@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
@@ -11,6 +13,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     slack_id = db.Column(db.String(50))
+    # cards_added = db.relationship('Card', lazy='dynamic')
+    # scars_applied = db.relationship('Scar', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -25,3 +29,27 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(user_id):
     return User.query.filter_by(id=user_id).first()
+
+
+class Card(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    added_by_id= db.Column(db.Integer)
+    # added_by_id= db.Column(db.Integer, db.ForeignKey('user.id'))
+    # scars = db.relationship('Scar')
+
+    def __repr__(self):
+        return '<Card {}:{}>'.format(self.name, self.id)
+
+
+# class Scar(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+#     card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
+#     scarred_by_id= db.Column(db.Integer, db.ForeignKey('user.id'))
+#     text=db.Column(db.String(256))
+
+#     def __repr__(self):
+#         return '<Scar {}>'.format(self.id)
+
