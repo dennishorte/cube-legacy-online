@@ -29,11 +29,12 @@ export WORKON_HOME=$HOME/.virtualenvs
 export VIRTUALENVWRAPPER_VIRTUALENV=~/.local/bin/virtualenv
 source ~/.local/bin/virtualenvwrapper.sh
 
-export CUBE_FLASK_SECRET_KEY="superer_secret"
-export CUBE_DB_USER="power_user"
-export CUBE_DB_PASS="super_secret"
-export CUBE_DB_HOST="127.0.0.1:3306"
-export CUBE_DB_NAME="my_db"
+# Add to PROJECT_ROOT/.env
+FLASK_SECRET_KEY="superer_secret"
+DB_USER="power_user"
+DB_PASS="super_secret"
+DB_HOST="127.0.0.1:3306"
+DB_NAME="my_db"
 
 # Back to command line
 cd ~
