@@ -13,5 +13,4 @@ class Config(object):
         host=os.environ["CUBE_DB_HOST"].split(':')[0],
         port=os.environ["CUBE_DB_HOST"].split(':')[1],
         db_name=os.environ["CUBE_DB_NAME"],
-    )        
-   
+    )   
