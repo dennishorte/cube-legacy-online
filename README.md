@@ -6,6 +6,9 @@ The application will be accessible at http:127.0.0.1:5000.
 
 **Setup EC2 Instance**
 
+# Found this tutorial very helpful: https://www.codementor.io/@jqn/deploy-a-flask-app-on-aws-ec2-13hp1ilqy2
+# modwsgi docs helped figure out how to use virtual env: https://modwsgi.readthedocs.io/en/develop/user-guides/virtual-environments.html
+
 sudo apt-get update
 sudo apt-get install python3-pip
 sudo apt-get install emacs
@@ -40,3 +43,42 @@ mkdir .virtualenv
 cd ~/code/cube-legacy-online/
 mkvirtualenv cube-legacy-online
 pip install -r requirements.txt
+
+# Apache setup
+sudo apt-get install apache2
+sudo apt-get install libapache2-mod-wsgi-py3
+sudo ln -sT ~/code/cube-legacy-online /var/www/html/cube-legacy-online
+
+# Create a file in the root of the project directory
+# cube-legacy-online.wsgi
+```
+import sys
+sys.path.insert(0, '/var/www/html/cube-legacy-online')
+
+from cube-legacy-online import app as application
+```
+
+# Enable mod_wsgi
+# edit: `/etc/apache2/sites-enabled/000-default.conf`
+# add the following directly after the document root
+```
+
+	WSGIDaemonProcess cube-legacy-online threads=5 python-home=/home/ubuntu/.virtualenvs/cube-legacy-online
+	WSGIProcessGroup cube-legacy-online
+	WSGIApplicationGroup %{GLOBAL}
+	WSGIScriptAlias / /var/www/html/cube-legacy-online/cube-legacy-online.wsgi
+
+	<Directory cube-legacy-online>
+	    Order deny,allow
+	    Allow from all
+	</Directory>
+```
+
+# Back in shell
+sudo service apache2 restart
+
+# Install MySQL for connecting to RDS
+sudo apt-get install mysql-server
+
+# This page finally let me figure out how to connect to the DB from my EC2 instance.
+# https://www.cloudbooklet.com/how-to-setup-rds-and-connect-with-ec2-in-aws/
