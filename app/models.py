@@ -13,7 +13,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     slack_id = db.Column(db.String(50))
-    # cards_added = db.relationship('Card', lazy='dynamic')
+    cards_added = db.relationship('Card', backref='added_by')
     # scars_applied = db.relationship('Scar', lazy='dynamic')
 
     def __repr__(self):
@@ -35,8 +35,7 @@ class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    added_by_id= db.Column(db.Integer)
-    # added_by_id= db.Column(db.Integer, db.ForeignKey('user.id'))
+    added_by_id= db.Column(db.Integer, db.ForeignKey('user.id'))
     # scars = db.relationship('Scar')
 
     def __repr__(self):

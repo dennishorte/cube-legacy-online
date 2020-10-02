@@ -1,8 +1,8 @@
-"""cards table no relationship
+"""card table with relationship
 
-Revision ID: 7aa5a4b9ef70
+Revision ID: fdcbb0bb3062
 Revises: fd9853d8ee72
-Create Date: 2020-10-02 16:33:21.127253
+Create Date: 2020-10-02 16:44:07.875814
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7aa5a4b9ef70'
+revision = 'fdcbb0bb3062'
 down_revision = 'fd9853d8ee72'
 branch_labels = None
 depends_on = None
@@ -23,6 +23,7 @@ def upgrade():
     sa.Column('name', sa.String(length=128), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('added_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['added_by_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_card_name'), 'card', ['name'], unique=False)
