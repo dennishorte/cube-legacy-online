@@ -84,31 +84,62 @@ class Participant(db.Model):
     def __repr__(self):
         return '<Participant {}>'.format(self.user.username)
 
+    def waiting_packs(self):
+        """
+        Return all packs that this participant is blocking.
+        """
+        num_seats = self.draft.num_seats
+        last_pick = len(self.picks)
+
+        packs = []
+        while True:
+            next_pick = last_pick + 1
+            
+            next_pack = last_pick // self.draft.pack_size
+            next_pick_for_pack = last_pick % self.draft.pack_size + 1
+
+            if next_pack % 2 == 0:  # Pass left
+                next_seat = (num_seats + self.seat - (next_pick_for_pack - 1)) % num_seats
+                
+            else:  # pass right
+                next_seat = (self.seat + next_pick_for_pack - 1) % num_seats
+
+            print('++++++++++++++++++++')
+            print('{} {:8} {:2} {}:{} {} {}'.format(
+                self.draft_id,
+                self.user.username,
+                next_pick,
+                self.seat,
+                next_seat,
+                next_pack,
+                next_pick_for_pack,
+            ))
+
+            pack = Pack.query.filter(
+                Pack.draft_id == self.draft_id,
+                Pack.seat_number == next_seat,
+                Pack.pack_number == next_pack,
+                Pack.num_picked == next_pick_for_pack - 1,
+            ).first()
+
+            if pack is None:
+                break
+            else:
+                packs.append(pack)
+                last_pick += 1
+
+        return packs
+
     def waiting_pack(self):
         """
         Return the next pack this player should draft, if any.
         """
-        all_packs = self.draft.packs
-        waiting = [x for x in all_packs if x.next_seat() == self.seat]
-        waiting.sort(key=self._pack_sort_key)
-
-        if waiting and self._ready_to_pick(waiting[0]):
+        waiting = self.waiting_packs()
+        if waiting:
             return waiting[0]
         else:
             return None
-
-    @staticmethod
-    def _pack_sort_key(pack):
-        return (pack.pack_number, pack.num_picked)
-
-    def _ready_to_pick(self, pack):
-        """
-        A player can only pick from the next round if they have enough picks already for
-        the current round.
-        """
-        num_packs_completed = len(self.picks) // self.draft.pack_size
-        return pack.pack_number <= num_packs_completed
-
+        
 
 class Pack(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -138,6 +169,12 @@ class Pack(db.Model):
             tmp -= self.num_picked
 
         return tmp % num_seats
+
+    def pick_number(self):
+        return self.num_picked + 1
+
+    def complete(self):
+        return self.num_picked == self.draft.pack_size
 
 
 class PackCard(db.Model):

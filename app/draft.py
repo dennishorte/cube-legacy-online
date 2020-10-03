@@ -20,6 +20,8 @@ class DraftWrapper(object):
             PackCard.draft_id==draft_id,
             PackCard.picked_by_id==self.participant.id,
         ).all()
+        self.seating = self.draft.participants
+        self.seating.sort(key=lambda x: x.seat)
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()

@@ -81,14 +81,13 @@ def cards():
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
     
-    seating = dw.draft.participants
-    seating.sort(key=lambda x: x.seat)
     
     return render_template(
         'draft.html',
         draft=dw.draft,
-        seating=seating,
+        seating=dw.seating,
         user=dw.user,
+        pack=dw.pack,
         pack_cards=dw.pack_cards,
         picked_cards=dw.picks,
     )
