@@ -62,6 +62,6 @@ def cards():
 
     scars = {}
     for scar in scar_list:
-        scars.setdefault(scar.card.name, []).append(scar.text)
+        scars.setdefault(scar.card_id, []).append(scar.text)
         
     return render_template('cards.html', cards=card_list, scars=scars)

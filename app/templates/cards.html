@@ -9,7 +9,7 @@
         {% for card in cards %}
             <tr>
                 <td>{{ card.name }}</td>
-                <td>{{ '; '.join(scars[card.name]) }}</td>
+                <td>{{ '; '.join(scars[card.id]) }}</td>
             </tr>
         {% endfor  %}
     </table>
