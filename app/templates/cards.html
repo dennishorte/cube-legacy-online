@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <table>
+        <tr>
+            <th>Card Name</th>
+            <th>Scars</th>
+        </tr>
+        {% for card in cards %}
+            <tr>
+                <td>{{ card.name }}</td>
+                <td>{{ '; '.join(scars[card.name]) }}</td>
+            </tr>
+        {% endfor  %}
+    </table>
+{% endblock %}
