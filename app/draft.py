@@ -9,16 +9,35 @@ from app.models import Participant
 from app.models import User
 
 
+class DraftWrapper(object):
+    def __init__(self, draft_id, user):
+        self.draft = Draft.query.get(draft_id)
+        self.user = user
+        self.participant = next(x for x in self.draft.participants if x.user_id == user.id)
+        self.pack = self.participant.waiting_pack()
+        self.pack_cards = [x for x in self.pack.cards if not x.picked()] if self.pack else None
+        self.picks = PackCard.query.filter(
+            PackCard.draft_id==draft_id,
+            PackCard.picked_by_id==self.participant.id,
+        ).all()
+
+    def pick_card(self, card_id):
+        pack_card = PackCard.query.filter(PackCard.id==card_id).first()
+        pack_card.picked_by = self.participant
+        pack_card.pick_number = self.pack.num_picked + 1
+        db.session.add(pack_card)
+        
+        self.pack.num_picked += 1
+        db.session.add(self.pack)
+        db.session.commit()
+
+
 def create_draft(
         name: str,
         participants: list,  # List of usernames
         pack_size: int,
         num_packs: int,
 ):
-    # Only create a new draft if there isn't already a draft in progress.
-    if any(map(lambda x: not x.complete, Draft.query.all())):
-        raise RuntimeError("Can't start a new draft while another draft is in progress.")
-    
     draft = Draft(
         name=name,
         complete=False,
@@ -40,7 +59,7 @@ def create_draft(
 
     for i, pack in enumerate(_make_packs(pack_size, num_packs, len(participants))):
         pack_number = i % num_packs
-        seat_number = i / len(participants)
+        seat_number = i // num_packs
         
         pack_orm = Pack(
             draft=draft,
@@ -57,7 +76,7 @@ def create_draft(
             )
             db.session.add(card)
         
-    # db.session.commit()
+    db.session.commit()
 
 
 def _make_packs(pack_size, num_packs, num_players):

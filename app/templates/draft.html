@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="header">
+        <h1>{{ draft.name }}</h1>
+    </div>
+
+    <div id="seating">
+        <p class="seating_direction">right</p>
+        <table id="seating">
+            {% for s in seating %}
+                <tr>
+                    <td>{{ s.user.username }}</td>
+                    <td></td>
+                    <td>
+                        <a href="/draft/{{draft.id}}/force/{{s.user.id}}">force</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p class="seating_direction">left</p>
+    </div>
+
+    <div id="picker">
+        {% if draft.complete %}
+            <p>draft is complete</p>
+        {% elif not pack_cards %}
+            <p>no packs waiting for you right now</p>
+        {% else %}
+            <ul>
+            {% for card in pack_cards %}
+                <li><a href="/draft/{{draft.id}}/pick/{{card.id}}">
+                    {{ card.card.name }}
+                </a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div id="picked">
+        <p>Your Picks</p>
+        <ul>
+        {% for card in picked_cards %}
+            <li>{{ card.card.name }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div id="card_info">
+        Mouse over a card to see information about it here.
+    </div>
+{% endblock %}

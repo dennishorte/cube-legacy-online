@@ -67,7 +67,10 @@ class Draft(db.Model):
 
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
-    participant = db.relationship('Participant', backref='draft')
+    participants = db.relationship('Participant', backref='draft')
+
+    def __repr__(self):
+        return '<Draft {}>'.format(self.name)
 
 
 class Participant(db.Model):
@@ -78,19 +81,33 @@ class Participant(db.Model):
     
     picks = db.relationship('PackCard', backref='picked_by')
 
-    def waiting_packs(self):
+    def __repr__(self):
+        return '<Participant {}>'.format(self.user.username)
+
+    def waiting_pack(self):
         """
-        Return the set of all packs that are stacked up on this player in this draft,
-        ordered so that the first element return is the first pack that should be picked from.
+        Return the next pack this player should draft, if any.
         """
         all_packs = self.draft.packs
         waiting = [x for x in all_packs if x.next_seat() == self.seat]
         waiting.sort(key=self._pack_sort_key)
-        return waiting
+
+        if waiting and self._ready_to_pick(waiting[0]):
+            return waiting[0]
+        else:
+            return None
 
     @staticmethod
     def _pack_sort_key(pack):
         return (pack.pack_number, pack.num_picked)
+
+    def _ready_to_pick(self, pack):
+        """
+        A player can only pick from the next round if they have enough picks already for
+        the current round.
+        """
+        num_packs_completed = len(self.picks) // self.draft.pack_size
+        return pack.pack_number <= num_packs_completed
 
 
 class Pack(db.Model):
@@ -102,6 +119,9 @@ class Pack(db.Model):
 
     cards = db.relationship('PackCard', backref='pack')
 
+    def __repr__(self):
+        return '<Pack s:{} p:{} n:{}>'.format(self.seat_number, self.pack_number, self.num_picked)
+
     def direction(self):
         if self.pack_number % 2 == 0:
             return 'left'    # Meaning if this is seat number 2, it will pass to seat 3.
@@ -111,11 +131,11 @@ class Pack(db.Model):
     def next_seat(self):
         num_seats = self.draft.num_seats
 
-        tmp = seat_number + num_seats * 100
+        tmp = self.seat_number + num_seats * 100
         if self.direction() == 'left':
-            tmp += num_picked
+            tmp += self.num_picked
         else:
-            tmp -= num_picked
+            tmp -= self.num_picked
 
         return tmp % num_seats
 
@@ -128,5 +148,8 @@ class PackCard(db.Model):
     picked_by_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
     pick_number = db.Column(db.Integer, default=-1)
 
+    def __repr__(self):
+        return '<PackCard {}>'.format(self.card.name)
+    
     def picked(self):
         return self.pick_number > -1
