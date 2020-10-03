@@ -59,6 +59,7 @@ class Scar(db.Model):
     
 class Draft(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
     complete = db.Column(db.Boolean)
     pack_size = db.Column(db.Integer)
     num_packs = db.Column(db.Integer)
