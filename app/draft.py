@@ -10,6 +10,7 @@ from app.models import User
 
 
 def create_draft(
+        name: str,
         participants: list,  # List of usernames
         pack_size: int,
         num_packs: int,
@@ -19,6 +20,7 @@ def create_draft(
         raise RuntimeError("Can't start a new draft while another draft is in progress.")
     
     draft = Draft(
+        name=name,
         complete=False,
         pack_size=pack_size,
         num_packs=num_packs,
