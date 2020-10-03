@@ -2,12 +2,12 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-PROD_DB_URI_STRING = "{driver}://{user}:{pw}@{host}:{port}/{db_name}"
 
 if os.environ.get('FLASK_ENV') == 'development':
     db_uri ="sqlite:///" + basedir + "/app.db"
 else:
-    db_uri = DB_URI_STRING.format(
+    PROD_DB_URI_STRING = "{driver}://{user}:{pw}@{host}:{port}/{db_name}"
+    db_uri = PROD_DB_URI_STRING.format(
         driver="mysql+pymysql",
         user=os.environ["DB_USER"],
         pw=os.environ["DB_PASS"],
