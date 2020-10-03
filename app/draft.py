@@ -31,6 +31,19 @@ class DraftWrapper(object):
         
         self.pack.num_picked += 1
         db.session.add(self.pack)
+
+        # If this was the last pick, mark the draft complete.
+        if self.pack.num_picked == self.draft.pack_size \
+                and self.pack.pack_number == self.draft.num_packs - 1:
+            unpicked_cards = PackCard.query.filter(
+                PackCard.draft_id == self.draft.id,
+                PackCard.pick_number < 0,
+            ).first()
+            if unpicked_cards is None:
+                self.draft.complete = True
+                db.session.add(self.draft)
+
+        # commit the update
         db.session.commit()
 
 
