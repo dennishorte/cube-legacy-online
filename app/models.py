@@ -295,4 +295,4 @@ class PackCard(db.Model):
 class ScryfallData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(127), index=True)
-    json = db.Column(db.String(16383))
+    json = db.Column(db.Text)
