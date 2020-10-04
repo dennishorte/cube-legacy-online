@@ -53,7 +53,7 @@ def update_one(scryfall_json, card_name, fix_names=False):
 
     else:
         scryfall_data = ScryfallData(
-            name=scryfalldata_name,
+            name=scryfall_name,
             json=json.dumps(scryfall_json)
         )
         db.session.add(scryfall_data)

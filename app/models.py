@@ -104,7 +104,7 @@ class Scar(db.Model):
         db.DateTime,
         comment="Time this scar was applied to a card.",
     )
-    notes_id=db.Column(
+    notes=db.Column(
         db.String(256),
         default='',
         comment="Thoughts the player had when adding this scar to the card.",
