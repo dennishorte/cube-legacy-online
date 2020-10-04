@@ -155,17 +155,6 @@ class Participant(db.Model):
             else:  # pass right
                 next_seat = (self.seat + next_pick_for_pack - 1) % num_seats
 
-            print('++++++++++++++++++++')
-            print('{} {:8} {:2} {}:{} {} {}'.format(
-                self.draft_id,
-                self.user.username,
-                next_pick,
-                self.seat,
-                next_seat,
-                next_pack,
-                next_pick_for_pack,
-            ))
-
             pack = Pack.query.filter(
                 Pack.draft_id == self.draft_id,
                 Pack.seat_number == next_seat,
