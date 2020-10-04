@@ -80,8 +80,6 @@ def cards():
 @login_required
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
-    
-    
     return render_template(
         'draft.html',
         draft=dw.draft,
@@ -89,6 +87,8 @@ def draft(draft_id):
         user=dw.user,
         pack=dw.pack,
         pack_cards=dw.pack_cards,
+        passing_to=dw.passing_to(),
+        scar_map=dw.scar_map,
         picked_cards=dw.picks,
     )
 

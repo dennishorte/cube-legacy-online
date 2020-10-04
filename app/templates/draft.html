@@ -32,27 +32,54 @@
         {% elif not pack_cards %}
             <p>no packs waiting for you right now</p>
         {% else %}
-            <p>Pack {{ pack.pack_number + 1 }}, Pick {{ pack.pick_number() }}</p>
-            <ul>
-            {% for card in pack_cards %}
-                <li><a href="/draft/{{draft.id}}/pick/{{card.id}}">
-                    {{ card.card.name }}
-                </a></li>
-            {% endfor %}
-            </ul>
+            <p>Pack {{ pack.pack_number + 1 }} / Pick {{ pack.pick_number() }} / Passing to: {{ passing_to }}</p>
+            <table>
+                <tr>
+                    <th>Card Name</th>
+                    <th>Scars</th>
+                </tr>
+                {% for card in pack_cards %}
+                    <tr>
+                        <td>
+                            <a href="/draft/{{draft.id}}/pick/{{card.id}}">
+                                {{ card.card.name }}
+                            </a>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for scar in scar_map[card.card_id] %}
+                                    <li>{{  scar.text }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         {% endif %}
     </div>
 
     <div id="picked">
         <p>Your Picks ({{ picked_cards|length }})</p>
-        <ul>
-        {% for card in picked_cards %}
-            <li>{{ card.card.name }}</li>
-        {% endfor %}
-        </ul>
+        <table>
+            <tr>
+                <th>Card Name</th>
+                <th>Scars</th>
+            </tr>
+            {% for card in picked_cards %}
+                <tr>
+                    <td>{{ card.card.name }}</td>
+                    <td>
+                        <ul>
+                            {% for scar in scar_map[card.card_id] %}
+                                <li>{{  scar.text }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 
     <div id="card_info">
-        Mouse over a card to see information about it here.
     </div>
 {% endblock %}

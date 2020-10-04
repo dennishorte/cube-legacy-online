@@ -72,6 +72,17 @@ class Draft(db.Model):
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
 
+    def scar_map(self):
+        """
+        A map of pack_card.id -> [Scar models] for all cards in this draft.
+        """
+        card_ids = [x.card_id for x in self.pack_cards]
+        scars = Scar.query.filter(Scar.card_id.in_(card_ids)).all()
+        scar_map = {}
+        for scar in scars:
+            scar_map.setdefault(scar.card_id, []).append(scar)
+        return scar_map
+
 
 class Participant(db.Model):
     id = db.Column(db.Integer, primary_key=True)

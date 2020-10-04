@@ -22,6 +22,7 @@ class DraftWrapper(object):
         ).all()
         self.seating = self.draft.participants
         self.seating.sort(key=lambda x: x.seat)
+        self.scar_map = self.draft.scar_map()
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
@@ -45,6 +46,18 @@ class DraftWrapper(object):
 
         # commit the update
         db.session.commit()
+
+    def passing_to(self):
+        """Name of the player who will see this pack after you pick from it."""
+        if self.pack is None:
+            return None
+        
+        if self.pack.pack_number % 2 == 0:
+            next_seat = (self.participant.seat + 1) % self.draft.num_seats
+        else:
+            next_seat = (self.participant.seat - 1) % self.draft.num_seats
+
+        return self.seating[next_seat].user.username
 
 
 def create_draft(
