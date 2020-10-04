@@ -48,10 +48,45 @@ class Card(db.Model):
 
 class Scar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
-    added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    text=db.Column(db.String(256))
+    timestamp = db.Column(
+        db.DateTime,
+        index=True,
+        default=datetime.utcnow,
+        comment="Time this scar was added to the pool",
+    )
+    card_id = db.Column(
+        db.Integer,
+        db.ForeignKey('card.id'),
+        comment="Card this scar is applied to. If null, not yet applied.",
+    )
+    added_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        comment="User who added this scar to a card.",
+    )
+    added_timestamp = db.Column(
+        db.DateTime,
+        comment="Time this scar was applied to a card.",
+    )
+    text=db.Column(
+        db.String(256),
+        comment="Text that will be added to the card this scar is applied to.",
+    )
+    restrictions=db.Column(
+        db.String(64),
+        default='',
+        comment="Limitations on the kind of card this scar can be applied to.",
+    )
+    reminder=db.Column(
+        db.String(256),
+        default='',
+        comment="Some additional explanation of what this scar does.",
+    )
+    notes_id=db.Column(
+        db.String(256),
+        default='',
+        comment="Thoughts the player had when adding this scar to the card.",
+    )
 
     def __repr__(self):
         return '<Scar {}>'.format(self.id)
@@ -64,6 +99,7 @@ class Draft(db.Model):
     pack_size = db.Column(db.Integer)
     num_packs = db.Column(db.Integer)
     num_seats = db.Column(db.Integer)
+    scar_rounds_str = db.Column(db.String(64))  # eg. "1,4"
 
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
@@ -71,6 +107,9 @@ class Draft(db.Model):
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
+
+    def scar_rounds(self):
+        return [int(x) for x in self.scar_rounds_str]
 
     def scar_map(self):
         """

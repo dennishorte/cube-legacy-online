@@ -65,6 +65,7 @@ def create_draft(
         participants: list,  # List of usernames
         pack_size: int,
         num_packs: int,
+        scarring_rounds: list,  # List of ints, 0 indexed
 ):
     draft = Draft(
         name=name,
@@ -72,6 +73,7 @@ def create_draft(
         pack_size=pack_size,
         num_packs=num_packs,
         num_seats=len(participants),
+        scar_rounds_str=','.join(scarring_rounds),
     )
     db.session.add(draft)
 
