@@ -1,26 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div id="header">
-        <h1>Hi, {{ current_user.username }}!</h1>
-    </div>
-    
-    <div id="drafts">
-        <div id="active">
-            <p>Active Drafts</p>
-            <ul>
-                {% for p in active %}
-                    <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-                {% endfor %}
-            </ul>
+    <div id="header" class="row">
+        <div class="col" >
+            <h1>Hi, {{ current_user.username }}!</h1>
         </div>
-        <div id="complete">
-            <p>Completed Drafts</p>
-            <ul>
-                {% for p in complete %}
-                    <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-                {% endfor %}
-            </ul>
+    </div>
+
+    <div class="row" >
+        <div id="drafts" class="col">
+            <div id="active">
+                <p>Active Drafts</p>
+                <ul>
+                    {% for p in active %}
+                        <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="complete">
+                <p>Completed Drafts</p>
+                <ul>
+                    {% for p in complete %}
+                        <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div id="new_draft" class="col" >
+            New Draft Form will be here.
         </div>
     </div>
 {% endblock %}
