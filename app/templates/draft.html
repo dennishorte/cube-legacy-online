@@ -33,11 +33,14 @@
             <p>no packs waiting for you right now</p>
         {% else %}
             <p>Pack {{ pack.pack_number + 1 }} / Pick {{ pack.pick_number() }} / Passing to: {{ passing_to }}</p>
-            <table>
-                <tr>
-                    <th>Card Name</th>
-                    <th>Scars</th>
-                </tr>
+            <table class="table table-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Card Name</th>
+                        <th>Scars</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for card in pack_cards %}
                     <tr>
                         <td>
@@ -54,17 +57,20 @@
                         </td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
         {% endif %}
     </div>
 
     <div id="picked">
         <p>Your Picks ({{ picked_cards|length }})</p>
-        <table>
-            <tr>
-                <th>Card Name</th>
-                <th>Scars</th>
-            </tr>
+        <table class="table table-sm">
+            <thead class="thead-light">
+                <tr>
+                    <th>Card Name</th>
+                    <th>Scars</th>
+                </tr>
+            </thead>
             {% for card in picked_cards %}
                 <tr>
                     <td>{{ card.card.name }}</td>
