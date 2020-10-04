@@ -51,12 +51,44 @@ class Card(db.Model):
 
 
 class Scar(db.Model):
+    ############################################################
+    # Base Columns
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(
         db.DateTime,
         index=True,
         default=datetime.utcnow,
         comment="Time this scar was added to the pool",
+    )
+
+    ############################################################
+    # Scar description columns
+    
+    text=db.Column(
+        db.String(256),
+        comment="Text that will be added to the card this scar is applied to.",
+    )
+    restrictions=db.Column(
+        db.String(64),
+        default='',
+        comment="Limitations on the kind of card this scar can be applied to.",
+    )
+    reminder=db.Column(
+        db.String(256),
+        default='',
+        comment="Some additional explanation of what this scar does.",
+    )
+
+    ############################################################
+    # Scar application columns
+
+    draft_id = db.Column(
+        db.Integer,
+        comment="The draft in which this scar was applied, if any."
+    )
+    draft_pack_number = db.Column(
+        db.Integer,
+        comment="The draft round in which this scar was applied, if any."
     )
     card_id = db.Column(
         db.Integer,
@@ -72,28 +104,53 @@ class Scar(db.Model):
         db.DateTime,
         comment="Time this scar was applied to a card.",
     )
-    text=db.Column(
-        db.String(256),
-        comment="Text that will be added to the card this scar is applied to.",
-    )
-    restrictions=db.Column(
-        db.String(64),
-        default='',
-        comment="Limitations on the kind of card this scar can be applied to.",
-    )
-    reminder=db.Column(
-        db.String(256),
-        default='',
-        comment="Some additional explanation of what this scar does.",
-    )
     notes_id=db.Column(
         db.String(256),
         default='',
         comment="Thoughts the player had when adding this scar to the card.",
     )
 
+    ############################################################
+    # Columns for locking scars
+
+    lock_draft_id = db.Column(db.Integer)
+    lock_participant_id = db.Column(db.Integer)
+
     def __repr__(self):
         return '<Scar {}>'.format(self.id)
+
+    def lock(self, draft_id, participant_id):
+        """
+        Lock this scar for this user so that there aren't scars in a draft and if
+        a player reloads, they get the same scars. Does not commit the changes so that
+        multiple locks can be committed at once.
+        """
+        self.lock_draft_id = draft_id
+        self.lock_participant_id = participant_id
+
+    def unlock(self):
+        """See lock for more info."""
+        self.lock_draft_id = None
+        self.lock_participant_id = None
+
+    @classmethod
+    def get_locked(cls, draft_id, participant_id):
+        """See lock for more info."""
+        return cls.query.filter(
+            Scar.lock_draft_id == draft_id,
+            Scar.lock_participant_id == participant_id,
+        ).all()
+
+    @classmethod
+    def apply_to_card(cls, card_id, scar_id, user_id, draft_id=None, pack_number=None):
+        scar = Scar.query.get(scar_id)
+        scar.draft_id = draft_id
+        scar.draft_pack_number = pack_number
+        scar.card_id = card_id
+        scar.added_by_id = user_id
+        scar.added_timestamp = datetime.utcnow()
+        db.session.add(scar)
+        db.session.commit()
 
     
 class Draft(db.Model):
@@ -113,7 +170,7 @@ class Draft(db.Model):
         return '<Draft {}>'.format(self.name)
 
     def scar_rounds(self):
-        return [int(x) for x in self.scar_rounds_str]
+        return [int(x) for x in self.scar_rounds_str.split(',')]
 
     def scar_map(self):
         """

@@ -42,18 +42,49 @@
         {% elif not pack_cards %}
             <p>no packs waiting for you right now</p>
         {% else %}
-            <p>Pack {{ pack.pack_number + 1 }} / Pick {{ pack.pick_number() }} / Passing to: {{ passing_to }}</p>
+                <p>
+                    Pack {{ pack.pack_number + 1 }} /
+                    Pick {{ pack.pick_number() }} /
+                    Passing to: {{ passing_to }}
+                </p>
+                
+                {% if dw.is_scarring_round() %}
+                    <p class="text-danger">Scarring Round: You must apply a scar before picking a card. You can't pick the card you scar.</p>
+                    <ol>
+                        {% for scar in dw.get_new_scars() %}
+                            <li>
+                                {{ scar.text }}<br>
+                                <span class="text-danger">{{ scar.restrictions }}</span><br>
+                                <span class="text-secondary">{{ scar.reminder }}</span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
             <div class="row">
                 {% for card in pack_cards %}
                     <div class="col">
-                        <a href="/draft/{{draft.id}}/pick/{{card.id}}">
-                            {% for image_url in card.card.image_urls() %}
-                                <img
-                                    style="max-width:200px"
-                                    src="{{card.card.image_url}}"
-                                    alt="{{card.card.name}}">
-                            {% endfor %}
-                        </a>
+                        {% if dw.is_scarring_round() %}
+                            <ol>
+                                {% for scar in dw.get_new_scars() %}
+                                    <li><a href="/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}">apply me</a></li>
+                                {% endfor %}
+                            </ol>
+                        {% else %}
+                            {# This makes the cards pickable. Hide when adding scars. #}
+                            <a href="/draft/{{draft.id}}/pick/{{card.id}}">
+                        {% endif %}
+                        
+                        {% for image_url in card.card.image_urls() %}
+                            <img
+                                style="max-width:200px"
+                                src="{{image_url}}"
+                                alt="{{card.card.name}}">
+                        {% endfor %}
+                        
+                        {% if not dw.is_scarring_round() %}
+                            </a>
+                        {% endif %}
+                        
                         {% if scar_map[card.card_id] %}
                             {% for scar in scar_map[card.card_id] %}
                                 <p class="text-success">{{  scar.text }}</p>
@@ -75,7 +106,7 @@
                     {% for image_url in card.card.image_urls() %}
                         <img
                             style="max-width:200px"
-                            src="{{card.card.image_url}}"
+                            src="{{image_url}}"
                             alt="{{card.card.name}}">
                     {% endfor %}
                     {% if scar_map[card.card_id] %}

@@ -82,11 +82,12 @@ def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
     return render_template(
         'draft.html',
+        dw=dw,
         draft=dw.draft,
         seating=dw.seating,
         user=dw.user,
         pack=dw.pack,
-        pack_cards=dw.pack_cards,
+        pack_cards=dw.pack_cards(),
         passing_to=dw.passing_to(),
         scar_map=dw.scar_map,
         picked_cards=dw.picks,
@@ -106,6 +107,19 @@ def draft_pick(draft_id, card_id):
 def force_pick(draft_id, user_id):
     user = User.query.get(user_id)
     dw = DraftWrapper(draft_id, user)
-    if dw.pack_cards:
-        dw.pick_card(dw.pack_cards[0].id)
+
+    # Don't apply any scar an advance.
+    if dw.is_scarring_round():
+        dw.unlock_new_scars()
+
+    # Pick the first card in the pack.
+    if dw.pack_cards():
+        dw.pick_card(dw.pack_cards()[0].id)
+    return redirect("/draft/{}".format(draft_id))
+
+@app.route("/draft/<draft_id>/scar/<card_id>/<scar_id>")
+@login_required
+def apply_scar(draft_id, card_id, scar_id):
+    dw = DraftWrapper(draft_id, current_user)
+    dw.apply_scar(card_id, scar_id)
     return redirect("/draft/{}".format(draft_id))
