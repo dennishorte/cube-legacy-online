@@ -2,16 +2,25 @@
 
 {% block content %}
     <div id="header">
-        <h1>{{ draft.name }}</h1>
+        <div class="row">
+            <div class="col" >
+                <h1>{{ draft.name }}</h1>
+            </div>
+            <div class="col text-right" >
+                <a href="/">home</a>
+            </div>
     </div>
 
     <div id="seating">
+        <h2>Seating</h2>
         <p class="seating_direction">right</p>
-        <table id="seating">
+        <table id="seating" class="table table-sm">
             <tr>
-                <th>player</th>
-                <th>waiting</th>
-                <th></th>
+                <thead class="thead-light">
+                    <th>player</th>
+                    <th>waiting</th>
+                    <th></th>
+                </thead>
             </tr>
             {% for s in seating %}
                 <tr>
@@ -26,66 +35,65 @@
         <p class="seating_direction">left</p>
     </div>
 
-    <div id="picker">
+    <div id="picker" class="no-gutters">
+        <h2>Card Picker</h2>
         {% if draft.complete %}
             <p>draft is complete</p>
         {% elif not pack_cards %}
             <p>no packs waiting for you right now</p>
         {% else %}
             <p>Pack {{ pack.pack_number + 1 }} / Pick {{ pack.pick_number() }} / Passing to: {{ passing_to }}</p>
-            <table class="table table-sm">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Card Name</th>
-                        <th>Scars</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="row">
                 {% for card in pack_cards %}
-                    <tr>
-                        <td>
-                            <a href="/draft/{{draft.id}}/pick/{{card.id}}">
-                                {{ card.card.name }}
-                            </a>
-                        </td>
-                        <td>
-                            <ul>
-                                {% for scar in scar_map[card.card_id] %}
-                                    <li>{{  scar.text }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
+                    <div class="col">
+                        <a href="/draft/{{draft.id}}/pick/{{card.id}}">
+                            {% for image_url in card.card.image_urls() %}
+                                <img
+                                    style="max-width:200px"
+                                    src="{{card.card.image_url}}"
+                                    alt="{{card.card.name}}">
+                            {% endfor %}
+                        </a>
+                        {% if scar_map[card.card_id] %}
+                            {% for scar in scar_map[card.card_id] %}
+                                <p class="text-success">{{  scar.text }}</p>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-info">vanilla (no scars)</p>
+                        {% endif %}
+                    </div>
                 {% endfor %}
-                </tbody>
-            </table>
+            </div>
         {% endif %}
     </div>
 
-    <div id="picked">
-        <p>Your Picks ({{ picked_cards|length }})</p>
-        <table class="table table-sm">
-            <thead class="thead-light">
-                <tr>
-                    <th>Card Name</th>
-                    <th>Scars</th>
-                </tr>
-            </thead>
+    <div id="picked" class="no-gutters">
+        <h2>Your Picks ({{ picked_cards|length }})</h2>
+        <div class="row">
             {% for card in picked_cards %}
-                <tr>
-                    <td>{{ card.card.name }}</td>
-                    <td>
-                        <ul>
-                            {% for scar in scar_map[card.card_id] %}
-                                <li>{{  scar.text }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
+                <div class="col">
+                    {% for image_url in card.card.image_urls() %}
+                        <img
+                            style="max-width:200px"
+                            src="{{card.card.image_url}}"
+                            alt="{{card.card.name}}">
+                    {% endfor %}
+                    {% if scar_map[card.card_id] %}
+                        {% for scar in scar_map[card.card_id] %}
+                            <p class="text-success">{{  scar.text }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-info">vanilla (no scars)</p>
+                    {% endif %}
+                </div>
             {% endfor %}
-        </table>
-    </div>
+        </div>
 
-    <div id="card_info">
+        <div id="pick-text-list">
+            <h2>A Flat List of Your Picks for Copy-Pasting</h2>
+            {% for card in picked_cards %}
+                {{ card.card.name }}<br>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

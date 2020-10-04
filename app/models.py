@@ -46,6 +46,9 @@ class Card(db.Model):
     def __repr__(self):
         return '<Card {}:{}>'.format(self.name, self.id)
 
+    def image_urls(self):
+        return self.image_url.split(',')
+
 
 class Scar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
