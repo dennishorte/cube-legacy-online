@@ -7,3 +7,4 @@ gunicorn
 is_safe_url
 pymysql
 python-dotenv
+requests

@@ -37,7 +37,8 @@ class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    added_by_id= db.Column(db.Integer, db.ForeignKey('user.id'))
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    image_url = db.Column(db.String(511))
 
     picks = db.relationship('PackCard', backref='card')
     scars = db.relationship('Scar', backref='card')
@@ -240,3 +241,9 @@ class PackCard(db.Model):
     
     def picked(self):
         return self.pick_number > -1
+
+
+class ScryfallData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(127), index=True)
+    json = db.Column(db.String(16383))
