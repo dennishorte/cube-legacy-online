@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Debugger: {{ d.draft.name }} ({{d.draft.id}})
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h3>Players</h3>
+            <table class="table">
+                <thead>
+                    <td>seat</td>
+                    <td>name</td>
+                    <td>user_id</td>
+                </thead>
+                <tbody>
+                    {% for p in d.participants %}
+                        <tr>
+                            <td>{{ p.seat }}</td>
+                            <td>{{ p.user.username }}</td>
+                            <td>{{ p.user.id }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>  <!-- Players -->
+    
+    {% for p in d.participants %}
+        <h4>Packs for {{ p.user.username }} in seat {{ p.seat }}</h4>
+        <div class="row">
+            {% for pack in d.packs_for(p) %}
+                <div class="col">
+                    <p class="m-0">Pack: {{ pack.pack_number }}</p>
+                    <p class="m-0">{{ pack.direction() }}: {{ pack.seat_ordering() }}</p>
+
+                    {% for card in d.picked_cards_for_pack(pack) %}
+                        <p class="text-primary m-0">
+                            {{ card.card.name }}
+                            <span class="text-info">({{card.picked_by.user.username}})</span>
+                        </p>
+                    {% endfor %}
+
+                    {% for card in d.unpicked_cards_for_pack(pack) %}
+                        <p class="text-secondary m-0">{{ card.card.name }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div> <!-- Packs -->
+    {% endfor %}
+{% endblock %}

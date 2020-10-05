@@ -11,6 +11,7 @@ from is_safe_url import is_safe_url
 
 from app import app
 from app.draft import DraftWrapper
+from app.draft_debugger import DraftDebugger
 from app.forms import LoginForm
 from app.models import Card
 from app.models import Draft
@@ -130,3 +131,9 @@ def get_new_scars(draft_id):
     dw = DraftWrapper(draft_id, current_user)
     dw.these_scars_suck()
     return redirect("/draft/{}".format(draft_id))
+
+@app.route("/draft/<draft_id>/debug")
+@login_required
+def draft_debug(draft_id):
+    draft_debugger = DraftDebugger(draft_id)
+    return render_template('draft_debug.html', d=draft_debugger)

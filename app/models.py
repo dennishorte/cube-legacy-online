@@ -259,16 +259,18 @@ class Pack(db.Model):
         else:
             return 'right'
 
-    def next_seat(self):
+    def seat_ordering(self):
+        pack_size = self.draft.pack_size
         num_seats = self.draft.num_seats
+        
+        seat_range = range(pack_size)
+        if self.direction() == 'right':
+            seat_range = [0 - x for x in seat_range]
+        
+        return [(x + self.seat_number) % num_seats for x in seat_range]
 
-        tmp = self.seat_number + num_seats * 100
-        if self.direction() == 'left':
-            tmp += self.num_picked
-        else:
-            tmp -= self.num_picked
-
-        return tmp % num_seats
+    def next_seat(self):
+        return self.seat_ordering[self.num_picked]
 
     def pick_number(self):
         return self.num_picked + 1
