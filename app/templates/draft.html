@@ -5,6 +5,33 @@
 {% endblock %}
 
 {% block content %}
+    <div class="modal fade" id="scarConfirmationModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cardEditorModalLabel">
+                        Scar Confirmation
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="scmImageHolder"></div>
+                    <div id="scmOldScarHolder"></div>
+                    <div id="scmNewScarHolder"></div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Oops</button>
+                    <button type="button" class="btn btn-primary">Scar Card</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
     <div id="seating">
         <h2>Seating</h2>
         <p class="seating_direction">right</p>
@@ -58,13 +85,7 @@
             <div class="row">
                 {% for card in pack_cards %}
                     <div class="col border-bottom rounded-bottom border-dark">
-                        {% if dw.is_scarring_round() %}
-                            <ol>
-                                {% for scar in dw.get_new_scars() %}
-                                    <li><a href="/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}">apply me</a></li>
-                                {% endfor %}
-                            </ol>
-                        {% else %}
+                        {% if not dw.is_scarring_round() %}
                             {# This makes the cards pickable. Hide when adding scars. #}
                             <a href="/draft/{{draft.id}}/pick/{{card.id}}">
                         {% endif %}
@@ -87,6 +108,22 @@
                         {% else %}
                             <p class="text-info">vanilla (no scars)</p>
                         {% endif %}
+
+                        {% if dw.is_scarring_round() %}
+                            <div class="row">
+                                <div class="col">
+                                    {% for scar in dw.get_new_scars() %}
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary btn-lg"
+                                            onclick="location.href='/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}';">
+                                            scar {{ loop.index }}
+                                        </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        
                     </div>
                 {% endfor %}
             </div>
@@ -122,4 +159,22 @@
             {% endfor %}
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+     $('#scarConfirmationModal').on('show.bs.modal', function (event) {
+         var target = $(event.relatedTarget)  // Row that triggered the modal
+         var card_img = null;
+         var card_old_scar = null;
+         var card_new_scar = null;
+         var add_scar_link = "location.href='/';"
+
+                             var modal = $(this)
+         modal.find('.modal-body #scmImageHolder').append(card_img);
+         modal.find('.modal-body #scmOldScarHolder').append(card_old_scar);
+         modal.find('.modal-body #scmNewScarHolder').append(card_new_scar);
+         modal.find('.modal-body #scmConfirmButton').append('onclick', add_scar_link);
+     })
+    </script>
 {% endblock %}
