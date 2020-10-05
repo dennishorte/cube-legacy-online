@@ -1,16 +1,10 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <div id="header">
-        <div class="row">
-            <div class="col" >
-                <h1>{{ draft.name }}</h1>
-            </div>
-            <div class="col text-right" >
-                <a href="/">home</a>
-            </div>
-    </div>
+{% block title %}
+    {{ draft.name }}
+{% endblock %}
 
+{% block content %}
     <div id="seating">
         <h2>Seating</h2>
         <p class="seating_direction">right</p>

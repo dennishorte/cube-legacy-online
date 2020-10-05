@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <div id="header" class="row">
-        <div class="col" >
-            <h1>Hi, {{ current_user.username }}!</h1>
-        </div>
-    </div>
+{% block title %}
+    Cube Legacy Online
+{% endblock %}
 
+{% block content %}
     <div class="row" >
         <div id="drafts" class="col">
             <div id="active">
@@ -27,7 +25,7 @@
             </div>
         </div>
 
-        <div id="new_draft" class="col" >
+        <div id="new_draft" class="col border">
             New Draft Form will be here.
         </div>
     </div>
