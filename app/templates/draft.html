@@ -85,42 +85,48 @@
             <div class="row">
                 {% for card in pack_cards %}
                     <div class="col border-bottom rounded-bottom border-dark">
-                        {% if not dw.is_scarring_round() %}
-                            {# This makes the cards pickable. Hide when adding scars. #}
-                            <a href="/draft/{{draft.id}}/pick/{{card.id}}">
-                        {% endif %}
-                        
-                        {% for image_url in card.card.image_urls() %}
-                            <img
-                                style="max-width:200px"
-                                src="{{image_url}}"
-                                alt="{{card.card.name}}">
-                        {% endfor %}
-                        
-                        {% if not dw.is_scarring_round() %}
-                            </a>
-                        {% endif %}
-                        
-                        {% if scar_map[card.card_id] %}
-                            {% for scar in scar_map[card.card_id] %}
-                                <p class="text-success">{{  scar.text }}</p>
+                        <div class="d-flex justify-content-center">
+                            {% if not dw.is_scarring_round() %}
+                                {# This makes the cards pickable. Hide when adding scars. #}
+                                <a href="/draft/{{draft.id}}/pick/{{card.id}}">
+                            {% endif %}
+                            
+                            {% for image_url in card.card.image_urls() %}
+                                <img
+                                    style="max-width:200px"
+                                    src="{{image_url}}"
+                                    alt="{{card.card.name}}">
                             {% endfor %}
-                        {% else %}
-                            <p class="text-info">vanilla (no scars)</p>
-                        {% endif %}
+                            
+                            {% if not dw.is_scarring_round() %}
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {% if scar_map[card.card_id] %}
+                                {% for scar in scar_map[card.card_id] %}
+                                    <p class="text-success">{{  scar.text }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-info">vanilla (no scars)</p>
+                            {% endif %}
+                        </div>
 
                         {% if dw.is_scarring_round() %}
-                            <div class="row">
-                                <div class="col">
-                                    {% for scar in dw.get_new_scars() %}
-                                        <button
-                                            type="button"
-                                            class="btn btn-secondary btn-lg"
-                                            onclick="location.href='/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}';">
-                                            scar {{ loop.index }}
-                                        </button>
-                                    {% endfor %}
-                                </div>
+                            <div class="btn-group btn-group-lg btn-block">
+                                {% for scar in dw.get_new_scars() %}
+                                    <button
+                                        type="button"
+                                        {% if loop.index == 1 %}
+                                            class="btn btn-secondary"
+                                        {% else %}
+                                            class="btn btn-dark"
+                                        {% endif %}
+                                        onclick="location.href='/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}';">
+                                        scar {{ loop.index }}
+                                    </button>
+                                {% endfor %}
                             </div>
                         {% endif %}
                         
