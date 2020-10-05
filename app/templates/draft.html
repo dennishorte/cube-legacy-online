@@ -63,7 +63,7 @@
                 {% endif %}
             <div class="row">
                 {% for card in pack_cards %}
-                    <div class="col">
+                    <div class="col border-bottom rounded-bottom border-dark">
                         {% if dw.is_scarring_round() %}
                             <ol>
                                 {% for scar in dw.get_new_scars() %}
