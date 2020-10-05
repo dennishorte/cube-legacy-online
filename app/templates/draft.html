@@ -38,8 +38,17 @@
         <table id="seating" class="table table-sm">
             <tr>
                 <thead class="thead-light">
+                    <th></th>
+                    <th></th>
+                    <th colspan="{{ dw.draft.num_packs }}">num picks made</th>
+                    <th></th>
+                </thead>
+                <thead class="thead-light">
                     <th>player</th>
                     <th>waiting</th>
+                    {% for pack in range(dw.draft.num_packs) %}
+                        <th>{{ loop.index }}</th>
+                    {% endfor %}
                     <th></th>
                 </thead>
             </tr>
@@ -47,6 +56,9 @@
                 <tr>
                     <td>{{ s.user.username }}</td>
                     <td>{{ s.waiting_packs()|length }}</td>
+                    {% for pack in range(dw.draft.num_packs) %}
+                        <td>{{ s.num_picked_for_pack(loop.index - 1) }}</td>
+                    {% endfor %}
                     <td>
                         <a href="/draft/{{draft.id}}/force/{{s.user.id}}">force</a>
                     </td>

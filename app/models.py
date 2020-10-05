@@ -239,6 +239,19 @@ class Participant(db.Model):
             return waiting[0]
         else:
             return None
+
+    def num_picked_for_pack(self, pack_index):
+        all_picks = PackCard.query.filter(
+            PackCard.draft_id == self.draft_id,
+            PackCard.picked_by_id == self.id
+        ).all()
+
+        round_to_picks = {}
+        for pick in all_picks:
+            round = pick.pack.pack_number
+            round_to_picks.setdefault(round, []).append(pick)
+
+        return len(round_to_picks.get(pack_index, []))
         
 
 class Pack(db.Model):
