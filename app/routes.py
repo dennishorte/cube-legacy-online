@@ -123,3 +123,10 @@ def apply_scar(draft_id, card_id, scar_id):
     dw = DraftWrapper(draft_id, current_user)
     dw.apply_scar(card_id, scar_id)
     return redirect("/draft/{}".format(draft_id))
+
+@app.route("/draft/<draft_id>/new_scars")
+@login_required
+def get_new_scars(draft_id):
+    dw = DraftWrapper(draft_id, current_user)
+    dw.these_scars_suck()
+    return redirect("/draft/{}".format(draft_id))

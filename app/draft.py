@@ -21,6 +21,10 @@ class DraftWrapper(object):
         self._new_scars = None
         self._pack_cards = None
 
+    def these_scars_suck(self):
+        self.unlock_new_scars()
+        self._new_scars = None
+
     def _scar_that_was_applied_this_round(self):
         return Scar.query.filter(
             Scar.draft_id == self.draft.id,

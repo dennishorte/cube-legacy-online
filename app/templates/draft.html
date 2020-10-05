@@ -50,11 +50,12 @@
                 
                 {% if dw.is_scarring_round() %}
                     <p class="text-danger">Scarring Round: You must apply a scar before picking a card. You can't pick the card you scar.</p>
+                    <p><a href="/draft/{{draft.id}}/new_scars">These scars don't work. Give me some new ones.</a></p>
                     <ol>
                         {% for scar in dw.get_new_scars() %}
                             <li>
-                                {{ scar.text }}<br>
-                                <span class="text-danger">{{ scar.restrictions }}</span><br>
+                                {{ scar.text }}
+                                <span class="text-danger">{{ scar.restrictions }}</span>
                                 <span class="text-secondary">{{ scar.reminder }}</span>
                             </li>
                         {% endfor %}
