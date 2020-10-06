@@ -25,3 +25,6 @@ class DraftDebugger(object):
     def unpicked_cards_for_pack(self, pack):
         cards = [x for x in self.pack_cards if x.pack_id == pack.id and not x.picked()]
         return cards
+
+    def scars_applied(self):
+        return Scar.query.filter(Scar.draft_id == self.draft.id).all()
