@@ -10,14 +10,14 @@ from flask_login import logout_user
 from is_safe_url import is_safe_url
 
 from app import app
-from app.draft import DraftWrapper
-from app.draft_debugger import DraftDebugger
+# from app.draft import DraftWrapper
+# from app.draft_debugger import DraftDebugger
 from app.forms import LoginForm
-from app.models import Card
-from app.models import Draft
-from app.models import PackCard
-from app.models import Scar
-from app.models import User
+# from app.models import Card
+# from app.models import Draft
+# from app.models import PackCard
+# from app.models import Scar
+# from app.models import User
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -55,12 +55,12 @@ def logout():
 @app.route("/index")
 @login_required
 def index():
-    active_participations = [x for x in current_user.participations if not x.draft.complete]
-    complete_participations = [x for x in current_user.participations if x.draft.complete]
+    active_seats = [x for x in current_user.draft_seats if not x.draft.complete]
+    complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
     return render_template(
         'index.html',
-        active=active_participations,
-        complete=complete_participations,
+        active=active_seats,
+        complete=complete_seats,
     )
 
 
@@ -77,62 +77,62 @@ def cards():
     return render_template('cards.html', cards=card_list, scars=scars)
 
 
-@app.route("/draft/<draft_id>")
-@login_required
-def draft(draft_id):
-    dw = DraftWrapper(draft_id, current_user)
-    return render_template(
-        'draft.html',
-        dw=dw,
-        draft=dw.draft,
-        seating=dw.seating,
-        user=dw.user,
-        pack=dw.pack,
-        pack_cards=dw.pack_cards(),
-        passing_to=dw.passing_to(),
-        scar_map=dw.scar_map,
-    )
+# @app.route("/draft/<draft_id>")
+# @login_required
+# def draft(draft_id):
+#     dw = DraftWrapper(draft_id, current_user)
+#     return render_template(
+#         'draft.html',
+#         dw=dw,
+#         draft=dw.draft,
+#         seating=dw.seating,
+#         user=dw.user,
+#         pack=dw.pack,
+#         pack_cards=dw.pack_cards(),
+#         passing_to=dw.passing_to(),
+#         scar_map=dw.scar_map,
+#     )
 
 
-@app.route("/draft/<draft_id>/pick/<card_id>")
-@login_required
-def draft_pick(draft_id, card_id):
-    dw = DraftWrapper(draft_id, current_user)
-    dw.pick_card(card_id)
-    return redirect("/draft/{}".format(draft_id))
+# @app.route("/draft/<draft_id>/pick/<card_id>")
+# @login_required
+# def draft_pick(draft_id, card_id):
+#     dw = DraftWrapper(draft_id, current_user)
+#     dw.pick_card(card_id)
+#     return redirect("/draft/{}".format(draft_id))
 
 
-@app.route("/draft/<draft_id>/force/<user_id>")
-@login_required
-def force_pick(draft_id, user_id):
-    user = User.query.get(user_id)
-    dw = DraftWrapper(draft_id, user)
+# @app.route("/draft/<draft_id>/force/<user_id>")
+# @login_required
+# def force_pick(draft_id, user_id):
+#     user = User.query.get(user_id)
+#     dw = DraftWrapper(draft_id, user)
 
-    # Don't apply any scar an advance.
-    if dw.is_scarring_round():
-        dw.unlock_new_scars()
+#     # Don't apply any scar an advance.
+#     if dw.is_scarring_round():
+#         dw.unlock_new_scars()
 
-    # Pick the first card in the pack.
-    if dw.pack_cards():
-        dw.pick_card(dw.pack_cards()[0].id)
-    return redirect("/draft/{}".format(draft_id))
+#     # Pick the first card in the pack.
+#     if dw.pack_cards():
+#         dw.pick_card(dw.pack_cards()[0].id)
+#     return redirect("/draft/{}".format(draft_id))
 
-@app.route("/draft/<draft_id>/scar/<card_id>/<scar_id>")
-@login_required
-def apply_scar(draft_id, card_id, scar_id):
-    dw = DraftWrapper(draft_id, current_user)
-    dw.apply_scar(card_id, scar_id)
-    return redirect("/draft/{}".format(draft_id))
+# @app.route("/draft/<draft_id>/scar/<card_id>/<scar_id>")
+# @login_required
+# def apply_scar(draft_id, card_id, scar_id):
+#     dw = DraftWrapper(draft_id, current_user)
+#     dw.apply_scar(card_id, scar_id)
+#     return redirect("/draft/{}".format(draft_id))
 
-@app.route("/draft/<draft_id>/new_scars")
-@login_required
-def get_new_scars(draft_id):
-    dw = DraftWrapper(draft_id, current_user)
-    dw.these_scars_suck()
-    return redirect("/draft/{}".format(draft_id))
+# @app.route("/draft/<draft_id>/new_scars")
+# @login_required
+# def get_new_scars(draft_id):
+#     dw = DraftWrapper(draft_id, current_user)
+#     dw.these_scars_suck()
+#     return redirect("/draft/{}".format(draft_id))
 
-@app.route("/draft/<draft_id>/debug")
-@login_required
-def draft_debug(draft_id):
-    draft_debugger = DraftDebugger(draft_id)
-    return render_template('draft_debug.html', d=draft_debugger)
+# @app.route("/draft/<draft_id>/debug")
+# @login_required
+# def draft_debug(draft_id):
+#     draft_debugger = DraftDebugger(draft_id)
+#     return render_template('draft_debug.html', d=draft_debugger)

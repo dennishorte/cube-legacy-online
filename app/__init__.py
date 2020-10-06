@@ -16,3 +16,8 @@ login.init_app(app)
 login.login_view = 'login'
 
 from app import routes
+
+# This ensures that all models are loaded for flask migrate
+from app.models.cube import *
+from app.models.draft import *
+from app.models.user import *
