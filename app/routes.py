@@ -91,7 +91,6 @@ def draft(draft_id):
         pack_cards=dw.pack_cards(),
         passing_to=dw.passing_to(),
         scar_map=dw.scar_map,
-        picked_cards=dw.picks,
     )
 
 

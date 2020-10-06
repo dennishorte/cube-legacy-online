@@ -13,6 +13,8 @@ class DraftWrapper(object):
         self.picks = PackCard.query.filter(
             PackCard.draft_id==draft_id,
             PackCard.picked_by_id==self.participant.id,
+        ).order_by(
+            PackCard.picked_at.desc()
         ).all()
         self.seating = self.draft.participants
         self.seating.sort(key=lambda x: x.seat)
@@ -110,6 +112,7 @@ class DraftWrapper(object):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
         pack_card.picked_by = self.participant
         pack_card.pick_number = self.pack.num_picked + 1
+        pack_card.picked_at = datetime.utcnow()
         db.session.add(pack_card)
         
         self.pack.num_picked += 1

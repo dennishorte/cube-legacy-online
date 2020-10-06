@@ -299,6 +299,7 @@ class PackCard(db.Model):
     pack_id = db.Column(db.Integer, db.ForeignKey('pack.id'))
     picked_by_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
     pick_number = db.Column(db.Integer, default=-1)
+    picked_at = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<PackCard {}>'.format(self.card.name)

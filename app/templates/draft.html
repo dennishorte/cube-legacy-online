@@ -149,9 +149,9 @@
     </div>
 
     <div id="picked" class="no-gutters">
-        <h2>Your Picks ({{ picked_cards|length }})</h2>
+        <h2>Your Picks ({{ dw.picks|length }})</h2>
         <div class="row">
-            {% for card in picked_cards %}
+            {% for card in dw.picks %}
                 <div class="col">
                     {% for image_url in card.card.image_urls() %}
                         <img
@@ -172,7 +172,7 @@
 
         <div id="pick-text-list">
             <h2>A Flat List of Your Picks for Copy-Pasting</h2>
-            {% for card in picked_cards %}
+            {% for card in dw.picks %}
                 {{ card.card.name }}<br>
             {% endfor %}
         </div>
