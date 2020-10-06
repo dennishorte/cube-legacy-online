@@ -62,11 +62,13 @@
             </thead>
             <tbody>
                 {% for scar in d.scars_applied() %}
-                    <td>{{ scar.draft_pack_number }}</td>
-                    <td>{{ scar.added_by.username }}</td>
-                    <td>{{ scar.card.name }}</td>
-                    <td>{{ scar.card_id }}</td>
-                    <td>{{ scar.text }}</td>
+                    <tr>
+                        <td>{{ scar.draft_pack_number }}</td>
+                        <td>{{ scar.added_by.username }}</td>
+                        <td>{{ scar.card.name }}</td>
+                        <td>{{ scar.card_id }}</td>
+                        <td>{{ scar.text }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
