@@ -26,7 +26,7 @@ class BaseCard(db.Model):
 class Cube(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    active = db.Column(db.Boolean, index=True)
+    active = db.Column(db.Boolean, index=True, default=True)
 
     # Relationships
     cards = db.relationship('CubeCard', backref='cube')

@@ -13,11 +13,10 @@ from app import app
 # from app.draft import DraftWrapper
 # from app.draft_debugger import DraftDebugger
 from app.forms import LoginForm
-# from app.models import Card
-# from app.models import Draft
-# from app.models import PackCard
-# from app.models import Scar
-# from app.models import User
+from app.forms import NewCubeForm
+from app.models.cube import *
+from app.models.draft import *
+from app.models.user import *
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -64,17 +63,41 @@ def index():
     )
 
 
-@app.route("/cards")
+@app.route("/cubes", methods=['GET', 'POST'])
 @login_required
-def cards():
-    card_list = Card.query.all()
-    scar_list = Scar.query.all()
+def cubes():
+    form = NewCubeForm()
 
-    scars = {}
-    for scar in scar_list:
-        scars.setdefault(scar.card_id, []).append(scar.text)
+    if form.validate_on_submit():
+        cube = Cube.query.filter(Cube.name==form.name.data).first()
+        if cube is not None:
+            flash('A Cube with the name "{}" already exists.'.format(cube.name))
+            return redirect(url_for('cubes'))
+
+        cube = Cube(name=form.name.data)
+        db.session.add(cube)
+        db.session.commit()
+    
+    cubes = Cube.query.all()
+    return render_template(
+        'cubes.html',
+        active=[x for x in cubes if x.active],
+        inactive=[x for x in cubes if not x.active],
+        form=form
+    )
+
+
+# @app.route("/cards")
+# @login_required
+# def cards():
+#     card_list = Card.query.all()
+#     scar_list = Scar.query.all()
+
+#     scars = {}
+#     for scar in scar_list:
+#         scars.setdefault(scar.card_id, []).append(scar.text)
         
-    return render_template('cards.html', cards=card_list, scars=scars)
+#     return render_template('cards.html', cards=card_list, scars=scars)
 
 
 # @app.route("/draft/<draft_id>")
