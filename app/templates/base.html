@@ -15,13 +15,15 @@
     <body>
         <div class="container">
             <div class="row" id="header">
-                <div class="col">
-                    <h1>{% block title %}{% endblock %}</h1>
-                </div>
                 <div class="col text-right">
                     <a href="/">home</a> /
                     <a href="/cards">cards</a> /
                     <a href="/logout">logout</a>
+                </div>
+            </div>
+            <div class="row" id="header">
+                <div class="col">
+                    <h1>{% block title %}{% endblock %}</h1>
                 </div>
             </div>
             <div class="row">
