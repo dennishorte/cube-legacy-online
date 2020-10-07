@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cube Details: {{ cube.name }}
+{% endblock %}
+
+{% block content %}
+  <!-- Modal: Please wait while the server loads the card data. -->
+  <div class="modal fade" id="waitWhileAddingCards" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Adding New Cards</h5>
+        </div>
+        
+        <div class="modal-body">
+          <p>Now adding these cards to the database. Adding cards includes fetching data from Scryfall, which can take up to a minute if many cards were added at once.</p>
+          
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>          
+        </div>
+        
+        <div class="modal-footer">
+          <a href="/cubes/{{ cube.id }}"
+            <button type="button" class="btn btn-primary">Reload Page</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" >
+
+    <!-- List of cards in the cube -->
+    <div id="cards" class="col">
+      {% for card in cube.cards %}
+        <p class="m-0">card.name</p>
+      {% endfor %}
+    </div>
+
+    <!-- Form for adding new cards to the cube -->
+    <div id="addCardsForm" class="col border">
+      <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+          {{ form.cardnames.label }}<br>
+          {{ form.cardnames(style="min-width: 100%") }}
+        </p>
+      </form>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     $('#waitWhileAddingCards').on('show.bs.modal', function (event) {
+       var modal = $(this)
+       modal_reload_button = modal.find('.modal-footer button')
+       modal_reload_button.hide()
+       
+       $.ajax({
+         type: "POST",
+         url: "{{ url_for('add_cards', cube_id=cube.id) }}",
+         data: $('form').serialize(), // serializes the form's elements.
+         success: function (data) {
+           modal_reload_button.show()
+
+           var body = modal.find('.modal-body')
+           body.empty()
+           body.text('Cards added successfully. Reload page to see them.')
+           body.addClass('text-success')
+         }
+       });
+     })
+     
+     // Inject our CSRF token into our AJAX request.
+     $.ajaxSetup({
+       beforeSend: function(xhr, settings) {
+         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+           xhr.setRequestHeader("X-CSRFToken", "{{ form.csrf_token._value() }}")
+         }
+       }
+     })
+   });
+  </script>        
+{% endblock %}
+

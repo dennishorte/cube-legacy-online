@@ -3,7 +3,14 @@ from wtforms import BooleanField
 from wtforms import PasswordField
 from wtforms import StringField
 from wtforms import SubmitField
+from wtforms import TextAreaField
 from wtforms.validators import DataRequired
+
+
+class AddCardsForm(FlaskForm):
+    cardnames = TextAreaField('Cards to be added (1 per line)')
+    submit = SubmitField('Add Cards')
+    
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

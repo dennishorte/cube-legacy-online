@@ -1,8 +1,8 @@
-"""initial migration
+"""empty message
 
-Revision ID: 658187f6747f
+Revision ID: f9d86364f5db
 Revises: 
-Create Date: 2020-10-06 13:20:15.901474
+Create Date: 2020-10-06 18:29:08.251741
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '658187f6747f'
+revision = 'f9d86364f5db'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,13 +25,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_base_card_name'), 'base_card', ['name'], unique=False)
-    op.create_table('cube',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=64), nullable=True),
-    sa.Column('active', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_cube_active'), 'cube', ['active'], unique=False)
     op.create_table('draft',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
@@ -52,17 +45,17 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
-    op.create_table('cube_card',
+    op.create_table('cube',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
-    sa.Column('json', sa.Text(), nullable=True),
-    sa.Column('cube_id', sa.Integer(), nullable=True),
-    sa.Column('base_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['base_id'], ['base_card.id'], ),
-    sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_cube_card_active'), 'cube_card', ['active'], unique=False)
+    op.create_index(op.f('ix_cube_active'), 'cube', ['active'], unique=False)
+    op.create_index(op.f('ix_cube_timestamp'), 'cube', ['timestamp'], unique=False)
     op.create_table('pack',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('draft_id', sa.Integer(), nullable=True),
@@ -81,6 +74,17 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('cube_card',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('json', sa.Text(), nullable=True),
+    sa.Column('cube_id', sa.Integer(), nullable=True),
+    sa.Column('base_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['base_id'], ['base_card.id'], ),
+    sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_cube_card_active'), 'cube_card', ['active'], unique=False)
     op.create_table('cube_card_version_history',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
@@ -125,16 +129,17 @@ def downgrade():
     op.drop_table('cube_edit_history')
     op.drop_index(op.f('ix_cube_card_version_history_timestamp'), table_name='cube_card_version_history')
     op.drop_table('cube_card_version_history')
-    op.drop_table('seat')
-    op.drop_table('pack')
     op.drop_index(op.f('ix_cube_card_active'), table_name='cube_card')
     op.drop_table('cube_card')
+    op.drop_table('seat')
+    op.drop_table('pack')
+    op.drop_index(op.f('ix_cube_timestamp'), table_name='cube')
+    op.drop_index(op.f('ix_cube_active'), table_name='cube')
+    op.drop_table('cube')
     op.drop_index(op.f('ix_user_username'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_draft_timestamp'), table_name='draft')
     op.drop_table('draft')
-    op.drop_index(op.f('ix_cube_active'), table_name='cube')
-    op.drop_table('cube')
     op.drop_index(op.f('ix_base_card_name'), table_name='base_card')
     op.drop_table('base_card')
     # ### end Alembic commands ###

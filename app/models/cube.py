@@ -27,6 +27,10 @@ class Cube(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     active = db.Column(db.Boolean, index=True, default=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    # Foreign Keys
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     # Relationships
     cards = db.relationship('CubeCard', backref='cube')

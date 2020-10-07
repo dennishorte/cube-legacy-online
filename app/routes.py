@@ -12,6 +12,7 @@ from is_safe_url import is_safe_url
 from app import app
 # from app.draft import DraftWrapper
 # from app.draft_debugger import DraftDebugger
+from app.forms import AddCardsForm
 from app.forms import LoginForm
 from app.forms import NewCubeForm
 from app.models.cube import *
@@ -86,6 +87,26 @@ def cubes():
         form=form
     )
 
+
+@app.route("/cubes/<cube_id>")
+@login_required
+def cube_details(cube_id):
+    form = AddCardsForm()
+    cube = Cube.query.get(cube_id)
+    return render_template(
+        'cube_details.html',
+        cube=cube,
+        form=form,
+    )
+
+    
+@app.route("/cubes/<cube_id>", methods=["POST"])
+@login_required
+def add_cards(cube_id):
+    form = AddCardsForm()
+
+    return 'hello'
+    
 
 # @app.route("/cards")
 # @login_required
