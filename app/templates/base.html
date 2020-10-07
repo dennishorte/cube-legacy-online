@@ -13,6 +13,60 @@
     <title>Cube Legacy Online</title>
   </head>
   <body>
+    {% if edit_card_form %}
+      <!-- Modal: Card Editor -->
+      <!-- Used in many different places, so we put it in the base.html to avoid duplication. -->
+      <div class="modal fade" id="cardEditorModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Card Editor</h5>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            
+            <div class="modal-body">
+              <form action="" method="post" novalidate>
+                {{ edit_card_form.hidden_tag() }}
+                <div class="form-group">
+                  {{ edit_card_form.name.label }}
+                  {{ edit_card_form.name(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ edit_card_form.manacost.label }}
+                  {{ edit_card_form.manacost(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ edit_card_form.imageurl.label }}
+                  <span class="">(<a href="#" id="openCardImage">see</a>)</span>
+                  {{ edit_card_form.imageurl(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ edit_card_form.typeline.label }}
+                  {{ edit_card_form.typeline(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ edit_card_form.rulestext.label }}
+                  {{ edit_card_form.rulestext(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ edit_card_form.pt_loyalty.label }}
+                  {{ edit_card_form.pt_loyalty(class='form-control') }}
+                </div>
+              </form>
+            </div>
+            
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    
     <div class="container">
       <div class="row" id="header">
         <div class="col text-right">
@@ -57,6 +111,66 @@
       crossorigin="anonymous">
     </script>
 
+    {% if edit_card_form %}
+      <script>
+       $(document).ready(function() {
+         // Open card image handler
+         $('#openCardImage').click(function (event) {
+           var image_url = $('#cardEditorModal #imageurl').val()
+           var win = window.open(image_url)
+           if (win) {
+             win.focus()
+           }
+           else {
+             alert('Unable to open new tab')
+           }
+         }) // END open card image handler
+
+         // Card Editor Modal on-show handler
+         $('#cardEditorModal').on('show.bs.modal', function (event) {
+           var source = $(event.relatedTarget)
+           var card_id = source.data('card-id')
+           var modal = $(this)
+
+           // Fetch the full card data.
+           $.ajax({
+             type: "POST",
+             url: "/card/" + card_id + "/json",
+             data: $('form').serialize(), // serializes the form's elements.
+             beforeSend: function(request) {
+               request.setRequestHeader("X-CSRFToken", "{{ edit_card_form.csrf_token._value() }}")
+             },         
+             success: function (data) {
+               if (data == 'Unknown Card') {
+                 modal.find('.modal-body').empty()
+                 modal.find('.modal-body').text('Unable to find card with id = '+card_id)
+               }
+               else {
+                 modal.find('#name').val(data.name)
+                 modal.find('#manacost').val(data.mana_cost)
+                 modal.find('#imageurl').val(data.image_uris.normal)
+                 modal.find('#typeline').val(data.type_line)
+                 modal.find('#rulestext').val(data.oracle_text)
+
+                 var pt_loyalty = modal.find('#pt_loyalty')
+                 if (data.loyalty) {
+                   pt_loyalty.val(data.loyalty)
+                 }
+                 else if (data.power) {
+                   pt_loyalty.val(''+data.power+'/'+data.toughness)
+                 }
+                 else {
+                   pt_loyalty.val('')
+                 }
+               }
+             }
+           })
+         }) // END: Card Editor Modal on-show handler
+         
+       })
+      </script>
+    {% endif %}
+    
     {% block scripts %}{% endblock %}
   </body>
 </html>

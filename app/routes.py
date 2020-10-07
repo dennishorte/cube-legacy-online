@@ -13,6 +13,7 @@ from app import app
 # from app.draft import DraftWrapper
 # from app.draft_debugger import DraftDebugger
 from app.forms import AddCardsForm
+from app.forms import EditCardForm
 from app.forms import LoginForm
 from app.forms import NewCubeForm
 from app.models.cube import *
@@ -92,12 +93,14 @@ def cubes():
 @app.route("/cubes/<cube_id>")
 @login_required
 def cube_details(cube_id):
-    form = AddCardsForm()
+    add_cards_form = AddCardsForm()
+    edit_card_form = EditCardForm()
     cube = Cube.query.get(cube_id)
     return render_template(
         'cube_details.html',
         cube=cube,
-        form=form,
+        add_cards_form=add_cards_form,
+        edit_card_form=edit_card_form,
     )
 
     
@@ -113,6 +116,16 @@ def add_cards(cube_id):
 
     else:
         return 'failed'
+
+
+@app.route("/card/<card_id>/json", methods=['POST'])
+@login_required
+def card_json(card_id):
+    card = CubeCard.query.get(card_id)
+    if not card:
+        return 'Unknown Card'
+    else:
+        return card.get_json()
     
 
 # @app.route("/cards")

@@ -42,7 +42,13 @@
         <tbody>
           {% for card in cube.cards %}
             <tr>
-              <td>{{ card.get_json().name }}</td>
+              <td
+                data-card-id="{{ card.id }}"
+                data-toggle="modal"
+                data-target="#cardEditorModal">
+
+                {{ card.get_json().name }}
+              </td>
               <td>
                 <button type="button" class="close">&times;</button>
               </td>
@@ -55,10 +61,10 @@
     <!-- Form for adding new cards to the cube -->
     <div id="addCardsForm" class="col border">
       <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
+        {{ add_cards_form.hidden_tag() }}
         <p>
-          {{ form.cardnames.label }}<br>
-          {{ form.cardnames(style="min-width: 100%") }}
+          {{ add_cards_form.cardnames.label }}<br>
+          {{ add_cards_form.cardnames(style="min-width: 100%") }}
         </p>
       </form>
       <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
@@ -78,6 +84,9 @@
          type: "POST",
          url: "{{ url_for('add_cards', cube_id=cube.id) }}",
          data: $('form').serialize(), // serializes the form's elements.
+         beforeSend: function(request) {
+           request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
+         },         
          success: function (data) {
            modal_reload_button.show()
 
@@ -86,16 +95,7 @@
            body.text('Cards added successfully. Reload page to see them.')
            body.addClass('text-success')
          }
-       });
-     })
-     
-     // Inject our CSRF token into our AJAX request.
-     $.ajaxSetup({
-       beforeSend: function(xhr, settings) {
-         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-           xhr.setRequestHeader("X-CSRFToken", "{{ form.csrf_token._value() }}")
-         }
-       }
+       })
      })
    });
   </script>        
