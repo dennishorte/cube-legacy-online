@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Cube List
+  Cube List
 {% endblock %}
 
 {% block content %}
-    <div class="row" >
-        <div id="activeCubes" class="col">
-            {% for cube in active %}
-                <p><a href="/cubes/{{cube.id}}">{{ cube.name }}</a></p>
-            {% endfor %}
-        </div>
-
-        <div id="newCube" class="col border">
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.name.label }}<br>
-                    {{ form.name(size=32) }}
-                </p>
-                <p>{{ form.submit() }}</p>
-            </form>
-        </div>
+  <div class="row" >
+    <div id="activeCubes" class="col">
+      {% for cube in active %}
+        <p><a href="/cubes/{{cube.id}}">{{ cube.name }}</a></p>
+      {% endfor %}
     </div>
+
+    <div id="newCube" class="col border">
+      <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+          {{ form.name.label }}<br>
+          {{ form.name(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+      </form>
+    </div>
+  </div>
 {% endblock %}
