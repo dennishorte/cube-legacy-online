@@ -34,9 +34,22 @@
 
     <!-- List of cards in the cube -->
     <div id="cards" class="col">
-      {% for card in cube.cards %}
-        <p class="m-0">card.name</p>
-      {% endfor %}
+      <table class="table table-sm">
+        <thead class="thead thead-light">
+          <th>card name</th>
+          <th>remove</th>
+        </thead>
+        <tbody>
+          {% for card in cube.cards %}
+            <tr>
+              <td>{{ card.get_json().name }}</td>
+              <td>
+                <button type="button" class="close">&times;</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
 
     <!-- Form for adding new cards to the cube -->

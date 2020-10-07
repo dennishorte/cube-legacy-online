@@ -1,4 +1,5 @@
 import enum
+import json
 from datetime import datetime
 
 from app import db
@@ -15,12 +16,19 @@ class BaseCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     json = db.Column(db.Text)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     cards = db.relationship('CubeCard', backref='base')
 
     def __repr__(self):
         return '<BaseCard {}>'.format(self.name)
+
+    def get_json(self):
+        return json.loads(self.json)
+    
+    def set_json(self, json_obj):
+        self.json = json.dumps(json_obj)
     
 
 class Cube(db.Model):
@@ -67,6 +75,12 @@ class CubeCard(db.Model):
 
     def __repr__(self):
         return '<CubeCard {}>'.format(self.json['name'])
+
+    def get_json(self):
+        return json.loads(self.json)
+    
+    def set_json(self, json_obj):
+        self.json = json.dumps(json_obj)
 
     
 class CubeCardVersionHistory(db.Model):

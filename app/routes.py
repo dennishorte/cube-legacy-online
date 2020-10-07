@@ -18,6 +18,7 @@ from app.forms import NewCubeForm
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
+from app.util.cube_util import add_cards_to_cube
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -105,7 +106,13 @@ def cube_details(cube_id):
 def add_cards(cube_id):
     form = AddCardsForm()
 
-    return 'hello'
+    if form.validate_on_submit():
+        card_names = [x.strip() for x in form.cardnames.data.split('\n') if x.strip()]
+        add_cards_to_cube(cube_id, card_names)
+        return 'success'
+
+    else:
+        return 'failed'
     
 
 # @app.route("/cards")

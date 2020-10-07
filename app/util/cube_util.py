@@ -1,0 +1,65 @@
+from app import db
+from app.models.cube import *
+from app.util.scryfall import fetch_many_from_scryfall
+
+
+def add_cards_to_cube(cube_id, card_names):
+    _ensure_cube(cube_id)
+    scryfall_data = fetch_many_from_scryfall(card_names)
+    failed_to_fetch = []
+    
+    for name, datum in scryfall_data.items():
+        if datum is None:
+            failed_to_fetch.append(name)
+            del scryfall_data[name]
+
+    _create_base_cards_from_scryfall_data(scryfall_data)
+
+    true_names_with_dups = []
+    for name in card_names:
+        if name in scryfall_data:
+            true_names_with_dups.append(scryfall_data[name]['name'])
+
+    base_cards = BaseCard.query.filter(BaseCard.name.in_(true_names_with_dups)).all()
+    base_card_map = {x.name: x for x in base_cards}
+
+    for true_name in true_names_with_dups:
+        base_card = base_card_map[true_name]
+        cc = CubeCard(
+            active=True,
+            json=base_card.json,
+            cube_id=cube_id,
+            base_id=base_card.id,
+        )
+        db.session.add(cc)
+
+    db.session.commit()
+
+    return {
+        'added': len(true_names_with_dups),
+        'unique_added': len(base_cards),
+        'failed_to_fetch': failed_to_fetch,
+    }
+
+
+def _ensure_cube(cube_id):
+    cube = Cube.query.get(cube_id)
+    if not cube:
+        raise ValueError("Invalid cube id: {}".format(cube_id))
+
+    return cube
+
+
+def _create_base_cards_from_scryfall_data(data: dict):
+    true_names = [x['name'] for x in data.values()]
+    
+    existing_cards = BaseCard.query.filter(BaseCard.name.in_(true_names))
+    existing_names = set([x.name for x in existing_cards])
+
+    for scryfall_datum in data.values():
+        if scryfall_datum and scryfall_datum['name'] not in existing_names:
+            bc = BaseCard(name=scryfall_datum['name'])
+            bc.set_json(scryfall_datum)
+            db.session.add(bc)
+
+    db.session.commit()
