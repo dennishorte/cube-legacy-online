@@ -180,18 +180,6 @@ def _new_draft_form():
 
     return new_draft_form
     
-# @app.route("/cards")
-# @login_required
-# def cards():
-#     card_list = Card.query.all()
-#     scar_list = Scar.query.all()
-
-#     scars = {}
-#     for scar in scar_list:
-#         scars.setdefault(scar.card_id, []).append(scar.text)
-        
-#     return render_template('cards.html', cards=card_list, scars=scars)
-
 
 # @app.route("/draft/<draft_id>")
 # @login_required
