@@ -58,6 +58,12 @@ def logout():
 @login_required
 def index():
     new_draft_form = NewDraftForm()
+    
+    cube_names = [x.name for x in Cube.query.order_by('name')]
+    new_draft_form.cube.choices = cube_names
+
+    user_names = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+    new_draft_form.players.choices = user_names
 
     if new_draft_form.validate_on_submit():
         pass

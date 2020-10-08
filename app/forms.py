@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField
 from wtforms import IntegerField
 from wtforms import PasswordField
+from wtforms import SelectField
+from wtforms import SelectMultipleField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import TextAreaField
@@ -38,7 +40,8 @@ class NewCubeForm(FlaskForm):
 
 class NewDraftForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
+    cube = SelectField('Cube', validators=[DataRequired()])
     packsize = IntegerField('Pack Size', validators=[DataRequired()])
     numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
-    players = TextAreaField('Player Names (one per line)', validators=[DataRequired()])
+    players = SelectMultipleField('Players', validators=[DataRequired()])
     submit = SubmitField('Create')
