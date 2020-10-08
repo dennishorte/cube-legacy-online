@@ -14,7 +14,7 @@
         </div>
         
         <div class="modal-body">
-          <p>Now adding these cards to the database. Adding cards includes fetching data from Scryfall, which can take up to a minute if many cards were added at once.</p>
+          <p>Now adding these cards to the database. Adding cards includes fetching data from Scryfall, which can take a few minutes if many cards were added at once.</p>
           
           <div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
@@ -98,6 +98,12 @@
            body.empty()
            body.text('Cards added successfully. Reload page to see them.')
            body.addClass('text-success')
+         },
+         error: function(data) {
+           var body = modal.find('.modal-body')
+           body.empty()
+           body.text("Something went wrong. Reload the page to see if your cards were added.")
+           body.addClass('text-warn')
          }
        })
      })

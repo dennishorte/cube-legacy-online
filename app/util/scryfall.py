@@ -17,8 +17,13 @@ def fetch_many_from_scryfall(card_names: list):
     """
     results = {}
 
-    for name in card_names:
+    print("Fetching {} cards from Scryfall".format(len(card_names)))
+    
+    for i, name in enumerate(card_names):
+        print("...{} of {}: {}".format(i, len(card_names), name))
         results[name] = fetch_one_from_scryfall(name)
         time.sleep(.100)  # 100 ms delay, as requested by scryfall
+
+    print("...COMPLETE (fetching cards from Scryfall")
 
     return results
