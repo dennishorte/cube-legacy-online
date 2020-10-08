@@ -10,13 +10,13 @@ class Draft(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64))
 
-    complete = db.Column(db.Boolean)
+    complete = db.Column(db.Boolean, default=False)
 
     # Setup info
     pack_size = db.Column(db.Integer)
     num_packs = db.Column(db.Integer)
     num_seats = db.Column(db.Integer)
-    scar_rounds_str = db.Column(db.String(64))  # eg. "1,4"
+    scar_rounds_str = db.Column(db.String(64), default="")  # eg. "1,4"
 
     # Relationships
     seats = db.relationship('Seat', backref='draft')

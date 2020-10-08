@@ -1,3 +1,5 @@
+import random
+
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -57,24 +59,13 @@ def logout():
 @app.route("/", methods=['GET', 'POST'])
 @login_required
 def index():
-    new_draft_form = NewDraftForm()
-    
-    cube_names = [x.name for x in Cube.query.order_by('name')]
-    new_draft_form.cube.choices = cube_names
-
-    user_names = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
-    new_draft_form.players.choices = user_names
-
-    if new_draft_form.validate_on_submit():
-        pass
-    
     active_seats = [x for x in current_user.draft_seats if not x.draft.complete]
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
     return render_template(
         'index.html',
         active=active_seats,
         complete=complete_seats,
-        new_draft_form=new_draft_form,
+        new_draft_form=_new_draft_form(),
     )
 
 
@@ -144,8 +135,51 @@ def card_json(card_id):
         return 'Unknown Card'
     else:
         return card.get_json()
-    
 
+
+@app.route('/draft/new', methods=['POST'])
+@login_required
+def new_draft():
+    form = _new_draft_form()
+
+    if form.validate_on_submit():
+        draft = Draft(
+            name=form.name.data,
+            pack_size=form.packsize.data,
+            num_packs=form.numpacks.data,
+            num_seats=len(form.players.data),
+        )
+        db.session.add(draft)
+
+        users = User.query.filter(User.name.in_(form.players.data)).all()
+        random.shuffle(users)
+        for index, user in enumerate(users):
+            seat = Seat(
+                order=index,
+                user_id=user.id,
+                draft_id=draft.id,
+            )
+            db.session.add(seat)
+
+        db.session.commit()
+
+        return redirect('/')
+
+    else:
+        return "Unable to create new draft"
+
+
+def _new_draft_form():
+    new_draft_form = NewDraftForm()
+
+    cube_names = [x.name for x in Cube.query.order_by('name')]
+    new_draft_form.cube.choices = cube_names
+
+    user_names = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+    new_draft_form.players.choices = user_names
+
+    return new_draft_form
+    
 # @app.route("/cards")
 # @login_required
 # def cards():
