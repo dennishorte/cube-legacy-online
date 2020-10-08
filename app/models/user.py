@@ -8,7 +8,7 @@ from app import login
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    name = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     slack_id = db.Column(db.String(50))
 
@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     draft_seats = db.relationship('Seat', backref='user')
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User {}>'.format(self.name)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

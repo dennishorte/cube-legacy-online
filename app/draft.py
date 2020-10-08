@@ -142,12 +142,12 @@ class DraftWrapper(object):
         else:
             next_seat = (self.participant.seat - 1) % self.draft.num_seats
 
-        return self.seating[next_seat].user.username
+        return self.seating[next_seat].user.name
 
 
 def create_draft(
         name: str,
-        participants: list,  # List of usernames
+        participants: list,  # List of names
         pack_size: int,
         num_packs: int,
         scarring_rounds: list,  # List of ints, 0 indexed
@@ -164,7 +164,7 @@ def create_draft(
 
     random.shuffle(participants)
     for seat, p in enumerate(participants):
-        user = User.query.filter(User.username==p).first()
+        user = User.query.filter(User.name==p).first()
         p_orm = Participant(
             user=user,
             draft=draft,

@@ -18,7 +18,7 @@
           {% for p in d.participants %}
             <tr>
               <td>{{ p.seat }}</td>
-              <td>{{ p.user.username }}</td>
+              <td>{{ p.user.name }}</td>
               <td>{{ p.user.id }}</td>
             </tr>
           {% endfor %}
@@ -28,7 +28,7 @@
   </div>  <!-- Players -->
   
   {% for p in d.participants %}
-    <h4>Packs for {{ p.user.username }} in seat {{ p.seat }}</h4>
+    <h4>Packs for {{ p.user.name }} in seat {{ p.seat }}</h4>
     <div class="row">
       {% for pack in d.packs_for(p) %}
         <div class="col">
@@ -38,7 +38,7 @@
           {% for card in d.picked_cards_for_pack(pack) %}
             <p class="text-primary m-0">
               {{ card.card.name }}
-              <span class="text-info">({{card.picked_by.user.username}})</span>
+              <span class="text-info">({{card.picked_by.user.name}})</span>
             </p>
           {% endfor %}
 
@@ -64,7 +64,7 @@
         {% for scar in d.scars_applied() %}
           <tr>
             <td>{{ scar.draft_pack_number }}</td>
-            <td>{{ scar.added_by.username }}</td>
+            <td>{{ scar.added_by.name }}</td>
             <td>{{ scar.card.name }}</td>
             <td>{{ scar.card_id }}</td>
             <td>{{ scar.text }}</td>

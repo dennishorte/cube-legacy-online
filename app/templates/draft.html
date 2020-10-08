@@ -54,7 +54,7 @@
       </tr>
       {% for s in seating %}
         <tr>
-          <td>{{ s.user.username }}</td>
+          <td>{{ s.user.name }}</td>
           <td>{{ s.waiting_packs()|length }}</td>
           {% for pack in range(dw.draft.num_packs) %}
             <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
