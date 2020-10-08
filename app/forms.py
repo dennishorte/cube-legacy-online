@@ -10,6 +10,7 @@ from wtforms.validators import Length
 
 class AddCardsForm(FlaskForm):
     cardnames = TextAreaField('Cards to be added (1 per line)')
+    add_as_starter = BooleanField('Add as a starter card, not as yourself')
     submit = SubmitField('Add Cards')
     
 

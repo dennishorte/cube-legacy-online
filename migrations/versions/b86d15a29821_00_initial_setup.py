@@ -1,8 +1,8 @@
-"""empty message
+"""00 initial setup
 
-Revision ID: f9d86364f5db
+Revision ID: b86d15a29821
 Revises: 
-Create Date: 2020-10-06 18:29:08.251741
+Create Date: 2020-10-08 09:15:06.280621
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f9d86364f5db'
+revision = 'b86d15a29821'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=True),
     sa.Column('json', sa.Text(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_base_card_name'), 'base_card', ['name'], unique=False)
@@ -39,12 +40,12 @@ def upgrade():
     op.create_index(op.f('ix_draft_timestamp'), 'draft', ['timestamp'], unique=False)
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=64), nullable=True),
+    sa.Column('name', sa.String(length=64), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('slack_id', sa.String(length=50), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
+    op.create_index(op.f('ix_user_name'), 'user', ['name'], unique=True)
     op.create_table('cube',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=True),
@@ -76,24 +77,23 @@ def upgrade():
     )
     op.create_table('cube_card',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('version', sa.Integer(), nullable=True),
+    sa.Column('latest', sa.Boolean(), nullable=True),
     sa.Column('json', sa.Text(), nullable=True),
     sa.Column('cube_id', sa.Integer(), nullable=True),
     sa.Column('base_id', sa.Integer(), nullable=True),
+    sa.Column('added_by_id', sa.Integer(), nullable=True),
+    sa.Column('edited_by_id', sa.Integer(), nullable=True),
+    sa.Column('removed_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['added_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['base_id'], ['base_card.id'], ),
     sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
+    sa.ForeignKeyConstraint(['edited_by_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['removed_by_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_cube_card_active'), 'cube_card', ['active'], unique=False)
-    op.create_table('cube_card_version_history',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.Column('json', sa.Text(), nullable=True),
-    sa.Column('card_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['card_id'], ['cube_card.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_cube_card_version_history_timestamp'), 'cube_card_version_history', ['timestamp'], unique=False)
+    op.create_index(op.f('ix_cube_card_timestamp'), 'cube_card', ['timestamp'], unique=False)
     op.create_table('cube_edit_history',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
@@ -127,16 +127,14 @@ def downgrade():
     op.drop_table('pack_card')
     op.drop_index(op.f('ix_cube_edit_history_timestamp'), table_name='cube_edit_history')
     op.drop_table('cube_edit_history')
-    op.drop_index(op.f('ix_cube_card_version_history_timestamp'), table_name='cube_card_version_history')
-    op.drop_table('cube_card_version_history')
-    op.drop_index(op.f('ix_cube_card_active'), table_name='cube_card')
+    op.drop_index(op.f('ix_cube_card_timestamp'), table_name='cube_card')
     op.drop_table('cube_card')
     op.drop_table('seat')
     op.drop_table('pack')
     op.drop_index(op.f('ix_cube_timestamp'), table_name='cube')
     op.drop_index(op.f('ix_cube_active'), table_name='cube')
     op.drop_table('cube')
-    op.drop_index(op.f('ix_user_username'), table_name='user')
+    op.drop_index(op.f('ix_user_name'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_draft_timestamp'), table_name='draft')
     op.drop_table('draft')

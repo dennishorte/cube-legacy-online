@@ -3,7 +3,7 @@ from app.models.cube import *
 from app.util.scryfall import fetch_many_from_scryfall
 
 
-def add_cards_to_cube(cube_id, card_names):
+def add_cards_to_cube(cube_id, card_names, added_by):
     _ensure_cube(cube_id)
     scryfall_data = fetch_many_from_scryfall(card_names)
     failed_to_fetch = []
@@ -25,11 +25,10 @@ def add_cards_to_cube(cube_id, card_names):
 
     for true_name in true_names_with_dups:
         base_card = base_card_map[true_name]
-        cc = CubeCard(
-            active=True,
-            json=base_card.json,
+        cc = CubeCard.from_base_card(
+            base_card=base_card,
             cube_id=cube_id,
-            base_id=base_card.id,
+            added_by=added_by,
         )
         db.session.add(cc)
 

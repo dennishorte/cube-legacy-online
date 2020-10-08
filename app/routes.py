@@ -111,7 +111,13 @@ def add_cards(cube_id):
 
     if form.validate_on_submit():
         card_names = [x.strip() for x in form.cardnames.data.split('\n') if x.strip()]
-        add_cards_to_cube(cube_id, card_names)
+
+        if form.add_as_starter.data == True:
+            added_by = User.query.filter(User.name == 'starter').first()
+        else:
+            added_by = current_user
+        
+        add_cards_to_cube(cube_id, card_names, added_by)
         return 'success'
 
     else:

@@ -41,12 +41,20 @@ class Cube(db.Model):
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     # Relationships
-    cards = db.relationship('CubeCard', backref='cube')
+    _cards = db.relationship('CubeCard', backref='cube')
     edits = db.relationship('CubeEditHistory', backref='cube')
 
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
 
+    def cards(self):
+        """
+        Get only the latest version of the cards in the cube.
+        """
+        return CubeCard.query.filter(
+            CubeCard.cube_id == self.id,
+            CubeCard.latest == True,
+        ).all()
 
 class CubeEditHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,15 +71,17 @@ class CubeEditHistory(db.Model):
 
 class CubeCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    active = db.Column(db.Boolean, index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    version = db.Column(db.Integer)
+    latest = db.Column(db.Boolean, default=True)
     json = db.Column(db.Text)
     
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
     base_id = db.Column(db.Integer, db.ForeignKey('base_card.id'))
-
-    # Relationships
-    versions = db.relationship('CubeCardVersionHistory', backref='card')
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    edited_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<CubeCard {}>'.format(self.json['name'])
@@ -82,14 +92,73 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
-    
-class CubeCardVersionHistory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    json = db.Column(db.Text)
+    @classmethod
+    def from_base_card(cls, cube_id, base_card, added_by):
+        base_json = json.loads(base_card.json)
+        all_faces = base_json.get('faces', []) + [base_json]
+        
+        # Make the image url a top-level value.
+        for face in all_faces:
+            if 'image_uris' in face:
+                face['image_url'] = face['image_uris']['normal']
 
-    # Foreign Keys
-    card_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
+        wanted_keys = (
+            # Meta data
+            'all_parts',
+            'card_faces',
+            'faces',
+            'layout',
+            'object',
 
-    def __repr__(self):
-        return '<CubeCardVersion {} id:{}>'.format(self.json['name'], id)
+            # Card data
+            'cmc',
+            'component',
+            'flavor_text',
+            'image_url',
+            'loyalty',
+            'mana_cost',
+            'name',
+            'oracle_text',
+            'power',
+            'toughness',
+            'type_line',
+        )
+
+        # Remove unwanted keys
+        for face in all_faces:
+            face_keys = list(face.keys())
+            for key in face_keys:
+                if not key in wanted_keys:
+                    del face[key]
+
+        return CubeCard(
+            version=1,
+            cube_id=cube_id,
+            base_id=base_card.id,
+            json=json.dumps(base_json),
+            added_by_id=added_by.id,
+        )
+
+    def update(self, new_json, edited_by):
+        """
+        Assuming any changes have been made in the JSON compared to this CubeCard,
+        creates a new version of this CubeCard.
+        """
+        if self.removed_by_id:
+            raise ValueError("Can't edit a removed card.")
+            
+        if self.json != new_json:
+            new_card = CubeCard(
+                json=new_json,
+                version=self.version + 1,
+                cube_id=self.cube_id,
+                base_id=self.base_id,
+                added_by_id=self.added_by_id,
+                edited_by=edited_by,
+            )
+
+            self.latest = False
+            
+            db.session.add(new_card)
+            db.session.add(self)
+            db.session.commit()
