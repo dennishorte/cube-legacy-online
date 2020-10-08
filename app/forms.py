@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField
+from wtforms import IntegerField
 from wtforms import PasswordField
 from wtforms import StringField
 from wtforms import SubmitField
@@ -32,4 +33,12 @@ class LoginForm(FlaskForm):
 
 class NewCubeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+
+class NewDraftForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    packsize = IntegerField('Pack Size', validators=[DataRequired()])
+    numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
+    players = TextAreaField('Player Names (one per line)', validators=[DataRequired()])
     submit = SubmitField('Create')

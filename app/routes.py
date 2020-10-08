@@ -16,6 +16,7 @@ from app.forms import AddCardsForm
 from app.forms import EditCardForm
 from app.forms import LoginForm
 from app.forms import NewCubeForm
+from app.forms import NewDraftForm
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
@@ -53,16 +54,21 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route("/")
-@app.route("/index")
+@app.route("/", methods=['GET', 'POST'])
 @login_required
 def index():
+    new_draft_form = NewDraftForm()
+
+    if new_draft_form.validate_on_submit():
+        pass
+    
     active_seats = [x for x in current_user.draft_seats if not x.draft.complete]
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
     return render_template(
         'index.html',
         active=active_seats,
         complete=complete_seats,
+        new_draft_form=new_draft_form,
     )
 
 
