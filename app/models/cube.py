@@ -98,7 +98,7 @@ class CubeCard(db.Model):
 
     def all_faces(self):
         card_info = self.get_json()
-        return [card_info] + card_info.get('faces', [])
+        return [card_info] + card_info.get('card_faces', [])
 
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
@@ -109,7 +109,7 @@ class CubeCard(db.Model):
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
         base_json = json.loads(base_card.json)
-        all_faces = base_json.get('faces', []) + [base_json]
+        all_faces = base_json.get('card_faces', []) + [base_json]
         
         # Make the image url a top-level value.
         for face in all_faces:
@@ -120,7 +120,7 @@ class CubeCard(db.Model):
             # Meta data
             'all_parts',
             'card_faces',
-            'faces',
+            'card_faces',
             'layout',
             'object',
 
