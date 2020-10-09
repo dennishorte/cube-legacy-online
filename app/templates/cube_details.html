@@ -37,49 +37,68 @@
   </div>
 
   <div class="row">
+    <div class="col">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item waves-effect waves-light">
+            <a class="nav-link" id="home-tab" data-toggle="tab" href="#cards">Card List</a>
+          </li>
+          {% if cube.style == 'legacy' %}
+            <li class="nav-item waves-effect waves-light">
+              <a class="nav-link" id="profile-tab" data-toggle="tab" href="#scars">Scar</a>
+            </li>
+          {% endif %}
+          <li class="nav-item waves-effect waves-light">
+            <a class="nav-link active" id="contact-tab" data-toggle="tab" href="#addCards">Add Cards</a>
+          </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade" id="cards">
+            <table class="table table-sm">
+              <thead class="thead thead-light">
+                <th>card name</th>
+                <th>remove</th>
+              </thead>
+              <tbody>
+                {% for card in cube.cards() %}
+                  <tr>
+                    <td
+                      data-card-id="{{ card.id }}"
+                      data-toggle="modal"
+                      data-target="#cardEditorModal">
 
-    <!-- List of cards in the cube -->
-    <div id="cards" class="col">
-      <table class="table table-sm">
-        <thead class="thead thead-light">
-          <th>card name</th>
-          <th>remove</th>
-        </thead>
-        <tbody>
-          {% for card in cube.cards() %}
-            <tr>
-              <td
-                data-card-id="{{ card.id }}"
-                data-toggle="modal"
-                data-target="#cardEditorModal">
+                      {{ card.get_json().name }}
+                    </td>
+                    <td>
+                      <button type="button" class="close">&times;</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div> <!-- cards tab -->
 
-                {{ card.get_json().name }}
-              </td>
-              <td>
-                <button type="button" class="close">&times;</button>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div> <!-- cards list -->
-
-    <!-- Form for adding new cards to the cube -->
-    <div id="addCardsForm" class="col border">
-      <form action="" method="post" novalidate>
-        {{ add_cards_form.hidden_tag() }}
-        <div class="form-group">
-          {{ add_cards_form.cardnames.label }}
-          {{ add_cards_form.cardnames(class='form-control') }}
+          {% if cube.style == 'legacy' %}
+            <div class="tab-pane fade" id="scars">
+            </div> <!-- scars tab -->
+          {% endif %}
+          
+          <div class="tab-pane fade active show" id="addCards">
+            <form action="" method="post" novalidate>
+              {{ add_cards_form.hidden_tag() }}
+              <div class="form-group">
+                {{ add_cards_form.cardnames.label }}
+                {{ add_cards_form.cardnames(class='form-control') }}
+              </div>
+              <div class="form-group">
+                {{ add_cards_form.add_as_starter() }}
+                {{ add_cards_form.add_as_starter.label }}
+              </div>
+            </form>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
+          </div> <!-- add cards tabe -->
         </div>
-        <div class="form-group">
-          {{ add_cards_form.add_as_starter() }}
-          {{ add_cards_form.add_as_starter.label }}
-        </div>
-      </form>
-      <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
-    </div> <!-- add cards form -->
-    
+    </div>
   </div>
 {% endblock %}
 
