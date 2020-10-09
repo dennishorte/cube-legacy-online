@@ -174,13 +174,12 @@ def draft(draft_id):
     return render_template('draft.html', d=dw)
 
 
-
-# @app.route("/draft/<draft_id>/pick/<card_id>")
-# @login_required
-# def draft_pick(draft_id, card_id):
-#     dw = DraftWrapper(draft_id, current_user)
-#     dw.pick_card(card_id)
-#     return redirect("/draft/{}".format(draft_id))
+@app.route("/draft/<draft_id>/pick/<card_id>")
+@login_required
+def draft_pick(draft_id, card_id):
+    dw = DraftWrapper(draft_id, current_user)
+    dw.pick_card(card_id)
+    return redirect("/draft/{}".format(draft_id))
 
 
 # @app.route("/draft/<draft_id>/force/<user_id>")

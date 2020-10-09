@@ -1,5 +1,24 @@
 {% extends "base.html" %}
 
+{% macro show_card_list(cards) %}
+  <div class="row no-gutters">
+    {% for card in cards %}
+    <div class="col border rounded border-secondary m-1 bg-light">
+      <p class="m-1">
+        <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
+          {% for image_url in card.cube_card.image_urls() %}
+            <img
+              style="max-width:200px"
+              src="{{image_url}}"
+              alt="{{card.cube_card.name}}">
+          {% endfor %}
+        </a>
+      </p>
+      <p class="m-1 text-success text-sm">Vanilla: No Scars</p>
+    </div>
+  {% endfor %}
+{% endmacro %}
+
 {% block title %}
   {{ d.draft.name }}
 {% endblock %}
@@ -43,7 +62,7 @@
   </div> <!-- Seating -->
 
   <div id="picker" class="no-gutters">
-    <h2>Card Picker</h2>
+    <h2 class="text-primary">Card Picker</h2>
     {% if d.draft.complete %}
       <p>draft is complete</p>
     {% elif not d.pack %}
@@ -55,24 +74,13 @@
         Passing to: {{ d.passing_to() }}
       </p>
 
-      <div id="availableCards" class="row no-gutters">
-        {% for card in d.pack.unpicked_cards() %}
-          <div class="col border rounded border-secondary m-1 bg-light">
-            <p class="m-1">
-              <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
-                {% for image_url in card.cube_card.image_urls() %}
-                  <img
-                    style="max-width:200px"
-                    src="{{image_url}}"
-                    alt="{{card.cube_card.name}}">
-                {% endfor %}
-              </a>
-            </p>
-            <p class="m-1 text-success text-sm">Vanilla: No Scars</p>
-          </div>
-        {% endfor %}
-      </div> <!-- availableCards -->
+      {{ show_card_list(d.pack.unpicked_cards()) }}
     {% endif %}
   </div> <!-- picker -->
+
+  <div id="picks" class="no-gutters">
+    <h2 class="text-secondary">Your Picks</h2>
+    {{ show_card_list(d.seat.picks) }}
+  </div>
 
 {% endblock %}

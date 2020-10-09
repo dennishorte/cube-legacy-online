@@ -27,6 +27,28 @@ class DraftWrapper(object):
 
         return self.seats[next_seat].user.name
 
+    def pick_card(self, card_id):
+        pack_card = PackCard.query.filter(PackCard.id==card_id).first()
+        pack_card.picked_by_id = self.seat.order
+        pack_card.pick_number = self.pack.num_picked
+        pack_card.picked_at = datetime.utcnow()
+        db.session.add(pack_card)
+        
+        self.pack.num_picked += 1
+        db.session.add(self.pack)
+
+        # If this was the last pick, mark the draft complete.
+        unpicked_cards = PackCard.query.filter(
+            PackCard.draft_id == self.draft.id,
+            PackCard.pick_number < 0,
+        ).first()
+        if unpicked_cards is None:
+            self.draft.complete = True
+            db.session.add(self.draft)
+
+        # commit the update
+        db.session.commit()
+
     ############################################################
 
         
@@ -114,28 +136,3 @@ class DraftWrapper(object):
         # All the calls in this function commit the changes to the db on their own.
         # So, no commit here.
         self._new_scars = None
-    
-    def pick_card(self, card_id):
-        pack_card = PackCard.query.filter(PackCard.id==card_id).first()
-        pack_card.picked_by = self.participant
-        pack_card.pick_number = self.pack.num_picked + 1
-        pack_card.picked_at = datetime.utcnow()
-        db.session.add(pack_card)
-        
-        self.pack.num_picked += 1
-        db.session.add(self.pack)
-
-        # If this was the last pick, mark the draft complete.
-        if self.pack.num_picked == self.draft.pack_size \
-                and self.pack.pack_number == self.draft.num_packs - 1:
-            unpicked_cards = PackCard.query.filter(
-                PackCard.draft_id == self.draft.id,
-                PackCard.pick_number < 0,
-            ).first()
-            if unpicked_cards is None:
-                self.draft.complete = True
-                db.session.add(self.draft)
-
-        # commit the update
-        db.session.commit()
-
