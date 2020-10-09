@@ -75,6 +75,7 @@ class CubeCard(db.Model):
 
     # Relationships
     draft_cards = db.relationship('PackCard', backref='cube_card')
+    scars = db.relationship('Scar', backref='applied_to')
 
     def __repr__(self):
         return '<CubeCard {}>'.format(self.get_json()['name'])
@@ -169,3 +170,24 @@ class CubeCard(db.Model):
             db.session.add(new_card)
             db.session.add(self)
             db.session.commit()
+
+
+class Scar(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+
+    # Content info
+    text = db.Column(db.String(64))
+    restrictions = db.Column(db.String(64))
+    errata = db.Column(db.Text)
+
+    # Creation info
+    created_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    # Application info
+    applied_timestamp = db.Column(db.DateTime)
+    applied_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    applied_to_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
+    removed_timestamp = db.Column(db.DateTime)
+    removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
