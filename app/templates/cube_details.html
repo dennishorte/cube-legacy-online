@@ -28,9 +28,15 @@
         </div>
       </div>
     </div>
+  </div> <!-- loading cards modal -->
+
+  <div class="row">
+    <div class="col">
+      <p>Cube Style: {{ cube.style.name }}</p>
+    </div>
   </div>
 
-  <div class="row" >
+  <div class="row">
 
     <!-- List of cards in the cube -->
     <div id="cards" class="col">
@@ -56,7 +62,7 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>
+    </div> <!-- cards list -->
 
     <!-- Form for adding new cards to the cube -->
     <div id="addCardsForm" class="col border">
@@ -72,7 +78,8 @@
         </div>
       </form>
       <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
-    </div>
+    </div> <!-- add cards form -->
+    
   </div>
 {% endblock %}
 

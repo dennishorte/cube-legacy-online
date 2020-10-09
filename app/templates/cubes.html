@@ -15,10 +15,14 @@
     <div id="newCube" class="col border">
       <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-        <p>
-          {{ form.name.label }}<br>
-          {{ form.name(size=32) }}
-        </p>
+        <div class="form-group">
+          {{ form.name.label }}
+          {{ form.name(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ form.style.label }}
+          {{ form.style(class="list-unstyled") }}
+        </div>
         <p>{{ form.submit() }}</p>
       </form>
     </div>

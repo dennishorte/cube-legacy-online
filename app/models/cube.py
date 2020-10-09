@@ -10,6 +10,11 @@ class CubeEditType(enum.Enum):
     add = 0
     remove = 1
 
+    
+class CubeStyle(enum.Enum):
+    standard = 1
+    legacy = 2
+
 
 class BaseCard(db.Model):
     """Data fetched from Scryfall"""
@@ -36,6 +41,7 @@ class Cube(db.Model):
     name = db.Column(db.String(64))
     active = db.Column(db.Boolean, index=True, default=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    style = db.Column(db.Enum(CubeStyle))
 
     # Foreign Keys
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))

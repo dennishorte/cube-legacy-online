@@ -78,7 +78,10 @@ def cubes():
             flash('A Cube with the name "{}" already exists.'.format(cube.name))
             return redirect(url_for('cubes'))
 
-        cube = Cube(name=form.name.data)
+        cube = Cube(
+            name=form.name.data,
+            style=form.style.data,
+        )
         db.session.add(cube)
         db.session.commit()
     

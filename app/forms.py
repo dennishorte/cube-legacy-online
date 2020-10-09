@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField
 from wtforms import IntegerField
 from wtforms import PasswordField
+from wtforms import RadioField
 from wtforms import SelectField
 from wtforms import SelectMultipleField
 from wtforms import StringField
@@ -35,6 +36,7 @@ class LoginForm(FlaskForm):
 
 class NewCubeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
+    style = RadioField('Style', validators=[DataRequired()], choices=['standard', 'legacy'])
     submit = SubmitField('Create')
 
 
