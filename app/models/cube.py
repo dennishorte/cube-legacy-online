@@ -6,11 +6,6 @@ from app import db
 from app.models.user import *
 
 
-class CubeEditType(enum.Enum):
-    add = 0
-    remove = 1
-
-    
 class CubeStyle(enum.Enum):
     standard = 1
     legacy = 2
@@ -49,7 +44,7 @@ class Cube(db.Model):
     # Relationships
     _cards = db.relationship('CubeCard', backref='cube')
     drafts = db.relationship('Draft', backref='cube')
-    edits = db.relationship('CubeEditHistory', backref='cube')
+    scars = db.relationship('Scar', backref='cube')
 
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
@@ -62,18 +57,6 @@ class Cube(db.Model):
             CubeCard.cube_id == self.id,
             CubeCard.latest == True,
         ).all()
-
-class CubeEditHistory(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    type = db.Column(db.Enum(CubeEditType))
-
-    # Foreign Keys
-    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
-    card_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
-
-    def __repr__(self):
-        return '<CubeEdit {}>'.format(self.id)
 
 
 class CubeCard(db.Model):
