@@ -105,7 +105,7 @@ def cube_details(cube_id):
     )
 
     
-@app.route("/cubes/<cube_id>", methods=["POST"])
+@app.route("/cubes/<cube_id>/add", methods=["POST"])
 @login_required
 def add_cards(cube_id):
     form = AddCardsForm()
