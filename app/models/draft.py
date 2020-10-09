@@ -18,6 +18,9 @@ class Draft(db.Model):
     num_seats = db.Column(db.Integer)
     scar_rounds_str = db.Column(db.String(64), default="")  # eg. "1,4"
 
+    # Foreign Keys
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+    
     # Relationships
     seats = db.relationship('Seat', backref='draft')
     packs = db.relationship('Pack', backref='draft')

@@ -1,5 +1,3 @@
-import random
-
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -143,26 +141,14 @@ def new_draft():
     form = _new_draft_form()
 
     if form.validate_on_submit():
-        draft = Draft(
+        from app.util.create_draft import create_draft
+        create_draft(
             name=form.name.data,
+            cube_name=form.cube.data,
             pack_size=form.packsize.data,
             num_packs=form.numpacks.data,
-            num_seats=len(form.players.data),
+            user_names=form.players.data,
         )
-        db.session.add(draft)
-
-        users = User.query.filter(User.name.in_(form.players.data)).all()
-        random.shuffle(users)
-        for index, user in enumerate(users):
-            seat = Seat(
-                order=index,
-                user_id=user.id,
-                draft_id=draft.id,
-            )
-            db.session.add(seat)
-
-        db.session.commit()
-
         return redirect('/')
 
     else:

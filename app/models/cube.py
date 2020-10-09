@@ -42,6 +42,7 @@ class Cube(db.Model):
 
     # Relationships
     _cards = db.relationship('CubeCard', backref='cube')
+    drafts = db.relationship('Draft', backref='cube')
     edits = db.relationship('CubeEditHistory', backref='cube')
 
     def __repr__(self):
@@ -82,6 +83,9 @@ class CubeCard(db.Model):
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     edited_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    # Relationships
+    draft_cards = db.relationship('PackCard', backref='cube_card')
 
     def __repr__(self):
         return '<CubeCard {}>'.format(self.json['name'])
@@ -142,22 +146,26 @@ class CubeCard(db.Model):
     def update(self, new_json, edited_by):
         """
         Assuming any changes have been made in the JSON compared to this CubeCard,
-        creates a new version of this CubeCard.
+        creates a copy of this cube card and adds it to the database as an old verison,
+        and then updates this card with the new data. This preserves the card id for
+        drafts, when cards will be edited during drafting.
         """
         if self.removed_by_id:
             raise ValueError("Can't edit a removed card.")
             
         if self.json != new_json:
             new_card = CubeCard(
-                json=new_json,
+                json=self.json,
                 version=self.version + 1,
                 cube_id=self.cube_id,
                 base_id=self.base_id,
                 added_by_id=self.added_by_id,
-                edited_by=edited_by,
+                edited_by=self.edited_by_id,
+                latest=False,
             )
 
-            self.latest = False
+            self.json = new_json
+            self.edited_by_id = edited_by.id
             
             db.session.add(new_card)
             db.session.add(self)
