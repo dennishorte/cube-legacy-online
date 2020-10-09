@@ -88,7 +88,7 @@ class CubeCard(db.Model):
     draft_cards = db.relationship('PackCard', backref='cube_card')
 
     def __repr__(self):
-        return '<CubeCard {}>'.format(self.json['name'])
+        return '<CubeCard {}>'.format(self.get_json()['name'])
 
     def get_json(self):
         return json.loads(self.json)
@@ -99,6 +99,9 @@ class CubeCard(db.Model):
     def all_faces(self):
         card_info = self.get_json()
         return [card_info] + card_info.get('faces', [])
+
+    def name(self):
+        return self.get_json().get('name', 'NO_NAME')
 
     def image_urls(self):
         return [x['image_url'] for x in self.all_faces() if 'image_url' in x]

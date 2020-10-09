@@ -134,8 +134,14 @@ class Pack(db.Model):
         
         return [(x + self.seat_number) % num_seats for x in seat_range]
 
+    def next_seat_order(self):
+        return self.seat_ordering()[self.num_picked]
+
     def next_seat(self):
-        return self.seat_ordering[self.num_picked]
+        return Seat.query.filter(
+            Seat.draft_id == self.draft_id,
+            Seat.order == self.next_seat_order()
+        ).first()
 
     def pick_number(self):
         return self.num_picked + 1

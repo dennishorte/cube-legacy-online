@@ -10,7 +10,6 @@ from flask_login import logout_user
 from is_safe_url import is_safe_url
 
 from app import app
-# from app.draft_debugger import DraftDebugger
 from app.forms import AddCardsForm
 from app.forms import EditCardForm
 from app.forms import LoginForm
@@ -20,6 +19,7 @@ from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
 from app.util.cube_util import add_cards_to_cube
+from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
 
 
@@ -182,37 +182,19 @@ def draft_pick(draft_id, card_id):
     return redirect("/draft/{}".format(draft_id))
 
 
-# @app.route("/draft/<draft_id>/force/<user_id>")
-# @login_required
-# def force_pick(draft_id, user_id):
-#     user = User.query.get(user_id)
-#     dw = DraftWrapper(draft_id, user)
+@app.route("/draft/<draft_id>/force/<user_id>")
+@login_required
+def force_pick(draft_id, user_id):
+    user = User.query.get(user_id)
+    dw = DraftWrapper(draft_id, user)
 
-#     # Don't apply any scar an advance.
-#     if dw.is_scarring_round():
-#         dw.unlock_new_scars()
+    # Pick the first card in the pack.
+    if dw.pack:
+        dw.pick_card(dw.pack.unpicked_cards()[0].id)
+    return redirect("/draft/{}".format(draft_id))
 
-#     # Pick the first card in the pack.
-#     if dw.pack_cards():
-#         dw.pick_card(dw.pack_cards()[0].id)
-#     return redirect("/draft/{}".format(draft_id))
-
-# @app.route("/draft/<draft_id>/scar/<card_id>/<scar_id>")
-# @login_required
-# def apply_scar(draft_id, card_id, scar_id):
-#     dw = DraftWrapper(draft_id, current_user)
-#     dw.apply_scar(card_id, scar_id)
-#     return redirect("/draft/{}".format(draft_id))
-
-# @app.route("/draft/<draft_id>/new_scars")
-# @login_required
-# def get_new_scars(draft_id):
-#     dw = DraftWrapper(draft_id, current_user)
-#     dw.these_scars_suck()
-#     return redirect("/draft/{}".format(draft_id))
-
-# @app.route("/draft/<draft_id>/debug")
-# @login_required
-# def draft_debug(draft_id):
-#     draft_debugger = DraftDebugger(draft_id)
-#     return render_template('draft_debug.html', d=draft_debugger)
+@app.route("/draft/<draft_id>/debug")
+@login_required
+def draft_debug(draft_id):
+    draft_debugger = DraftDebugger(draft_id)
+    return render_template('draft_debug.html', d=draft_debugger)

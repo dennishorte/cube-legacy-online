@@ -1,19 +1,19 @@
-from app.models import *
+from app.models.draft import *
 
 
 class DraftDebugger(object):
     def __init__(self, draft_id):
         self.draft = Draft.query.get(draft_id)
 
-        self.participants = Participant.query.filter(Participant.draft_id == draft_id).all()
-        self.participants.sort(key=lambda x: x.seat)
+        self.seats = Seat.query.filter(Seat.draft_id == draft_id).all()
+        self.seats.sort(key=lambda x: x.order)
         
         self.packs = Pack.query.filter(Pack.draft_id == draft_id).all()
 
         self.pack_cards = PackCard.query.filter(PackCard.draft_id == draft_id).all()
 
-    def packs_for(self, participant):
-        packs = [x for x in self.packs if x.seat_number == participant.seat]
+    def packs_for(self, seat):
+        packs = [x for x in self.packs if x.seat_number == seat.order]
         packs.sort(key=lambda x: x.pack_number)
         return packs
 

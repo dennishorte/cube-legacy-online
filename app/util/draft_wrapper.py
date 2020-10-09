@@ -29,7 +29,7 @@ class DraftWrapper(object):
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
-        pack_card.picked_by_id = self.seat.order
+        pack_card.picked_by_id = self.seat.id
         pack_card.pick_number = self.pack.num_picked
         pack_card.picked_at = datetime.utcnow()
         db.session.add(pack_card)
