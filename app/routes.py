@@ -10,7 +10,6 @@ from flask_login import logout_user
 from is_safe_url import is_safe_url
 
 from app import app
-# from app.draft import DraftWrapper
 # from app.draft_debugger import DraftDebugger
 from app.forms import AddCardsForm
 from app.forms import EditCardForm
@@ -21,6 +20,7 @@ from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
 from app.util.cube_util import add_cards_to_cube
+from app.util.draft_wrapper import DraftWrapper
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -167,21 +167,12 @@ def _new_draft_form():
     return new_draft_form
     
 
-# @app.route("/draft/<draft_id>")
-# @login_required
-# def draft(draft_id):
-#     dw = DraftWrapper(draft_id, current_user)
-#     return render_template(
-#         'draft.html',
-#         dw=dw,
-#         draft=dw.draft,
-#         seating=dw.seating,
-#         user=dw.user,
-#         pack=dw.pack,
-#         pack_cards=dw.pack_cards(),
-#         passing_to=dw.passing_to(),
-#         scar_map=dw.scar_map,
-#     )
+@app.route("/draft/<draft_id>")
+@login_required
+def draft(draft_id):
+    dw = DraftWrapper(draft_id, current_user)
+    return render_template('draft.html', d=dw)
+
 
 
 # @app.route("/draft/<draft_id>/pick/<card_id>")

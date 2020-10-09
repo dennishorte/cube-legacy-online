@@ -1,198 +1,78 @@
 {% extends "base.html" %}
 
 {% block title %}
-  {{ draft.name }}
+  {{ d.draft.name }}
 {% endblock %}
 
 {% block content %}
-  <div class="modal fade" id="scarConfirmationModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cardEditorModalLabel">
-            Scar Confirmation
-          </h5>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
-        
-        <div class="modal-body">
-          <div id="scmImageHolder"></div>
-          <div id="scmOldScarHolder"></div>
-          <div id="scmNewScarHolder"></div>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Oops</button>
-          <button type="button" class="btn btn-primary">Scar Card</button>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  
   <div id="seating">
     <h2>Seating</h2>
-    <p class="seating_direction">right</p>
     <table id="seating" class="table table-sm">
       <tr>
         <thead class="thead-light">
           <th></th>
           <th></th>
-          <th colspan="{{ dw.draft.num_packs }}">num picks made</th>
+          <th colspan="{{ d.draft.num_packs }}">num picks made</th>
           <th></th>
         </thead>
         <thead class="thead-light">
           <th>player</th>
           <th>waiting</th>
-          {% for pack in range(dw.draft.num_packs) %}
+          {% for pack in range(d.draft.num_packs) %}
             <th>{{ loop.index }}</th>
           {% endfor %}
           <th></th>
         </thead>
       </tr>
-      {% for s in seating %}
-        <tr>
-          <td>{{ s.user.name }}</td>
-          <td>{{ s.waiting_packs()|length }}</td>
-          {% for pack in range(dw.draft.num_packs) %}
-            <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
-          {% endfor %}
-          <td>
-            <a href="/draft/{{draft.id}}/force/{{s.user.id}}">force</a>
-          </td>
-        </tr>
-      {% endfor %}
+
+      <tbody>
+        {% for s in d.seats %}
+          <tr>
+            <td>{{ s.user.name }}</td>
+            <td>{{ s.waiting_packs()|length }}</td>
+            {% for pack in range(d.draft.num_packs) %}
+              <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
+            {% endfor %}
+            <td>
+              <a href="/draft/{{d.draft.id}}/force/{{s.user.id}}">force</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    <p class="seating_direction">left</p>
-  </div>
+  </div> <!-- Seating -->
 
   <div id="picker" class="no-gutters">
     <h2>Card Picker</h2>
-    {% if draft.complete %}
+    {% if d.draft.complete %}
       <p>draft is complete</p>
-    {% elif not pack_cards %}
+    {% elif not d.pack %}
       <p>no packs waiting for you right now</p>
     {% else %}
       <p>
-        Pack {{ pack.pack_number + 1 }} /
-        Pick {{ pack.pick_number() }} /
-        Passing to: {{ passing_to }}
+        Pack {{ d.pack.pack_number + 1 }} /
+        Pick {{ d.pack.pick_number() }} /
+        Passing to: {{ d.passing_to() }}
       </p>
-      
-      {% if dw.is_scarring_round() %}
-        <p class="text-danger">Scarring Round: You must apply a scar before picking a card. You can't pick the card you scar.</p>
-        <p><a href="/draft/{{draft.id}}/new_scars">These scars don't work. Give me some new ones.</a></p>
-        <ol>
-          {% for scar in dw.get_new_scars() %}
-            <li>
-              {{ scar.text }}
-              <span class="text-danger">{{ scar.restrictions }}</span>
-              <span class="text-secondary">{{ scar.reminder }}</span>
-            </li>
-          {% endfor %}
-        </ol>
-      {% endif %}
-      <div class="row">
-        {% for card in pack_cards %}
-          <div class="col border-bottom rounded-bottom border-dark">
-            <div class="d-flex justify-content-center">
-              {% if not dw.is_scarring_round() %}
-                {# This makes the cards pickable. Hide when adding scars. #}
-                <a href="/draft/{{draft.id}}/pick/{{card.id}}">
-              {% endif %}
-              
-              {% for image_url in card.card.image_urls() %}
-                <img
-                  style="max-width:200px"
-                  src="{{image_url}}"
-                  alt="{{card.card.name}}">
-              {% endfor %}
-              
-              {% if not dw.is_scarring_round() %}
-                </a>
-              {% endif %}
-            </div>
 
-            <div>
-              {% if scar_map[card.card_id] %}
-                {% for scar in scar_map[card.card_id] %}
-                  <p class="text-success">{{  scar.text }}</p>
+      <div id="availableCards" class="row no-gutters">
+        {% for card in d.pack.unpicked_cards() %}
+          <div class="col border rounded border-secondary m-1 bg-light">
+            <p class="m-1">
+              <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
+                {% for image_url in card.cube_card.image_urls() %}
+                  <img
+                    style="max-width:200px"
+                    src="{{image_url}}"
+                    alt="{{card.cube_card.name}}">
                 {% endfor %}
-              {% else %}
-                <p class="text-info">vanilla (no scars)</p>
-              {% endif %}
-            </div>
-
-            {% if dw.is_scarring_round() %}
-              <div class="btn-group btn-group-lg btn-block">
-                {% for scar in dw.get_new_scars() %}
-                  <button
-                    type="button"
-                    {% if loop.index == 1 %}
-                      class="btn btn-secondary"
-                    {% else %}
-                      class="btn btn-dark"
-                    {% endif %}
-                    onclick="location.href='/draft/{{draft.id}}/scar/{{card.card.id}}/{{scar.id}}';">
-                    scar {{ loop.index }}
-                  </button>
-                {% endfor %}
-              </div>
-            {% endif %}
-            
+              </a>
+            </p>
+            <p class="m-1 text-success text-sm">Vanilla: No Scars</p>
           </div>
         {% endfor %}
-      </div>
+      </div> <!-- availableCards -->
     {% endif %}
-  </div>
+  </div> <!-- picker -->
 
-  <div id="picked" class="no-gutters">
-    <h2>Your Picks ({{ dw.picks|length }})</h2>
-    <div class="row">
-      {% for card in dw.picks %}
-        <div class="col">
-          {% for image_url in card.card.image_urls() %}
-            <img
-              style="max-width:200px"
-              src="{{image_url}}"
-              alt="{{card.card.name}}">
-          {% endfor %}
-          {% if scar_map[card.card_id] %}
-            {% for scar in scar_map[card.card_id] %}
-              <p class="text-success">{{  scar.text }}</p>
-            {% endfor %}
-          {% else %}
-            <p class="text-info">vanilla (no scars)</p>
-          {% endif %}
-        </div>
-      {% endfor %}
-    </div>
-
-    <div id="pick-text-list">
-      <h2>A Flat List of Your Picks for Copy-Pasting</h2>
-      {% for card in dw.picks %}
-        {{ card.card.name }}<br>
-      {% endfor %}
-    </div>
-  </div>
-{% endblock %}
-
-{% block scripts %}
-  <script>
-   $('#scarConfirmationModal').on('show.bs.modal', function (event) {
-     var target = $(event.relatedTarget)  // Row that triggered the modal
-     var card_img = null;
-     var card_old_scar = null;
-     var card_new_scar = null;
-     var add_scar_link = "location.href='/';"
-
-     var modal = $(this)
-     modal.find('.modal-body #scmImageHolder').append(card_img);
-     modal.find('.modal-body #scmOldScarHolder').append(card_old_scar);
-     modal.find('.modal-body #scmNewScarHolder').append(card_new_scar);
-     modal.find('.modal-body #scmConfirmButton').append('onclick', add_scar_link);
-   })
-  </script>
 {% endblock %}

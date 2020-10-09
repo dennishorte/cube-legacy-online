@@ -62,7 +62,7 @@ class Seat(db.Model):
             next_pick_for_pack = last_pick % self.draft.pack_size + 1
 
             if next_pack % 2 == 0:  # Pass left
-                next_seat = (num_seats + self.seat - (next_pick_for_pack - 1)) % num_seats
+                next_seat = (num_seats + self.order - (next_pick_for_pack - 1)) % num_seats
                 
             else:  # pass right
                 next_seat = (self.seat + next_pick_for_pack - 1) % num_seats
@@ -143,6 +143,12 @@ class Pack(db.Model):
     def complete(self):
         return self.num_picked == self.draft.pack_size
 
+    def picked_cards(self):
+        return [x for x in self.card if x.pick_number != -1]
+
+    def unpicked_cards(self):
+        return [x for x in self.cards if x.pick_number == -1]
+
 
 class PackCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -154,7 +160,7 @@ class PackCard(db.Model):
     picked_at = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<PackCard {}>'.format(self.card.name)
+        return '<PackCard {}>'.format(self.cube_card.name)
     
     def picked(self):
         return self.pick_number > -1

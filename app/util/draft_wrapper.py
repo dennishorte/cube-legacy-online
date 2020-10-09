@@ -1,28 +1,35 @@
 import random
 
 from app import db
-from app.models import *
+from app.models.draft import *
 
 
 class DraftWrapper(object):
     def __init__(self, draft_id, user):
         self.draft = Draft.query.get(draft_id)
+        
+        self.seats = self.draft.seats
+        self.seats.sort(key=lambda x: x.order)
+
         self.user = user
-        self.participant = next(x for x in self.draft.participants if x.user_id == user.id)
-        self.pack = self.participant.waiting_pack()
-        self.picks = PackCard.query.filter(
-            PackCard.draft_id==draft_id,
-            PackCard.picked_by_id==self.participant.id,
-        ).order_by(
-            PackCard.picked_at.desc()
-        ).all()
-        self.seating = self.draft.participants
-        self.seating.sort(key=lambda x: x.seat)
-        self.scar_map = self.draft.scar_map()
+        self.seat = next(x for x in self.seats if x.user_id == self.user.id)
+        self.pack = self.seat.waiting_pack()
 
-        self._new_scars = None
-        self._pack_cards = None
+    def passing_to(self):
+        """Name of the player who will see this pack after you pick from it."""
+        if self.pack is None:
+            return None
+        
+        if self.pack.pack_number % 2 == 0:
+            next_seat = (self.seat.order + 1) % self.draft.num_seats
+        else:
+            next_seat = (self.seat.order - 1) % self.draft.num_seats
 
+        return self.seats[next_seat].user.name
+
+    ############################################################
+
+        
     def these_scars_suck(self):
         self.unlock_new_scars()
         self._new_scars = None
@@ -132,14 +139,3 @@ class DraftWrapper(object):
         # commit the update
         db.session.commit()
 
-    def passing_to(self):
-        """Name of the player who will see this pack after you pick from it."""
-        if self.pack is None:
-            return None
-        
-        if self.pack.pack_number % 2 == 0:
-            next_seat = (self.participant.seat + 1) % self.draft.num_seats
-        else:
-            next_seat = (self.participant.seat - 1) % self.draft.num_seats
-
-        return self.seating[next_seat].user.name

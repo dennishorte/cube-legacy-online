@@ -96,6 +96,13 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
+    def all_faces(self):
+        card_info = self.get_json()
+        return [card_info] + card_info.get('faces', [])
+
+    def image_urls(self):
+        return [x['image_url'] for x in self.all_faces() if 'image_url' in x]
+
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
         base_json = json.loads(base_card.json)
