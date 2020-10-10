@@ -86,6 +86,31 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
+    def front_json(self):
+        j = self.get_json()
+        if 'card_faces' in j:
+            j.update(j['card_faces'][0])
+            del j['card_faces']
+        return j
+
+    def back_json(self):
+        j = self.get_json()
+        if not 'card_faces' in j:
+            return None
+        else:
+            j.update(j['card_faces'][1])
+            del j['card_faces']
+            return j
+
+    def faced_json(self):
+        front = self.front_json()
+        back = self.back_json()
+
+        if back:
+            return [front, back]
+        else:
+            return [front]
+
     def all_faces(self):
         card_info = self.get_json()
         return [card_info] + card_info.get('card_faces', [])
