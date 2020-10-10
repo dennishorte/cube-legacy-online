@@ -5,6 +5,14 @@
 {% endblock title %}
 
 {% block content %}
+
+  <div class="row">
+    <div class="col">
+      <a href="{{ url_for('cube_cards', cube_id=card.cube_id) }}">back to cube</a>
+    </div>
+  </div>
+
+  <hr>
   
   <!-- edit form -->
   <div id="editForm" class="row">
@@ -13,7 +21,8 @@
         <div class="row">
 
           <!-- Front Face of Card -->
-          <div class="col" id="frontFace">
+          <div class="col bg-light m-1 rounded border" id="frontFace">
+            <h4 class="mt-2">front</h4>
             <div class="form-group">
               {{ form.front_name.label }}
               {{ form.front_name(class='form-control') }}
@@ -42,7 +51,8 @@
           <!-- END: Front Face of Card -->
 
           <!-- Back Face of Card -->
-          <div class="col" id="backFace">
+          <div class="col bg-light m-1 rounded border" id="backFace">
+            <h4 class="mt-2">back</h4>
             <div class="form-group">
               {{ form.back_name.label }}
               {{ form.back_name(class='form-control', id='backName') }}
@@ -72,8 +82,8 @@
           
         </div>
 
-        <div class="row border-top">
-          <div class="col col-md-3">
+        <div class="row">
+          <div class="col col-md-3 bg-light m-1 rounded border" id="frontFace">
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.layout.label }}
