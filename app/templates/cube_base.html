@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Cube Details: {{ cube.name }}
+{% endblock title %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <p>Cube Style: {{ cube.style.name }}</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+
+      <ul class="nav">
+        <li class="card-link">
+          <a class="nav-link" href="{{ url_for('cube_cards', cube_id=cube.id) }}">Cards</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('cube_achievements', cube_id=cube.id) }}">Achievements</a>
+        </li>
+
+        {% if cube.style.name == 'legacy' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('cube_scars', cube_id=cube.id) }}">Scars</a>
+          </li>
+        {% endif %}
+      </ul>
+      
+    </div>
+  </div>
+{% endblock content %}
+
+{% block scripts %}
+{% endblock scripts %}

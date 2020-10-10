@@ -96,16 +96,28 @@ def cubes():
 
 @app.route("/cubes/<cube_id>")
 @login_required
-def cube_details(cube_id):
+def cube_cards(cube_id):
     add_cards_form = AddCardsForm()
     edit_card_form = EditCardForm()
     cube = Cube.query.get(cube_id)
     return render_template(
-        'cube_details.html',
+        'cube_cards.html',
         cube=cube,
         add_cards_form=add_cards_form,
         edit_card_form=edit_card_form,
     )
+
+
+@app.route("/cubes/<cube_id>/achievements")
+@login_required
+def cube_achievements(cube_id):
+    return 'cube achievements'
+
+
+@app.route("/cubes/<cube_id>/scars")
+@login_required
+def cube_scars(cube_id):
+    return 'cube scars'
 
     
 @app.route("/cubes/<cube_id>/add", methods=["POST"])

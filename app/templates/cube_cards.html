@@ -1,0 +1,115 @@
+{% extends "cube_base.html" %}
+
+{% block content %}
+  {{ super() }}
+
+
+  <div class="row">
+    <!-- Card Details -->
+    <div class="col col-md-8">
+      <table class="table table-sm">
+        <thead class="thead thead-light">
+          <th>card name</th>
+          <th>remove</th>
+        </thead>
+        <tbody>
+          {% for card in cube.cards() %}
+            <tr>
+              <td
+                data-card-id="{{ card.id }}"
+                data-toggle="modal"
+                data-target="#cardEditorModal">
+
+                {{ card.get_json().name }}
+              </td>
+              <td>
+                <button type="button" class="close">&times;</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- END Card Details -->
+
+    <!-- Add Cards Form -->
+    <div class="col col-md-4">
+      <form action="" method="post" novalidate>
+        {{ add_cards_form.hidden_tag() }}
+        <div class="form-group">
+          {{ add_cards_form.cardnames.label }}
+          {{ add_cards_form.cardnames(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ add_cards_form.add_as_starter() }}
+          {{ add_cards_form.add_as_starter.label }}
+        </div>
+      </form>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
+    </div>
+    <!-- END: Add Cards Form -->
+
+  </div>
+
+  
+  <!-- Modal: Please wait while the server loads the card data. -->
+  <div class="modal fade" id="waitWhileAddingCards" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Adding New Cards</h5>
+        </div>
+        
+        <div class="modal-body">
+          <p>Now adding these cards to the database. Adding cards includes fetching data from Scryfall, which can take a few minutes if many cards were added at once.</p>
+          
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>          
+        </div>
+        
+        <div class="modal-footer">
+          <a href="/cubes/{{ cube.id }}"
+            <button type="button" class="btn btn-primary">Reload Page</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- loading cards modal -->
+{% endblock content %}
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     $('#waitWhileAddingCards').on('show.bs.modal', function (event) {
+       var modal = $(this)
+       modal_reload_button = modal.find('.modal-footer button')
+       modal_reload_button.hide()
+       
+       $.ajax({
+         type: "POST",
+         url: "{{ url_for('add_cards', cube_id=cube.id) }}",
+         data: $('form').serialize(), // serializes the form's elements.
+         beforeSend: function(request) {
+           request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
+         },         
+         success: function (data) {
+           modal_reload_button.show()
+
+           var body = modal.find('.modal-body')
+           body.empty()
+           body.text('Cards added successfully. Reload page to see them.')
+           body.addClass('text-success')
+         },
+         error: function(data) {
+           var body = modal.find('.modal-body')
+           body.empty()
+           body.text("Something went wrong. Reload the page to see if your cards were added.")
+           body.addClass('text-warn')
+         }
+       })
+     })
+   });
+  </script>
+{% endblock scripts %}
