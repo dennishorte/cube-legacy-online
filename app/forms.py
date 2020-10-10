@@ -20,19 +20,6 @@ class AddCardsForm(FlaskForm):
     submit = SubmitField('Add Cards')
 
 
-class EditCardForm(FlaskForm):
-    TYPE = 'single'
-    
-    name = StringField('Name', validators=[DataRequired()])
-    manacost = StringField('Mana Cost', validators=[DataRequired()])
-    imageurls = TextAreaField('Image Url', validators=[DataRequired()])
-    typeline = StringField('Type Line', validators=[DataRequired()])
-    rulestext = TextAreaField('Rules Text')
-    pt_loyalty = StringField('p/t or loyalty')
-    layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
-    submit = SubmitField('Update')
-
-
 class EditMultiFaceCardForm(FlaskForm):
     TYPE = 'multi'
     
