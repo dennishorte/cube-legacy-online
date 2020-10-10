@@ -3,28 +3,19 @@
 {% block content %}
   {{ super() }}
 
-
   <div class="row">
     <!-- Card Details -->
     <div class="col col-md-8">
       <table class="table table-sm">
         <thead class="thead thead-light">
           <th>card name</th>
-          <th>remove</th>
+          <th></th>
         </thead>
         <tbody>
           {% for card in cube.cards() %}
             <tr>
-              <td
-                data-card-id="{{ card.id }}"
-                data-toggle="modal"
-                data-target="#cardEditorModal">
-
-                {{ card.get_json().name }}
-              </td>
-              <td>
-                <button type="button" class="close">&times;</button>
-              </td>
+              <td>{{ card.get_json().name }}</td>
+              <td><a href="{{ url_for('card_editor', card_id=card.id) }}">edit</a></td>
             </tr>
           {% endfor %}
         </tbody>
