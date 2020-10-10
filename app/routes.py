@@ -10,11 +10,7 @@ from flask_login import logout_user
 from is_safe_url import is_safe_url
 
 from app import app
-from app.forms import AddCardsForm
-from app.forms import EditCardForm
-from app.forms import LoginForm
-from app.forms import NewCubeForm
-from app.forms import NewDraftForm
+from app.forms import *
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
@@ -117,7 +113,28 @@ def cube_achievements(cube_id):
 @app.route("/cubes/<cube_id>/scars")
 @login_required
 def cube_scars(cube_id):
-    return 'cube scars'
+    form = NewScarForm()
+    cube = Cube.query.get(cube_id)
+    return render_template('cube_scars.html', cube=cube, form=form)
+
+
+@app.route("/cubes/<cube_id>/scars/add", methods=["POST"])
+@login_required
+def cube_scars_add(cube_id):
+    form = NewScarForm()
+
+    if form.validate_on_submit():
+        scar = Scar(
+            cube_id=cube_id,
+            text=form.text.data.strip(),
+            restrictions=form.restrictions.data.strip(),
+            created_by=current_user,
+        )
+        db.session.add(scar)
+        db.session.commit()
+            
+    
+    return redirect(url_for('cube_scars', cube_id=cube_id))
 
     
 @app.route("/cubes/<cube_id>/add", methods=["POST"])

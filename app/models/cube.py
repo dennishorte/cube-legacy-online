@@ -178,8 +178,8 @@ class Scar(db.Model):
 
     # Content info
     text = db.Column(db.String(64))
-    restrictions = db.Column(db.String(64))
-    errata = db.Column(db.Text)
+    restrictions = db.Column(db.String(64), default='')
+    errata = db.Column(db.Text, default='')
 
     # Creation info
     created_timestamp = db.Column(db.DateTime, default=datetime.utcnow)

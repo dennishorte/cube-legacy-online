@@ -1,0 +1,51 @@
+{% extends "cube_base.html" %}
+
+{% block content %}
+  {{ super() }}
+
+  <div class="row">
+
+    <!-- Table of existing scars -->
+    <div class="col col-md-8">
+      <table class="table table-sm">
+        <thead class="thead thead-light">
+          <th>text</th>
+          <th>restrictions</th>
+          <th>errata</th>
+          <th>creator</th>
+          <th>card</th>
+        </thead>
+        <tbody>
+          {% for scar in cube.scars %}
+            <tr>
+              <td>{{ scar.text }}</td>
+              <td>{{ scar.restrictions }}</td>
+              <td>{{ scar.errata }}</td>
+              <td>{{ scar.created_by.name }}</td>
+              <td>{{ scar.applied_to.name }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- END: Table of existing scars -->
+
+    <!-- New scar form -->
+    <div class="col col-md-4">
+      <h4>Create Scar</h4>
+      <form action="{{ url_for('cube_scars_add', cube_id=cube.id) }}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.text.label }}
+          {{ form.text(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ form.restrictions.label }}
+          {{ form.restrictions(class='form-control') }}
+        </div>
+        <p>{{ form.submit() }}</p>
+      </form>
+    </div>
+    <!-- END: New scar form -->
+  </div>
+{% endblock content %}

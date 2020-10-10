@@ -16,7 +16,7 @@ class AddCardsForm(FlaskForm):
     cardnames = TextAreaField('Cards to be added (1 per line)')
     add_as_starter = BooleanField('Add as a starter card, not as yourself')
     submit = SubmitField('Add Cards')
-    
+
 
 class EditCardForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=63)])
@@ -46,4 +46,10 @@ class NewDraftForm(FlaskForm):
     packsize = IntegerField('Pack Size', validators=[DataRequired()])
     numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
     players = SelectMultipleField('Players', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+
+class NewScarForm(FlaskForm):
+    text = TextAreaField('Scar Text', validators=[DataRequired()])
+    restrictions = StringField('Restrictions')
     submit = SubmitField('Create')
