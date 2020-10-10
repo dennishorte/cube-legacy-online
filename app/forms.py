@@ -41,14 +41,18 @@ class EditMultiFaceCardForm(FlaskForm):
     front_image_url = TextAreaField('Image Url', validators=[DataRequired()])
     front_type_line = StringField('Type Line', validators=[DataRequired()])
     front_rules_text = TextAreaField('Rules Text')
-    front_pt_loyalty = StringField('p/t or loyalty')
-
+    front_power = StringField('Power')
+    front_toughness = StringField('Toughness')
+    front_loyalty = StringField('Loyalty')
+    
     back_name = StringField('Name')
     back_mana_cost = StringField('Mana Cost')
     back_image_url = TextAreaField('Image Url')
     back_type_line = StringField('Type Line')
     back_rules_text = TextAreaField('Rules Text')
-    back_pt_loyalty = StringField('p/t or loyalty')
+    back_power = StringField('Power')
+    back_toughness = StringField('Toughness')
+    back_loyalty = StringField('Loyalty')
 
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
     submit = SubmitField('Update')

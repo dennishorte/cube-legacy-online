@@ -150,10 +150,9 @@ def card_editor(card_id):
     form.front_image_url.data = front_json['image_url']
     form.front_type_line.data = front_json['type_line']
     form.front_rules_text.data = front_json['oracle_text']
-    if 'loyalty' in front_json:
-        form.front_pt_loyalty.data = front_json['loyalty']
-    elif 'power' in front_json:
-        form.front_pt_loyalty.data = '{}/{}'.format(front_json['power'], front_json['toughness'])
+    form.front_power.data = front_json.get('power', '')
+    form.front_toughness.data = front_json.get('toughness', '')
+    form.front_loyalty.data = front_json.get('loyalty', '')
 
     # Back face of card
     back_json = card.back_json()
@@ -163,11 +162,10 @@ def card_editor(card_id):
         form.back_image_url.data = back_json['image_url']
         form.back_type_line.data = back_json['type_line']
         form.back_rules_text.data = back_json['oracle_text']
-        if 'loyalty' in back_json:
-            form.back_pt_loyalty.data = back_json['loyalty']
-        elif 'power' in back_json:
-            form.back_pt_loyalty.data = '{}/{}'.format(back_json['power'], back_json['toughness'])
-
+        form.back_power.data = back_json.get('power', '')
+        form.back_toughness.data = back_json.get('toughness', '')
+        form.back_loyalty.data = back_json.get('loyalty', '')
+    
     # Generic Pieces
     form.layout.data = front_json['layout']
 
