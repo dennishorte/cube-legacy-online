@@ -80,19 +80,21 @@
           <h1>{% block title %}{% endblock %}</h1>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          {% with messages = get_flashed_messages() %}
-            {% if messages %}
-              <ul>
-                {% for message in messages %}
-                  <li>{{ message }}</li>
-                {% endfor %}
-              </ul>
-            {% endif %}
-          {% endwith %}
-        </div>
-      </div>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="row mt-2">
+              <div class="col alert alert-success">
+                <p class="mb-0">{{ message }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <!-- END: Flash Messages -->
+      
       {% block content %}{% endblock %}
     </div>
     <script
