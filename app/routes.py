@@ -136,6 +136,46 @@ def cube_scars_add(cube_id):
     
     return redirect(url_for('cube_scars', cube_id=cube_id))
 
+
+@app.route("/card/<card_id>", methods=['GET', 'POST'])
+@login_required
+def card_editor(card_id):
+    card = CubeCard.query.get(card_id)
+    form = EditMultiFaceCardForm()
+
+    # Front face of card
+    front_json = card.front_json()
+    form.front_name.data = front_json['name']
+    form.front_mana_cost.data = front_json['mana_cost']
+    form.front_image_url.data = front_json['image_url']
+    form.front_type_line.data = front_json['type_line']
+    form.front_rules_text.data = front_json['oracle_text']
+    if 'loyalty' in front_json:
+        form.front_pt_loyalty.data = front_json['loyalty']
+    elif 'power' in front_json:
+        form.front_pt_loyalty.data = '{}/{}'.format(front_json['power'], front_json['toughness'])
+
+    # Back face of card
+    back_json = card.back_json()
+    if back_json:
+        form.back_name.data = back_json['name']
+        form.back_mana_cost.data = back_json['mana_cost']
+        form.back_image_url.data = back_json['image_url']
+        form.back_type_line.data = back_json['type_line']
+        form.back_rules_text.data = back_json['oracle_text']
+        if 'loyalty' in back_json:
+            form.back_pt_loyalty.data = back_json['loyalty']
+        elif 'power' in back_json:
+            form.back_pt_loyalty.data = '{}/{}'.format(back_json['power'], back_json['toughness'])
+
+    # Generic Pieces
+    form.layout.data = front_json['layout']
+
+    if form.validate_on_submit():
+        flash('Card Updated')
+
+    return render_template('card_editor.html', card=card, form=form)
+
     
 @app.route("/cubes/<cube_id>/add", methods=["POST"])
 @login_required

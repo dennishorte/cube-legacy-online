@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Card Editor
+{% endblock title %}
+
+{% block content %}
+  
+  <!-- edit form -->
+  <div id="editForm" class="row">
+    <div class="col col-md-12">
+      <form action="{{ url_for('card_editor', card_id=card.id) }}" method="post">
+        <div class="row">
+
+          <!-- Front Face of Card -->
+          <div class="col" id="frontFace">
+            <div class="form-group">
+              {{ form.front_name.label }}
+              {{ form.front_name(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.front_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
+              {{ form.front_mana_cost(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.front_image_url.label }}
+              {{ form.front_image_url(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.front_type_line.label }}
+              {{ form.front_type_line(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.front_rules_text.label }}
+              {{ form.front_rules_text(class='form-control', rows='5') }}
+            </div>
+            <div class="form-group">
+              {{ form.front_pt_loyalty.label }}
+              {{ form.front_pt_loyalty(class='form-control') }}
+            </div>
+          </div>
+          <!-- END: Front Face of Card -->
+
+          <!-- Back Face of Card -->
+          <div class="col" id="backFace">
+            <div class="form-group">
+              {{ form.back_name.label }}
+              {{ form.back_name(class='form-control', id='backName') }}
+            </div>
+            <div class="form-group">
+              {{ form.back_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
+              {{ form.back_mana_cost(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.back_image_url.label }}
+              {{ form.back_image_url(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.back_type_line.label }}
+              {{ form.back_type_line(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.back_rules_text.label }}
+              {{ form.back_rules_text(class='form-control', rows='5') }}
+            </div>
+            <div class="form-group">
+              {{ form.back_pt_loyalty.label }}
+              {{ form.back_pt_loyalty(class='form-control') }}
+            </div>
+          </div>
+          <!-- END: Back Face of Card -->
+          
+        </div>
+
+        <div class="row border-top">
+          <div class="col col-md-3">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {{ form.layout.label }}
+              {{ form.layout(class='form-control', id='layout') }}
+            </div>
+            <p>{{ form.submit() }}</p>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+    
+  </div>
+  <!-- END: edit form -->
+
+  <hr>
+
+  <!-- edit history -->
+  <div id="editHistory" class="row">
+    <div class="col">
+      <h4>Edit History</h4>
+    </div>
+  </div>
+  <!-- END: edit history -->
+{% endblock content %}
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     // Expand the textareas to display all of their content.
+     $('textarea').each(function(index, element) {
+       element.style.height = element.scrollHeight+3+'px'; 
+     })
+     
+     $('#layout').change(function() {
+       var layout = $(this).val()
+       var back_face = $('#backFace')
+       
+       if (layout == 'normal' || layout == 'split' || layout == 'leveler' || layout == 'saga') {
+         back_face.hide()
+       }
+       else {
+         back_face.show()
+       }
+     })
+   })
+  </script>
+{% endblock scripts %}

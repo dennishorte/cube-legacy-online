@@ -11,6 +11,8 @@ from wtforms import TextAreaField
 from wtforms.validators import DataRequired
 from wtforms.validators import Length
 
+from app.util.enum import Layout
+
 
 class AddCardsForm(FlaskForm):
     cardnames = TextAreaField('Cards to be added (1 per line)')
@@ -19,12 +21,37 @@ class AddCardsForm(FlaskForm):
 
 
 class EditCardForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=63)])
-    manacost = StringField('Mana Cost', validators=[DataRequired(), Length(max=32)])
-    imageurl = StringField('Image Url', validators=[DataRequired(), Length(max=255)])
-    typeline = StringField('Type Line', validators=[DataRequired(), Length(max=63)])
-    rulestext = TextAreaField('Rules Text', validators=[Length(max=255)])
-    pt_loyalty = StringField('p/t or loyalty', validators=[Length(max=16)])
+    TYPE = 'single'
+    
+    name = StringField('Name', validators=[DataRequired()])
+    manacost = StringField('Mana Cost', validators=[DataRequired()])
+    imageurls = TextAreaField('Image Url', validators=[DataRequired()])
+    typeline = StringField('Type Line', validators=[DataRequired()])
+    rulestext = TextAreaField('Rules Text')
+    pt_loyalty = StringField('p/t or loyalty')
+    layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
+    submit = SubmitField('Update')
+
+
+class EditMultiFaceCardForm(FlaskForm):
+    TYPE = 'multi'
+    
+    front_name = StringField('Name', validators=[DataRequired()])
+    front_mana_cost = StringField('Mana Cost', validators=[DataRequired()])
+    front_image_url = TextAreaField('Image Url', validators=[DataRequired()])
+    front_type_line = StringField('Type Line', validators=[DataRequired()])
+    front_rules_text = TextAreaField('Rules Text')
+    front_pt_loyalty = StringField('p/t or loyalty')
+
+    back_name = StringField('Name')
+    back_mana_cost = StringField('Mana Cost')
+    back_image_url = TextAreaField('Image Url')
+    back_type_line = StringField('Type Line')
+    back_rules_text = TextAreaField('Rules Text')
+    back_pt_loyalty = StringField('p/t or loyalty')
+
+    layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
+    submit = SubmitField('Update')
     
     
 class LoginForm(FlaskForm):
