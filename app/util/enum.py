@@ -25,3 +25,10 @@ class Layout(enum.Enum):
     @classmethod
     def choices(cls):
         return [x.name for x in cls]
+
+    @staticmethod
+    def has_multiple_faces(layout):
+        if isinstance(layout, Layout):
+            layout = layout.name
+        
+        return layout not in ('normal', 'leveler', 'saga')
