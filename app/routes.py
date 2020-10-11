@@ -137,7 +137,7 @@ def cube_scars_add(cube_id):
     return redirect(url_for('cube_scars', cube_id=cube_id))
 
 
-@app.route("/card/<card_id>", methods=['GET', 'POST'])
+@app.route("/card/<card_id>")
 @login_required
 def card_editor(card_id):
     card = CubeCard.query.get(card_id)
@@ -169,10 +169,21 @@ def card_editor(card_id):
     # Generic Pieces
     form.layout.data = front_json['layout']
 
+    return render_template('card_editor.html', card=card, form=form)
+
+
+@app.route("/card/<card_id>/update", methods=["POST"])
+@login_required
+def card_update(card_id):
+    card = CubeCard.query.get(card_id)
+    form = EditMultiFaceCardForm()
+
     if form.validate_on_submit():
+        
+        
         flash('Card Updated')
 
-    return render_template('card_editor.html', card=card, form=form)
+    return redirect(url_for('card_editor', card_id=card_id))
 
     
 @app.route("/cubes/<cube_id>/add", methods=["POST"])
