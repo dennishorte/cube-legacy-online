@@ -1,17 +1,19 @@
 from app import db
 from app.models.cube import *
-from app.util.scryfall import fetch_many_from_scryfall
+from app.util import scryfall
 
 
 def add_cards_to_cube(cube_id, card_names, added_by):
     _ensure_cube(cube_id)
-    scryfall_data = fetch_many_from_scryfall(card_names)
+    scryfall_data = scryfall.fetch_many_from_scryfall(card_names)
     failed_to_fetch = []
     
-    for name, datum in scryfall_data.items():
-        if datum is None:
+    for name, datum in list(scryfall_data.items()):
+        if datum is None or datum['object'] == 'error':
             failed_to_fetch.append(name)
             del scryfall_data[name]
+        else:
+            scryfall.convert_to_clo_standard_json(datum)
 
     _create_base_cards_from_scryfall_data(scryfall_data)
 
@@ -35,8 +37,8 @@ def add_cards_to_cube(cube_id, card_names, added_by):
     db.session.commit()
 
     return {
-        'added': len(true_names_with_dups),
-        'unique_added': len(base_cards),
+        'num_added': len(true_names_with_dups),
+        'num_unique_added': len(base_cards),
         'failed_to_fetch': failed_to_fetch,
     }
 
