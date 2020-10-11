@@ -94,13 +94,11 @@ def cubes():
 @login_required
 def cube_cards(cube_id):
     add_cards_form = AddCardsForm()
-    edit_card_form = EditCardForm()
     cube = Cube.query.get(cube_id)
     return render_template(
         'cube_cards.html',
         cube=cube,
         add_cards_form=add_cards_form,
-        edit_card_form=edit_card_form,
     )
 
 
