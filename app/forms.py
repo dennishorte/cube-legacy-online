@@ -21,25 +21,23 @@ class AddCardsForm(FlaskForm):
 
 
 class EditMultiFaceCardForm(FlaskForm):
-    TYPE = 'multi'
+    face_0_name = StringField('Name')
+    face_0_mana_cost = StringField('Mana Cost')
+    face_0_image_url = TextAreaField('Image Url')
+    face_0_type_line = StringField('Type Line')
+    face_0_oracle_text = TextAreaField('Rules Text')
+    face_0_power = StringField('Power')
+    face_0_toughness = StringField('Toughness')
+    face_0_loyalty = StringField('Loyalty')
     
-    front_name = StringField('Name', validators=[DataRequired()])
-    front_mana_cost = StringField('Mana Cost', validators=[DataRequired()])
-    front_image_url = TextAreaField('Image Url', validators=[DataRequired()])
-    front_type_line = StringField('Type Line', validators=[DataRequired()])
-    front_rules_text = TextAreaField('Rules Text')
-    front_power = StringField('Power')
-    front_toughness = StringField('Toughness')
-    front_loyalty = StringField('Loyalty')
-    
-    back_name = StringField('Name')
-    back_mana_cost = StringField('Mana Cost')
-    back_image_url = TextAreaField('Image Url')
-    back_type_line = StringField('Type Line')
-    back_rules_text = TextAreaField('Rules Text')
-    back_power = StringField('Power')
-    back_toughness = StringField('Toughness')
-    back_loyalty = StringField('Loyalty')
+    face_1_name = StringField('Name')
+    face_1_mana_cost = StringField('Mana Cost')
+    face_1_image_url = TextAreaField('Image Url')
+    face_1_type_line = StringField('Type Line')
+    face_1_oracle_text = TextAreaField('Rules Text')
+    face_1_power = StringField('Power')
+    face_1_toughness = StringField('Toughness')
+    face_1_loyalty = StringField('Loyalty')
 
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
     submit = SubmitField('Update')

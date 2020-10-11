@@ -86,85 +86,22 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
-    def front_json(self):
-        j = self.get_json()
-        if 'card_faces' in j:
-            j.update(j['card_faces'][0])
-            del j['card_faces']
-        return j
-
-    def back_json(self):
-        j = self.get_json()
-        if not 'card_faces' in j:
-            return None
-        else:
-            j.update(j['card_faces'][1])
-            del j['card_faces']
-            return j
-
-    def faced_json(self):
-        front = self.front_json()
-        back = self.back_json()
-
-        if back:
-            return [front, back]
-        else:
-            return [front]
-
-    def all_faces(self):
-        card_info = self.get_json()
-        return [card_info] + card_info.get('card_faces', [])
-
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
 
     def image_urls(self):
         return [x['image_url'] for x in self.all_faces() if 'image_url' in x]
 
+    def card_faces(self):
+        return self.get_json()['card_faces']
+
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
-        base_json = json.loads(base_card.json)
-        all_faces = base_json.get('card_faces', []) + [base_json]
-        
-        # Make the image url a top-level value.
-        for face in all_faces:
-            if 'image_uris' in face:
-                face['image_url'] = face['image_uris']['normal']
-
-        wanted_keys = (
-            # Meta data
-            'all_parts',
-            'card_faces',
-            'card_faces',
-            'layout',
-            'object',
-
-            # Card data
-            'cmc',
-            'component',
-            'flavor_text',
-            'image_url',
-            'loyalty',
-            'mana_cost',
-            'name',
-            'oracle_text',
-            'power',
-            'toughness',
-            'type_line',
-        )
-
-        # Remove unwanted keys
-        for face in all_faces:
-            face_keys = list(face.keys())
-            for key in face_keys:
-                if not key in wanted_keys:
-                    del face[key]
-
         return CubeCard(
             version=1,
             cube_id=cube_id,
             base_id=base_card.id,
-            json=json.dumps(base_json),
+            json=base_card.json,
             added_by_id=added_by.id,
         )
 
@@ -177,24 +114,34 @@ class CubeCard(db.Model):
         """
         if self.removed_by_id:
             raise ValueError("Can't edit a removed card.")
-            
-        if self.json != new_json:
+
+        if self.get_json() != new_json:
+            # Create a copy of this card as a non-latest version.
             new_card = CubeCard(
+                timestamp=self.timestamp,
+                version=self.version,
+                latest=False,
                 json=self.json,
-                version=self.version + 1,
+
                 cube_id=self.cube_id,
                 base_id=self.base_id,
                 added_by_id=self.added_by_id,
-                edited_by=self.edited_by_id,
-                latest=False,
+                edited_by_id=self.edited_by_id,
             )
 
-            self.json = new_json
+            # Update this card with the new data.
+            self.version += 1
+            self.json = json.dumps(new_json)
             self.edited_by_id = edited_by.id
-            
+
             db.session.add(new_card)
             db.session.add(self)
             db.session.commit()
+
+            return True  # Changes detected and card updated
+
+        else:
+            return False  # No change detected
 
 
 class Scar(db.Model):

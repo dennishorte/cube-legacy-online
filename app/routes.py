@@ -17,6 +17,7 @@ from app.models.user import *
 from app.util.cube_util import add_cards_to_cube
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
+from app.util.string import normalize_newlines
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -141,31 +142,21 @@ def card_editor(card_id):
     card = CubeCard.query.get(card_id)
     form = EditMultiFaceCardForm()
 
-    # Front face of card
-    front_json = card.front_json()
-    form.front_name.data = front_json['name']
-    form.front_mana_cost.data = front_json['mana_cost']
-    form.front_image_url.data = front_json['image_url']
-    form.front_type_line.data = front_json['type_line']
-    form.front_rules_text.data = front_json['oracle_text']
-    form.front_power.data = front_json.get('power', '')
-    form.front_toughness.data = front_json.get('toughness', '')
-    form.front_loyalty.data = front_json.get('loyalty', '')
+    card_faces = card.card_faces()
 
-    # Back face of card
-    back_json = card.back_json()
-    if back_json:
-        form.back_name.data = back_json['name']
-        form.back_mana_cost.data = back_json['mana_cost']
-        form.back_image_url.data = back_json['image_url']
-        form.back_type_line.data = back_json['type_line']
-        form.back_rules_text.data = back_json['oracle_text']
-        form.back_power.data = back_json.get('power', '')
-        form.back_toughness.data = back_json.get('toughness', '')
-        form.back_loyalty.data = back_json.get('loyalty', '')
-    
+    for form_field in form:
+        tokens = form_field.name.split('_', 2)
+        if tokens[0] != 'face':
+            continue
+
+        face = int(tokens[1])
+        field_name = tokens[2]
+
+        if face < len(card_faces):
+            form_field.data = card_faces[face].get(field_name, '')
+        
     # Generic Pieces
-    form.layout.data = front_json['layout']
+    form.layout.data = card.get_json().get('layout', '')
 
     return render_template('card_editor.html', card=card, form=form)
 
@@ -173,15 +164,54 @@ def card_editor(card_id):
 @app.route("/card/<card_id>/update", methods=["POST"])
 @login_required
 def card_update(card_id):
-    card = CubeCard.query.get(card_id)
     form = EditMultiFaceCardForm()
 
-    if form.validate_on_submit():
-        
-        
+    if not form.validate_on_submit():
+        flash('Error on Update')
+        return redirect(url_for('card_editor', card_id=card_id))
+
+    card = CubeCard.query.get(card_id)
+    card_json = card.get_json()
+    _card_update_copy_form_data_into_card_json(card_json, form)
+
+    # Create a new version of the card
+    new_version_created = card.update(card_json, current_user)
+
+    # Give the user some feedback on what happened.
+    if new_version_created:
         flash('Card Updated')
+    else:
+        flash('No changes detected')
 
     return redirect(url_for('card_editor', card_id=card_id))
+
+
+def _card_update_copy_form_data_into_card_json(card_json, form):
+    card_faces = card_json['card_faces']
+
+    # Copy the data from the form into the card_faces dicts.
+    for form_field in form:
+        tokens = form_field.name.split('_', 2)
+        if tokens[0] != 'face':
+            continue
+
+        face = int(tokens[1])
+        field_name = tokens[2]
+
+        while face >= len(card_faces):
+            card_faces.append({})
+
+        card_faces[face][field_name] = normalize_newlines(form_field.data.strip())
+        
+    # Remove any dicts face dicts that don't have data.
+    # This happens often for normal layout cards since there is always a second face form.
+    card_json['card_faces'] = [x for x in card_faces if x]
+
+    # Update the root fields
+    card_json['layout'] = form.layout.data.strip()
+    card_json['name'] = ' // '.join([x['name'] for x in card_faces])
+    card_json['type_line'] = ' // '.join([x['type_line'] for x in card_faces])
+    card_json['oracle_text'] = '\n-----\n'.join([x['oracle_text'] for x in card_faces])
 
     
 @app.route("/cubes/<cube_id>/add", methods=["POST"])

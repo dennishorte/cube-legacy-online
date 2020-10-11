@@ -17,12 +17,16 @@
   <!-- edit form -->
   <div id="editForm" class="row">
     <div class="col col-md-12">
-      <form action="{{ url_for('card_editor', card_id=card.id) }}" method="post">
+      <form action="{{ url_for('card_update', card_id=card.id) }}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <!-- Big Card Name -->
         <div class="row justify-content-md-center">
           <div class="col ml-1 mr-1 bg-light rounded border">
             <h2 class="mt-2 text-secondary text-center">~ {{ card.name() }} ~</h2>
           </div>
         </div>
+        <!-- END: Big Card Name -->
         
         <div class="row">
 
@@ -30,38 +34,38 @@
           <div class="col bg-light m-1 rounded border" id="frontFace">
             <h4 class="mt-2">front</h4>
             <div class="form-group">
-              {{ form.front_name.label }}
-              {{ form.front_name(class='form-control') }}
+              {{ form.face_0_name.label }}
+              {{ form.face_0_name(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.front_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
-              {{ form.front_mana_cost(class='form-control') }}
+              {{ form.face_0_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
+              {{ form.face_0_mana_cost(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.front_image_url.label }}
-              {{ form.front_image_url(class='form-control') }}
+              {{ form.face_0_image_url.label }}
+              {{ form.face_0_image_url(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.front_type_line.label }}
-              {{ form.front_type_line(class='form-control') }}
+              {{ form.face_0_type_line.label }}
+              {{ form.face_0_type_line(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.front_rules_text.label }}
-              {{ form.front_rules_text(class='form-control', rows='5') }}
+              {{ form.face_0_oracle_text.label }}
+              {{ form.face_0_oracle_text(class='form-control', rows='5') }}
             </div>
 
             <div class="row">
               <div class="col form-group">
-                {{ form.front_power.label }}
-                {{ form.front_power(class='form-control') }}
+                {{ form.face_0_power.label }}
+                {{ form.face_0_power(class='form-control') }}
               </div>
               <div class="col form-group">
-                {{ form.front_toughness.label }}
-                {{ form.front_toughness(class='form-control') }}
+                {{ form.face_0_toughness.label }}
+                {{ form.face_0_toughness(class='form-control') }}
               </div>
               <div class="col form-group">
-                {{ form.front_loyalty.label }}
-                {{ form.front_loyalty(class='form-control') }}
+                {{ form.face_0_loyalty.label }}
+                {{ form.face_0_loyalty(class='form-control') }}
               </div>
             </div>
           </div>
@@ -71,38 +75,38 @@
           <div class="col bg-light m-1 rounded border" id="backFace">
             <h4 class="mt-2">back</h4>
             <div class="form-group">
-              {{ form.back_name.label }}
-              {{ form.back_name(class='form-control', id='backName') }}
+              {{ form.face_1_name.label }}
+              {{ form.face_1_name(class='form-control', id='backName') }}
             </div>
             <div class="form-group">
-              {{ form.back_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
-              {{ form.back_mana_cost(class='form-control') }}
+              {{ form.face_1_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
+              {{ form.face_1_mana_cost(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.back_image_url.label }}
-              {{ form.back_image_url(class='form-control') }}
+              {{ form.face_1_image_url.label }}
+              {{ form.face_1_image_url(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.back_type_line.label }}
-              {{ form.back_type_line(class='form-control') }}
+              {{ form.face_1_type_line.label }}
+              {{ form.face_1_type_line(class='form-control') }}
             </div>
             <div class="form-group">
-              {{ form.back_rules_text.label }}
-              {{ form.back_rules_text(class='form-control', rows='5') }}
+              {{ form.face_1_oracle_text.label }}
+              {{ form.face_1_oracle_text(class='form-control', rows='5') }}
             </div>
 
             <div class="row">
               <div class="col form-group">
-                {{ form.back_power.label }}
-                {{ form.back_power(class='form-control') }}
+                {{ form.face_1_power.label }}
+                {{ form.face_1_power(class='form-control') }}
               </div>
               <div class="col form-group">
-                {{ form.back_toughness.label }}
-                {{ form.back_toughness(class='form-control') }}
+                {{ form.face_1_toughness.label }}
+                {{ form.face_1_toughness(class='form-control') }}
               </div>
               <div class="col form-group">
-                {{ form.back_loyalty.label }}
-                {{ form.back_loyalty(class='form-control') }}
+                {{ form.face_1_loyalty.label }}
+                {{ form.face_1_loyalty(class='form-control') }}
               </div>
             </div>
             
