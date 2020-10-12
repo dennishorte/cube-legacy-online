@@ -27,8 +27,36 @@
           </div>
         </div>
         <!-- END: Big Card Name -->
+
+        {% if scar %}
+          <!-- Scar -->
+          <div class="row justify-content-md-center mt-2">
+            <div class="col ml-1 mr-1 bg-warning rounded border">
+              <p>Here is the scar you are supposed to add to the card. Please copy-paste or type it into the card appropriately.</p>
+              <p>If you decide you don't want to apply this scar after all, just use the back button to return from whence you came.</p>
+
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Scar Text</td>
+                    <td>{{ scar.text }}</td>
+                  </tr>
+                  {% if scar.restrictions %}
+                    <td>Restrictions</td>
+                    <td>{{ scar.restrictions }}</td>
+                  {% endif %}
+                  {% if scar.errata %}
+                    <td>Errata</td>
+                    <td>{{ scar.errata }}</td>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- END: Scar -->
+        {% endif %}
         
-        <div class="row">
+        <div class="row mt-1">
 
           <!-- Front Face of Card -->
           <div class="col bg-light m-1 rounded border" id="frontFace">

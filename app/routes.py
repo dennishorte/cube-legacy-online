@@ -158,7 +158,18 @@ def card_editor(card_id):
     # Generic Pieces
     form.layout.data = card.get_json().get('layout', '')
 
-    return render_template('card_editor.html', card=card, form=form)
+    # Adding a specific scar?
+    scar_id = request.args.get('scar_id')
+    scar = Scar.query.get(scar_id)
+    if scar:
+        form.comment.data = "Added scar during draft: {}".format(scar.text)
+
+    return render_template(
+        'card_editor.html',
+        card=card,
+        form=form,
+        scar=scar,
+    )
 
 
 @app.route("/card/<card_id>/update", methods=["POST"])
