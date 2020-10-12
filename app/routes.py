@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -162,7 +164,8 @@ def card_editor(card_id):
     scar_id = request.args.get('scar_id')
     scar = Scar.query.get(scar_id)
     if scar:
-        form.comment.data = "Added scar during draft: {}".format(scar.text)
+        form.comment.data = "{} added scar during draft: {}".format(current_user.name, scar.text)
+        form.scar_id.data = scar_id
 
     return render_template(
         'card_editor.html',
@@ -185,12 +188,24 @@ def card_update(card_id):
     card_json = card.get_json()
     _card_update_copy_form_data_into_card_json(card_json, form)
 
+    if not form.comment.data:
+        form.comment.data = "Edited by {}".format(current_user.name)
+
     # Create a new version of the card
     new_version_created = card.update(
         new_json=card_json,
         edited_by=current_user,
         comment=form.comment.data,
     )
+
+    # Mark the scar as used, if there was one.
+    if form.scar_id.data and new_version_created:
+        scar = Scar.query.get(form.scar_id.data)
+        scar.applied_timestamp = datetime.utcnow()
+        scar.applied_by_id = current_user.id
+        scar.applied_to_id = card_id
+        db.session.add(scar)
+        db.session.commit()
 
     # Give the user some feedback on what happened.
     if new_version_created:

@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField
+from wtforms import HiddenField
 from wtforms import IntegerField
 from wtforms import PasswordField
 from wtforms import RadioField
@@ -43,6 +44,9 @@ class EditMultiFaceCardForm(FlaskForm):
     
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
     submit = SubmitField('Update')
+
+    # Used when adding a scar in order to mark the scar as applied.
+    scar_id = HiddenField('Scar ID')
     
     
 class LoginForm(FlaskForm):

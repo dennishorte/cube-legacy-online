@@ -22,7 +22,16 @@
               <td>{{ scar.restrictions }}</td>
               <td>{{ scar.errata }}</td>
               <td>{{ scar.created_by.name }}</td>
-              <td>{{ scar.applied_to.name }}</td>
+
+              {% if scar.applied_to %}
+                <td>
+                  <a href="{{ url_for('card_editor', card_id=scar.applied_to_id) }}">
+                    {{ scar.applied_to.name() }}
+                  </a>
+                </td>
+              {% else %}
+                <td></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
