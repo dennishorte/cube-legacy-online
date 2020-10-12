@@ -91,7 +91,7 @@ class CubeCard(db.Model):
         return self.get_json().get('name', 'NO_NAME')
 
     def image_urls(self):
-        return [x['image_url'] for x in self.all_faces() if 'image_url' in x]
+        return [x['image_url'] for x in self.card_faces() if 'image_url' in x]
 
     def card_faces(self):
         return self.get_json()['card_faces']
