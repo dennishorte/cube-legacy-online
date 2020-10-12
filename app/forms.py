@@ -39,6 +39,8 @@ class EditMultiFaceCardForm(FlaskForm):
     face_1_toughness = StringField('Toughness')
     face_1_loyalty = StringField('Loyalty')
 
+    comment = TextAreaField('Comment')
+    
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
     submit = SubmitField('Update')
     

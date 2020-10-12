@@ -116,13 +116,18 @@
         </div>
 
         <div class="row">
-          <div class="col col-md-3 bg-light m-1 rounded border" id="frontFace">
+          <div class="col bg-light m-1 rounded border" id="commentArea">
+            {{ form.comment.label }}
+            {{ form.comment(class='form-control') }}
+          </div>
+          
+          <div class="col bg-light m-1 rounded border" id="submitArea">
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.layout.label }}
               {{ form.layout(class='form-control', id='layout') }}
             </div>
-            <p>{{ form.submit() }}</p>
+            <p>{{ form.submit(class='btn-primary') }}</p>
           </div>
         </div>
         

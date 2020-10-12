@@ -65,6 +65,7 @@ class CubeCard(db.Model):
     version = db.Column(db.Integer)
     latest = db.Column(db.Boolean, default=True)
     json = db.Column(db.Text)
+    comment = db.Column(db.Text)
     
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
@@ -105,7 +106,7 @@ class CubeCard(db.Model):
             added_by_id=added_by.id,
         )
 
-    def update(self, new_json, edited_by):
+    def update(self, new_json, edited_by, comment):
         """
         Assuming any changes have been made in the JSON compared to this CubeCard,
         creates a copy of this cube card and adds it to the database as an old verison,
@@ -133,6 +134,7 @@ class CubeCard(db.Model):
             self.version += 1
             self.json = json.dumps(new_json)
             self.edited_by_id = edited_by.id
+            self.comment = comment
 
             db.session.add(new_card)
             db.session.add(self)

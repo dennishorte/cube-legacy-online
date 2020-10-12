@@ -175,7 +175,11 @@ def card_update(card_id):
     _card_update_copy_form_data_into_card_json(card_json, form)
 
     # Create a new version of the card
-    new_version_created = card.update(card_json, current_user)
+    new_version_created = card.update(
+        new_json=card_json,
+        edited_by=current_user,
+        comment=form.comment.data,
+    )
 
     # Give the user some feedback on what happened.
     if new_version_created:
