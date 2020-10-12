@@ -197,15 +197,17 @@ def _card_update_copy_form_data_into_card_json(card_json, form):
 
         face = int(tokens[1])
         field_name = tokens[2]
+        field_value = normalize_newlines(form_field.data.strip())
 
         while face >= len(card_faces):
             card_faces.append({})
 
-        card_faces[face][field_name] = normalize_newlines(form_field.data.strip())
-        
-    # Remove any dicts face dicts that don't have data.
+        card_faces[face][field_name] = field_value
+
+    # Remove any dicts face dicts that don't have names.
     # This happens often for normal layout cards since there is always a second face form.
-    card_json['card_faces'] = [x for x in card_faces if x]
+    card_faces = [x for x in card_faces if x.get('name', False)]
+    card_json['card_faces'] = card_faces
 
     # Update the root fields
     card_json['layout'] = form.layout.data.strip()
