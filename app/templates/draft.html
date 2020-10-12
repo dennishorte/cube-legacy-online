@@ -71,7 +71,7 @@
       <p>
         Pack {{ d.pack.pack_number + 1 }} /
         Pick {{ d.pack.pick_number() }} /
-        Passing to: {{ d.passing_to() }}
+        Passing to: {{ d.passing_to().name }}
       </p>
 
       {{ show_card_list(d.pack.unpicked_cards()) }}

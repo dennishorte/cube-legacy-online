@@ -16,7 +16,7 @@ class DraftWrapper(object):
         self.pack = self.seat.waiting_pack()
 
     def passing_to(self):
-        """Name of the player who will see this pack after you pick from it."""
+        """User who will see this pack after you pick from it."""
         if self.pack is None:
             return None
         
@@ -25,7 +25,7 @@ class DraftWrapper(object):
         else:
             next_seat = (self.seat.order - 1) % self.draft.num_seats
 
-        return self.seats[next_seat].user.name
+        return self.seats[next_seat].user
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
