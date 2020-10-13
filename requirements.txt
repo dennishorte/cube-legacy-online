@@ -5,6 +5,7 @@ flask-sqlalchemy
 flask-wtf
 gunicorn
 is_safe_url
+lxml
 pymysql
 python-dotenv
 requests

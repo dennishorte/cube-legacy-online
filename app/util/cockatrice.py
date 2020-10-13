@@ -2,36 +2,42 @@
 Spec Definition:
 https://github.com/Cockatrice/Cockatrice/wiki/Custom-Cards-&-Sets#to-add-your-own-custom-cards-follow-these-steps
 
+Example card
 
+<card>
+  <cipt>1</cipt>      <!-- Comes into play tapped -->
+  <name>Card name</name>
+  <related>Another card name</related>
+  <reverse-related>Another card name</reverse-related>
+  <set picurl="http://.../image.jpg">XXX</set>
+  <tablerow>3</tablerow>
+  <text>Card description and oracle text, including actions, effects, etc..</text>
+  <token>1</token>
+  <upsidedown>1</upsidedown>
+  <prop>
+    <cmc>1</cmc>
+    <coloridentity>R</coloridentity>
+    <colors>R</colors>
+    <layout>normal</layout>
+    <loyalty>4</loyalty>
+    <maintype>Instant</maintype>
+    <manacost>R</manacost>
+    <pt>0/2</pt>
+    <side>front</side>
+    <type>Instant</type>
+  </prop>
+</card>
 """
 
 import datetime
-from xml.etree.ElementTree import Element
-from xml.etree.ElementTree import SubElement
+from lxml.etree import Element
+from lxml.etree import SubElement
+from lxml.etree import tostring
 
-from app.models import ModCard
-
-
-ALL_LAYOUTS = [
-    'adventure',
-    'aftermath',
-    'augment',
-    'flip',
-    'host',
-    'leveler',
-    'meld',
-    'modal_dfc',
-    'normal',
-    'planar',
-    'saga',
-    'scheme',
-    'split',
-    'transform',
-    'vanguard',
-]
+from app.util.enum import Layout
 
 
-def export_to_cockatrice(cards: list):
+def export_to_cockatrice(cube):
     """
     Output format:
     <?xml version="1.0" encoding="UTF-8"?>
@@ -49,13 +55,13 @@ def export_to_cockatrice(cards: list):
     root = Element('cockatrice_carddatabase')
     root.set('version', '4')
 
-    sets = SubElement(root, 'sets')
-    cards = SubElement(root, 'cards')
+    sets_root = SubElement(root, 'sets')
+    cards_root = SubElement(root, 'cards')
 
-    _add_sets_xml(sets)
-    _add_cards_xml(cards)
+    _add_sets_xml(sets_root)
+    _add_cards_xml(cards_root, cube)
 
-    return root.tostring()
+    return tostring(root, pretty_print=True).decode('utf-8')
     
 
 def _add_sets_xml(root):
@@ -68,10 +74,11 @@ def _add_sets_xml(root):
       <releasedate>{date}</releasedate>
     </set>
     """
-    name = SubElement(root, 'name')
-    longname = SubElement(root, 'longname')
-    settype = SubElement(root, 'settype')
-    releasedate = SubElement(root, 'releasedate')
+    set_elem = SubElement(root, 'set')
+    name = SubElement(set_elem, 'name')
+    longname = SubElement(set_elem, 'longname')
+    settype = SubElement(set_elem, 'settype')
+    releasedate = SubElement(set_elem, 'releasedate')
 
     date_str = str(datetime.date.today())
     
@@ -81,111 +88,89 @@ def _add_sets_xml(root):
     releasedate.text = date_str
     
     
-def _add_cards_xml(root):
-    for card in ModCard.latest():
-        _add_cards_xmls(card, root)
+def _add_cards_xml(root, cube):
+    for card in cube.cards():
+        _add_one_card_xmls(card, root)
 
 
-def _add_card_xmls(card, root):
+def _add_one_card_xmls(card, root):
     """
-    A card can have multiple faces, so this sometimes returns multiple cards.
+    In cockatrice, each physical face of a card has its own object. This doesn't apply
+    to the abstract faces of a split card like Fire // Ice or to adventures, only to
+    cards that physically have two sides with game content on them.
+    (All cards have two physical sides.)
     """
-    faces = [card]
-    if card.faces:
-        raise NotImplementedError()
+    card_data = card.get_json()
 
-    for face in faces:
-        elem = SubElement(root, 'card')
-        _add_card_face_xml(card, elem)
+    if card_data['layout'] == Layout.normal.name:
+        card_face = card_data['card_faces'][0]
+        card_elem = SubElement(root, 'card')
 
-
-def _add_card_face_xml(face, root):
-    """
-    Insert correct data for the face into a card.
-    Root should be a SubElement of a <cards> element.
-
-    Example output:
-
-    <card>
-      <cipt>1</cipt>      <!-- Comes into play tapped -->
-      <name>Card name</name>
-      <related>Another card name</related>
-      <reverse-related>Another card name</reverse-related>
-      <set picurl="http://.../image.jpg">XXX</set>
-      <tablerow>3</tablerow>
-      <text>Card description and oracle text, including actions, effects, etc..</text>
-      <token>1</token>
-      <upsidedown>1</upsidedown>
-      <prop>
-        <cmc>1</cmc>
-        <coloridentity>R</coloridentity>
-        <colors>R</colors>
-        <layout>normal</layout>
-        <loyalty>4</loyalty>
-        <maintype>Instant</maintype>
-        <manacost>R</manacost>
-        <pt>0/2</pt>
-        <side>front</side>
-        <type>Instant</type>
-      </prop>
-    </card>
-    """
-    set = SubElement(root, 'set')
-    name = SubElement(root, 'name')
-    text = SubElement(root, 'text')
-    prop = SubElement(root, 'prop')
-    tablerow = SubElement(root, 'tablerow')
-
-    set.text = 'clo'
-    set.set('picurl', card.image_url)
-    name.text = card.name
-    text.text = card.text
-    table_row.text = _get_table_row_for_card(card)
-
-    _make_card_face_props_xml(card, prop)
-    
-    for related in card.related:
-        r = SubElement(root, 'related')
-        r.text = related
-    
-def _add_card_face_props_xml(face, root):
-    """
-    Inserts all props of the card face into root.
-    Root should be a SubElement of a <card> element.
-    """
-    layout = SubElement(root, 'layout')
-    side = SubElement(root, 'side')
-    type = SubElement(root, 'type')
-    maintype = SubElement(root, 'maintype')
-    manacost = SubElement(root, 'manacost')
-    cmc = SubElement(root, 'cmc')
-    colors = SubElement(root, 'colors')
-    coloridentity = SubElement(root, 'coloridentity')
-    
-    layout.text = face.layout
-    side.text = face.face
-    type.text = face.type_line
-    maintype.text = face.main_type
-    manacost.text = face.mana_cost
-    cmc.text = face.cmc
-    colors.text = face.colors
-    coloridentity.text = face.color_identity
-
-    if face.is_creature():
-        pt = SubElement(root, 'pt')
-        pt.text = '{}/{}'.format(face.power, face.toughness)
-
-    if face.is_planeswalker():
-        loyalty = SubElement(root, 'loyalty')
-        loyalty.text = face.loyalty
+        name = SubElement(card_elem, 'name')
+        if card.version == 1:
+            name.text = "{}'".format(card_face['name'])
+        else:
+            name.text = "{}++".format(card_face['name'])
         
+        set = SubElement(card_elem, 'set')
+        set.text = 'clo'
+        set.set('picurl', card_face['image_url'])
+
+        tablerow = SubElement(card_elem, 'tablerow')
+        tablerow.text = _get_table_row_for_card(card_face)
+
+        text = SubElement(card_elem, 'text')
+        text.text = card_face['oracle_text']
+
+        # Props
+        props = SubElement(card_elem, 'prop')
         
-def _get_table_row_for_card(card):
-    if 'land' in card.super_types:
-        return 0
-    elif 'instant' in card.super_types or 'sorcery' in card.super_types:
-        return 3
-    elif 'creature' in card.super_types:
-        return 2
+        props_cmc = SubElement(props, 'cmc')
+        props_cmc.text = str(card_data['cmc'])
+
+        props_layout = SubElement(props, 'layout')
+        props_layout.text = card_data['layout']
+
+        if 'loyalty' in card_face:
+            props_loyalty = SubElement(props, 'loyalty')
+            props_loyalty.text = card_face['loyalty']
+
+        if 'mana_cost' in card_face:
+            props_manacost = SubElement(props, 'manacost')
+            props_manacost.text = _clean_mana_cost(card_face['mana_cost'])
+            
+        if 'power' in card_face:
+            props_pt = SubElement(props, 'pt')
+            props_pt.text = '{}/{}'.format(card_face['power'], card_face['toughness'])
+
+        props_side = SubElement(props, 'side')
+        props_side.text = 'front'
+
     else:
-        return 1
+        return
+
+
+def _clean_mana_cost(mana_cost):
+    tokens = mana_cost.split('}')
+    for i in range(len(tokens)):
+        token = tokens[i]
+        if not token:
+            continue
+        elif token.startswith('{') and len(token) == 2:
+            tokens[i] = token[1]
+        else:
+            tokens[i] = token + '}'
+    return ''.join(tokens)
+
+
+def _get_table_row_for_card(card_face):
+    types = card_face['type_line'].lower().split()
+    
+    if 'land' in types:
+        return '0'
+    elif 'instant' in types or 'sorcery' in types:
+        return '3'
+    elif 'creature' in types:
+        return '2'
+    else:
+        return '1'

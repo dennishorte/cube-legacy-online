@@ -4,27 +4,6 @@ from copy import deepcopy
 
 
 class CardConsts(object):
-    JSON_KEYS = (
-        # Meta data
-        'all_parts',
-        'card_faces',
-        'layout',
-        'object',
-
-        # Card data
-        'cmc',
-        'component',
-        'flavor_text',
-        'image_url',
-        'loyalty',
-        'mana_cost',
-        'name',
-        'oracle_text',
-        'power',
-        'toughness',
-        'type_line',
-    )
-
     ROOT_KEYS = (
         'card_faces',
         'cmc',
