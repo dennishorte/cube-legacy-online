@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
 
     cubes = db.relationship('Cube', backref='created_by')
     draft_seats = db.relationship('Seat', backref='user')
+    match_results = db.relationship('MatchResult', backref='user')
     
     scars_created = db.relationship('Scar', backref='created_by', foreign_keys='Scar.created_by_id')
     scars_added = db.relationship('Scar', backref='applied_by', foreign_keys='Scar.applied_by_id')
@@ -26,7 +27,7 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)    
+        return check_password_hash(self.password_hash, password)
 
 
 @login.user_loader

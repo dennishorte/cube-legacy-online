@@ -25,6 +25,7 @@ class Draft(db.Model):
     seats = db.relationship('Seat', backref='draft')
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
+    match_results = db.relationship('MatchResult', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
@@ -170,4 +171,35 @@ class PackCard(db.Model):
     
     def picked(self):
         return self.pick_number > -1
-    
+
+
+class MatchResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    opponent_id = db.Column(db.Integer, index=True, nullable=False)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
+    wins = db.Column(db.Integer, default=0)
+    losses = db.Column(db.Integer, default=0)
+    draws = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f"<MatchResult {self.user_id} vs {self.opponent_id} {self.wins}-{self.losses}-{self.draws}>"
+
+    def get_or_create_inverse(self):
+        result = MatchResult.query.filter(
+            MatchResult.user_id == self.opponent_id,
+            MatchResult.opponent_id == self.user_id,
+        ).first()
+
+        if not result:
+            result = MatchResult()
+        
+        result.user_id=self.opponent_id
+        result.opponent_id=self.user_id
+        result.draft_id=self.draft_id
+        result.wins=self.losses
+        result.losses=self.wins
+        result.draws=self.draws
+
+        return result

@@ -10,7 +10,7 @@ from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import TextAreaField
 from wtforms.validators import DataRequired
-from wtforms.validators import Length
+from wtforms.validators import Optional
 
 from app.util.enum import Layout
 
@@ -75,3 +75,11 @@ class NewScarForm(FlaskForm):
     text = TextAreaField('Scar Text', validators=[DataRequired()])
     restrictions = StringField('Restrictions')
     submit = SubmitField('Create')
+
+
+class ResultForm(FlaskForm):
+    user_id = HiddenField('user_id')
+    wins = IntegerField('wins', validators=[Optional()])
+    losses = IntegerField('losses', validators=[Optional()])
+    draws = IntegerField('draws', validators=[Optional()])
+    submit = SubmitField('update')

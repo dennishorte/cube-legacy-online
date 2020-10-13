@@ -2,6 +2,7 @@ import random
 
 from app import db
 from app.config import Config
+from app.forms import ResultForm
 from app.models.draft import *
 from app.util import slack
 
@@ -54,6 +55,22 @@ class DraftWrapper(object):
         if self.passing_to():
             if Config.FLASK_ENV == 'production' or self.passing_to().name == 'dennis':
                 slack.send_your_pick_notification(self.passing_to(), self.draft)
+
+    def result_form_for(self, seat):
+        result = MatchResult.query.filter(
+            MatchResult.user_id == self.user.id,
+            MatchResult.opponent_id == seat.user.id,
+        ).first()
+        
+        form = ResultForm()
+        form.user_id.data = seat.user.id
+
+        if result:
+            form.wins.data = result.wins
+            form.losses.data = result.losses
+            form.draws.data = result.draws
+
+        return form
             
 
     ############################################################

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% macro show_card_list(cards) %}
+  <div class="row no-gutters">
+    {% for card in cards %}
+      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+        <p>
+          <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
+            {% for image_url in card.cube_card.image_urls() %}
+              <img
+                style="max-width:200px"
+                src="{{image_url}}"
+                alt="{{card.cube_card.name()}}">
+            {% endfor %}
+          </a>
+        </p>
+        {% if card.version != 1 %}
+          <a href="{{ url_for('card_editor', card_id=card.cube_card.id) }}">
+            <button class="btn btn-danger">
+              Scarred
+            </button>
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
+{% endmacro %}
+
+{% block title %}
+  {{ d.draft.name }}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+
+    <!-- Match Results -->
+    <div class="col">
+      <h3>Your Results</h3>
+      <table class="table">
+        <thead>
+          <th>opponent</th>
+          <th>results</th>
+          <th></th>
+        </thead>
+        <tbody>
+          {% for seat in d.seats %}
+            {% if seat != d.seat %}
+              {% set form = d.result_form_for(seat) %}
+              <form action="{{ url_for('draft_result', draft_id=d.draft.id) }}" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                {{ form.user_id() }}
+                <tr>
+                  <td>{{ seat.user.name }}</td>
+                  <td>
+                    W{{ form.wins(size="3") }}
+                    L{{ form.losses(size="3") }}
+                    D{{ form.draws(size="3") }}
+                  </td>
+                  <td>{{ form.submit() }}</td>
+                </tr>
+              </form>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>All Results</h3>
+      <table class="table">
+      </table>
+    </div>
+    <!-- END: Match Results -->
+
+    <!-- Deck Info -->
+    <div class="col">
+
+    </div>
+    <!-- END: Deck Info -->
+  </div>
+
+  <!-- Picks -->
+  {{ show_card_list(d.seat.picks) }}
+  <!-- END: Picks -->
+{% endblock content %}

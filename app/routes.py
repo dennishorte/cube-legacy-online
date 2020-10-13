@@ -323,9 +323,42 @@ def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
 
     if dw.draft.complete:
-        return render_template('draft_picker.html', d=dw)
+        return render_template('draft_complete.html', d=dw)
     else:
         return render_template('draft_picker.html', d=dw)
+
+
+@app.route("/draft/<draft_id>/results", methods=["POST"])
+@login_required
+def draft_result(draft_id):
+    form = ResultForm()
+
+    if form.validate_on_submit():
+        # See if there is already a result for this matchup.
+        result = MatchResult.query.filter(
+            MatchResult.user_id == current_user.id,
+            MatchResult.opponent_id == form.user_id.data,
+        ).first()
+
+
+        if not result:
+            result = MatchResult()
+            
+        result.user_id=current_user.id
+        result.opponent_id=form.user_id.data
+        result.draft_id=draft_id
+        result.wins=form.wins.data or 0
+        result.losses=form.losses.data or 0
+        result.draws=form.draws.data or 0
+
+        db.session.add(result)
+        db.session.add(result.get_or_create_inverse())
+        db.session.commit()
+    
+    else:
+        flash("Error submitting form")
+
+    return redirect(url_for('draft', draft_id=draft_id))
 
 
 @app.route("/draft/<draft_id>/pick/<card_id>")
