@@ -101,26 +101,27 @@ def _add_one_card_xmls(card, root):
     (All cards have two physical sides.)
     """
     card_data = card.get_json()
+    layout = card_data['layout']
 
-    if card_data['layout'] == Layout.normal.name:
-        card_face = card_data['card_faces'][0]
+    if layout != Layout.split.name:
+        return
+
+    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+        # card_face = card_data['card_faces'][0]
         card_elem = SubElement(root, 'card')
 
         name = SubElement(card_elem, 'name')
-        if card.version == 1:
-            name.text = "{}'".format(card_face['name'])
-        else:
-            name.text = "{}++".format(card_face['name'])
+        name.text = _card_name(card_data, scarred=(card.version != 1))
         
         set = SubElement(card_elem, 'set')
         set.text = 'clo'
-        set.set('picurl', card_face['image_url'])
+        set.set('picurl', _image_url(card_data))
 
         tablerow = SubElement(card_elem, 'tablerow')
-        tablerow.text = _get_table_row_for_card(card_face)
+        tablerow.text = _table_row(card_data)
 
         text = SubElement(card_elem, 'text')
-        text.text = card_face['oracle_text']
+        text.text = card_data['oracle_text']
 
         # Props
         props = SubElement(card_elem, 'prop')
@@ -131,23 +132,59 @@ def _add_one_card_xmls(card, root):
         props_layout = SubElement(props, 'layout')
         props_layout.text = card_data['layout']
 
-        if 'loyalty' in card_face:
-            props_loyalty = SubElement(props, 'loyalty')
-            props_loyalty.text = card_face['loyalty']
-
-        if 'mana_cost' in card_face:
-            props_manacost = SubElement(props, 'manacost')
-            props_manacost.text = _clean_mana_cost(card_face['mana_cost'])
-            
-        if 'power' in card_face:
-            props_pt = SubElement(props, 'pt')
-            props_pt.text = '{}/{}'.format(card_face['power'], card_face['toughness'])
-
         props_side = SubElement(props, 'side')
         props_side.text = 'front'
 
+        props_manacost = SubElement(props, 'manacost')
+        props_manacost.text = _mana_cost(card_data)
+            
+        front_face = card_data['card_faces'][0]
+        if front_face.get('loyalty'):
+            props_loyalty = SubElement(props, 'loyalty')
+            props_loyalty.text = front_face['loyalty']
+
+        if front_face.get('power'):
+            props_pt = SubElement(props, 'pt')
+            props_pt.text = '{}/{}'.format(front_face['power'], front_face['toughness'])
+
     else:
-        return
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for layout: {layout}")
+
+
+def _card_name(card_data, scarred):
+    layout = card_data['layout']
+
+    if Layout.simple_faced_layout(layout):
+        name = card_data['card_faces'][0]['name']
+    elif layout == Layout.split.name:
+        name = card_data['name']
+    else:
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
+
+    if scarred:
+        return f"{name}++"
+    else:
+        return f"{name}'"
+    
+
+def _image_url(card_data):
+    layout = card_data['layout']
+
+    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+        return card_data['card_faces'][0]['image_url']
+
+    else:
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
+
+
+def _mana_cost(card_data):
+    layout = card_data['layout']
+
+    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+        mana_costs = [_clean_mana_cost(x['mana_cost']) for x in card_data['card_faces']]
+        return ' // '.join(mana_costs)
+    else:
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
 
 
 def _clean_mana_cost(mana_cost):
@@ -156,15 +193,15 @@ def _clean_mana_cost(mana_cost):
         token = tokens[i]
         if not token:
             continue
-        elif token.startswith('{') and len(token) == 2:
+        elif token.startswith('{'):
             tokens[i] = token[1]
         else:
             tokens[i] = token + '}'
     return ''.join(tokens)
 
 
-def _get_table_row_for_card(card_face):
-    types = card_face['type_line'].lower().split()
+def _table_row(card_data):
+    types = card_data['type_line'].lower().split()
     
     if 'land' in types:
         return '0'
