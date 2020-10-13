@@ -28,12 +28,22 @@ class Layout(enum.Enum):
 
     @staticmethod
     def simple_faced_layout(layout):
-         if isinstance(layout, Layout):
+        if isinstance(layout, Layout):
             layout = layout.name
 
-         return layout in (
-             Layout.normal.name,
-             Layout.leveler.name,
-             Layout.saga.name,
-             Layout.meld.name,
-         )
+        return layout in (
+            Layout.normal.name,
+            Layout.leveler.name,
+            Layout.saga.name,
+            Layout.meld.name,
+        )
+
+    @staticmethod
+    def split_faced_layout(layout):
+        if isinstance(layout, Layout):
+            layout = layout.name
+
+        return layout in (
+            Layout.split.name,
+            Layout.adventure.name,
+        )

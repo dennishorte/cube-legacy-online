@@ -103,10 +103,7 @@ def _add_one_card_xmls(card, root):
     card_data = card.get_json()
     layout = card_data['layout']
 
-    if layout != Layout.split.name:
-        return
-
-    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+    if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
         # card_face = card_data['card_faces'][0]
         card_elem = SubElement(root, 'card')
 
@@ -156,7 +153,7 @@ def _card_name(card_data, scarred):
 
     if Layout.simple_faced_layout(layout):
         name = card_data['card_faces'][0]['name']
-    elif layout == Layout.split.name:
+    elif Layout.split_faced_layout(layout):
         name = card_data['name']
     else:
         raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
@@ -170,7 +167,7 @@ def _card_name(card_data, scarred):
 def _image_url(card_data):
     layout = card_data['layout']
 
-    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+    if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
         return card_data['card_faces'][0]['image_url']
 
     else:
@@ -180,7 +177,7 @@ def _image_url(card_data):
 def _mana_cost(card_data):
     layout = card_data['layout']
 
-    if Layout.simple_faced_layout(layout) or layout == Layout.split.name:
+    if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
         mana_costs = [_clean_mana_cost(x['mana_cost']) for x in card_data['card_faces']]
         return ' // '.join(mana_costs)
     else:
