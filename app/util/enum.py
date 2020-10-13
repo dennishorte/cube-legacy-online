@@ -47,3 +47,13 @@ class Layout(enum.Enum):
             Layout.split.name,
             Layout.adventure.name,
         )
+
+    @staticmethod
+    def double_sided_layout(layout):
+        if isinstance(layout, Layout):
+            layout = layout.name
+
+        return layout in (
+            Layout.transform.name,
+            Layout.modal_dfc.name,
+        )

@@ -98,27 +98,36 @@ def _add_one_card_xmls(card, root):
     In cockatrice, each physical face of a card has its own object. This doesn't apply
     to the abstract faces of a split card like Fire // Ice or to adventures, only to
     cards that physically have two sides with game content on them.
-    (All cards have two physical sides.)
+    (All physical cards have two physical sides.)
     """
     card_data = card.get_json()
     layout = card_data['layout']
+    is_scarred = card.version != 1
 
-    if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
-        # card_face = card_data['card_faces'][0]
+    if Layout.double_sided_layout(layout):
+        face_indices = [0, 1]
+    else:
+        face_indices = [0]
+
+    for face_index in face_indices:
         card_elem = SubElement(root, 'card')
 
         name = SubElement(card_elem, 'name')
-        name.text = _card_name(card_data, scarred=(card.version != 1))
+        name.text = _card_name(
+            card_data,
+            face_index,
+            scarred=is_scarred,
+        )
         
         set = SubElement(card_elem, 'set')
         set.text = 'clo'
-        set.set('picurl', _image_url(card_data))
+        set.set('picurl', _image_url(card_data, face_index))
 
         tablerow = SubElement(card_elem, 'tablerow')
-        tablerow.text = _table_row(card_data)
+        tablerow.text = _table_row(card_data, face_index)
 
         text = SubElement(card_elem, 'text')
-        text.text = card_data['oracle_text']
+        text.text = _oracle_text(card_data, face_index)
 
         # Props
         props = SubElement(card_elem, 'prop')
@@ -127,32 +136,37 @@ def _add_one_card_xmls(card, root):
         props_cmc.text = str(card_data['cmc'])
 
         props_layout = SubElement(props, 'layout')
-        props_layout.text = card_data['layout']
+        props_layout.text = layout
 
         props_side = SubElement(props, 'side')
-        props_side.text = 'front'
+        props_side.text = 'front' if face_index == 0 else 'back'
 
-        props_manacost = SubElement(props, 'manacost')
-        props_manacost.text = _mana_cost(card_data)
+        mana_cost = _mana_cost(card_data, face_index)
+        if mana_cost:  # Most double faced cards have no mana cost on the back.
+            props_manacost = SubElement(props, 'manacost')
+            props_manacost.text = mana_cost
             
-        front_face = card_data['card_faces'][0]
-        if front_face.get('loyalty'):
+        card_face = card_data['card_faces'][face_index]
+        if card_face.get('loyalty'):
             props_loyalty = SubElement(props, 'loyalty')
-            props_loyalty.text = front_face['loyalty']
+            props_loyalty.text = card_face['loyalty']
 
-        if front_face.get('power'):
+        if card_face.get('power'):
             props_pt = SubElement(props, 'pt')
-            props_pt.text = '{}/{}'.format(front_face['power'], front_face['toughness'])
+            props_pt.text = '{}/{}'.format(card_face['power'], card_face['toughness'])
 
-    else:
-        raise NotImplementedError(f"Don't have a Cockatrice pattern for layout: {layout}")
+        if Layout.double_sided_layout(layout):
+            other_face_index = (face_index + 1) % 2
+            related = SubElement(card_elem, 'related')
+            related.set('attach', 'attach')
+            related.text = _card_name(card_data, other_face_index, is_scarred)
 
 
-def _card_name(card_data, scarred):
+def _card_name(card_data, face_index, scarred):
     layout = card_data['layout']
 
-    if Layout.simple_faced_layout(layout):
-        name = card_data['card_faces'][0]['name']
+    if Layout.simple_faced_layout(layout) or Layout.double_sided_layout(layout):
+        name = card_data['card_faces'][face_index]['name']
     elif Layout.split_faced_layout(layout):
         name = card_data['name']
     else:
@@ -164,25 +178,43 @@ def _card_name(card_data, scarred):
         return f"{name}'"
     
 
-def _image_url(card_data):
+def _image_url(card_data, face_index):
     layout = card_data['layout']
 
-    if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
-        return card_data['card_faces'][0]['image_url']
+    if Layout.simple_faced_layout(layout) \
+       or Layout.split_faced_layout(layout) \
+       or Layout.double_sided_layout(layout):
+        
+        return card_data['card_faces'][face_index]['image_url']
 
     else:
         raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
 
 
-def _mana_cost(card_data):
+def _mana_cost(card_data, face_index):
     layout = card_data['layout']
 
     if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
         mana_costs = [_clean_mana_cost(x['mana_cost']) for x in card_data['card_faces']]
         return ' // '.join(mana_costs)
+    elif Layout.double_sided_layout(layout):
+        return _clean_mana_cost(card_data['card_faces'][face_index].get('mana_cost', ''))
     else:
         raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
 
+
+def _oracle_text(card_data, face_index):
+    layout = card_data['layout']
+
+    if Layout.simple_faced_layout(layout) or Layout.double_sided_layout(layout):
+        return card_data['card_faces'][face_index]['oracle_text']
+    
+    elif Layout.split_faced_layout(layout):
+        return card_data['oracle_text']
+
+    else:
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for text of: {layout}")
+    
 
 def _clean_mana_cost(mana_cost):
     tokens = mana_cost.split('}')
@@ -190,15 +222,15 @@ def _clean_mana_cost(mana_cost):
         token = tokens[i]
         if not token:
             continue
-        elif token.startswith('{'):
+        elif token.startswith('{') and len(token) == 2:
             tokens[i] = token[1]
         else:
             tokens[i] = token + '}'
     return ''.join(tokens)
 
 
-def _table_row(card_data):
-    types = card_data['type_line'].lower().split()
+def _table_row(card_data, face_index):
+    types = card_data['card_faces'][face_index]['type_line'].lower().split()
     
     if 'land' in types:
         return '0'
