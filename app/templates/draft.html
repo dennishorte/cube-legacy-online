@@ -3,20 +3,26 @@
 {% macro show_card_list(cards) %}
   <div class="row no-gutters">
     {% for card in cards %}
-    <div class="col border rounded border-secondary m-1 bg-light">
-      <p class="m-1">
-        <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
-          {% for image_url in card.cube_card.image_urls() %}
-            <img
-              style="max-width:200px"
-              src="{{image_url}}"
-              alt="{{card.cube_card.name}}">
-          {% endfor %}
-        </a>
-      </p>
-      <p class="m-1 text-success text-sm">Vanilla: No Scars</p>
-    </div>
-  {% endfor %}
+      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+        <p>
+          <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
+            {% for image_url in card.cube_card.image_urls() %}
+              <img
+                style="max-width:200px"
+                src="{{image_url}}"
+                alt="{{card.cube_card.name}}">
+            {% endfor %}
+          </a>
+        </p>
+        {% if card.version != 1 %}
+          <a href="{{ url_for('card_editor', card_id=card.cube_card.id) }}">
+            <button class="btn btn-danger">
+              Scarred
+            </button>
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
 {% endmacro %}
 
 {% block title %}
