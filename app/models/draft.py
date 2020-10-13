@@ -65,7 +65,7 @@ class Seat(db.Model):
                 next_seat = (num_seats + self.order - (next_pick_for_pack - 1)) % num_seats
                 
             else:  # pass right
-                next_seat = (self.seat + next_pick_for_pack - 1) % num_seats
+                next_seat = (self.order + next_pick_for_pack - 1) % num_seats
 
             pack = Pack.query.filter(
                 Pack.draft_id == self.draft_id,

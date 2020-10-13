@@ -1,7 +1,9 @@
 import random
 
 from app import db
+from app.config import Config
 from app.models.draft import *
+from app.util import slack
 
 
 class DraftWrapper(object):
@@ -50,7 +52,8 @@ class DraftWrapper(object):
         db.session.commit()
 
         if self.passing_to():
-            slack.send_your_pick_notification(self.passing_to(), self.draft)
+            if Config.FLASK_ENV == 'production' or self.passing_to().name == 'dennis':
+                slack.send_your_pick_notification(self.passing_to(), self.draft)
             
 
     ############################################################
