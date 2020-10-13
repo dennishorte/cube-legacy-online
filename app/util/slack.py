@@ -9,14 +9,17 @@ _client = WebClient(token=Config.SLACK_BOT_TOKEN)
 clo_channel = 'C01AV1RGJSK'
 
 
-def send_your_pick_notification(user_id):
+def send_your_pick_notification(user, draft):
     try:
-        open_response = _client.conversations_open(users=[user_id])
+        open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
+
+        draft_url = f"http://{Config.SITE_ROOT}/draft/{draft.id}"
+        message = f"Someone has passed you a pack. Time to <{draft_url}|make a pick>."
 
         send_response = _client.chat_postMessage(
             channel=dm_channel,
-            text="Someone has passed you a pack. Time to make a pick."
+            text=message,
         )
         
     except SlackApiError as e:

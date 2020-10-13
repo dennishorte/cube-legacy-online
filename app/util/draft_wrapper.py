@@ -49,6 +49,10 @@ class DraftWrapper(object):
         # commit the update
         db.session.commit()
 
+        if self.passing_to():
+            slack.send_your_pick_notification(self.passing_to(), self.draft)
+            
+
     ############################################################
 
         

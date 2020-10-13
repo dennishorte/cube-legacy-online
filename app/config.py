@@ -18,6 +18,7 @@ else:
     
 class Config(object):
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
+    SITE_ROOT = os.environ.get('SITE_ROOT_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = db_uri
     SLACK_BOT_TOKEN = os.environ.get('SLACK_BOT_TOKEN')
