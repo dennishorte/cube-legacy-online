@@ -112,7 +112,38 @@ def cube_cards(cube_id):
 @app.route("/cubes/<cube_id>/achievements")
 @login_required
 def cube_achievements(cube_id):
-    return 'cube achievements'
+    form = NewAchievementForm()
+    cube = Cube.query.get(cube_id)
+    return render_template('cube_achievements.html', cube=cube, form=form)
+
+
+@app.route("/cubes/<cube_id>/achievements/<achievement_id>/unlock")
+@login_required
+def cube_achievements_unlock(cube_id, achievement_id):
+    return 'Unlocks coming coon'
+
+
+@app.route("/cubes/<cube_id>/achievements_new", methods=["POST"])
+@login_required
+def cube_achievements_add(cube_id):
+    form = NewAchievementForm()
+    cube = Cube.query.get(cube_id)
+
+    if form.validate_on_submit():
+        a = Achievement(
+            cube_id=cube_id,
+            name=form.name.data,
+            conditions=form.conditions.data,
+            unlock=form.unlock.data,
+            multiunlock=form.multiunlock.data,
+            created_by=current_user,
+        )
+        db.session.add(a)
+        db.session.commit()
+
+        flash('Achievement Created')
+    
+    return redirect(url_for('cube_achievements', cube_id=cube_id))
 
 
 @app.route("/cubes/<cube_id>/scars")

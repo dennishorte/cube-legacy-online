@@ -72,6 +72,14 @@ class NewDraftForm(FlaskForm):
     submit = SubmitField('Create')
 
 
+class NewAchievementForm(FlaskForm):
+    name = StringField('Name')
+    conditions = TextAreaField('Conditions')
+    unlock = TextAreaField('Unlock Info')
+    multiunlock = BooleanField('Is Multiunlock')
+    submit = SubmitField('Create')
+
+
 class NewScarForm(FlaskForm):
     text = TextAreaField('Scar Text', validators=[DataRequired()])
     restrictions = StringField('Restrictions')

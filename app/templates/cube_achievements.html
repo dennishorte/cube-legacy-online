@@ -1,0 +1,59 @@
+{% extends "cube_base.html" %}
+
+{% block content %}
+  {{ super() }}
+
+  <!-- Available Achievements -->
+  <div class="row">
+    <div class="col">
+      <h4>Available Achievements</h4>
+
+      <div class="bg-light border border-round p-2">
+        {% for achievement in cube.achievements_avaiable() %}
+        <ul class="list-unstyled mb-0">
+          <li class="text-primary">
+            {{ achievement.name }}
+            {% if achievement.multiunlock %}
+              <span class="badge badge-pill badge-warning">multi</span>
+            {% endif %}
+            <a href="{{ url_for('cube_achievements_unlock', cube_id=cube.id, achievement_id=achievement.id) }}">
+              <button class="btn btn-success">unlock</button>
+            </a>
+          </li>
+          <li class="text-secondary">{{ achievement.conditions }}</li>
+        </ul>
+        <hr>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- END: Available Achievements -->
+
+  <!-- New achievement form -->
+    <div class="col">
+      <h4>Create Achievement</h4>
+      <div class="bg-light border border-round p-2">
+        <form action="{{ url_for('cube_achievements_add', cube_id=cube.id) }}" method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class='form-control') }}
+          </div>
+          <div class="form-group">
+            {{ form.conditions.label }}
+            {{ form.conditions(class='form-control', rows=5) }}
+          </div>
+          <div class="form-group">
+            {{ form.unlock.label }}
+            {{ form.unlock(class='form-control', rows=10) }}
+          </div>
+          <div class="form-group">
+            {{ form.multiunlock() }}
+            {{ form.multiunlock.label }}
+          </div>
+          <p>{{ form.submit() }}</p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- END: New scar form -->
+{% endblock content %}
