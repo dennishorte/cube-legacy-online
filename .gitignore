@@ -6,3 +6,4 @@ __pycache__
 .env
 app/app.db
 test.py
+app/static/cockatrice

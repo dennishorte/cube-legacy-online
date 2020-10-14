@@ -17,6 +17,7 @@ else:
     )
     
 class Config(object):
+    COCKATRICE_FOLDER = 'static/cockatrice'
     FLASK_ENV = os.environ.get('FLASK_ENV')
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
     SITE_ROOT = os.environ.get('SITE_ROOT_URL')

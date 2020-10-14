@@ -1,9 +1,12 @@
+import os
 from datetime import datetime
 
+from flask import current_app
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import send_from_directory
 from flask import url_for
 from flask_login import current_user
 from flask_login import login_user
@@ -16,6 +19,7 @@ from app.forms import *
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
+from app.util import cockatrice
 from app.util.cube_util import add_cards_to_cube
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
@@ -386,8 +390,28 @@ def force_pick(draft_id, user_id):
         dw.pick_card(dw.pack.unpicked_cards()[0].id)
     return redirect("/draft/{}".format(draft_id))
 
+
 @app.route("/draft/<draft_id>/debug")
 @login_required
 def draft_debug(draft_id):
     draft_debugger = DraftDebugger(draft_id)
     return render_template('draft_debug.html', d=draft_debugger)
+
+
+@app.route('/draft/<draft_id>/cockatrice')
+def download(draft_id):
+    cockatrice_folder = os.path.join(current_app.root_path, app.config['COCKATRICE_FOLDER'])
+    filename = f"00-cockatrice-draft-{draft_id}.xml"
+    combined = os.path.join(cockatrice_folder, filename)
+
+    # Ensure folder for saving cockatrice files
+    if not os.path.exists(cockatrice_folder):
+        os.makedirs(cockatrice_folder)
+
+    # Create the file if it doesn't already exist
+    if not os.path.exists(combined) or request.args.get('force_rebuild'):
+        draft = Draft.query.get(draft_id)
+        with open(combined, 'w') as fout:
+            fout.write(cockatrice.export_to_cockatrice(draft.cube))
+
+    return send_from_directory(directory=cockatrice_folder, filename=filename, as_attachment=True)
