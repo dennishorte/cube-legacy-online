@@ -163,8 +163,8 @@ class Scar(db.Model):
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
 
     # Content info
-    text = db.Column(db.String(64))
-    restrictions = db.Column(db.String(64), default='')
+    text = db.Column(db.Text)
+    restrictions = db.Column(db.String(128), default='')
     errata = db.Column(db.Text, default='')
 
     # Creation info
