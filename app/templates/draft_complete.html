@@ -37,7 +37,7 @@
     <div class="col">
       <h3>Your Results</h3>
       <table class="table">
-        <thead>
+        <thead class="thead-light">
           <th>opponent</th>
           <th>results</th>
           <th></th>
@@ -66,12 +66,33 @@
 
       <h3>All Results</h3>
       <table class="table">
+        <thead class="thead-light">
+          <th>player 1</th>
+          <th>player 2</th>
+          <th>result</th>
+        </thead>
+        <tbody>
+          {% for seat1 in d.seats %}
+            {% if seat1 != d.seat %}
+              {% for seat2 in d.seats %}
+                <tr>
+                  {% if seat1 != seat2 %}
+                    <td>{{ seat1.user.name }}</td>
+                    <td>{{ seat2.user.name }}</td>
+                    <td>{{ d.results(seat1, seat2) }}</td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </tbody>
       </table>
     </div>
     <!-- END: Match Results -->
 
     <!-- Deck Info -->
     <div class="col">
+      <h3>Cockatrice Custom Set</h3>
       <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id) }}">
         <button class="btn btn-primary">Download Cockatrice Cards XML</button>
       </a>
@@ -84,6 +105,11 @@
   </div>
 
   <!-- Picks -->
+  <div class="row">
+    <div class="col">
+      <h3>Your Picks</h3>
+    </div>
+  </div>
   {{ show_card_list(d.seat.picks) }}
 
   <div class="row">

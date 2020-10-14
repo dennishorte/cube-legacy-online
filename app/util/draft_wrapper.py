@@ -71,6 +71,17 @@ class DraftWrapper(object):
             form.draws.data = result.draws
 
         return form
+
+    def results(self, seat1, seat2):
+        result = MatchResult.query.filter(
+            MatchResult.user_id == seat1.user.id,
+            MatchResult.opponent_id == seat2.user.id,
+        ).first()
+
+        if result:
+            return f"{result.wins}-{result.losses}-{result.draws}"
+        else:
+            return ""
             
 
     ############################################################
