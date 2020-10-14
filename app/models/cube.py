@@ -44,11 +44,18 @@ class Cube(db.Model):
 
     # Relationships
     _cards = db.relationship('CubeCard', backref='cube')
+    achievements = db.relationship('Achievement', backref='cube')
     drafts = db.relationship('Draft', backref='cube')
     scars = db.relationship('Scar', backref='cube')
 
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
+
+    def achievements_avaiable(self):
+        return [x for x in self.achievements if x.available()]
+
+    def achievements_completed(self):
+        return [x for x in self.achievements if not x.available()]
 
     def cards(self):
         """
@@ -177,3 +184,26 @@ class Scar(db.Model):
     applied_to_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
     removed_timestamp = db.Column(db.DateTime)
     removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+class Achievement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+
+    # Content info
+    name = db.Column(db.Text)
+    conditions = db.Column(db.Text)
+    unlock = db.Column(db.Text)
+    multiunlock = db.Column(db.Boolean)
+    version = db.Column(db.Integer, default=1)
+
+    # Creation info
+    created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Unlock info
+    unlocked_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    unlocked_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def available(self):
+        return self.unlocked_by_id is None

@@ -20,6 +20,9 @@ class User(UserMixin, db.Model):
     scars_added = db.relationship('Scar', backref='applied_by', foreign_keys='Scar.applied_by_id')
     scars_removed = db.relationship('Scar', backref='removed_by', foreign_keys='Scar.removed_by_id')
 
+    achievements_created = db.relationship('Achievement', backref='created_by', foreign_keys='Achievement.created_by_id')
+    achievements_unlocked = db.relationship('Achievement', backref='unlocked_by', foreign_keys='Achievement.unlocked_by_id')
+
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
