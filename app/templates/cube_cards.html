@@ -10,11 +10,17 @@
         <thead class="thead thead-light">
           <th>card name</th>
           <th></th>
+          <th></th>
         </thead>
         <tbody>
           {% for card in cube.cards() %}
             <tr>
-              <td>{{ card.get_json().name }}</td>
+              <td>{{ card.name() }}</td>
+              <td>
+                {% if card.is_scarred() %}
+                  <span class="badge badge-warning">scarred</span>
+                {% endif %}
+              </td>
               <td><a href="{{ url_for('card_editor', card_id=card.id) }}">edit</a></td>
             </tr>
           {% endfor %}
