@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, '/var/www/html/cube-legacy-online')
+sys.path.insert(0, '/var/www/html/clo-v2')
 
 def application(environ, start_response):
     ENVIRONMENT_VARIABLES = [
