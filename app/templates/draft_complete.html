@@ -14,8 +14,8 @@
             {% endfor %}
           </a>
         </p>
-        {% if card.version != 1 %}
-          <a href="{{ url_for('card_editor', card_id=card.cube_card.id) }}">
+        {% if card.cube_card.is_scarred() %}
+          <a href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
             <button class="btn btn-danger">
               Scarred
             </button>
@@ -88,7 +88,7 @@
 
   <div class="row">
     <div class="col">
-      <h3>Cockatrice Card Names</h3>
+      <h3>Legacy Card Names</h3>
       <ul class="list-unstyled">
         {% for card in d.seat.picks %}
           <li>{{ card.cube_card.cockatrice_name() }}</li>
