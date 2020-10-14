@@ -43,6 +43,7 @@ class EditMultiFaceCardForm(FlaskForm):
     comment = TextAreaField('Comment')
     
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
+    update_as = SelectField('Update As')
     submit = SubmitField('Update')
 
     # Used when adding a scar in order to mark the scar as applied.

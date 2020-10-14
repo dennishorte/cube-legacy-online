@@ -146,7 +146,7 @@
         <div class="row">
           <div class="col bg-light m-1 rounded border" id="commentArea">
             {{ form.comment.label }}
-            {{ form.comment(class='form-control') }}
+            {{ form.comment(class='form-control', rows='5') }}
           </div>
           
           <div class="col bg-light m-1 rounded border" id="submitArea">
@@ -154,6 +154,10 @@
             <div class="form-group">
               {{ form.layout.label }}
               {{ form.layout(class='form-control', id='layout') }}
+            </div>
+            <div class="form-group">
+              {{ form.update_as.label }}
+              {{ form.update_as(class='form-control') }}
             </div>
             <p>{{ form.submit(class='btn-primary') }}</p>
           </div>

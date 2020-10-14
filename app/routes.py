@@ -159,6 +159,8 @@ def card_editor(card_id):
         
     # Generic Pieces
     form.layout.data = card.get_json().get('layout', '')
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.data = current_user.name
 
     # Adding a specific scar?
     scar_id = request.args.get('scar_id')
@@ -179,6 +181,7 @@ def card_editor(card_id):
 @login_required
 def card_update(card_id):
     form = EditMultiFaceCardForm()
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
 
     if not form.validate_on_submit():
         flash('Error on Update')
@@ -191,10 +194,12 @@ def card_update(card_id):
     if not form.comment.data:
         form.comment.data = "Edited by {}".format(current_user.name)
 
+    editor = User.query.filter(User.name == form.update_as.data).first()
+
     # Create a new version of the card
     new_version_created = card.update(
         new_json=card_json,
-        edited_by=current_user,
+        edited_by=editor,
         comment=form.comment.data,
     )
 
