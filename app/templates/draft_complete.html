@@ -23,6 +23,7 @@
         {% endif %}
       </div>
     {% endfor %}
+  </div>
 {% endmacro %}
 
 {% block title %}
@@ -78,5 +79,25 @@
 
   <!-- Picks -->
   {{ show_card_list(d.seat.picks) }}
+
+  <div class="row">
+    <div class="col">
+      <h3>Cockatrice Card Names</h3>
+      <ul class="list-unstyled">
+        {% for card in d.seat.picks %}
+          <li>{{ card.cube_card.cockatrice_name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col">
+      <h3>Standard Card Names</h3>
+      <ul class="list-unstyled">
+        {% for card in d.seat.picks %}
+          <li>{{ card.cube_card.name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
   <!-- END: Picks -->
 {% endblock content %}

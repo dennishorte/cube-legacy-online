@@ -4,6 +4,7 @@ from datetime import datetime
 
 from app import db
 from app.models.user import *
+from app.util import cockatrice
 
 
 class CubeStyle(enum.Enum):
@@ -98,6 +99,14 @@ class CubeCard(db.Model):
 
     def card_faces(self):
         return self.get_json()['card_faces']
+
+    def cockatrice_name(self):
+        data = self.get_json()
+        return cockatrice._card_name(
+            card_data=data,
+            face_index=0,
+            scarred=self.is_scarred(),
+        )
 
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
