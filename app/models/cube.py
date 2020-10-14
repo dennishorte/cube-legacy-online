@@ -93,6 +93,9 @@ class CubeCard(db.Model):
     def image_urls(self):
         return [x['image_url'] for x in self.card_faces() if 'image_url' in x]
 
+    def is_scarred(self):
+        return self.version > 1
+
     def card_faces(self):
         return self.get_json()['card_faces']
 

@@ -14,7 +14,7 @@
             {% endfor %}
           </a>
         </p>
-        {% if card.version != 1 %}
+        {% if card.cube_card.is_scarred() %}
           <a href="{{ url_for('card_editor', card_id=card.cube_card.id) }}">
             <button class="btn btn-danger">
               Scarred
