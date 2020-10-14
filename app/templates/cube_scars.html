@@ -11,7 +11,6 @@
         <thead class="thead thead-light">
           <th>text</th>
           <th>restrictions</th>
-          <th>errata</th>
           <th>creator</th>
           <th>card</th>
         </thead>
@@ -20,7 +19,6 @@
             <tr>
               <td>{{ scar.text }}</td>
               <td>{{ scar.restrictions }}</td>
-              <td>{{ scar.errata }}</td>
               <td>{{ scar.created_by.name }}</td>
 
               {% if scar.applied_to %}
