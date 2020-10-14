@@ -399,19 +399,25 @@ def draft_debug(draft_id):
 
 
 @app.route('/draft/<draft_id>/cockatrice')
-def download(draft_id):
+def cockatrice_download(draft_id):
     cockatrice_folder = os.path.join(current_app.root_path, app.config['COCKATRICE_FOLDER'])
     filename = f"00-cockatrice-draft-{draft_id}.xml"
     combined = os.path.join(cockatrice_folder, filename)
+    force_rebuild = request.args.get('force_rebuild')
 
     # Ensure folder for saving cockatrice files
     if not os.path.exists(cockatrice_folder):
         os.makedirs(cockatrice_folder)
 
     # Create the file if it doesn't already exist
-    if not os.path.exists(combined) or request.args.get('force_rebuild'):
+    if not os.path.exists(combined) or force_rebuild:
         draft = Draft.query.get(draft_id)
         with open(combined, 'w') as fout:
             fout.write(cockatrice.export_to_cockatrice(draft.cube))
 
-    return send_from_directory(directory=cockatrice_folder, filename=filename, as_attachment=True)
+    return send_from_directory(
+        directory=cockatrice_folder,
+        filename=filename,
+        as_attachment=True,
+        cache_timeout=0 if force_rebuild else None,
+    )

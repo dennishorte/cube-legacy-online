@@ -72,7 +72,13 @@
 
     <!-- Deck Info -->
     <div class="col">
-
+      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id) }}">
+        <button class="btn btn-primary">Download Cockatrice Cards XML</button>
+      </a>
+      
+      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
+        <button class="btn btn-secondary">Rebuild</button>
+      </a>
     </div>
     <!-- END: Deck Info -->
   </div>
