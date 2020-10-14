@@ -159,7 +159,7 @@
               {{ form.update_as.label }}
               {{ form.update_as(class='form-control') }}
             </div>
-            <p>{{ form.submit(class='btn-primary') }}</p>
+            <p>{{ form.submit(class='btn-primary', id='submitButton') }}</p>
           </div>
         </div>
         
@@ -187,6 +187,14 @@
      $('textarea').each(function(index, element) {
        element.style.height = element.scrollHeight+3+'px'; 
      })
+
+     {% if read_only == 'true' %}
+     $('input, textarea').each(function() {
+       $(this).attr('disabled', 'disabled')
+     })
+
+     $('#submitButton').removeClass('btn-primary')
+     {% endif %}
      
      $('#layout').change(function() {
        var layout = $(this).val()

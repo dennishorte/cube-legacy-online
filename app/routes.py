@@ -174,6 +174,7 @@ def card_editor(card_id):
         card=card,
         form=form,
         scar=scar,
+        read_only=request.args.get('read_only', ''),
     )
 
 
