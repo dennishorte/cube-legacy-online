@@ -10,24 +10,39 @@
 
       <div class="bg-light border border-round p-2">
         {% for achievement in cube.achievements_avaiable() %}
-        <ul class="list-unstyled mb-0">
-          <li class="text-primary">
-            {{ achievement.name }}
-            {% if achievement.multiunlock %}
-              <span class="badge badge-pill badge-warning">multi</span>
-            {% endif %}
-            <a href="{{ url_for('achievement_confirm_reveal', achievement_id=achievement.id) }}">
-              <button class="btn btn-success">unlock</button>
-            </a>
+          <div class="d-flex">
+
+            <!-- Achievement Name -->
+            <div class="mr-auto mt-1 text-primary">
+              {{ achievement.name }}
+              {% if achievement.multiunlock %}
+                <span class="badge badge-pill badge-warning">multi</span>
+              {% endif %}
+            </div>
+
+            <!-- Edit Button -->
             {% if achievement.created_by_id == current_user.id %}
-              <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
-                <button class="btn btn-warning">edit</button>
-              </a>
+              <div class="mr-1">
+                <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
+                  <button class="btn btn-warning">edit</button>
+                </a>
+              </div>
             {% endif %}
-          </li>
-          <li class="text-secondary">{{ achievement.conditions }}</li>
-        </ul>
-        <hr>
+
+            <!-- Claim Button -->
+            <div>
+              <a href="{{ url_for('achievement_confirm_reveal', achievement_id=achievement.id) }}">
+                <button class="btn btn-success">unlock</button>
+              </a>
+            </div>
+          </div>
+
+          <!-- Achievement Conditions -->
+          <div class="d-flex text-secondary">
+            {{ achievement.conditions }}
+          </div>
+          
+          <hr>
         {% endfor %}
       </div>
     </div>
