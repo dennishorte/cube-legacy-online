@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row d-flex justify-content-center">
+    
+    <!-- Edit achievement form -->
+    <div class="col col-md-8">
+      <h4>Edit Achievement</h4>
+      <form action="{{ url_for('achievement_edit', achievement_id=ach.id) }}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.name.label }}
+          {{ form.name(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ form.conditions.label }}
+          {{ form.conditions(class='form-control', rows=5) }}
+        </div>
+        <div class="form-group">
+          {{ form.unlock.label }}
+          {{ form.unlock(class='form-control', rows=10) }}
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              {{ form.multiunlock() }}
+              {{ form.multiunlock.label }}
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              {{ form.update_as.label }}
+              {{ form.update_as(class='form-control') }}
+            </div>
+          </div>
+        </div>
+        <p>{{ form.submit() }}</p>
+      </form>
+    </div>
+  </div>
+  <!-- END: Achievement edit form -->
+{% endblock content %}

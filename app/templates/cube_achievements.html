@@ -19,6 +19,11 @@
             <a href="{{ url_for('achievement_confirm_reveal', achievement_id=achievement.id) }}">
               <button class="btn btn-success">unlock</button>
             </a>
+            {% if achievement.created_by_id == current_user.id %}
+              <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
+                <button class="btn btn-warning">edit</button>
+              </a>
+            {% endif %}
           </li>
           <li class="text-secondary">{{ achievement.conditions }}</li>
         </ul>
@@ -64,6 +69,6 @@
         </form>
       </div>
     </div>
+    <!-- END: New achievement form -->
   </div>
-  <!-- END: New scar form -->
 {% endblock content %}

@@ -160,6 +160,38 @@ def achievement_reveal(achievement_id):
     )
 
 
+@app.route("/achievement/<achievement_id>/edit", methods=["GET", "POST"])
+@login_required
+def achievement_edit(achievement_id):
+    ach = Achievement.query.get(achievement_id)
+    form = NewAchievementForm()
+    form.update_as.choices = User.all_names()
+
+    if form.validate_on_submit():
+        _update_achievement_from_form(ach, form)
+        flash('Achievement Updated')
+        return redirect(url_for('cube_achievements', cube_id=ach.cube_id))
+
+    else:
+        form.name.data = ach.name
+        form.conditions.data = ach.conditions
+        form.unlock.data = ach.unlock
+        form.multiunlock.data = ach.multiunlock
+        form.update_as.data = ach.created_by.name
+        form.submit.label.text = 'Update'
+        return render_template('achievement_edit.html', ach=ach, form=form)
+
+
+def _update_achievement_from_form(ach, form):
+    ach.name=form.name.data
+    ach.conditions=form.conditions.data
+    ach.unlock=form.unlock.data
+    ach.multiunlock=form.multiunlock.data
+    ach.created_by=User.query.filter(User.name == form.update_as.data).first()
+    db.session.add(ach)
+    db.session.commit()
+
+    
 @app.route("/achievement/<achievement_id>/finalize")
 @login_required
 def achievement_finalize(achievement_id):
@@ -180,17 +212,7 @@ def cube_achievements_add(cube_id):
     cube = Cube.query.get(cube_id)
 
     if form.validate_on_submit():
-        a = Achievement(
-            cube_id=cube_id,
-            name=form.name.data,
-            conditions=form.conditions.data,
-            unlock=form.unlock.data,
-            multiunlock=form.multiunlock.data,
-            created_by=User.query.filter(User.name == form.update_as.data).first(),
-        )
-        db.session.add(a)
-        db.session.commit()
-
+        _update_achievement_from_form(Achievement(cube_id=cube_id), form)
         flash('Achievement Created')
     
     return redirect(url_for('cube_achievements', cube_id=cube_id))
