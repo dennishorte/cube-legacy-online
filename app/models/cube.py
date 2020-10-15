@@ -5,6 +5,7 @@ from datetime import datetime
 from app import db
 from app.models.user import *
 from app.util import cockatrice
+from app.util.enum import Layout
 
 
 class CubeStyle(enum.Enum):
@@ -99,7 +100,14 @@ class CubeCard(db.Model):
         return self.get_json().get('name', 'NO_NAME')
 
     def image_urls(self):
-        return [x['image_url'] for x in self.card_faces() if 'image_url' in x]
+        data = self.get_json()
+        layout = data['layout']
+        if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
+            return [data['card_faces'][0]['image_url']]
+        elif Layout.double_sided_layout(layout):
+            return [x['image_url'] for x in self.card_faces() if 'image_url' in x]
+        else:
+            raise ValueError(f"Unknown layout type: {layout}")
 
     def is_scarred(self):
         return self.version > 1
