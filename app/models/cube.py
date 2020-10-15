@@ -204,6 +204,7 @@ class Achievement(db.Model):
     # Unlock info
     unlocked_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     unlocked_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    finalized_timestamp = db.Column(db.DateTime)
 
     def available(self):
         return self.unlocked_by_id is None
