@@ -1,36 +1,14 @@
-{% extends "base.html" %}
+{% from "macros.html" import show_card_list %}
 
-{% macro show_card_list(cards) %}
-  <div class="row no-gutters">
-    {% for card in cards %}
-      <div class="col border rounded border-secondary m-1 p-2 bg-light">
-        <p>
-          <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
-            {% for image_url in card.cube_card.image_urls() %}
-              <img
-                style="max-width:200px"
-                src="{{image_url}}"
-                alt="{{card.cube_card.name()}}">
-            {% endfor %}
-          </a>
-        </p>
-        {% if card.cube_card.is_scarred() %}
-          <a href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
-            <button class="btn btn-danger">
-              Scarred
-            </button>
-          </a>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-{% endmacro %}
+{% extends "base.html" %}
 
 {% block title %}
   {{ d.draft.name }}
 {% endblock %}
 
 {% block content %}
+
+  <!-- Seating Chart -->
   <div id="seating">
     <h2>Seating</h2>
     <table id="seating" class="table table-sm">
@@ -66,8 +44,10 @@
         {% endfor %}
       </tbody>
     </table>
-  </div> <!-- Seating -->
+  </div>
+  <!-- END: Seating Chart -->
 
+  <!-- Card Picker -->
   <div id="picker" class="no-gutters">
     <h2 class="text-primary">Card Picker</h2>
     {% if d.draft.complete %}
@@ -81,13 +61,16 @@
         Passing to: {{ d.passing_to().name }}
       </p>
 
-      {{ show_card_list(d.pack.unpicked_cards()) }}
+      {{ show_card_list(d.pack.unpicked_cards(), d.draft.id) }}
     {% endif %}
-  </div> <!-- picker -->
+  </div>
+  <!-- END: Card Picker -->
 
+  <!-- Picked Cards -->
   <div id="picks" class="no-gutters">
     <h2 class="text-secondary">Your Picks</h2>
-    {{ show_card_list(d.seat.picks) }}
+    {{ show_card_list(d.seat.picks, None) }}
   </div>
+  <!-- END: Picked Cards -->
 
 {% endblock %}

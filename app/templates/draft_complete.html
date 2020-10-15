@@ -1,30 +1,6 @@
-{% extends "base.html" %}
+{% from "macros.html" import show_card_list %}
 
-{% macro show_card_list(cards) %}
-  <div class="row no-gutters">
-    {% for card in cards %}
-      <div class="col border rounded border-secondary m-1 p-2 bg-light">
-        <p>
-          <a href="/draft/{{d.draft.id}}/pick/{{card.id}}">
-            {% for image_url in card.cube_card.image_urls() %}
-              <img
-                style="max-width:200px"
-                src="{{image_url}}"
-                alt="{{card.cube_card.name()}}">
-            {% endfor %}
-          </a>
-        </p>
-        {% if card.cube_card.is_scarred() %}
-          <a href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
-            <button class="btn btn-danger">
-              Scarred
-            </button>
-          </a>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-{% endmacro %}
+{% extends "base.html" %}
 
 {% block title %}
   {{ d.draft.name }}
@@ -110,7 +86,7 @@
       <h3>Your Picks</h3>
     </div>
   </div>
-  {{ show_card_list(d.seat.picks) }}
+  {{ show_card_list(d.seat.picks, None) }}
 
   <div class="row">
     <div class="col">
