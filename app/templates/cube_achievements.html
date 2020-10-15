@@ -46,9 +46,19 @@
             {{ form.unlock.label }}
             {{ form.unlock(class='form-control', rows=10) }}
           </div>
-          <div class="form-group">
-            {{ form.multiunlock() }}
-            {{ form.multiunlock.label }}
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                {{ form.multiunlock() }}
+                {{ form.multiunlock.label }}
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                {{ form.update_as.label }}
+                {{ form.update_as(class='form-control') }}
+              </div>
+            </div>
           </div>
           <p>{{ form.submit() }}</p>
         </form>

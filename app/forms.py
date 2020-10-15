@@ -77,6 +77,7 @@ class NewAchievementForm(FlaskForm):
     conditions = TextAreaField('Conditions')
     unlock = TextAreaField('Unlock Info')
     multiunlock = BooleanField('Is Multiunlock')
+    update_as = SelectField('Create As')
     submit = SubmitField('Create')
 
 

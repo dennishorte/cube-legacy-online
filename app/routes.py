@@ -113,6 +113,9 @@ def cube_cards(cube_id):
 @login_required
 def cube_achievements(cube_id):
     form = NewAchievementForm()
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.data = current_user.name
+        
     cube = Cube.query.get(cube_id)
     return render_template('cube_achievements.html', cube=cube, form=form)
 
@@ -127,6 +130,9 @@ def cube_achievements_unlock(cube_id, achievement_id):
 @login_required
 def cube_achievements_add(cube_id):
     form = NewAchievementForm()
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.data = current_user.name
+    
     cube = Cube.query.get(cube_id)
 
     if form.validate_on_submit():
@@ -136,7 +142,7 @@ def cube_achievements_add(cube_id):
             conditions=form.conditions.data,
             unlock=form.unlock.data,
             multiunlock=form.multiunlock.data,
-            created_by=current_user,
+            created_by=User.query.filter(User.name == form.update_as.data).first(),
         )
         db.session.add(a)
         db.session.commit()
