@@ -62,10 +62,16 @@ def logout():
 def index():
     active_seats = [x for x in current_user.draft_seats if not x.draft.complete]
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
+
+    achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
+    achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
+    
     return render_template(
         'index.html',
         active=active_seats,
         complete=complete_seats,
+        achievements_unfinished=achievements_unfinished,
+        achievements_finished=achievements_finished,
         new_draft_form=_new_draft_form(),
     )
 
@@ -131,6 +137,18 @@ def achievement_confirm_reveal(achievement_id):
     )
 
 
+@app.route("/achievement/<achievement_id>/claim")
+@login_required
+def achievement_claim(achievement_id):
+    achievement = Achievement.query.get(achievement_id)
+    achievement.unlocked_by = current_user
+    achievement.unlocked_timestamp = datetime.utcnow()
+    db.session.add(achievement)
+    db.session.commit()
+
+    return redirect(url_for('achievement_reveal', achievement_id=achievement_id))
+
+
 @app.route("/achievement/<achievement_id>/reveal")
 @login_required
 def achievement_reveal(achievement_id):
@@ -145,7 +163,12 @@ def achievement_reveal(achievement_id):
 @app.route("/achievement/<achievement_id>/finalize")
 @login_required
 def achievement_finalize(achievement_id):
-    return 'achievement finalized'
+    achievement = Achievement.query.get(achievement_id)
+    achievement.finalized_timestamp = datetime.utcnow()
+    db.session.add(achievement)
+    db.session.commit()
+
+    return redirect(url_for('index'))
 
 
 @app.route("/cubes/<cube_id>/new_achievement", methods=["POST"])

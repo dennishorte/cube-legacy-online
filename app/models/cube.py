@@ -203,7 +203,7 @@ class Achievement(db.Model):
 
     # Unlock info
     unlocked_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    unlocked_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    unlocked_timestamp = db.Column(db.DateTime)
     finalized_timestamp = db.Column(db.DateTime)
 
     def available(self):

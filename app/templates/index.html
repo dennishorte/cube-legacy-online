@@ -1,58 +1,89 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Cube Legacy Online
+  Cube Legacy Online
 {% endblock %}
 
 {% block content %}
-    <div class="row" >
-        <div id="drafts" class="col">
-            <div id="active">
-                <p>Active Drafts</p>
-                <ul>
-                    {% for p in active %}
-                        <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div id="complete">
-                <p>Completed Drafts</p>
-                <ul>
-                    {% for p in complete %}
-                        <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+  <div class="row" >
+    <div id="drafts" class="col">
+      <div id="active">
+        <p>Active Drafts</p>
+        <ul>
+          {% for p in active %}
+            <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div id="complete">
+        <p>Completed Drafts</p>
+        <ul>
+          {% for p in complete %}
+            <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
 
-        <div id="new_draft" class="col border">
-          <h4 class="mt-2">New Draft</h4>
-          <form action="/draft/new" method="post" novalidate>
-            {{ new_draft_form.hidden_tag() }}
-            <div class="form-group">
-              {{ new_draft_form.name.label }}
-              {{ new_draft_form.name(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.cube.label }}
-              {{ new_draft_form.cube(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.packsize.label }}
-              {{ new_draft_form.packsize(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.numpacks.label }}
-              {{ new_draft_form.numpacks(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.players.label }}
-              {{ new_draft_form.players(class='form-control', size=6) }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.submit() }}
-            </div>
-          </form>
-        </div>
+      <hr>
+
+      <!-- List of Achievements -->
+      <div id="claimedAchievements">
+        <p>Claimed Achievements</p>
+        <ul class="unstyled-list">
+          {% for achievement in achievements_unfinished %}
+            <li>
+              <a href="{{ url_for('achievement_reveal', achievement_id=achievement.id) }}">
+                {{ achievement.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div id="completedAchievements">
+        <p>Finalized Achievements</p>
+        <ul class="unstyled-list">
+          {% for achievement in achievements_finished %}
+            <li>
+              <a href="{{ url_for('achievement_reveal', achievement_id=achievement.id) }}">
+                {{ achievement.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    <!-- END: List of Achievements -->
+
     </div>
+
+    <div id="new_draft" class="col border">
+      <h4 class="mt-2">New Draft</h4>
+      <form action="/draft/new" method="post" novalidate>
+        {{ new_draft_form.hidden_tag() }}
+        <div class="form-group">
+          {{ new_draft_form.name.label }}
+          {{ new_draft_form.name(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ new_draft_form.cube.label }}
+          {{ new_draft_form.cube(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ new_draft_form.packsize.label }}
+          {{ new_draft_form.packsize(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ new_draft_form.numpacks.label }}
+          {{ new_draft_form.numpacks(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ new_draft_form.players.label }}
+          {{ new_draft_form.players(class='form-control', size=6) }}
+        </div>
+        <div class="form-group">
+          {{ new_draft_form.submit() }}
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}

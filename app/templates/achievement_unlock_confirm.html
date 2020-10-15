@@ -10,7 +10,7 @@
       <p class="text-secondary">{{ achievement.conditions }}</p>
       <hr>
 
-      <a href="{{ url_for('achievement_reveal', achievement_id=achievement.id) }}">
+      <a href="{{ url_for('achievement_claim', achievement_id=achievement.id) }}">
         <button class="btn btn-primary">I've Earned This Man</button>
       </a>
     </div>
