@@ -11,6 +11,7 @@ def create_draft(
         pack_size: int,
         num_packs: int,
         user_names: list,
+        scar_rounds: str,
 ):
     cube = Cube.query.filter(Cube.name == cube_name).first()
     
@@ -20,6 +21,7 @@ def create_draft(
         pack_size=pack_size,
         num_packs=num_packs,
         num_seats=len(user_names),
+        scar_rounds_str=scar_rounds,
     )
     db.session.add(draft)
 

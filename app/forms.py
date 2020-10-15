@@ -68,6 +68,7 @@ class NewDraftForm(FlaskForm):
     cube = SelectField('Cube', validators=[DataRequired()])
     packsize = IntegerField('Pack Size', validators=[DataRequired()])
     numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
+    scar_rounds = StringField('Scar Rounds (eg. 0,3)')
     players = SelectMultipleField('Players', validators=[DataRequired()])
     submit = SubmitField('Create')
 

@@ -415,6 +415,7 @@ def new_draft():
             pack_size=form.packsize.data,
             num_packs=form.numpacks.data,
             user_names=form.players.data,
+            scar_rounds=form.scar_rounds.data,
         )
         return redirect('/')
 
