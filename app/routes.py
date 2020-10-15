@@ -120,18 +120,39 @@ def cube_achievements(cube_id):
     return render_template('cube_achievements.html', cube=cube, form=form)
 
 
-@app.route("/cubes/<cube_id>/achievements/<achievement_id>/unlock")
+@app.route("/achievement/<achievement_id>/confirm_reveal")
 @login_required
-def cube_achievements_unlock(cube_id, achievement_id):
-    return 'Unlocks coming coon'
+def achievement_confirm_reveal(achievement_id):
+    achievement = Achievement.query.get(achievement_id)
+
+    return render_template(
+        'achievement_unlock_confirm.html',
+        achievement=achievement,
+    )
 
 
-@app.route("/cubes/<cube_id>/achievements_new", methods=["POST"])
+@app.route("/achievement/<achievement_id>/reveal")
+@login_required
+def achievement_reveal(achievement_id):
+    achievement = Achievement.query.get(achievement_id)
+
+    return render_template(
+        'achievement_unlock_reveal.html',
+        achievement=achievement,
+    )
+
+
+@app.route("/achievement/<achievement_id>/finalize")
+@login_required
+def achievement_finalize(achievement_id):
+    return 'achievement finalized'
+
+
+@app.route("/cubes/<cube_id>/new_achievement", methods=["POST"])
 @login_required
 def cube_achievements_add(cube_id):
     form = NewAchievementForm()
     form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
-    form.update_as.data = current_user.name
     
     cube = Cube.query.get(cube_id)
 

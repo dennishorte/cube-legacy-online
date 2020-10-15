@@ -87,6 +87,10 @@ class NewScarForm(FlaskForm):
     submit = SubmitField('Create')
 
 
+class ReallyUnlockForm(FlaskForm):
+    submit = SubmitField('I Earned this Man')
+
+
 class ResultForm(FlaskForm):
     user_id = HiddenField('user_id')
     wins = IntegerField('wins', validators=[Optional()])

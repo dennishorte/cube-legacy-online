@@ -207,3 +207,6 @@ class Achievement(db.Model):
 
     def available(self):
         return self.unlocked_by_id is None
+
+    def unlock_lines(self):
+        return [x.strip() for x in self.unlock.split('\n') if x.strip()]

@@ -16,7 +16,7 @@
             {% if achievement.multiunlock %}
               <span class="badge badge-pill badge-warning">multi</span>
             {% endif %}
-            <a href="{{ url_for('cube_achievements_unlock', cube_id=cube.id, achievement_id=achievement.id) }}">
+            <a href="{{ url_for('achievement_confirm_reveal', achievement_id=achievement.id) }}">
               <button class="btn btn-success">unlock</button>
             </a>
           </li>
