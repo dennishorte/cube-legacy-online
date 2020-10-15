@@ -119,7 +119,7 @@ def cube_cards(cube_id):
 @login_required
 def cube_achievements(cube_id):
     form = NewAchievementForm()
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
         
     cube = Cube.query.get(cube_id)
@@ -175,7 +175,7 @@ def achievement_finalize(achievement_id):
 @login_required
 def cube_achievements_add(cube_id):
     form = NewAchievementForm()
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
     
     cube = Cube.query.get(cube_id)
 
@@ -200,7 +200,7 @@ def cube_achievements_add(cube_id):
 @login_required
 def cube_scars(cube_id):
     form = NewScarForm()
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
 
     cube = Cube.query.get(cube_id)
@@ -211,7 +211,7 @@ def cube_scars(cube_id):
 @login_required
 def cube_scars_add(cube_id):
     form = NewScarForm()
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
 
     if form.validate_on_submit():
         scar = Scar(
@@ -248,7 +248,7 @@ def card_editor(card_id):
         
     # Generic Pieces
     form.layout.data = card.get_json().get('layout', '')
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
 
     # Adding a specific scar?
@@ -271,7 +271,7 @@ def card_editor(card_id):
 @login_required
 def card_update(card_id):
     form = EditMultiFaceCardForm()
-    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.choices = User.all_names()
 
     if not form.validate_on_submit():
         flash('Error on Update')

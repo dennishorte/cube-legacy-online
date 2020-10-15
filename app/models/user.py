@@ -32,6 +32,10 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @staticmethod
+    def all_names():
+        return [x.name for x in User.query.order_by(User.name)]
+
 
 @login.user_loader
 def load_user(user_id):
