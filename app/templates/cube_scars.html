@@ -7,6 +7,7 @@
 
     <!-- Table of existing scars -->
     <div class="col col-md-8">
+      <h4>Scars</h4>
       <table class="table table-sm">
         <thead class="thead thead-light">
           <th>text</th>
@@ -38,7 +39,7 @@
     <!-- END: Table of existing scars -->
 
     <!-- New scar form -->
-    <div class="col col-md-4">
+    <div class="col col-md-4 bg-light border p-2">
       <h4>Create Scar</h4>
       <form action="{{ url_for('cube_scars_add', cube_id=cube.id) }}" method="post" novalidate>
         {{ form.hidden_tag() }}
@@ -50,7 +51,17 @@
           {{ form.restrictions.label }}
           {{ form.restrictions(class='form-control') }}
         </div>
-        <p>{{ form.submit() }}</p>
+        <div class="row">
+          <div class="col">
+            <p>{{ form.submit(class='btn btn-primary') }}</p>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              {{ form.update_as.label }}
+              {{ form.update_as(class='form-control') }}
+            </div>
+          </div>
+        </div>
       </form>
     </div>
     <!-- END: New scar form -->

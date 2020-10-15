@@ -31,7 +31,7 @@
   <!-- New achievement form -->
     <div class="col">
       <h4>Create Achievement</h4>
-      <div class="bg-light border border-round p-2">
+      <div class="bg-light border p-2">
         <form action="{{ url_for('cube_achievements_add', cube_id=cube.id) }}" method="post" novalidate>
           {{ form.hidden_tag() }}
           <div class="form-group">

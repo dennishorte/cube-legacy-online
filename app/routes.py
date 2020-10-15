@@ -177,6 +177,9 @@ def cube_achievements_add(cube_id):
 @login_required
 def cube_scars(cube_id):
     form = NewScarForm()
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
+    form.update_as.data = current_user.name
+
     cube = Cube.query.get(cube_id)
     return render_template('cube_scars.html', cube=cube, form=form)
 
@@ -185,6 +188,7 @@ def cube_scars(cube_id):
 @login_required
 def cube_scars_add(cube_id):
     form = NewScarForm()
+    form.update_as.choices = [x.name for x in User.query.order_by(User.name)]
 
     if form.validate_on_submit():
         scar = Scar(
