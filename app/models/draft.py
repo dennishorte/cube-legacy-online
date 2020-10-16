@@ -114,7 +114,6 @@ class Pack(db.Model):
     seat_number = db.Column(db.Integer)
     pack_number = db.Column(db.Integer)
     num_picked = db.Column(db.Integer, default=0)
-    did_scar = db.Column(db.Boolean, default=False)  # TODO: remove; unused
     scarred_this_round_id = db.Column(db.Integer)  # CubeCard id
 
     cards = db.relationship('PackCard', backref='pack')
