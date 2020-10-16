@@ -10,6 +10,7 @@ def application(environ, start_response):
         'DB_PASS',
         'DB_HOST',
         'DB_NAME',
+	'SLACK_BOT_TOKEN',
     ]
 
     for key in ENVIRONMENT_VARIABLES:

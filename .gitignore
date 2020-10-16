@@ -7,3 +7,4 @@ __pycache__
 app/app.db
 test.py
 app/static/cockatrice
+*~
