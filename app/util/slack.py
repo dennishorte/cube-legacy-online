@@ -1,3 +1,6 @@
+from urllib.parse import urlparse
+
+from flask import request
 from slack import WebClient
 from slack.errors import SlackApiError
 
@@ -14,7 +17,8 @@ def send_your_pick_notification(user, draft):
         open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
 
-        draft_url = f"http://{Config.SITE_ROOT}/draft/{draft.id}"
+        domain_host = urlparse(request.base_url).hostname
+        draft_url = f"http://{domain_host}/draft/{draft.id}"
         message = f"Someone has passed you a pack. Time to <{draft_url}|make a pick>."
 
         send_response = _client.chat_postMessage(
