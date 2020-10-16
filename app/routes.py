@@ -535,6 +535,7 @@ def draft_debug(draft_id):
 
 
 @app.route('/draft/<draft_id>/cockatrice')
+@login_required
 def cockatrice_download(draft_id):
     cockatrice_folder = os.path.join(current_app.root_path, app.config['COCKATRICE_FOLDER'])
     filename = f"00-cockatrice-draft-{draft_id}.xml"
@@ -557,3 +558,12 @@ def cockatrice_download(draft_id):
         as_attachment=True,
         cache_timeout=0 if force_rebuild else None,
     )
+
+
+@app.route('/slack_test')
+@login_required
+def slack_test():
+    from app.util import slack
+    user = User.query.get(current_user.id)
+    slack.test_direct_message(user)
+    return redirect(url_for('index'))

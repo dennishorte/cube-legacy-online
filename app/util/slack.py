@@ -33,9 +33,9 @@ def send_your_pick_notification(user, draft):
         pass
 
 
-def test_direct_message():
+def test_direct_message(user):
     try:
-        open_response = _client.conversations_open(users=['U3SHZPJF5'])
+        open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
 
         send_response = _client.chat_postMessage(
