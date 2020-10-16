@@ -252,6 +252,11 @@ def cube_scars_add(cube_id):
 @app.route("/card/<card_id>")
 @login_required
 def card_editor(card_id):
+    """
+    Possible URL params
+    - scar_id: Loads the editor with information about the scar to help in applying it.
+    - read_only: Disables all of the form fields to prevent changes to the card.
+    """
     card = CubeCard.query.get(card_id)
     form = EditMultiFaceCardForm()
 

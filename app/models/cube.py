@@ -211,8 +211,6 @@ class Scar(db.Model):
     def lock(self, pack_id, user_id):
         self.locked_by_id = user_id
         self.locked_pack_id = pack_id
-        print(pack_id)
-        print(user_id)
         db.session.add(self)
         db.session.commit()
 

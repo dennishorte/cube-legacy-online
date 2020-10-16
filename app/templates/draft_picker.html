@@ -47,6 +47,28 @@
   </div>
   <!-- END: Seating Chart -->
 
+  <!-- Scars to Add -->
+  {% if d.is_scarring_round() %}
+    <div id="scars">
+      <h3>Scarring Rounds</h3>
+      {% for scar in d.pack.scar_options() %}
+        <div class="m-2 p-2 bg-light border row">
+          <div class="col col-1 btn btn-success">
+            Scar {{ loop.index }}
+          </div>
+
+          <div class="col">
+            <ul class="list-unstyled mb-0">
+              <li class="text-primary">{{ scar.text }}</li>
+              <li class="text-secondary">{{ scar.restrictions }}</li>
+            </ul>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <!-- END: Scars to Add -->
+
   <!-- Card Picker -->
   <div id="picker" class="no-gutters">
     <h2 class="text-primary">Card Picker</h2>

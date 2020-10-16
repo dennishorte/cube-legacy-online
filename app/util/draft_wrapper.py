@@ -18,6 +18,9 @@ class DraftWrapper(object):
         self.seat = next(x for x in self.seats if x.user_id == self.user.id)
         self.pack = self.seat.waiting_pack()
 
+    def is_scarring_round(self):
+        return self.pack and self.pack.is_scarring_round()
+
     def passing_to(self):
         """User who will see this pack after you pick from it."""
         if self.pack is None:
@@ -120,37 +123,8 @@ class DraftWrapper(object):
 
         return self._pack_cards
 
-    def is_scarring_round(self):
-        return (
-            len(self.pack_cards()) == self.draft.pack_size  # first pick of round
-            and self.pack.pack_number in self.draft.scar_rounds()
-            and not self.has_scarred_this_round()
-        )
-
     def has_scarred_this_round(self):
         return self._scar_that_was_applied_this_round() is not None
-
-    def get_new_scars(self):
-        # Use cached scars, if available.
-        if self._new_scars:
-            return self._new_scars
-        
-        # See if there are already some scars locked for this player for this draft.
-        locked = Scar.get_locked(self.draft.id, self.participant.id)
-        if locked:
-            self._new_scars = locked
-            return self._new_scars
-
-        # Generate some new scars for this player.
-        unused = Scar.query.filter(Scar.added_timestamp == None).all()
-        random.shuffle(unused)
-        self._new_scars = unused[:2]
-        
-        for scar in self._new_scars:
-            scar.lock(self.draft.id, self.participant.id)
-            db.session.add(scar)
-        db.session.commit()
-        return self._new_scars
 
     def unlock_new_scars(self):
         scars = self.get_new_scars()
