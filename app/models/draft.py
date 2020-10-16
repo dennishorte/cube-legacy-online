@@ -1,3 +1,4 @@
+import functools
 from datetime import datetime
 
 from app import db
@@ -126,6 +127,7 @@ class Pack(db.Model):
         else:
             return 'right'
 
+    @functools.cached_property        
     def is_scarring_round(self):
         return (
             self.num_picked == 0  # first pick of round
@@ -152,14 +154,16 @@ class Pack(db.Model):
         return [x for x in self.card if x.pick_number != -1]
 
     def scar_options(self):
-        if not self.is_scarring_round():
+        if not self.is_scarring_round:
             return None
 
         user = self.next_seat().user
         choices = Scar.get_for_pack(self.id, user.id)
 
         if not choices:
-            choices = Scar.lock_random_scars(self.draft_id, user.id, 2)
+            choices = Scar.lock_random_scars(self.id, user.id, 2)
+
+        choices.sort(key=lambda x: x.id)
 
         return choices        
 
