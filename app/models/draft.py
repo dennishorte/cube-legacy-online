@@ -31,7 +31,7 @@ class Draft(db.Model):
         return '<Draft {}>'.format(self.name)
 
     def scar_rounds(self):
-        return [int(x) for x in self.scar_rounds_str.split(',')]
+        return [int(x) for x in self.scar_rounds_str.split(',') if x.strip()]
 
 
 class Seat(db.Model):
@@ -113,6 +113,7 @@ class Pack(db.Model):
     seat_number = db.Column(db.Integer)
     pack_number = db.Column(db.Integer)
     num_picked = db.Column(db.Integer, default=0)
+    did_scar = db.Column(db.Boolean, default=False)
 
     cards = db.relationship('PackCard', backref='pack')
 
@@ -125,15 +126,12 @@ class Pack(db.Model):
         else:
             return 'right'
 
-    def seat_ordering(self):
-        pack_size = self.draft.pack_size
-        num_seats = self.draft.num_seats
-        
-        seat_range = range(pack_size)
-        if self.direction() == 'right':
-            seat_range = [0 - x for x in seat_range]
-        
-        return [(x + self.seat_number) % num_seats for x in seat_range]
+    def is_scarring_round(self):
+        return (
+            self.num_picked == 0  # first pick of round
+            and self.did_scar == False
+            and self.pack_number in self.draft.scar_rounds()
+        )
 
     def next_seat_order(self):
         return self.seat_ordering()[self.num_picked]
@@ -152,6 +150,28 @@ class Pack(db.Model):
 
     def picked_cards(self):
         return [x for x in self.card if x.pick_number != -1]
+
+    def scar_options(self):
+        if not self.is_scarring_round():
+            return None
+
+        user = self.next_seat().user
+        choices = Scar.get_for_pack(self.id, user.id)
+
+        if not choices:
+            choices = Scar.lock_random_scars(self.draft_id, user.id, 2)
+
+        return choices        
+
+    def seat_ordering(self):
+        pack_size = self.draft.pack_size
+        num_seats = self.draft.num_seats
+        
+        seat_range = range(pack_size)
+        if self.direction() == 'right':
+            seat_range = [0 - x for x in seat_range]
+        
+        return [(x + self.seat_number) % num_seats for x in seat_range]
 
     def unpicked_cards(self):
         return [x for x in self.cards if x.pick_number == -1]

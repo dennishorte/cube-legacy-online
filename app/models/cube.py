@@ -1,5 +1,6 @@
 import enum
 import json
+import random
 from datetime import datetime
 
 from app import db
@@ -192,6 +193,45 @@ class Scar(db.Model):
     applied_to_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
     removed_timestamp = db.Column(db.DateTime)
     removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    # Lock info
+    locked_by_id = db.Column(db.Integer)
+    locked_pack_id = db.Column(db.Integer)
+
+    @staticmethod
+    def get_for_pack(pack_id, user_id):
+        return Scar.query.filter(
+            Scar.locked_by_id == user_id,
+            Scar.locked_pack_id == pack_id,
+        ).all()
+
+    def is_locked(self):
+        return self.locked_by_id is not None
+
+    def lock(self, pack_id, user_id):
+        self.locked_by_id = user_id
+        self.locked_pack_id = pack_id
+        print(pack_id)
+        print(user_id)
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def lock_random_scars(pack_id, user_id, count):
+        scars = Scar.query.filter(Scar.locked_by_id == None).all()
+        random.shuffle(scars)
+        scars = scars[:count]
+
+        for scar in scars:
+            scar.lock(pack_id, user_id)
+
+        return scars
+    
+    def unlock(self):
+        self.locked_by_id = None
+        self.locked_pack_id = None
+        db.session.add(self)
+        db.session.commit()
 
 
 class Achievement(db.Model):
