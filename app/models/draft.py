@@ -114,7 +114,8 @@ class Pack(db.Model):
     seat_number = db.Column(db.Integer)
     pack_number = db.Column(db.Integer)
     num_picked = db.Column(db.Integer, default=0)
-    did_scar = db.Column(db.Boolean, default=False)
+    did_scar = db.Column(db.Boolean, default=False)  # TODO: remove; unused
+    scarred_this_round_id = db.Column(db.Integer)  # CubeCard id
 
     cards = db.relationship('PackCard', backref='pack')
 
@@ -131,9 +132,12 @@ class Pack(db.Model):
     def is_scarring_round(self):
         return (
             self.num_picked == 0  # first pick of round
-            and self.did_scar == False
+            and self.scarred_this_round_id is None
             and self.pack_number in self.draft.scar_rounds()
         )
+
+    def just_scarred(self, pack_card):
+        return self.num_picked == 0 and self.scarred_this_round_id == pack_card.cube_card.id
 
     def next_seat_order(self):
         return self.seat_ordering()[self.num_picked]

@@ -75,7 +75,7 @@
     {% if d.draft.complete %}
       <p>draft is complete</p>
     {% elif not d.pack %}
-      <p>no packs waiting for you right now</p>
+      <div class="btn btn-success">no packs waiting for you right now</div>
     {% else %}
       <p>
         Pack {{ d.pack.pack_number + 1 }} /
@@ -87,6 +87,8 @@
     {% endif %}
   </div>
   <!-- END: Card Picker -->
+
+  <hr>
 
   <!-- Picked Cards -->
   <div id="picks" class="no-gutters">

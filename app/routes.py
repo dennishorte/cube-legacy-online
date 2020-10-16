@@ -318,24 +318,47 @@ def card_update(card_id):
         new_json=card_json,
         edited_by=editor,
         comment=form.comment.data,
+        commit=False,
     )
-
-    # Mark the scar as used, if there was one.
-    if form.scar_id.data and new_version_created:
-        scar = Scar.query.get(form.scar_id.data)
-        scar.applied_timestamp = datetime.utcnow()
-        scar.applied_by_id = current_user.id
-        scar.applied_to_id = card_id
-        db.session.add(scar)
-        db.session.commit()
 
     # Give the user some feedback on what happened.
     if new_version_created:
+        return_to_draft_id = _apply_scar_from_editor(card, form.scar_id.data)
+        db.session.commit()
+
+        if return_to_draft_id:
+            return redirect(url_for('draft', draft_id=return_to_draft_id))
+        
         flash('Card Updated')
     else:
         flash('No changes detected')
 
     return redirect(url_for('card_editor', card_id=card_id))
+
+
+def _apply_scar_from_editor(card, scar_id):
+    if not scar_id:
+        return None
+
+    scar = Scar.query.get(scar_id)
+    scar.applied_timestamp = datetime.utcnow()
+    scar.applied_by_id = current_user.id
+    scar.applied_to_id = card.id
+    db.session.add(scar)
+
+    # Unlock the scars if they're from a draft.
+    # The most common case is that the scar was applied from a draft.
+    pack = Pack.query.get(scar.locked_pack_id)
+    if pack and scar.locked_by_id == current_user.id:
+        pack.scarred_this_round_id = card.id
+        db.session.add(pack)
+        for pack_scar in Scar.get_for_pack(pack.id, current_user.id):
+            pack_scar.unlock(commit=False)
+            db.session.add(pack_scar)
+        return pack.draft_id
+
+    else:
+        return None
 
 
 def _card_update_copy_form_data_into_card_json(card_json, form):

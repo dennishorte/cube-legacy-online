@@ -1,10 +1,17 @@
 {% macro show_card_list(cards, draft_id) %}
   <div class="row no-gutters">
     {% for card in cards %}
-      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+      {% set can_be_drafted = (draft_id != None and not card.pack.just_scarred(card)) %}
+      <div class="col border rounded border-secondary m-1 p-2
+                  {% if can_be_drafted %}
+                  bg-light
+                  {% else %}
+                  bg-warning
+                  {% endif %}
+                  ">
         <!-- Card Image (and draft link) -->
         <p>
-          {% if draft_id %}
+          {% if can_be_drafted %}
             <a href="/draft/{{draft_id}}/pick/{{card.id}}">
           {% endif %}
           {% for image_url in card.cube_card.image_urls() %}
@@ -13,7 +20,7 @@
               src="{{image_url}}"
               alt="{{card.cube_card.name()}}">
           {% endfor %}
-          {% if draft_id %}
+          {% if can_be_drafted %}
             </a>
           {% endif %}
         </p>

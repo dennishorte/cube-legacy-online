@@ -134,7 +134,7 @@ class CubeCard(db.Model):
             added_by_id=added_by.id,
         )
 
-    def update(self, new_json, edited_by, comment):
+    def update(self, new_json, edited_by, comment, commit=True):
         """
         Assuming any changes have been made in the JSON compared to this CubeCard,
         creates a copy of this cube card and adds it to the database as an old verison,
@@ -166,7 +166,9 @@ class CubeCard(db.Model):
 
             db.session.add(new_card)
             db.session.add(self)
-            db.session.commit()
+
+            if commit:
+                db.session.commit()
 
             return True  # Changes detected and card updated
 
@@ -225,11 +227,13 @@ class Scar(db.Model):
 
         return scars
     
-    def unlock(self):
+    def unlock(self, commit=True):
         self.locked_by_id = None
         self.locked_pack_id = None
-        db.session.add(self)
-        db.session.commit()
+
+        if commit:
+            db.session.add(self)
+            db.session.commit()
 
 
 class Achievement(db.Model):
