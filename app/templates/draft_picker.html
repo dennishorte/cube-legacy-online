@@ -1,4 +1,5 @@
 {% from "macros.html" import show_card_list %}
+{% from "macros.html" import show_draft_card_list %}
 
 {% extends "base.html" %}
 
@@ -83,7 +84,7 @@
         Passing to: {{ d.passing_to().name }}
       </p>
 
-      {{ show_card_list(d.pack.unpicked_cards(), d.draft.id) }}
+      {{ show_draft_card_list(d.pack.cards, d.draft.id) }}
     {% endif %}
   </div>
   <!-- END: Card Picker -->
@@ -93,7 +94,7 @@
   <!-- Picked Cards -->
   <div id="picks" class="no-gutters">
     <h2 class="text-secondary">Your Picks</h2>
-    {{ show_card_list(d.seat.picks, None) }}
+    {{ show_card_list(d.seat.picks) }}
   </div>
   <!-- END: Picked Cards -->
 

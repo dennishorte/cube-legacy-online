@@ -121,6 +121,19 @@ class Pack(db.Model):
     def __repr__(self):
         return '<Pack s:{} p:{} n:{}>'.format(self.seat_number, self.pack_number, self.num_picked)
 
+    def can_be_drafted(self, pack_card):
+        """False if the user just scarred this card or it has already been picked."""
+        return (
+            self.can_be_seen(pack_card)           # Is possible to see the card at all
+            and not self.just_scarred(pack_card)  # Not just scarred by current drafter
+            and pack_card.pick_number == -1       # Not picked yet
+        )
+
+    def can_be_seen(self, pack_card):
+        """False if card was picked before the first time the player saw this pack."""
+        first_saw = self.seat_ordering().index(self.next_seat_order())
+        return pack_card.pick_number == -1 or first_saw <= pack_card.pick_number
+
     def direction(self):
         if self.pack_number % 2 == 0:
             return 'left'    # Meaning if this is seat number 2, it will pass to seat 3.
@@ -141,6 +154,7 @@ class Pack(db.Model):
     def next_seat_order(self):
         return self.seat_ordering()[self.num_picked]
 
+    @functools.cached_property
     def next_seat(self):
         return Seat.query.filter(
             Seat.draft_id == self.draft_id,
@@ -195,7 +209,7 @@ class PackCard(db.Model):
 
     def __repr__(self):
         return '<PackCard {}>'.format(self.cube_card.name)
-    
+
     def picked(self):
         return self.pick_number > -1
 

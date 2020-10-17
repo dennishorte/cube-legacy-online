@@ -1,14 +1,8 @@
-{% macro show_card_list(cards, draft_id) %}
+{% macro show_draft_card_list(cards, draft_id) %}
   <div class="row no-gutters">
-    {% for card in cards %}
-      {% set can_be_drafted = (draft_id != None and not card.pack.just_scarred(card)) %}
-      <div class="col border rounded border-secondary m-1 p-2
-                  {% if can_be_drafted %}
-                  bg-light
-                  {% else %}
-                  bg-warning
-                  {% endif %}
-                  ">
+    {% for card in cards if card.pack.can_be_seen(card) %}
+      {% set can_be_drafted = card.pack.can_be_drafted(card) %}
+      <div class="col border rounded border-secondary m-1 p-2 bg-light">
         <!-- Card Image (and draft link) -->
         <p>
           {% if can_be_drafted %}
@@ -16,8 +10,12 @@
           {% endif %}
           {% for image_url in card.cube_card.image_urls() %}
             <img
-              style="max-width:200px"
-              src="{{image_url}}"
+              style="max-width:200px
+                     {% if not can_be_drafted %}
+                     ;opacity:0.5
+                     {% endif %}
+                     "
+                src="{{image_url}}"
               alt="{{card.cube_card.name()}}">
           {% endfor %}
           {% if can_be_drafted %}
@@ -45,6 +43,36 @@
           {% endfor %}
         {% endif %}
         <!-- END: Add Scars Buttons -->
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro show_card_list(cards) %}
+  <div class="row no-gutters">
+    {% for card in cards %}
+      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+        <!-- Card Image (and draft link) -->
+        <p>
+          {% for image_url in card.cube_card.image_urls() %}
+            <img
+              style="max-width:200px"
+              src="{{image_url}}"
+              alt="{{card.cube_card.name()}}">
+          {% endfor %}
+        </p>
+        <!-- END: Card Image (and draft link) -->
+
+        <!-- Scarred Pill (and view link) -->
+        {% if card.cube_card.is_scarred() %}
+          <a href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
+            <button class="btn btn-danger">
+              Scarred
+            </button>
+          </a>
+        {% endif %}
+        <!-- END: Scarred Pill (and view link) -->
+
       </div>
     {% endfor %}
   </div>
