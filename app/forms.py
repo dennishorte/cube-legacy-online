@@ -48,6 +48,31 @@ class EditMultiFaceCardForm(FlaskForm):
 
     # Used when adding a scar in order to mark the scar as applied.
     scar_id = HiddenField('Scar ID')
+
+    def group_fields(self):
+        """Group the form fields to allow programatic access."""
+        self.faces = [
+            {
+                'name': self.face_0_name,
+                'mana_cost': self.face_0_mana_cost,
+                'image_url': self.face_0_image_url,
+                'type_line': self.face_0_type_line,
+                'oracle_text': self.face_0_oracle_text,
+                'power': self.face_0_power,
+                'toughness': self.face_0_toughness,
+                'loyalty': self.face_0_loyalty,
+            },
+            {
+                'name': self.face_1_name,
+                'mana_cost': self.face_1_mana_cost,
+                'image_url': self.face_1_image_url,
+                'type_line': self.face_1_type_line,
+                'oracle_text': self.face_1_oracle_text,
+                'power': self.face_1_power,
+                'toughness': self.face_1_toughness,
+                'loyalty': self.face_1_loyalty,
+            },            
+        ]
     
     
 class LoginForm(FlaskForm):

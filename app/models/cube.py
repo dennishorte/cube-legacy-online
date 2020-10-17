@@ -151,6 +151,7 @@ class CubeCard(db.Model):
                 timestamp=self.timestamp,
                 version=self.version,
                 latest=False,
+                latest_id=self.id,
                 json=self.json,
 
                 cube_id=self.cube_id,

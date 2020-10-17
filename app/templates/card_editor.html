@@ -1,3 +1,45 @@
+{% macro face_form(fields, face_name) %}
+  <div class="col bg-light m-1 rounded border">
+    <h4 class="mt-2">{{ face_name }}</h4>
+    <div class="form-group">
+      {{ fields['name'].label }}
+      {{ fields['name'](class='form-control') }}
+    </div>
+    <div class="form-group">
+      {{ fields['mana_cost'].label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
+      {{ fields['mana_cost'](class='form-control') }}
+    </div>
+    <div class="form-group">
+      {{ fields['image_url'].label }}
+      {{ fields['image_url'](class='form-control') }}
+    </div>
+    <div class="form-group">
+      {{ fields['type_line'].label }}
+      {{ fields['type_line'](class='form-control') }}
+    </div>
+    <div class="form-group">
+      {{ fields['oracle_text'].label }}
+      {{ fields['oracle_text'](class='form-control', rows='5') }}
+    </div>
+
+    <div class="row">
+      <div class="col form-group">
+        {{ fields['power'].label }}
+        {{ fields['power'](class='form-control') }}
+      </div>
+      <div class="col form-group">
+        {{ fields['toughness'].label }}
+        {{ fields['toughness'](class='form-control') }}
+      </div>
+      <div class="col form-group">
+        {{ fields['loyalty'].label }}
+        {{ fields['loyalty'](class='form-control') }}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+<!-- START PAGE -->
 {% extends "base.html" %}
 
 {% block title %}
@@ -56,92 +98,13 @@
           <!-- END: Scar -->
         {% endif %}
         
+
+        <!-- Edit forms for each face -->
         <div class="row mt-1">
-
-          <!-- Front Face of Card -->
-          <div class="col bg-light m-1 rounded border" id="frontFace">
-            <h4 class="mt-2">front</h4>
-            <div class="form-group">
-              {{ form.face_0_name.label }}
-              {{ form.face_0_name(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_0_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
-              {{ form.face_0_mana_cost(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_0_image_url.label }}
-              {{ form.face_0_image_url(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_0_type_line.label }}
-              {{ form.face_0_type_line(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_0_oracle_text.label }}
-              {{ form.face_0_oracle_text(class='form-control', rows='5') }}
-            </div>
-
-            <div class="row">
-              <div class="col form-group">
-                {{ form.face_0_power.label }}
-                {{ form.face_0_power(class='form-control') }}
-              </div>
-              <div class="col form-group">
-                {{ form.face_0_toughness.label }}
-                {{ form.face_0_toughness(class='form-control') }}
-              </div>
-              <div class="col form-group">
-                {{ form.face_0_loyalty.label }}
-                {{ form.face_0_loyalty(class='form-control') }}
-              </div>
-            </div>
-          </div>
-          <!-- END: Front Face of Card -->
-
-          <!-- Back Face of Card -->
-          <div class="col bg-light m-1 rounded border" id="backFace">
-            <h4 class="mt-2">back</h4>
-            <div class="form-group">
-              {{ form.face_1_name.label }}
-              {{ form.face_1_name(class='form-control', id='backName') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_1_mana_cost.label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
-              {{ form.face_1_mana_cost(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_1_image_url.label }}
-              {{ form.face_1_image_url(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_1_type_line.label }}
-              {{ form.face_1_type_line(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ form.face_1_oracle_text.label }}
-              {{ form.face_1_oracle_text(class='form-control', rows='5') }}
-            </div>
-
-            <div class="row">
-              <div class="col form-group">
-                {{ form.face_1_power.label }}
-                {{ form.face_1_power(class='form-control') }}
-              </div>
-              <div class="col form-group">
-                {{ form.face_1_toughness.label }}
-                {{ form.face_1_toughness(class='form-control') }}
-              </div>
-              <div class="col form-group">
-                {{ form.face_1_loyalty.label }}
-                {{ form.face_1_loyalty(class='form-control') }}
-              </div>
-            </div>
-            
-          </div>
-          <!-- END: Back Face of Card -->
-          
+          {{ face_form(form.faces[0], 'front') }}
+          {{ face_form(form.faces[1], 'back') }}
         </div>
+        <!-- END: Edit forms for each face -->
 
         <div class="row">
           <div class="col bg-light m-1 rounded border" id="commentArea">

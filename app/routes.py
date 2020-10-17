@@ -259,20 +259,15 @@ def card_editor(card_id):
     """
     card = CubeCard.query.get(card_id)
     form = EditMultiFaceCardForm()
+    form.group_fields()
 
+    # Copy card face data into form
     card_faces = card.card_faces()
-
-    for form_field in form:
-        tokens = form_field.name.split('_', 2)
-        if tokens[0] != 'face':
-            continue
-
-        face = int(tokens[1])
-        field_name = tokens[2]
-
-        if face < len(card_faces):
-            form_field.data = card_faces[face].get(field_name, '')
-        
+    for face_index in range(len(card_faces)):
+        form_fields = form.faces[face_index]
+        for field_name, field in form_fields.items():
+            field.data = card_faces[face_index].get(field_name, '')
+    
     # Generic Pieces
     form.layout.data = card.get_json().get('layout', '')
     form.update_as.choices = User.all_names()
@@ -299,6 +294,7 @@ def card_editor(card_id):
 def card_update(card_id):
     form = EditMultiFaceCardForm()
     form.update_as.choices = User.all_names()
+    form.group_fields()
 
     if not form.validate_on_submit():
         flash('Error on Update')
@@ -363,21 +359,14 @@ def _apply_scar_from_editor(card, scar_id):
 
 def _card_update_copy_form_data_into_card_json(card_json, form):
     card_faces = card_json['card_faces']
+    while len(card_faces) < len(form.faces):
+        card_faces.append({})
 
     # Copy the data from the form into the card_faces dicts.
-    for form_field in form:
-        tokens = form_field.name.split('_', 2)
-        if tokens[0] != 'face':
-            continue
-
-        face = int(tokens[1])
-        field_name = tokens[2]
-        field_value = normalize_newlines(form_field.data.strip())
-
-        while face >= len(card_faces):
-            card_faces.append({})
-
-        card_faces[face][field_name] = field_value
+    for face_index in range(len(form.faces)):
+        card_face = card_faces[face_index]
+        for field_name, field in form.faces[face_index].items():
+            card_face[field_name] = normalize_newlines(field.data.strip())
 
     # Remove any dicts face dicts that don't have names.
     # This happens often for normal layout cards since there is always a second face form.
