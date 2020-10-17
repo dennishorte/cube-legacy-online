@@ -41,25 +41,28 @@
       </table>
 
       <h3>All Results</h3>
-      <table class="table">
-        <thead class="thead-light">
-          <th>player 1</th>
-          <th>player 2</th>
-          <th>result</th>
-        </thead>
+      <table class="table table-striped">
         <tbody>
+          <tr>
+            <td></td>
+            {% for seat in d.seats %}
+              <td>{{ seat.user.name }}</td>
+            {% endfor %}
+          </tr>
+          
           {% for seat1 in d.seats %}
-            {% if seat1 != d.seat %}
+            <tr>
+              <td>{{ seat1.user.name }}</td>
               {% for seat2 in d.seats %}
-                <tr>
-                  {% if seat1 != seat2 %}
-                    <td>{{ seat1.user.name }}</td>
-                    <td>{{ seat2.user.name }}</td>
-                    <td>{{ d.results(seat1, seat2) }}</td>
+                <td>
+                  {% if seat1 == seat2 %}
+                    &times;
+                  {% else %}
+                    {{ d.results(seat1, seat2) }}
                   {% endif %}
-                </tr>
+                </td>
               {% endfor %}
-            {% endif %}
+            </tr>
           {% endfor %}
         </tbody>
       </table>
