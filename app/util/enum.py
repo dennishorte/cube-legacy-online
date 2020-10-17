@@ -54,6 +54,7 @@ class Layout(enum.Enum):
             layout = layout.name
 
         return layout in (
+            Layout.flip.name,
             Layout.transform.name,
             Layout.modal_dfc.name,
         )
