@@ -56,7 +56,7 @@ class DraftWrapper(object):
         db.session.commit()
 
         if self.passing_to():
-            if Config.FLASK_ENV == 'production' or self.passing_to().name == 'dennis':
+            if Config.FLASK_ENV == 'production':
                 slack.send_your_pick_notification(self.passing_to(), self.draft)
 
     def result_form_for(self, seat):
