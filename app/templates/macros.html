@@ -75,3 +75,25 @@
     {% endfor %}
   </div>
 {% endmacro %}
+
+{% macro show_picked_card_names(seat) %}
+  <div class="row">
+    <div class="col">
+      <h3>Legacy Card Names</h3>
+      <ul class="list-unstyled">
+        {% for card in seat.picks %}
+          <li>{{ card.cube_card.cockatrice_name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col">
+      <h3>Standard Card Names</h3>
+      <ul class="list-unstyled">
+        {% for card in seat.picks %}
+          <li>{{ card.cube_card.name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endmacro %}

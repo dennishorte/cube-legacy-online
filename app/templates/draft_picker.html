@@ -1,5 +1,6 @@
 {% from "macros.html" import show_card_list %}
 {% from "macros.html" import show_draft_card_list %}
+{% from "macros.html" import show_picked_card_names %}
 
 {% extends "base.html" %}
 
@@ -96,6 +97,10 @@
     <h2 class="text-secondary">Your Picks</h2>
     {{ show_card_list(d.seat.picks) }}
   </div>
+
+  <hr>
+
+  {{ show_picked_card_names(d.seat) }}
   <!-- END: Picked Cards -->
 
 {% endblock %}
