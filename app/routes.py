@@ -482,6 +482,7 @@ def draft_result(draft_id):
     if form.validate_on_submit():
         # See if there is already a result for this matchup.
         result = MatchResult.query.filter(
+            MatchResult.draft_id == draft_id,
             MatchResult.user_id == current_user.id,
             MatchResult.opponent_id == form.user_id.data,
         ).first()

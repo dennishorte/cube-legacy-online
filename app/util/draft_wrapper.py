@@ -61,6 +61,7 @@ class DraftWrapper(object):
 
     def result_form_for(self, seat):
         result = MatchResult.query.filter(
+            MatchResult.draft_id == self.draft.id,
             MatchResult.user_id == self.user.id,
             MatchResult.opponent_id == seat.user.id,
         ).first()
@@ -77,6 +78,7 @@ class DraftWrapper(object):
 
     def results(self, seat1, seat2):
         result = MatchResult.query.filter(
+            MatchResult.draft_id == self.draft.id,
             MatchResult.user_id == seat1.user.id,
             MatchResult.opponent_id == seat2.user.id,
         ).first()
