@@ -25,6 +25,7 @@ def add_cards_to_cube(cube_id, card_names, added_by):
     base_cards = BaseCard.query.filter(BaseCard.name.in_(true_names_with_dups)).all()
     base_card_map = {x.name: x for x in base_cards}
 
+    new_cards = []
     for true_name in true_names_with_dups:
         base_card = base_card_map[true_name]
         cc = CubeCard.from_base_card(
@@ -32,8 +33,15 @@ def add_cards_to_cube(cube_id, card_names, added_by):
             cube_id=cube_id,
             added_by=added_by,
         )
+        new_cards.append(cc)
         db.session.add(cc)
 
+    db.session.commit()
+
+    # Give all the new cards a group id.
+    for c in new_cards:
+        c.latest_id = c.id
+        db.session.add(c)
     db.session.commit()
 
     return {
