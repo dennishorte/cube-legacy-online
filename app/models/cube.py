@@ -78,6 +78,7 @@ class CubeCard(db.Model):
     comment = db.Column(db.Text)
     
     # Foreign Keys
+    latest_id = db.Column(db.Integer)  # Used to keep a family together.
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
     base_id = db.Column(db.Integer, db.ForeignKey('base_card.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
