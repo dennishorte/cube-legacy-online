@@ -47,7 +47,7 @@ class Seat(db.Model):
     picks = db.relationship('PackCard', backref='picked_by')
 
     def __repr__(self):
-        return '<Seat {}>'.format(self.user.username)
+        return '<Seat {}>'.format(self.user.name)
 
     def waiting_packs(self):
         """
