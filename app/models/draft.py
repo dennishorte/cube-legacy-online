@@ -152,7 +152,10 @@ class Pack(db.Model):
         return self.num_picked == 0 and self.scarred_this_round_id == pack_card.cube_card.id
 
     def next_seat_order(self):
-        return self.seat_ordering()[self.num_picked]
+        if self.num_picked < len(self.seat_ordering()):
+            return self.seat_ordering()[self.num_picked]
+        else:
+            return None
 
     @functools.cached_property
     def next_seat(self):

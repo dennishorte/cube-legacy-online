@@ -33,10 +33,12 @@
       {% for pack in d.packs_for(p) %}
         <div class="col">
           <p class="m-0">Pack: {{ pack.pack_number }}</p>
-          <p class="m-0 text-info">Next:
-            {{ pack.next_seat.user.name }} :
-            {{ pack.next_seat.order }}
-          </p>
+          {% if pack.next_seat_order() %}
+            <p class="m-0 text-info">Next:
+              {{ pack.next_seat.user.name }} :
+              {{ pack.next_seat.order }}
+            </p>
+          {% endif %}
           <p class="m-0">{{ pack.direction() }}: {{ pack.seat_ordering() }}</p>
 
           {% for card in d.picked_cards_for_pack(pack) %}
