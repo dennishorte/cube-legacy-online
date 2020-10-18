@@ -18,7 +18,7 @@ def send_your_pick_notification(user, draft):
     if Config.FLASK_ENV != 'production':
         return
 
-    if not user.has_picked_since_last_notification():
+    if not user.should_send_notification():
         return
     
     try:
