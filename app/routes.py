@@ -281,19 +281,11 @@ def card_editor(card_id):
         form.comment.data = "{} added scar during draft: {}".format(current_user.name, scar.text)
         form.scar_id.data = scar_id
 
-    # Diff with original version
-    first_version = CubeCard.query.filter(
-        CubeCard.latest_id == card.latest_id,
-        CubeCard.version == 1,
-    ).first()
-    diff = card_diff(first_version, card)
-
     return render_template(
         'card_editor.html',
         card=card,
         form=form,
         scar=scar,
-        diff=diff,
         read_only=request.args.get('read_only', ''),
     )
 

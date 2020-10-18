@@ -1,10 +1,12 @@
 import enum
+import functools
 import json
 import random
 from datetime import datetime
 
 from app import db
 from app.models.user import *
+from app.util import card_util
 from app.util import cockatrice
 from app.util.enum import Layout
 
@@ -125,6 +127,22 @@ class CubeCard(db.Model):
             scarred=self.is_scarred(),
         )
 
+    @functools.cached_property        
+    def scar_diff(self):
+        original = CubeCard.query.filter(
+            CubeCard.version == 1,
+            CubeCard.latest_id == self.latest_id,
+        ).first()
+        return card_util.card_diff(original, self)
+
+    def scar_diff_flat(self):
+        lines = []
+        for face in self.scar_diff.data:
+            for key, changes in face.items():
+                lines += changes
+        return lines
+                    
+        
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
         return CubeCard(
