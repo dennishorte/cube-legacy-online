@@ -58,11 +58,6 @@ class DraftWrapper(object):
         self.user.last_pick_timestamp = datetime.utcnow()
         db.session.add(self.user)
 
-        # Consistency check: added because there were occasionally problems with the pack card
-        # not getting updated even though the pack was getting an extra pick made.
-        if pack.num_picked != len(pack.picked_cards()):
-            raise RuntimeError(f"Pick inconsistency in pack {pack.id}")
-
         # commit the update
         db.session.commit()
 
