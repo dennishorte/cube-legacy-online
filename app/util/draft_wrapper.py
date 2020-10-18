@@ -41,6 +41,9 @@ class DraftWrapper(object):
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
 
+        if not self.pack:
+            raise ValueError(f"No pack to pick from right now.")
+        
         if not pack_card.pack_id == self.pack.id:
             raise ValueError(f"{card_id}: {card.cube_card.name()} is not part of pack {self.pack.id}. It's in pack {card.pack_id}.")
         
