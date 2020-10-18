@@ -61,7 +61,7 @@ class Seat(db.Model):
         """
         # Collect all packs that it is my pick for and sort by pick order.
         packs = self.draft.packs
-        up_for_me = [x for x in packs if x.next_seat.id == self.id]
+        up_for_me = [x for x in packs if x.next_seat and x.next_seat.id == self.id]
         up_for_me.sort(key=lambda x: (x.pack_number * 100) + x.num_picked)
 
         # Remove packs that I can't pick from right now.
