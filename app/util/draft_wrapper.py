@@ -24,6 +24,10 @@ class DraftWrapper(object):
 
     def passing_to(self):
         """User who will see this pack after you pick from it."""
+
+        return self.passing_to_seat().user
+
+    def passing_to_seat(self):
         if self.pack is None:
             return None
         
@@ -32,7 +36,7 @@ class DraftWrapper(object):
         else:
             next_seat = (self.seat.order - 1) % self.draft.num_seats
 
-        return self.seats[next_seat].user
+        return self.seat[next_seat]
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
@@ -59,7 +63,8 @@ class DraftWrapper(object):
         # commit the update
         db.session.commit()
 
-        if self.passing_to():
+        next_seat = self.passing_to_seat()
+        if next_seat and next_seat.waiting_packs():
             slack.send_your_pick_notification(self.passing_to(), self.draft)
 
     def result_form_for(self, seat):
