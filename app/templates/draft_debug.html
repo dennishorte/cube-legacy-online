@@ -34,8 +34,8 @@
         <div class="col">
           <p class="m-0">Pack: {{ pack.pack_number }}</p>
           <p class="m-0 text-info">Next:
-            {{ pack.next_seat().user.name }} :
-            {{ pack.next_seat().order }}
+            {{ pack.next_seat.user.name }} :
+            {{ pack.next_seat.order }}
           </p>
           <p class="m-0">{{ pack.direction() }}: {{ pack.seat_ordering() }}</p>
 
