@@ -59,36 +59,20 @@ class Seat(db.Model):
         """
         Return all packs that this seat is blocking.
         """
-        num_seats = self.draft.num_seats
-        last_pick = len(self.picks)
+        # Collect all packs that it is my pick for and sort by pick order.
+        packs = self.draft.packs
+        up_for_me = [x for x in packs if x.next_seat.id == self.id]
+        up_for_me.sort(key=lambda x: (x.pack_number * 100) + x.num_picked)
 
-        packs = []
-        while True:
-            next_pick = last_pick + 1
-            
-            next_pack = last_pick // self.draft.pack_size
-            next_pick_for_pack = last_pick % self.draft.pack_size + 1
+        # Remove packs that I can't pick from right now.
+        can_pick_now = []
+        my_total_picks = len(self.picks)
+        for pack in up_for_me:
+            if pack.total_pick_number() == my_total_picks + 1:
+                can_pick_now.append(pack)
+                my_total_picks += 1
 
-            if next_pack % 2 == 0:  # Pass left
-                next_seat = (num_seats + self.order - (next_pick_for_pack - 1)) % num_seats
-                
-            else:  # pass right
-                next_seat = (self.order + next_pick_for_pack - 1) % num_seats
-
-            pack = Pack.query.filter(
-                Pack.draft_id == self.draft_id,
-                Pack.seat_number == next_seat,
-                Pack.pack_number == next_pack,
-                Pack.num_picked == next_pick_for_pack - 1,
-            ).first()
-
-            if pack is None:
-                break
-            else:
-                packs.append(pack)
-                last_pick += 1
-
-        return packs
+        return can_pick_now
 
     def waiting_pack(self):
         """
@@ -174,7 +158,10 @@ class Pack(db.Model):
         return len(self.picked_cards())
 
     def pick_number(self):
-        return self.num_picked + 1
+        return self.total_pick_number() % self.draft.pack_size
+
+    def total_pick_number(self):
+        return (self.pack_number * self.draft.pack_size) + self.num_picked + 1
 
     def complete(self):
         return self.num_picked == self.draft.pack_size
