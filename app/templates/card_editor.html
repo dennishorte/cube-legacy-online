@@ -1,40 +1,47 @@
-{% macro face_form(fields, face_name) %}
-  <div class="col bg-light m-1 rounded border">
+{% macro render_field_diff(diff, field_name) %}
+  <ul class="field-diff list-unstyled">
+    {% for change, line in diff[field_name] %}
+      <li class="
+                 {% if change == '+' %}
+                 text-success
+                 {% else %}
+                 text-danger
+                 {% endif %}
+                 "
+      >{{ change }} {{ line }}</li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
+{% macro render_form_group(fields, diff, field_name) %}
+  <div class="form-group">
+    {{ fields[field_name].label }}
+    {{ fields[field_name](class='form-control', rows='5') }}
+    {{ render_field_diff(diff, field_name) }}
+  </div>
+{% endmacro %}
+
+{% macro render_form_group_col(fields, diff, field_name) %}
+  <div class="col form-group">
+    {{ fields[field_name].label }}
+    {{ fields[field_name](class='form-control', rows='5') }}
+    {{ render_field_diff(diff, field_name) }}
+  </div>
+{% endmacro %}
+
+{% macro face_form(fields, diff, face_name) %}
+  <div class="col m-1 rounded border bg-light">
     <h4 class="mt-2">{{ face_name }}</h4>
-    <div class="form-group">
-      {{ fields['name'].label }}
-      {{ fields['name'](class='form-control') }}
-    </div>
-    <div class="form-group">
-      {{ fields['mana_cost'].label }} (<a href="https://scryfall.com/docs/api/colors">notation</a>)
-      {{ fields['mana_cost'](class='form-control') }}
-    </div>
-    <div class="form-group">
-      {{ fields['image_url'].label }}
-      {{ fields['image_url'](class='form-control') }}
-    </div>
-    <div class="form-group">
-      {{ fields['type_line'].label }}
-      {{ fields['type_line'](class='form-control') }}
-    </div>
-    <div class="form-group">
-      {{ fields['oracle_text'].label }}
-      {{ fields['oracle_text'](class='form-control', rows='5') }}
-    </div>
+    {{ render_form_group(fields, diff, 'name') }}
+    {{ render_form_group(fields, diff, 'mana_cost') }}
+    {{ render_form_group(fields, diff, 'image_url') }}
+    {{ render_form_group(fields, diff, 'type_line') }}
+    {{ render_form_group(fields, diff, 'oracle_text') }}
 
     <div class="row">
-      <div class="col form-group">
-        {{ fields['power'].label }}
-        {{ fields['power'](class='form-control') }}
-      </div>
-      <div class="col form-group">
-        {{ fields['toughness'].label }}
-        {{ fields['toughness'](class='form-control') }}
-      </div>
-      <div class="col form-group">
-        {{ fields['loyalty'].label }}
-        {{ fields['loyalty'](class='form-control') }}
-      </div>
+      {{ render_form_group_col(fields, diff, 'power') }}
+      {{ render_form_group_col(fields, diff, 'toughness') }}
+      {{ render_form_group_col(fields, diff, 'loyalty') }}
     </div>
   </div>
 {% endmacro %}
@@ -101,8 +108,8 @@
 
         <!-- Edit forms for each face -->
         <div class="row mt-1">
-          {{ face_form(form.faces[0], 'front') }}
-          {{ face_form(form.faces[1], 'back') }}
+          {{ face_form(form.faces[0], diff[0], 'front') }}
+          {{ face_form(form.faces[1], diff[1], 'back') }}
         </div>
         <!-- END: Edit forms for each face -->
 
