@@ -55,15 +55,6 @@ class DraftWrapper(object):
         self.pack.num_picked += 1
         db.session.add(self.pack)
 
-        # If this was the last pick, mark the draft complete.
-        unpicked_cards = PackCard.query.filter(
-            PackCard.draft_id == self.draft.id,
-            PackCard.pick_number < 0,
-        ).first()
-        if unpicked_cards is None:
-            self.draft.complete = True
-            db.session.add(self.draft)
-
         self.user.last_pick_timestamp = datetime.utcnow()
         db.session.add(self.user)
 

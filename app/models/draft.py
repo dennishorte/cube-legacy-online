@@ -11,8 +11,6 @@ class Draft(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64))
 
-    complete = db.Column(db.Boolean, default=False)
-
     # Setup info
     pack_size = db.Column(db.Integer)
     num_packs = db.Column(db.Integer)
@@ -30,6 +28,14 @@ class Draft(db.Model):
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
+
+    @functools.cached_property
+    def complete(self):
+        unpicked_cards = PackCard.query.filter(
+            PackCard.draft_id == self.id,
+            PackCard.pick_number == -1,
+        ).first()
+        return unpicked_cards is None
 
     def scar_rounds(self):
         return [int(x) for x in self.scar_rounds_str.split(',') if x.strip()]
@@ -113,7 +119,6 @@ class Pack(db.Model):
     draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
     seat_number = db.Column(db.Integer)
     pack_number = db.Column(db.Integer)
-    num_picked = db.Column(db.Integer, default=0)
     scarred_this_round_id = db.Column(db.Integer)  # CubeCard id
 
     cards = db.relationship('PackCard', backref='pack')
@@ -164,12 +169,17 @@ class Pack(db.Model):
             Seat.order == self.next_seat_order()
         ).first()
 
+    @functools.cached_property
+    def num_picked(self):
+        return len(self.picked_cards())
+
     def pick_number(self):
         return self.num_picked + 1
 
     def complete(self):
         return self.num_picked == self.draft.pack_size
 
+    @functools.lru_cache
     def picked_cards(self):
         picked = [x for x in self.cards if x.pick_number != -1]
         picked.sort(key=lambda x: x.pick_number)
