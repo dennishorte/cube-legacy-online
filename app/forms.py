@@ -27,6 +27,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_0_image_url = TextAreaField('Image Url')
     face_0_type_line = StringField('Type Line')
     face_0_oracle_text = TextAreaField('Rules Text')
+    face_0_flavor_text = TextAreaField('Flavor Text')
     face_0_power = StringField('Power')
     face_0_toughness = StringField('Toughness')
     face_0_loyalty = StringField('Loyalty')
@@ -36,6 +37,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_1_image_url = TextAreaField('Image Url')
     face_1_type_line = StringField('Type Line')
     face_1_oracle_text = TextAreaField('Rules Text')
+    face_1_flavor_text = TextAreaField('Flavor Text')
     face_1_power = StringField('Power')
     face_1_toughness = StringField('Toughness')
     face_1_loyalty = StringField('Loyalty')
@@ -58,6 +60,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'image_url': self.face_0_image_url,
                 'type_line': self.face_0_type_line,
                 'oracle_text': self.face_0_oracle_text,
+                'flavor_text': self.face_0_flavor_text,
                 'power': self.face_0_power,
                 'toughness': self.face_0_toughness,
                 'loyalty': self.face_0_loyalty,
@@ -68,6 +71,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'image_url': self.face_1_image_url,
                 'type_line': self.face_1_type_line,
                 'oracle_text': self.face_1_oracle_text,
+                'flavor_text': self.face_1_flavor_text,
                 'power': self.face_1_power,
                 'toughness': self.face_1_toughness,
                 'loyalty': self.face_1_loyalty,
