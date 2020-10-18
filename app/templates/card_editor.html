@@ -130,7 +130,10 @@
               {{ form.update_as.label }}
               {{ form.update_as(class='form-control') }}
             </div>
-            <p>{{ form.submit(class='btn-primary', id='submitButton') }}</p>
+            <div>
+              {{ form.submit(class='btn btn-primary', id='submitButton') }}
+              <button class="btn btn-secondary" onclick="toggle_diff()" type="button">Toggle Diff</button>
+            </div>
           </div>
         </div>
         
@@ -153,6 +156,10 @@
 
 {% block scripts %}
   <script>
+   function toggle_diff() {
+     $('.field-diff').toggle()
+   }
+   
    $(document).ready(function() {
      // Expand the textareas to display all of their content.
      $('textarea').each(function(index, element) {
