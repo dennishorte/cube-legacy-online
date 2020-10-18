@@ -38,7 +38,7 @@ class User(UserMixin, db.Model):
     def should_send_notification(self):
         return (
             not self.last_notif_timestamp
-            or not self.last_notif_timestamp
+            or not self.last_pick_timestamp
             or self.last_notif_timestamp < self.last_pick_timestamp
         )
 
