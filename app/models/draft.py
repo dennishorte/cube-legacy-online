@@ -176,7 +176,7 @@ class Pack(db.Model):
         if not self.is_scarring_round:
             return None
 
-        user = self.next_seat().user
+        user = self.next_seat.user
         choices = Scar.get_for_pack(self.id, user.id)
 
         if not choices:
