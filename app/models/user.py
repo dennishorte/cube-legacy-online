@@ -36,7 +36,10 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def has_picked_since_last_notification(self):
-        return self.last_notif_timestamp < self.last_pick_timestamp
+        if not self.last_notif_timestamp or not self.last_pick_timestamp:
+            return False
+        else:
+            return self.last_notif_timestamp < self.last_pick_timestamp
 
     @staticmethod
     def all_names():

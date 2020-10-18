@@ -213,7 +213,7 @@ class PackCard(db.Model):
     picked_at = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<PackCard {}>'.format(self.cube_card.name)
+        return '<PackCard {}>'.format(self.cube_card.name())
 
     def picked(self):
         return self.pick_number > -1

@@ -40,6 +40,10 @@ class DraftWrapper(object):
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
+
+        if not pack_card.pack_id == self.pack.id:
+            raise ValueError(f"{card_id}: {card.cube_card.name()} is not part of pack {self.pack.id}. It's in pack {card.pack_id}.")
+        
         pack_card.picked_by_id = self.seat.id
         pack_card.pick_number = self.pack.num_picked
         pack_card.picked_at = datetime.utcnow()
