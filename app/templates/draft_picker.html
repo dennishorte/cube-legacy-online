@@ -4,54 +4,64 @@
 
 {% extends "base.html" %}
 
-{% block title %}
-  {{ d.draft.name }}
-{% endblock %}
-
 {% block content %}
 
-  <!-- Seating Chart -->
-  <div id="seating">
-    <h2>Seating</h2>
-    <table id="seating" class="table table-sm">
-      <tr>
-        <thead class="thead-light">
-          <th></th>
-          <th></th>
-          <th colspan="{{ d.draft.num_packs }}">num picks made</th>
-          <th></th>
-        </thead>
-        <thead class="thead-light">
-          <th>player</th>
-          <th>waiting</th>
-          {% for pack in range(d.draft.num_packs) %}
-            <th>{{ loop.index }}</th>
-          {% endfor %}
-          <th></th>
-        </thead>
-      </tr>
-
-      <tbody>
-        {% for s in d.seats %}
-          <tr>
-            <td>{{ s.user.name }}</td>
-            <td>{{ s.waiting_packs()|length }}</td>
+  <div class="row">
+    <!-- Draft Info -->
+    <div class="col col-md-4 border bg-light p-2">
+      <ul class="list-unstyled">
+        <li><strong>Draft: </strong>{{ d.draft.name }}</li>
+        <li><strong>Cube: </strong>{{ d.draft.cube.name }}</li>
+        <li><strong>Packs: </strong>{{ d.draft.num_packs }}</li>
+        <li><strong>Pack size: </strong>{{ d.draft.pack_size }}</li>
+      </ul>
+    </div>
+    <!-- END: Draft Info -->
+    
+    <!-- Seating Chart -->
+    <div class="col-md-8" id="seating">
+      <h2>Seating</h2>
+      <table id="seating" class="table table-sm">
+        <tr>
+          <thead class="thead-light">
+            <th></th>
+            <th></th>
+            <th colspan="{{ d.draft.num_packs }}">num picks made</th>
+            <th></th>
+          </thead>
+          <thead class="thead-light">
+            <th>player</th>
+            <th>waiting</th>
             {% for pack in range(d.draft.num_packs) %}
-              <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
+              <th>{{ loop.index }}</th>
             {% endfor %}
-            <td>
-              <a href="/draft/{{d.draft.id}}/force/{{s.user.id}}">force</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            <th></th>
+          </thead>
+        </tr>
+
+        <tbody>
+          {% for s in d.seats %}
+            <tr>
+              <td>{{ s.user.name }}</td>
+              <td>{{ s.waiting_packs()|length }}</td>
+              {% for pack in range(d.draft.num_packs) %}
+                <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
+              {% endfor %}
+              <td>
+                <a href="/draft/{{d.draft.id}}/force/{{s.user.id}}">force</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- END: Seating Chart -->
+
   </div>
-  <!-- END: Seating Chart -->
 
   <!-- Scars to Add -->
   {% if d.is_scarring_round() %}
-    <div id="scars">
+    <div id="scars" class="mt-2">
       <h3>Scarring Rounds</h3>
       {% for scar in d.pack.scar_options() %}
         <div class="m-2 p-2 bg-light border row">
@@ -72,7 +82,7 @@
   <!-- END: Scars to Add -->
 
   <!-- Card Picker -->
-  <div id="picker" class="no-gutters">
+  <div id="picker" class="no-gutters mt-2">
     <h2 class="text-primary">Card Picker</h2>
     {% if d.draft.complete %}
       <p>draft is complete</p>
