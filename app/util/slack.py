@@ -1,9 +1,11 @@
+from datetime import datetime
 from urllib.parse import urlparse
 
 from flask import request
 from slack import WebClient
 from slack.errors import SlackApiError
 
+from app import db
 from app.config import Config
 
 
@@ -13,19 +15,25 @@ clo_channel = 'C01AV1RGJSK'
 
 
 def send_your_pick_notification(user, draft):
+    if Config.FLASK_ENV != 'production':
+        return
+
+    if not user.has_picked_since_last_notification():
+        return
+    
     try:
         open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
 
         domain_host = urlparse(request.base_url).hostname
         draft_url = f"http://{domain_host}/draft/{draft.id}"
-        message = f"Someone has passed you a pack. Time to <{draft_url}|make a pick>."
+        message = f"Someone has passed you a pack in {draft.name}. Time to <{draft_url}|make a pick>."
 
         send_response = _client.chat_postMessage(
             channel=dm_channel,
             text=message,
         )
-        
+
     except SlackApiError as e:
         # You will get a SlackApiError if "ok" is False
         assert e.response["ok"] is False
@@ -34,7 +42,11 @@ def send_your_pick_notification(user, draft):
 
     except Exception:
         # Don't crash the server because Slack notifications aren't working.
-        pass
+        return
+
+    user.last_notif_timestamp = datetime.utcnow()
+    db.session.add(user)
+    db.session.commit()
 
 
 def test_direct_message(user):

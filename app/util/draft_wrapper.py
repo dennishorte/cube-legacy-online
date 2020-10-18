@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 from app import db
 from app.config import Config
@@ -52,12 +53,14 @@ class DraftWrapper(object):
             self.draft.complete = True
             db.session.add(self.draft)
 
+        self.user.last_pick_timestamp = datetime.utcnow()
+        db.session.add(self.user)
+
         # commit the update
         db.session.commit()
 
         if self.passing_to():
-            if Config.FLASK_ENV == 'production':
-                slack.send_your_pick_notification(self.passing_to(), self.draft)
+            slack.send_your_pick_notification(self.passing_to(), self.draft)
 
     def result_form_for(self, seat):
         result = MatchResult.query.filter(

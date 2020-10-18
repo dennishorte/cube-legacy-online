@@ -12,6 +12,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     slack_id = db.Column(db.String(50))
 
+    last_pick_timestamp = db.Column(db.DateTime)
+    last_notif_timestamp = db.Column(db.DateTime)
+
     cubes = db.relationship('Cube', backref='created_by')
     draft_seats = db.relationship('Seat', backref='user')
     match_results = db.relationship('MatchResult', backref='user')
@@ -31,6 +34,9 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def has_picked_since_last_notification(self):
+        return self.last_notif_timestamp < self.last_pick_timestamp
 
     @staticmethod
     def all_names():
