@@ -34,8 +34,11 @@
         <div class="col">
           <p class="m-0">
             <a href="{{ url_for('pack_debug', pack_id=pack.id) }}">
-              Pack: {{ pack.pack_number }}
+              <strong>Pack: {{ pack.pack_number }}, id: {{ pack.id }}</strong>
             </a>
+          </p>
+          <p class="m-0">
+            <strong>Num Picked: </strong>{{ pack.num_picked }}
           </p>
           {% if pack.next_seat_order() %}
             <p class="m-0 text-info">Next:
@@ -46,13 +49,18 @@
           <p class="m-0">{{ pack.direction() }}: {{ pack.seat_ordering() }}</p>
 
           {% for card in pack.picked_cards() %}
-            <p class="text-primary m-0">
-              {{ card.cube_card.name() }}
-              <span class="text-info">(
+            <div class="m-0 d-flex justify-content-between">
+              <div>
+                {{ card.id }}.
+                <span class="text-primary">
+                  {{ card.cube_card.name() }}
+                </span>
+              </div>
+              <div class="text-info">(
                 {{ card.picked_by.user.name  }} :
                 {{ card.picked_by.order }}
-                )</span>
-            </p>
+                )</div>
+            </div>
           {% endfor %}
 
           {% for card in pack.unpicked_cards() %}
