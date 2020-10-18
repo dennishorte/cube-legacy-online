@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1db0a3bd6066
+Revision ID: cbe4d53bbf84
 Revises: 
-Create Date: 2020-10-13 09:24:09.907251
+Create Date: 2020-10-18 11:32:42.335575
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1db0a3bd6066'
+revision = 'cbe4d53bbf84'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,6 +31,8 @@ def upgrade():
     sa.Column('name', sa.String(length=64), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('slack_id', sa.String(length=50), nullable=True),
+    sa.Column('last_pick_timestamp', sa.DateTime(), nullable=True),
+    sa.Column('last_notif_timestamp', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_name'), 'user', ['name'], unique=True)
@@ -46,6 +48,24 @@ def upgrade():
     )
     op.create_index(op.f('ix_cube_active'), 'cube', ['active'], unique=False)
     op.create_index(op.f('ix_cube_timestamp'), 'cube', ['timestamp'], unique=False)
+    op.create_table('achievement',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('cube_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.Text(), nullable=True),
+    sa.Column('conditions', sa.Text(), nullable=True),
+    sa.Column('unlock', sa.Text(), nullable=True),
+    sa.Column('multiunlock', sa.Boolean(), nullable=True),
+    sa.Column('version', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_timestamp', sa.DateTime(), nullable=True),
+    sa.Column('unlocked_by_id', sa.Integer(), nullable=True),
+    sa.Column('unlocked_timestamp', sa.DateTime(), nullable=True),
+    sa.Column('finalized_timestamp', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
+    sa.ForeignKeyConstraint(['unlocked_by_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('cube_card',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
@@ -53,6 +73,7 @@ def upgrade():
     sa.Column('latest', sa.Boolean(), nullable=True),
     sa.Column('json', sa.Text(), nullable=True),
     sa.Column('comment', sa.Text(), nullable=True),
+    sa.Column('latest_id', sa.Integer(), nullable=True),
     sa.Column('cube_id', sa.Integer(), nullable=True),
     sa.Column('base_id', sa.Integer(), nullable=True),
     sa.Column('added_by_id', sa.Integer(), nullable=True),
@@ -70,7 +91,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('name', sa.String(length=64), nullable=True),
-    sa.Column('complete', sa.Boolean(), nullable=True),
     sa.Column('pack_size', sa.Integer(), nullable=True),
     sa.Column('num_packs', sa.Integer(), nullable=True),
     sa.Column('num_seats', sa.Integer(), nullable=True),
@@ -99,15 +119,15 @@ def upgrade():
     sa.Column('draft_id', sa.Integer(), nullable=True),
     sa.Column('seat_number', sa.Integer(), nullable=True),
     sa.Column('pack_number', sa.Integer(), nullable=True),
-    sa.Column('num_picked', sa.Integer(), nullable=True),
+    sa.Column('scarred_this_round_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['draft_id'], ['draft.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('scar',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cube_id', sa.Integer(), nullable=True),
-    sa.Column('text', sa.String(length=64), nullable=True),
-    sa.Column('restrictions', sa.String(length=64), nullable=True),
+    sa.Column('text', sa.Text(), nullable=True),
+    sa.Column('restrictions', sa.String(length=128), nullable=True),
     sa.Column('errata', sa.Text(), nullable=True),
     sa.Column('created_timestamp', sa.DateTime(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
@@ -116,6 +136,8 @@ def upgrade():
     sa.Column('applied_to_id', sa.Integer(), nullable=True),
     sa.Column('removed_timestamp', sa.DateTime(), nullable=True),
     sa.Column('removed_by_id', sa.Integer(), nullable=True),
+    sa.Column('locked_by_id', sa.Integer(), nullable=True),
+    sa.Column('locked_pack_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['applied_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['applied_to_id'], ['cube_card.id'], ),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
@@ -161,6 +183,7 @@ def downgrade():
     op.drop_table('draft')
     op.drop_index(op.f('ix_cube_card_timestamp'), table_name='cube_card')
     op.drop_table('cube_card')
+    op.drop_table('achievement')
     op.drop_index(op.f('ix_cube_timestamp'), table_name='cube')
     op.drop_index(op.f('ix_cube_active'), table_name='cube')
     op.drop_table('cube')
