@@ -36,7 +36,7 @@ class DraftWrapper(object):
         else:
             next_seat = (self.seat.order - 1) % self.draft.num_seats
 
-        return self.seat[next_seat]
+        return self.seats[next_seat]
 
     def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
