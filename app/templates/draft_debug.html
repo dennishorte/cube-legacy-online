@@ -32,7 +32,11 @@
     <div class="row">
       {% for pack in d.packs_for(p) %}
         <div class="col">
-          <p class="m-0">Pack: {{ pack.pack_number }}</p>
+          <p class="m-0">
+            <a href="{{ url_for('pack_debug', pack_id=pack.id) }}">
+              Pack: {{ pack.pack_number }}
+            </a>
+          </p>
           {% if pack.next_seat_order() %}
             <p class="m-0 text-info">Next:
               {{ pack.next_seat.user.name }} :
@@ -41,7 +45,7 @@
           {% endif %}
           <p class="m-0">{{ pack.direction() }}: {{ pack.seat_ordering() }}</p>
 
-          {% for card in d.picked_cards_for_pack(pack) %}
+          {% for card in pack.picked_cards() %}
             <p class="text-primary m-0">
               {{ card.cube_card.name() }}
               <span class="text-info">(
@@ -51,7 +55,7 @@
             </p>
           {% endfor %}
 
-          {% for card in d.unpicked_cards_for_pack(pack) %}
+          {% for card in pack.unpicked_cards() %}
             <p class="text-secondary m-0">{{ card.cube_card.name() }}</p>
           {% endfor %}
         </div>

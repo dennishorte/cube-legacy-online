@@ -525,6 +525,12 @@ def draft_debug(draft_id):
     return render_template('draft_debug.html', d=draft_debugger)
 
 
+@app.route("/pack/<pack_id>/debug")
+@login_required
+def pack_debug(pack_id):
+    return render_template('pack_debug.html', d=DraftDebugger.from_pack(pack_id))
+
+
 @app.route('/draft/<draft_id>/cockatrice')
 @login_required
 def cockatrice_download(draft_id):

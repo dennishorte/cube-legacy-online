@@ -171,7 +171,9 @@ class Pack(db.Model):
         return self.num_picked == self.draft.pack_size
 
     def picked_cards(self):
-        return [x for x in self.card if x.pick_number != -1]
+        picked = [x for x in self.cards if x.pick_number != -1]
+        picked.sort(key=lambda x: x.pick_number)
+        return picked
 
     def scar_options(self):
         if not self.is_scarring_round:

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Debugger: {{ d.draft.name }} ({{d.draft.id}})
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col">
+      <h3>Players</h3>
+      <table class="table">
+        <thead>
+          <td>seat</td>
+          <td>name</td>
+          <td>user_id</td>
+        </thead>
+        <tbody>
+          {% for p in d.seats %}
+            <tr>
+              <td>{{ p.order }}</td>
+              <td>{{ p.user.name }}</td>
+              <td>{{ p.user.id }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>  <!-- Players -->
+  
+  <!-- Pack Info -->
+  <div class="row">
+    <div class="col bg-light border p-2">
+      <ul class="list-unstyled">
+        <li><strong>draft id:</strong> {{ d.pack.draft_id }}</li>
+        <li><strong>seat num:</strong> {{ d.pack.seat_number }}</li>
+        <li><strong>pack num:</strong> {{ d.pack.pack_number }}</li>
+        <li><strong>num pick:</strong> {{ d.pack.num_picked }}</li>
+        <li><strong>direction:</strong> {{ d.pack.direction() }}</li>
+        <li><strong>next_seat_order:</strong> {{ d.pack.next_seat_order() }}</li>
+        <li><strong>next_seat:</strong> {{ d.pack.next_seat }}</li>
+        <li><strong>pick_number:</strong> {{ d.pack.pick_number() }}</li>
+        <li><strong>seat ordering:</strong> {{ d.pack.seat_ordering() }}</li>
+
+        <li><strong>is scar round:</strong> {{ d.pack.is_scarring_round }}</li>
+      </ul>
+
+    </div>
+    <div class="col bg-light border p-2">
+        
+      <p><strong>Picked cards</strong></p>
+      {% for card in d.pack.picked_cards() %}
+        <p class="text-primary m-0">
+          {{ card.cube_card.name() }}
+          <span class="text-info">(
+            {{ card.picked_by.user.name  }} :
+            {{ card.picked_by.order }}
+            )</span>
+        </p>
+      {% endfor %}
+
+      <hr>
+      
+      <p><strong>Unpicked cards</strong></p>
+      {% for card in d.pack.unpicked_cards() %}
+        <p class="text-secondary m-0">{{ card.cube_card.name() }}</p>
+      {% endfor %}
+      
+    </div>
+  </div>
+  <!-- END: Pack Info -->
+{% endblock %}

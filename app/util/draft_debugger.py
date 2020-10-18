@@ -2,12 +2,18 @@ from app.models.draft import *
 
 
 class DraftDebugger(object):
-    def __init__(self, draft_id):
+    @staticmethod
+    def from_pack(pack_id):
+        pack = Pack.query.get(pack_id)
+        return DraftDebugger(pack.draft_id, pack_id)
+    
+    def __init__(self, draft_id, pack_id=None):
         self.draft = Draft.query.get(draft_id)
 
         self.seats = Seat.query.filter(Seat.draft_id == draft_id).all()
         self.seats.sort(key=lambda x: x.order)
-        
+
+        self.pack = Pack.query.get(pack_id) if pack_id else None
         self.packs = Pack.query.filter(Pack.draft_id == draft_id).all()
 
         self.pack_cards = PackCard.query.filter(PackCard.draft_id == draft_id).all()
