@@ -40,7 +40,7 @@
           <p class="m-0">
             <strong>Num Picked: </strong>{{ pack.num_picked }}
           </p>
-          {% if pack.next_seat_order() %}
+          {% if pack.next_seat_order() != None %}
             <p class="m-0 text-info">Next:
               {{ pack.next_seat.user.name }} :
               {{ pack.next_seat.order }}
