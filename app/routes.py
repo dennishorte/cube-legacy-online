@@ -514,7 +514,9 @@ def force_pick(draft_id, user_id):
 
     # Pick the first card in the pack.
     if dw.pack:
+        dw.seat.unlock_scars()
         dw.pick_card(dw.pack.unpicked_cards()[0].id)
+        
     return redirect("/draft/{}".format(draft_id))
 
 
@@ -523,6 +525,14 @@ def force_pick(draft_id, user_id):
 def draft_debug(draft_id):
     draft_debugger = DraftDebugger(draft_id)
     return render_template('draft_debug.html', d=draft_debugger)
+
+
+@app.route("/draft/<draft_id>/new_scars")
+@login_required
+def draft_new_scars(draft_id):
+    d = DraftWrapper(draft_id, current_user)
+    d.seat.unlock_scars()
+    return redirect(url_for('draft', draft_id=draft_id))
 
 
 @app.route("/pack/<pack_id>/debug")

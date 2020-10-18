@@ -14,6 +14,9 @@
         <li><strong>Cube: </strong>{{ d.draft.cube.name }}</li>
         <li><strong>Packs: </strong>{{ d.draft.num_packs }}</li>
         <li><strong>Pack size: </strong>{{ d.draft.pack_size }}</li>
+        {% if d.draft.scar_rounds_str %}
+          <li><strong>Scar rounds: </strong>{{ d.draft.scar_rounds_str }}</li>
+        {% endif %}
       </ul>
     </div>
     <!-- END: Draft Info -->
@@ -62,7 +65,7 @@
   <!-- Scars to Add -->
   {% if d.is_scarring_round() %}
     <div id="scars" class="mt-2">
-      <h3>Scarring Rounds</h3>
+      <h3>Scarring Round</h3>
       {% for scar in d.pack.scar_options() %}
         <div class="m-2 p-2 bg-light border row">
           <div class="col col-1 btn btn-success">
@@ -77,6 +80,9 @@
           </div>
         </div>
       {% endfor %}
+      <a href="{{ url_for('draft_new_scars', draft_id=d.draft.id) }}">
+        I need new scars
+      </a>
     </div>
   {% endif %}
   <!-- END: Scars to Add -->

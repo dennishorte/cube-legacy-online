@@ -96,6 +96,18 @@ class Seat(db.Model):
             round_to_picks.setdefault(round, []).append(pick)
 
         return len(round_to_picks.get(pack_index, []))
+
+    def unlock_scars(self, commit=True):
+        pack = self.waiting_pack()
+        if not pack:
+            return
+
+        for pack_scar in Scar.get_for_pack(pack.id, self.user.id):
+            pack_scar.unlock(commit=False)
+            db.session.add(pack_scar)
+
+        if commit:
+            db.session.commit()
         
 
 class Pack(db.Model):
