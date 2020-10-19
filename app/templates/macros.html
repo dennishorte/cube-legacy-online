@@ -1,7 +1,9 @@
-{% macro show_achievement_form(form, cube) %}
+{% macro show_achievement_form(form) %}
   <div class="bg-light border p-2">
-    <form action="{{ url_for('cube_achievements_add', cube_id=cube.id) }}" method="post" novalidate>
+    <form action="{{ url_for('achievement_submit') }}" method="post" novalidate>
       {{ form.hidden_tag() }}
+      {{ form.cube_id() }}
+      {{ form.update_id() }}
       <div class="form-group">
         {{ form.name.label }}
         {{ form.name(class='form-control') }}

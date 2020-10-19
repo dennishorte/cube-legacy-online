@@ -122,6 +122,7 @@ def cube_achievements(cube_id):
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
+    form.cube_id.data = cube_id
     form.group_fields()
         
     cube = Cube.query.get(cube_id)
@@ -184,15 +185,6 @@ def achievement_edit(achievement_id):
         return render_template('achievement_edit.html', ach=ach, form=form)
 
 
-def _update_achievement_from_form(ach, form):
-    ach.name=form.name.data
-    ach.set_json(form.unlock_json())
-    ach.multiunlock=form.multiunlock.data
-    ach.created_by=User.query.filter(User.name == form.update_as.data).first()
-    db.session.add(ach)
-    db.session.commit()
-
-    
 @app.route("/achievement/<achievement_id>/finalize")
 @login_required
 def achievement_finalize(achievement_id):
@@ -204,20 +196,40 @@ def achievement_finalize(achievement_id):
     return redirect(url_for('index'))
 
 
-@app.route("/cubes/<cube_id>/new_achievement", methods=["POST"])
+@app.route("/achievement/submit", methods=["POST"])
 @login_required
-def cube_achievements_add(cube_id):
+def achievement_submit():
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
     form.group_fields()
     
-    cube = Cube.query.get(cube_id)
+    if not form.validate_on_submit():
+        flash('Error submitting achievement')
+        if form.update_id.data:
+            return redirect(url_for('achievement_edit', achievement_id=form.update_id.data))
+        elif form.cube_id.data:
+            return redirect(url_for('cube_achievements', cube_id=form.cube_id.data))
+        else:
+            return redirect(url_for('index'))
 
-    if form.validate_on_submit():
-        _update_achievement_from_form(Achievement(cube_id=cube_id), form)
-        flash('Achievement Created')
+    if form.update_id.data:
+        ach = Achievement.query.get(form.update_id.data)
+    elif form.cube_id.data:
+        ach = Achievement(cube_id=form.cube_id.data)
+    else:
+        raise ValueError("Can't create achievement with update_id or cube_id.")
+
+    ach.name=form.name.data
+    ach.set_json(form.unlock_json())
+    ach.multiunlock=form.multiunlock.data
+    ach.created_by=User.query.filter(User.name == form.update_as.data).first()
+
+    db.session.add(ach)
+    db.session.commit()        
+        
+    flash('Achievement Created')
     
-    return redirect(url_for('cube_achievements', cube_id=cube_id))
+    return redirect(url_for('cube_achievements', cube_id=ach.cube_id))
 
 
 @app.route("/cubes/<cube_id>/scars")

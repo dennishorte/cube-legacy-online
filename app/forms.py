@@ -122,6 +122,9 @@ class NewAchievementForm(FlaskForm):
     unlock_5_timing = StringField('Unlock 5 Timing')
     unlock_5_text = TextAreaField('Unlock 5 Description')
 
+    cube_id = HiddenField('Cube Id')  # Used when creating a new achievement
+    update_id = HiddenField('Update Id')  # Used when updating an existing achievement
+
     multiunlock = BooleanField('Is Multiunlock')
     update_as = SelectField('Create As')
     submit = SubmitField('Create')
