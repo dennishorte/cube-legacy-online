@@ -5,6 +5,7 @@ from flask_login import current_user
 from flask_login import login_required
 
 from app import app
+from app.forms import FinalizeAchievementForm
 from app.forms import NewAchievementForm
 from app.models.cube import *
 from app.models.draft import *
@@ -55,16 +56,22 @@ def achievement_edit(achievement_id):
     return render_template('achievement_edit.html', ach=ach, form=form)
 
 
-@app.route("/achievement/<achievement_id>/finalize")
+@app.route("/achievement/<achievement_id>/finalize", methods=["POST"])
 @login_required
 def achievement_finalize(achievement_id):
     """Marks that a player has completed all of the steps in the achievements."""
+    form = FinalizeAchievementForm()
     achievement = Achievement.query.get(achievement_id)
-    achievement.finalized_timestamp = datetime.utcnow()
-    db.session.add(achievement)
-    db.session.commit()
 
-    return redirect(url_for('index'))
+    if form.validate_on_submit():
+        achievement.finalized_timestamp = datetime.utcnow()
+        achievement.story = form.story.data
+        db.session.add(achievement)
+        db.session.commit()
+    else:
+        print(form.errors)
+
+    return redirect(url_for('achievement_view', achievement_id=achievement.id))
 
 
 @app.route("/achievement/<achievement_id>/view")
@@ -72,10 +79,12 @@ def achievement_finalize(achievement_id):
 def achievement_view(achievement_id):
     """Step 3 in claiming an achievement"""
     achievement = Achievement.query.get(achievement_id)
+    form = FinalizeAchievementForm()
 
     return render_template(
         'achievement_view.html',
         achievement=achievement,
+        form=form,
     )
 
 

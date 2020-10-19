@@ -80,6 +80,11 @@ class EditMultiFaceCardForm(FlaskForm):
         ]
     
     
+class FinalizeAchievementForm(FlaskForm):
+    story = TextAreaField('Tell the Story of This Achievement', validators=[DataRequired()])
+    submit = SubmitField("I've done all the things")
+
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

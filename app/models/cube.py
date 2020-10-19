@@ -275,6 +275,7 @@ class Achievement(db.Model):
     unlocked_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     unlocked_timestamp = db.Column(db.DateTime)
     finalized_timestamp = db.Column(db.DateTime)
+    story = db.Column(db.Text)
 
     # Deprecated (use unlock_json instead)
     unlock = db.Column(db.Text)

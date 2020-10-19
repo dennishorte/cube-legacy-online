@@ -26,19 +26,47 @@
 
               <div id="collapse{{ loop.index }}" class="collapse" data-parent="#accordion">
                 <div class="card-body">
-                  {{ group['text'] }}
+                  {% for line in group['text'].split('\n') %}
+                    <p>{{ group['text'] }}</p>
+                  {% endfor %}
                 </div>
               </div>
             </div>
           {% endif %}
         {% endfor %}
-        <!-- END: Achievement text -->
-        
-      <hr>
+      </div>
+      <!-- END: Achievement text -->
       
-      <a href="{{ url_for('achievement_finalize', achievement_id=achievement.id) }}">
-        <button class="btn btn-primary">I've Done All of The Things I'm Supposed To</button>
-      </a>
+      <hr>
+
+      <div>
+        {% if achievement.finalized_timestamp %}
+
+          <!-- Story of This Achievement -->
+          <p class="text-primary">Story of This Achievement</p>
+          {% for line in achievement.story.split('\n') %}
+            <p>{{ line }}</p>
+          {% endfor %}
+          <!-- END: Story of This Achievement -->
+
+        {% else %}
+
+          <!-- Finalize Achievement -->
+          <form action="{{ url_for('achievement_finalize', achievement_id=achievement.id) }}" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              <strong>{{ form.story.label }}</strong>
+              <p class="m-0 text-muted">How did you unlock it?</p>
+              <p class="m-0 text-muted">Why did you choose these cards?</p>
+              {{ form.story(class='form-control', rows='5') }}
+            </div>
+            {{ form.submit(class='btn btn-primary') }}
+          </form>
+          <!-- END: Finalize Achievement -->
+
+        {% endif %}
+      </div>
+      
     </div>
   </div>
   
