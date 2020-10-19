@@ -8,7 +8,7 @@
   <div class="row" >
     <div id="activeCubes" class="col">
       {% for cube in active %}
-        <p><a href="/cubes/{{cube.id}}">{{ cube.name }}</a></p>
+        <p><a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a></p>
       {% endfor %}
     </div>
 
