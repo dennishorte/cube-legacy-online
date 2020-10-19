@@ -51,8 +51,8 @@ def card_diff(card1, card2):
                 faces2[i].get(key, '').split('\n'),
             ))
 
-            diff = [x.strip() for x in diff if len(x.strip()) > 1]
-            diff = [(x[0], x[2:]) for x in diff if x.startswith('+') or x.startswith('-')]
+            diff = [x.rstrip() for x in diff if len(x.rstrip()) > 1]
+            diff = [(x[0], x[2:]) for x in diff if x.startswith('+ ') or x.startswith('- ')]
             face_diff[key] = diff
 
     return diffs
