@@ -5,8 +5,11 @@
 {% endblock %}
 
 {% block content %}
-  <div class="row" >
-    <div id="drafts" class="col">
+  <div class="row mb-5" >
+    
+    <!-- User drafts and achievements -->
+    <div id="drafts" class="col col-md-6">
+      <h4>Drafts</h4>
       <div id="active" class="border bg-light p-2">
         <p>Active Drafts</p>
         <ul class="list-unstyled ml-4">
@@ -24,9 +27,8 @@
         </ul>
       </div>
 
-      <hr>
-
       <!-- List of Achievements -->
+      <h4 class="mt-4">Achievements</h4>
       <div id="claimedAchievements" class="border bg-light p-2">
         <p>Claimed Achievements</p>
         <ul class="list-unstyled ml-4">
@@ -59,8 +61,10 @@
       <!-- END: Slack Test -->
 
     </div>
+    <!-- END: User drafts and achievements -->
 
-    <div id="new_draft" class="col border bg-light">
+    <!-- New draft form -->
+    <div id="new_draft" class="col border bg-light col-md-6">
       <h4 class="mt-2">New Draft</h4>
       <form action="/draft/new" method="post" novalidate>
         {{ new_draft_form.hidden_tag() }}
@@ -93,5 +97,7 @@
         </div>
       </form>
     </div>
+    <!-- END: New draft form -->
+
   </div>
 {% endblock %}
