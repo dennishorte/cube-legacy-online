@@ -8,14 +8,15 @@
       <hr>
       <p class="text-primary">{{ achievement.name }}</p>
       <p class="text-secondary">{{ achievement.conditions }}</p>
+
       <hr>
-      {% for line in achievement.unlock_lines() %}
-        <p class="text-dark">{{ line }}</p>
-      {% endfor %}
+
+      <!-- Achievement text to go here -->
+      
       <hr>
       
       <a href="{{ url_for('achievement_finalize', achievement_id=achievement.id) }}">
-        <button class="btn btn-primary">I've Done All of These Things</button>
+        <button class="btn btn-primary">I've Done All of The Things I'm Supposed To</button>
       </a>
     </div>
   </div>

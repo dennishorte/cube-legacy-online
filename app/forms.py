@@ -104,8 +104,8 @@ class NewDraftForm(FlaskForm):
 
 
 class NewAchievementForm(FlaskForm):
-    name = StringField('Name')
-    conditions = TextAreaField('How to Unlock')
+    name = StringField('Name', validators=[DataRequired()])
+    conditions = TextAreaField('How to Unlock', validators=[DataRequired()])
 
     unlock_1_timing = StringField('Unlock 1 Timing')
     unlock_1_text = TextAreaField('Unlock 1 Description')

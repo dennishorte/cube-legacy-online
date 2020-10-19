@@ -11,13 +11,14 @@ from app.models.draft import *
 from app.models.user import *
 
 
-@app.route("/achievement/<achievement_id>/confirm_reveal")
+@app.route("/achievement/<achievement_id>/claim_confirmation")
 @login_required
-def achievement_confirm_reveal(achievement_id):
+def achievement_claim_confirmation(achievement_id):
+    """Step 1 in claiming an achievement"""
     achievement = Achievement.query.get(achievement_id)
 
     return render_template(
-        'achievement_unlock_confirm.html',
+        'achievement_claim_confirmation.html',
         achievement=achievement,
     )
 
@@ -25,13 +26,14 @@ def achievement_confirm_reveal(achievement_id):
 @app.route("/achievement/<achievement_id>/claim")
 @login_required
 def achievement_claim(achievement_id):
+    """Step 2 in claiming an achievement"""
     achievement = Achievement.query.get(achievement_id)
     achievement.unlocked_by = current_user
     achievement.unlocked_timestamp = datetime.utcnow()
     db.session.add(achievement)
     db.session.commit()
 
-    return redirect(url_for('achievement_reveal', achievement_id=achievement_id))
+    return redirect(url_for('achievement_view', achievement_id=achievement_id))
 
 
 @app.route("/achievement/<achievement_id>/edit")
@@ -56,6 +58,7 @@ def achievement_edit(achievement_id):
 @app.route("/achievement/<achievement_id>/finalize")
 @login_required
 def achievement_finalize(achievement_id):
+    """Marks that a player has completed all of the steps in the achievements."""
     achievement = Achievement.query.get(achievement_id)
     achievement.finalized_timestamp = datetime.utcnow()
     db.session.add(achievement)
@@ -64,13 +67,14 @@ def achievement_finalize(achievement_id):
     return redirect(url_for('index'))
 
 
-@app.route("/achievement/<achievement_id>/reveal")
+@app.route("/achievement/<achievement_id>/view")
 @login_required
-def achievement_reveal(achievement_id):
+def achievement_view(achievement_id):
+    """Step 3 in claiming an achievement"""
     achievement = Achievement.query.get(achievement_id)
 
     return render_template(
-        'achievement_unlock_reveal.html',
+        'achievement_view.html',
         achievement=achievement,
     )
 

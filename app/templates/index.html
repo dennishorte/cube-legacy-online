@@ -32,7 +32,7 @@
         <ul class="unstyled-list">
           {% for achievement in achievements_unfinished %}
             <li>
-              <a href="{{ url_for('achievement_reveal', achievement_id=achievement.id) }}">
+              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
                 {{ achievement.name }}
               </a>
             </li>
@@ -45,7 +45,7 @@
         <ul class="unstyled-list">
           {% for achievement in achievements_finished %}
             <li>
-              <a href="{{ url_for('achievement_reveal', achievement_id=achievement.id) }}">
+              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
                 {{ achievement.name }}
               </a>
             </li>
