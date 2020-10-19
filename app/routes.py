@@ -122,6 +122,7 @@ def cube_achievements(cube_id):
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
+    form.group_fields()
         
     cube = Cube.query.get(cube_id)
     return render_template('cube_achievements.html', cube=cube, form=form)
@@ -167,6 +168,7 @@ def achievement_edit(achievement_id):
     ach = Achievement.query.get(achievement_id)
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
+    form.group_fields()
 
     if form.validate_on_submit():
         _update_achievement_from_form(ach, form)
@@ -175,18 +177,16 @@ def achievement_edit(achievement_id):
 
     else:
         form.name.data = ach.name
-        form.conditions.data = ach.conditions
-        form.unlock.data = ach.unlock
         form.multiunlock.data = ach.multiunlock
         form.update_as.data = ach.created_by.name
         form.submit.label.text = 'Update'
+        form.fill_from_json_list(ach.get_json())
         return render_template('achievement_edit.html', ach=ach, form=form)
 
 
 def _update_achievement_from_form(ach, form):
     ach.name=form.name.data
-    ach.conditions=form.conditions.data
-    ach.unlock=form.unlock.data
+    ach.set_json(form.unlock_json())
     ach.multiunlock=form.multiunlock.data
     ach.created_by=User.query.filter(User.name == form.update_as.data).first()
     db.session.add(ach)
@@ -209,6 +209,7 @@ def achievement_finalize(achievement_id):
 def cube_achievements_add(cube_id):
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
+    form.group_fields()
     
     cube = Cube.query.get(cube_id)
 

@@ -1,3 +1,47 @@
+{% macro show_achievement_form(form, cube) %}
+  <div class="bg-light border p-2">
+    <form action="{{ url_for('cube_achievements_add', cube_id=cube.id) }}" method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+        {{ form.name.label }}
+        {{ form.name(class='form-control') }}
+      </div>
+      <div class="form-group">
+        {{ form.conditions.label }}
+        {{ form.conditions(class='form-control', rows=5) }}
+      </div>
+      {% for group in form.unlocks %}
+        <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#unlockGroup{{ loop.index }}">Toggle {{ loop.index }}</button>
+        <div class="collapse" id="unlockGroup{{ loop.index }}">
+          <div class="form-group">
+            {{ group['timing'].label }}
+            {{ group['timing'](class='form-control', rows=10) }}
+          </div>
+          <div class="form-group">
+            {{ group['text'].label }}
+            {{ group['text'](class='form-control', rows=10) }}
+          </div>
+        </div>
+      {% endfor %}
+      <div class="row">
+        <div class="col">
+          <div class="form-group">
+            {{ form.multiunlock() }}
+            {{ form.multiunlock.label }}
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            {{ form.update_as.label }}
+            {{ form.update_as(class='form-control') }}
+          </div>
+        </div>
+      </div>
+      <p>{{ form.submit() }}</p>
+    </form>
+  </div>
+{% endmacro %}
+
 {% macro show_draft_card_list(cards, draft_id) %}
   <div class="row no-gutters">
     {% for card in cards if card.pack.can_be_seen(card) %}

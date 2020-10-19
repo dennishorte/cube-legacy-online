@@ -13,6 +13,7 @@ from wtforms.validators import DataRequired
 from wtforms.validators import Optional
 
 from app.util.enum import Layout
+from app.util.string import normalize_newlines
 
 
 class AddCardsForm(FlaskForm):
@@ -105,10 +106,72 @@ class NewDraftForm(FlaskForm):
 class NewAchievementForm(FlaskForm):
     name = StringField('Name')
     conditions = TextAreaField('Conditions')
-    unlock = TextAreaField('Unlock Info')
+
+    unlock_1_timing = StringField('Unlock 1 Timing')
+    unlock_1_text = TextAreaField('Unlock 1 Description')
+
+    unlock_2_timing = StringField('Unlock 2 Timing')
+    unlock_2_text = TextAreaField('Unlock 2 Description')
+
+    unlock_3_timing = StringField('Unlock 3 Timing')
+    unlock_3_text = TextAreaField('Unlock 3 Description')
+
+    unlock_4_timing = StringField('Unlock 4 Timing')
+    unlock_4_text = TextAreaField('Unlock 4 Description')
+
+    unlock_5_timing = StringField('Unlock 5 Timing')
+    unlock_5_text = TextAreaField('Unlock 5 Description')
+
     multiunlock = BooleanField('Is Multiunlock')
     update_as = SelectField('Create As')
     submit = SubmitField('Create')
+
+    def group_fields(self):
+        self.unlocks = [
+            {
+                'timing': self.unlock_1_timing,
+                'text': self.unlock_1_text,
+            },
+            {
+                'timing': self.unlock_2_timing,
+                'text': self.unlock_2_text,
+            },
+            {
+                'timing': self.unlock_3_timing,
+                'text': self.unlock_3_text,
+            },
+            {
+                'timing': self.unlock_4_timing,
+                'text': self.unlock_4_text,
+            },
+            {
+                'timing': self.unlock_5_timing,
+                'text': self.unlock_5_text,
+            },
+        ]
+
+    def fill_from_json_list(self, json_list):
+        if not self.unlocks:
+            self.group_fields()
+            
+        assert len(json_list) <= self.unlocks, "Too many values to load."
+
+        for i in range(len(self.unlocks)):
+            group = self.groups[i]
+            datum = self.json_list[i]
+
+            group['timing'].data = datum['timing']
+            group['text'].data = datum['text']
+
+    def unlock_json(self):
+        flat = []
+        for group in self.unlocks:
+            flat.append({
+                'timing': normalize_newlines(group['timing'].data.strip()),
+                'text': normalize_newlines(group['text'].data.strip()),
+            })
+        return flat
+                
 
 
 class NewScarForm(FlaskForm):

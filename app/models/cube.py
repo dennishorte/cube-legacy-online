@@ -262,10 +262,9 @@ class Achievement(db.Model):
 
     # Content info
     name = db.Column(db.Text)
-    conditions = db.Column(db.Text)
-    unlock = db.Column(db.Text)
     multiunlock = db.Column(db.Boolean)
     version = db.Column(db.Integer, default=1)
+    unlock_json = db.Column(db.Text)
 
     # Creation info
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -276,8 +275,18 @@ class Achievement(db.Model):
     unlocked_timestamp = db.Column(db.DateTime)
     finalized_timestamp = db.Column(db.DateTime)
 
+    # Deprecated (use unlock_json instead)
+    conditions = db.Column(db.Text)
+    unlock = db.Column(db.Text)
+
     def available(self):
         return self.unlocked_by_id is None
+
+    def get_json(self):
+        return json.loads(self.unlock_json)
+
+    def set_json(self, data):
+        self.unlock_json = json.dumps(data)
 
     def unlock_lines(self):
         return [x.strip() for x in self.unlock.split('\n') if x.strip()]

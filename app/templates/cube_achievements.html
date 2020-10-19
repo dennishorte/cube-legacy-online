@@ -1,3 +1,5 @@
+{% from 'macros.html' import show_achievement_form %}
+
 {% extends "cube_base.html" %}
 
 {% block content %}
@@ -5,7 +7,7 @@
 
   <!-- Available Achievements -->
   <div class="row">
-    <div class="col">
+    <div class="col col-md-6">
       <h4>Available Achievements</h4>
 
       <div class="bg-light border border-round p-2">
@@ -48,41 +50,10 @@
     </div>
     <!-- END: Available Achievements -->
 
-  <!-- New achievement form -->
-    <div class="col">
+    <!-- New achievement form -->
+    <div class="col col-md-6">
       <h4>Create Achievement</h4>
-      <div class="bg-light border p-2">
-        <form action="{{ url_for('cube_achievements_add', cube_id=cube.id) }}" method="post" novalidate>
-          {{ form.hidden_tag() }}
-          <div class="form-group">
-            {{ form.name.label }}
-            {{ form.name(class='form-control') }}
-          </div>
-          <div class="form-group">
-            {{ form.conditions.label }}
-            {{ form.conditions(class='form-control', rows=5) }}
-          </div>
-          <div class="form-group">
-            {{ form.unlock.label }}
-            {{ form.unlock(class='form-control', rows=10) }}
-          </div>
-          <div class="row">
-            <div class="col">
-              <div class="form-group">
-                {{ form.multiunlock() }}
-                {{ form.multiunlock.label }}
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group">
-                {{ form.update_as.label }}
-                {{ form.update_as(class='form-control') }}
-              </div>
-            </div>
-          </div>
-          <p>{{ form.submit() }}</p>
-        </form>
-      </div>
+      {{ show_achievement_form(form, cube) }}
     </div>
     <!-- END: New achievement form -->
   </div>
