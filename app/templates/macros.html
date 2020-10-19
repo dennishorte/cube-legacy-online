@@ -14,7 +14,11 @@
       </div>
       {% for group in form.unlocks %}
         <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#unlockGroup{{ loop.index }}">Toggle {{ loop.index }}</button>
-        <div class="collapse" id="unlockGroup{{ loop.index }}">
+        <div class="
+                    {% if not group['timing'].data %}
+                    collapse
+                    {% endif %}
+                    " id="unlockGroup{{ loop.index }}">
           <div class="form-group">
             {{ group['timing'].label }}
             {{ group['timing'](class='form-control', rows=10) }}
@@ -39,7 +43,7 @@
           </div>
         </div>
       </div>
-      <p>{{ form.submit() }}</p>
+      <p>{{ form.submit(class='btn btn-primary') }}</p>
     </form>
   </div>
 {% endmacro %}

@@ -105,7 +105,7 @@ class NewDraftForm(FlaskForm):
 
 class NewAchievementForm(FlaskForm):
     name = StringField('Name')
-    conditions = TextAreaField('Conditions')
+    conditions = TextAreaField('How to Unlock')
 
     unlock_1_timing = StringField('Unlock 1 Timing')
     unlock_1_text = TextAreaField('Unlock 1 Description')
@@ -157,11 +157,11 @@ class NewAchievementForm(FlaskForm):
         if not self.unlocks:
             self.group_fields()
             
-        assert len(json_list) <= self.unlocks, "Too many values to load."
+        assert len(json_list) <= len(self.unlocks), "Too many values to load."
 
         for i in range(len(self.unlocks)):
-            group = self.groups[i]
-            datum = self.json_list[i]
+            group = self.unlocks[i]
+            datum = json_list[i]
 
             group['timing'].data = datum['timing']
             group['text'].data = datum['text']

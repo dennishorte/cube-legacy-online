@@ -262,6 +262,7 @@ class Achievement(db.Model):
 
     # Content info
     name = db.Column(db.Text)
+    conditions = db.Column(db.Text)
     multiunlock = db.Column(db.Boolean)
     version = db.Column(db.Integer, default=1)
     unlock_json = db.Column(db.Text)
@@ -276,7 +277,6 @@ class Achievement(db.Model):
     finalized_timestamp = db.Column(db.DateTime)
 
     # Deprecated (use unlock_json instead)
-    conditions = db.Column(db.Text)
     unlock = db.Column(db.Text)
 
     def available(self):

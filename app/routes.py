@@ -163,26 +163,23 @@ def achievement_reveal(achievement_id):
     )
 
 
-@app.route("/achievement/<achievement_id>/edit", methods=["GET", "POST"])
+@app.route("/achievement/<achievement_id>/edit")
 @login_required
 def achievement_edit(achievement_id):
     ach = Achievement.query.get(achievement_id)
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
+    form.update_id.data = ach.id
     form.group_fields()
 
-    if form.validate_on_submit():
-        _update_achievement_from_form(ach, form)
-        flash('Achievement Updated')
-        return redirect(url_for('cube_achievements', cube_id=ach.cube_id))
+    form.name.data = ach.name
+    form.conditions.data = ach.conditions
+    form.multiunlock.data = ach.multiunlock
+    form.update_as.data = ach.created_by.name
+    form.submit.label.text = 'Update'
+    form.fill_from_json_list(ach.get_json())
 
-    else:
-        form.name.data = ach.name
-        form.multiunlock.data = ach.multiunlock
-        form.update_as.data = ach.created_by.name
-        form.submit.label.text = 'Update'
-        form.fill_from_json_list(ach.get_json())
-        return render_template('achievement_edit.html', ach=ach, form=form)
+    return render_template('achievement_edit.html', ach=ach, form=form)
 
 
 @app.route("/achievement/<achievement_id>/finalize")
@@ -220,6 +217,7 @@ def achievement_submit():
         raise ValueError("Can't create achievement with update_id or cube_id.")
 
     ach.name=form.name.data
+    ach.conditions=form.conditions.data
     ach.set_json(form.unlock_json())
     ach.multiunlock=form.multiunlock.data
     ach.created_by=User.query.filter(User.name == form.update_as.data).first()
