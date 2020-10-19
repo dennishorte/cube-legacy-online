@@ -17,6 +17,7 @@ login.login_view = 'login'
 
 from app.routes import auth_routes
 from app.routes import achievement_routes
+from app.routes import cube_routes
 from app.routes import other_routes
 
 # This ensures that all models are loaded for flask migrate

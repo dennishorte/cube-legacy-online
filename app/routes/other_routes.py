@@ -12,7 +12,6 @@ from flask_login import current_user
 from flask_login import login_user
 from flask_login import login_required
 from flask_login import logout_user
-from is_safe_url import is_safe_url
 
 from app import app
 from app.forms import *
@@ -21,7 +20,6 @@ from app.models.draft import *
 from app.models.user import *
 from app.util import cockatrice
 from app.util.card_util import card_diff
-from app.util.cube_util import add_cards_to_cube
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
 from app.util.string import normalize_newlines
@@ -44,89 +42,6 @@ def index():
         achievements_finished=achievements_finished,
         new_draft_form=_new_draft_form(),
     )
-
-
-@app.route("/cubes", methods=['GET', 'POST'])
-@login_required
-def cubes():
-    form = NewCubeForm()
-
-    if form.validate_on_submit():
-        cube = Cube.query.filter(Cube.name==form.name.data).first()
-        if cube is not None:
-            flash('A Cube with the name "{}" already exists.'.format(cube.name))
-            return redirect(url_for('cubes'))
-
-        cube = Cube(
-            name=form.name.data,
-            style=form.style.data,
-        )
-        db.session.add(cube)
-        db.session.commit()
-    
-    cubes = Cube.query.all()
-    return render_template(
-        'cubes.html',
-        active=[x for x in cubes if x.active],
-        inactive=[x for x in cubes if not x.active],
-        form=form
-    )
-
-
-@app.route("/cubes/<cube_id>")
-@login_required
-def cube_cards(cube_id):
-    add_cards_form = AddCardsForm()
-    cube = Cube.query.get(cube_id)
-    return render_template(
-        'cube_cards.html',
-        cube=cube,
-        add_cards_form=add_cards_form,
-    )
-
-
-@app.route("/cubes/<cube_id>/achievements")
-@login_required
-def cube_achievements(cube_id):
-    form = NewAchievementForm()
-    form.update_as.choices = User.all_names()
-    form.update_as.data = current_user.name
-    form.cube_id.data = cube_id
-    form.group_fields()
-        
-    cube = Cube.query.get(cube_id)
-    return render_template('cube_achievements.html', cube=cube, form=form)
-
-
-@app.route("/cubes/<cube_id>/scars")
-@login_required
-def cube_scars(cube_id):
-    form = NewScarForm()
-    form.update_as.choices = User.all_names()
-    form.update_as.data = current_user.name
-
-    cube = Cube.query.get(cube_id)
-    return render_template('cube_scars.html', cube=cube, form=form)
-
-
-@app.route("/cubes/<cube_id>/scars/add", methods=["POST"])
-@login_required
-def cube_scars_add(cube_id):
-    form = NewScarForm()
-    form.update_as.choices = User.all_names()
-
-    if form.validate_on_submit():
-        scar = Scar(
-            cube_id=cube_id,
-            text=form.text.data.strip(),
-            restrictions=form.restrictions.data.strip(),
-            created_by=current_user,
-        )
-        db.session.add(scar)
-        db.session.commit()
-            
-    
-    return redirect(url_for('cube_scars', cube_id=cube_id))
 
 
 @app.route("/card/<card_id>")
@@ -260,35 +175,6 @@ def _card_update_copy_form_data_into_card_json(card_json, form):
     card_json['oracle_text'] = '\n-----\n'.join([x['oracle_text'] for x in card_faces])
 
     
-@app.route("/cubes/<cube_id>/add", methods=["POST"])
-@login_required
-def add_cards(cube_id):
-    form = AddCardsForm()
-
-    if form.validate_on_submit():
-        card_names = [x.strip() for x in form.cardnames.data.split('\n') if x.strip()]
-
-        if form.add_as_starter.data == True:
-            added_by = User.query.filter(User.name == 'starter').first()
-        else:
-            added_by = current_user
-        
-        result = add_cards_to_cube(cube_id, card_names, added_by)
-
-        flash('Added {} cards ({} unique)'.format(
-            result['num_added'],
-            result['num_unique_added'],
-        ))
-        
-        for card_name in result['failed_to_fetch']:
-            flash('Failed to fetch Scryfall data for: {}'.format(card_name))
-            
-        return 'success'
-
-    else:
-        return 'failed'
-
-
 @app.route("/card/<card_id>/json", methods=['POST'])
 @login_required
 def card_json(card_id):

@@ -66,7 +66,7 @@
         </div>
         
         <div class="modal-footer">
-          <a href="/cubes/{{ cube.id }}"
+          <a href="{{ url_for('cube_cards', cube_id=cube.id) }}"
             <button type="button" class="btn btn-primary">Reload Page</button>
           </a>
         </div>
@@ -86,7 +86,7 @@
        
        $.ajax({
          type: "POST",
-         url: "{{ url_for('add_cards', cube_id=cube.id) }}",
+         url: "{{ url_for('cube_add_cards', cube_id=cube.id) }}",
          data: $('form').serialize(), // serializes the form's elements.
          beforeSend: function(request) {
            request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
