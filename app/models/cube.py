@@ -238,14 +238,20 @@ class Scar(db.Model):
 
     @staticmethod
     def lock_random_scars(pack_id, user_id, count):
-        scars = Scar.query.filter(Scar.locked_by_id == None).all()
-        random.shuffle(scars)
-        scars = scars[:count]
-
-        for scar in scars:
+        pack = Pack.query.get(pack_id)
+        for scar in Scar.random_scars(pack.draft.cube_id, count):
             scar.lock(pack_id, user_id)
 
         return scars
+
+    @staticmethod
+    def random_scars(cube_id, count):
+        scars = Scar.query.filter(
+            Scar.cube_id == cube_id,
+            Scar.locked_by_id == None
+        ).all()
+        random.shuffle(scars)
+        return scars[:count]
     
     def unlock(self, commit=True):
         self.locked_by_id = None

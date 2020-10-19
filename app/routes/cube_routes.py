@@ -1,6 +1,7 @@
 from flask import flash
 from flask import redirect
 from flask import render_template
+from flask import request
 from flask import url_for
 from flask_login import current_user
 from flask_login import login_required
@@ -101,12 +102,20 @@ def cube_cards(cube_id):
 @app.route("/cubes/<cube_id>/scars")
 @login_required
 def cube_scars(cube_id):
+    random_scar_count = int(request.args.get('random_scars', 0))
+    random_scars = Scar.random_scars(cube_id, random_scar_count)
+
     form = NewScarForm()
     form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
 
     cube = Cube.query.get(cube_id)
-    return render_template('cube_scars.html', cube=cube, form=form)
+    return render_template(
+        'cube_scars.html',
+        cube=cube,
+        form=form,
+        random_scars=random_scars,
+    )
 
 
 @app.route("/cubes/<cube_id>/scars/add", methods=["POST"])
