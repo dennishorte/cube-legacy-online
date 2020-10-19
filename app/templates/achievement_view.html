@@ -11,8 +11,29 @@
 
       <hr>
 
-      <!-- Achievement text to go here -->
-      
+      <!-- Achievement text -->
+      <div id="accordion">
+        {% for group in achievement.get_json() %}
+          {% if group['timing'] %}
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ loop.index }}">
+                    {{ group['timing'] }}
+                  </button>
+                </h5>
+              </div>
+
+              <div id="collapse{{ loop.index }}" class="collapse" data-parent="#accordion">
+                <div class="card-body">
+                  {{ group['text'] }}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <!-- END: Achievement text -->
+        
       <hr>
       
       <a href="{{ url_for('achievement_finalize', achievement_id=achievement.id) }}">
