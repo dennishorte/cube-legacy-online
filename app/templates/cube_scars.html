@@ -55,8 +55,11 @@
 
       <!-- Utilities -->
       <div class="bg-light border p-2">
-        <a class="btn btn-info" href="{{ url_for('cube_scars', cube_id=cube.id, random_scars=1) }}">1 Random Scar</a>
-        <a class="btn btn-info" href="{{ url_for('cube_scars', cube_id=cube.id, random_scars=2) }}">2 Random Scars</a>
+        <form action="{{ url_for('cube_scars', cube_id=cube.id) }}" method="post" novalidate>
+          {{ rsform.hidden_tag() }}
+          {{ rsform.submit(class="btn btn-info") }}
+          {{ rsform.count() }}
+        </form>
       </div>
       <!-- END: Utilities -->
 

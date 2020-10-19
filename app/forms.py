@@ -189,6 +189,11 @@ class NewScarForm(FlaskForm):
     submit = SubmitField('Create')
 
 
+class RandomScarsForm(FlaskForm):
+    count = SelectField('Count', choices=range(1, 10))
+    submit = SubmitField('Random Scars')
+
+
 class ReallyUnlockForm(FlaskForm):
     submit = SubmitField('I Earned this Man')
 

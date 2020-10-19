@@ -11,6 +11,7 @@ from app.forms import AddCardsForm
 from app.forms import NewAchievementForm
 from app.forms import NewCubeForm
 from app.forms import NewScarForm
+from app.forms import RandomScarsForm
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
@@ -99,21 +100,28 @@ def cube_cards(cube_id):
     )
 
 
-@app.route("/cubes/<cube_id>/scars")
+@app.route("/cubes/<cube_id>/scars", methods=["GET", "POST"])
 @login_required
 def cube_scars(cube_id):
-    random_scar_count = int(request.args.get('random_scars', 0))
-    random_scars = Scar.random_scars(cube_id, random_scar_count)
-
     form = NewScarForm()
     form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
+
+    rsform = RandomScarsForm()
+    if rsform.validate_on_submit():
+        random_scar_count = int(rsform.count.data)
+        random_scars = Scar.random_scars(cube_id, random_scar_count)
+
+    else:
+        rsform.count.data = '2'
+        random_scars = []
 
     cube = Cube.query.get(cube_id)
     return render_template(
         'cube_scars.html',
         cube=cube,
         form=form,
+        rsform=rsform,
         random_scars=random_scars,
     )
 
@@ -136,5 +144,3 @@ def cube_scars_add(cube_id):
             
     
     return redirect(url_for('cube_scars', cube_id=cube_id))
-
-
