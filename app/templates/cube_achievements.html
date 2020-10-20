@@ -16,7 +16,7 @@
 
             <!-- Achievement Name -->
             <div class="mr-auto mt-1 text-primary">
-              {{ achievement.name }}
+              {{ achievement.full_name() }}
               {% if achievement.multiunlock %}
                 <span class="badge badge-pill badge-warning">multi</span>
               {% endif %}
@@ -50,11 +50,47 @@
     </div>
     <!-- END: Available Achievements -->
 
-    <!-- New achievement form -->
+    
     <div class="col col-md-6">
+
+      <!-- New achievement form -->
       <h4>Create Achievement</h4>
       {{ show_achievement_form(form) }}
+      <!-- END: New achievement form -->
+
+      <!-- Claimed Achievements -->
+      <div class="border bg-light p-2 mt-2">
+        <h4>Claimed Achievements</h4>
+        {% for achievement in cube.achievements_completed() %}
+          <div class="d-flex">
+
+            <!-- Achievement Name -->
+            <div class="mr-auto mt-1 text-primary">
+              {{ achievement.full_name() }}
+              <span class="badge badge-pill badge-success">
+                {{ achievement.unlocked_by.name }}
+              </span>
+            </div>
+
+            <!-- Clone Button -->
+            <div class="mr-1">
+              <a href="{{ url_for('achievement_clone', achievement_id=achievement.id) }}">
+                <button class="btn btn-info">clone</button>
+              </a>
+            </div>
+          </div>
+
+          <div
+            <!-- Achievement Conditions -->
+            <div class="d-flex text-secondary">
+              {{ achievement.conditions }}
+            </div>
+            
+            <hr>
+          </div>
+        {% endfor %}
+      </div>
+      <!-- END: Claimed Achievements -->
     </div>
-    <!-- END: New achievement form -->
   </div>
 {% endblock content %}

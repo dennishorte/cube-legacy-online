@@ -38,6 +38,17 @@ def achievement_claim(achievement_id):
     return redirect(url_for('achievement_view', achievement_id=achievement_id))
 
 
+@app.route("/achievement/<achievement_id>/clone")
+@login_required
+def achievement_clone(achievement_id):
+    ach = Achievement.query.get(achievement_id)
+    new = ach.clone()
+    db.session.add(new)
+    db.session.commit()
+
+    return redirect(url_for('cube_achievements', cube_id=ach.cube_id))
+
+
 @app.route("/achievement/<achievement_id>/edit")
 @login_required
 def achievement_edit(achievement_id):

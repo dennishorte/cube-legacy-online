@@ -318,6 +318,27 @@ class Achievement(db.Model):
     def available(self):
         return self.unlocked_by_id is None
 
+    def clone(self):
+        latest_version = Achievement.query.filter(
+            Achievement.name == self.name,
+            Achievement.cube_id == self.cube_id,
+        ).order_by(
+            Achievement.version.desc()
+        ).first()
+        
+        ach = Achievement()
+        ach.name = self.name
+        ach.conditions = self.conditions
+        ach.multiunlock = self.multiunlock
+        ach.unlock_json = self.unlock_json
+        ach.created_by_id = self.created_by_id
+        ach.version = latest_version.version + 1
+        ach.cube_id = self.cube_id
+        return ach
+
+    def full_name(self):
+        return f"{self.name} v.{self.version}"
+
     def get_json(self):
         return json.loads(self.unlock_json)
 
