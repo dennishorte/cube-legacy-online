@@ -102,6 +102,8 @@
 {% block scripts %}
   <script>
    $(document).ready(function() {
+     $('#scarUpdateId').hide()
+     
      $('#scarTable tbody tr').click(function() {
        let row = $(this)
        let scar_id = row.data('scar-id')
