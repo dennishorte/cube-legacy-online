@@ -2,7 +2,29 @@ import difflib
 from collections import UserDict
 from collections import UserList
 
-from app.util.scryfall import CardConsts
+class CardConsts(object):
+    ROOT_KEYS = (
+        'card_faces',
+        'cmc',
+        'layout',
+        'name',
+        'object',
+        'oracle_text',
+        'type_line',
+    )
+
+    FACE_KEYS = (
+        'flavor_text',
+        'image_url',
+        'loyalty',
+        'mana_cost',
+        'name',
+        'object',
+        'oracle_text',
+        'power',
+        'toughness',
+        'type_line',
+    )
 
 
 class FaceDiff(UserDict):

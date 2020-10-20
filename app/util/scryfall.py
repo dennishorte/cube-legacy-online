@@ -2,30 +2,7 @@ import requests
 import time
 from copy import deepcopy
 
-
-class CardConsts(object):
-    ROOT_KEYS = (
-        'card_faces',
-        'cmc',
-        'layout',
-        'name',
-        'object',
-        'oracle_text',
-        'type_line',
-    )
-
-    FACE_KEYS = (
-        'flavor_text',
-        'image_url',
-        'loyalty',
-        'mana_cost',
-        'name',
-        'object',
-        'oracle_text',
-        'power',
-        'toughness',
-        'type_line',
-    )
+from app.util.card_util import CardConsts
 
 
 def fetch_one_from_scryfall(card_name):

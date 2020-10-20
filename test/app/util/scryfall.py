@@ -2,6 +2,7 @@ import json
 import unittest
 
 from app.util import scryfall
+from app.util.card_util import CardConsts
 
 
 def _normal_example():
