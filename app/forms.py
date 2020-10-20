@@ -185,6 +185,7 @@ class NewAchievementForm(FlaskForm):
 class NewScarForm(FlaskForm):
     text = TextAreaField('Scar Text', validators=[DataRequired()])
     restrictions = StringField('Restrictions')
+    update_id = StringField('ID of Scar to Update')
     update_as = SelectField('Create As')
     submit = SubmitField('Create')
 

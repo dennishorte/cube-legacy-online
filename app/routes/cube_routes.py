@@ -132,15 +132,24 @@ def cube_scars_add(cube_id):
     form = NewScarForm()
     form.update_as.choices = User.all_names()
 
-    if form.validate_on_submit():
-        scar = Scar(
-            cube_id=cube_id,
-            text=form.text.data.strip(),
-            restrictions=form.restrictions.data.strip(),
-            created_by=current_user,
-        )
-        db.session.add(scar)
-        db.session.commit()
-            
+    if not form.validate_on_submit():
+        flash('Failed to create/update scar')
+        return redirect(url_for('cube_scars', cube_id=cube_id))
+
+    if form.update_id.data:
+        scar = Scar.query.get(form.update_id.data)
+    else:
+        scar = Scar(cube_id=cube_id)
+        
+    if form.update_as.data:
+        user = User.query.filter(User.name == form.update_as.data).first()
+    else:
+        user = current_user
+
+    scar.text = form.text.data.strip()
+    scar.restrictions = form.restrictions.data.strip()
+    scar.created_by = user
+    db.session.add(scar)
+    db.session.commit()
     
     return redirect(url_for('cube_scars', cube_id=cube_id))

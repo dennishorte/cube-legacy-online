@@ -21,7 +21,7 @@
     <!-- Table of existing scars -->
     <div class="col col-md-8">
       <h4>Scars</h4>
-      <table class="table table-sm">
+      <table class="table table-sm" id="scarTable">
         <thead class="thead thead-light">
           <th>text</th>
           <th>restrictions</th>
@@ -30,9 +30,9 @@
         </thead>
         <tbody>
           {% for scar in cube.scars %}
-            <tr>
-              <td>{{ scar.text }}</td>
-              <td>{{ scar.restrictions }}</td>
+            <tr data-scar-id="{{ scar.id }}">
+              <td class="scar-text">{{ scar.text }}</td>
+              <td class="scar-restrictions">{{ scar.restrictions }}</td>
               <td>{{ scar.created_by.name }}</td>
 
               {% if scar.applied_to %}
@@ -64,21 +64,26 @@
       <!-- END: Utilities -->
 
       <!-- New scar form -->
-      <div class="bg-light border p-2 mt-2">
-        <h4>Create Scar</h4>
-        <form action="{{ url_for('cube_scars_add', cube_id=cube.id) }}" method="post" novalidate>
+      <div id="createScarForm" class="bg-light border p-2 mt-2">
+        <h4 id="createScarTitle">Create Scar</h4>
+        <form
+          action="{{ url_for('cube_scars_add', cube_id=cube.id) }}"
+          method="post"
+          novalidate>
+          
           {{ form.hidden_tag() }}
+          {{ form.update_id(id='scarUpdateId') }}
           <div class="form-group">
             {{ form.text.label }}
-            {{ form.text(class='form-control', rows=8) }}
+            {{ form.text(class='form-control', rows=8, id='scarText') }}
           </div>
           <div class="form-group">
             {{ form.restrictions.label }}
-            {{ form.restrictions(class='form-control') }}
+            {{ form.restrictions(class='form-control', id='scarRestrictions') }}
           </div>
           <div class="row">
             <div class="col">
-              <p>{{ form.submit(class='btn btn-primary') }}</p>
+              <p>{{ form.submit(class='btn btn-primary', id='scarSubmit') }}</p>
             </div>
             <div class="col">
               <div class="form-group">
@@ -93,3 +98,29 @@
     <!-- END: New scar form -->
   </div>
 {% endblock content %}
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     $('#scarTable tbody tr').click(function() {
+       let row = $(this)
+       let scar_id = row.data('scar-id')
+       let scar_text = row.find('.scar-text').text()
+       let scar_rest = row.find('.scar-restrictions').text()
+
+       let form = $('#createScarForm')
+       form.removeClass('bg-light')
+       form.addClass('bg-warning')
+       form.find('#createScarTitle').text('Edit Scar')
+       form.find('#scarUpdateId').val(scar_id)
+       form.find('#scarText').val(scar_text)
+       form.find('#scarRestrictions').val(scar_rest)
+
+       let submit = form.find('#scarSubmit')
+       submit.val('Update')
+       submit.removeClass('btn-primary')
+       submit.addClass('btn-danger')
+     })
+   })
+  </script>
+{% endblock %}
