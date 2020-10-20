@@ -29,22 +29,34 @@
     </div>
     <!-- END Card Details -->
 
-    <!-- Add Cards Form -->
     <div class="col col-md-4">
-      <form action="" method="post" novalidate>
-        {{ add_cards_form.hidden_tag() }}
-        <div class="form-group">
-          {{ add_cards_form.cardnames.label }}
-          {{ add_cards_form.cardnames(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ add_cards_form.add_as_starter() }}
-          {{ add_cards_form.add_as_starter.label }}
-        </div>
-      </form>
-      <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
+      <!-- Add Cards Form -->
+      <div>
+        <form action="" method="post" novalidate>
+          {{ add_cards_form.hidden_tag() }}
+          <div class="form-group">
+            {{ add_cards_form.cardnames.label }}
+            {{ add_cards_form.cardnames(class='form-control') }}
+          </div>
+          <div class="form-group">
+            {{ add_cards_form.add_as_starter() }}
+            {{ add_cards_form.add_as_starter.label }}
+          </div>
+        </form>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
+      </div>
+      <!-- END: Add Cards Form -->
+
+      <hr>
+      
+      <!-- Create card button -->
+      <div>
+        <a class="btn btn-info" href="{{ url_for('card_creator', cube_id=cube.id) }}">
+          Create an Original Card
+        </a>
+      </div>
+      <!-- END:Create card button -->
     </div>
-    <!-- END: Add Cards Form -->
 
   </div>
 

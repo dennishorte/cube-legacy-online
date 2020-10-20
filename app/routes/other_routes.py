@@ -20,6 +20,7 @@ from app.models.draft import *
 from app.models.user import *
 from app.util import cockatrice
 from app.util.card_util import card_diff
+from app.util.card_util import empty_card_json
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
 from app.util.string import normalize_newlines
@@ -41,6 +42,63 @@ def index():
         achievements_unfinished=achievements_unfinished,
         achievements_finished=achievements_finished,
         new_draft_form=_new_draft_form(),
+    )
+
+
+@app.route("/cube/<cube_id>/create", methods=["POST"])
+@login_required
+def card_create(cube_id):
+    form = EditMultiFaceCardForm()
+    form.update_as.choices = User.all_names()
+    form.group_fields()
+
+    if not form.validate_on_submit():
+        flash('Error Creating Card')
+        return redirect(url_for('card_creator', cube_id=cube_id))
+
+    if form.face_0_name.data == '':
+        flash('Card front face must have a name')
+        return redirect(url_for('card_creator', cube_id=cube_id))
+
+    card = CubeCard()
+    card.added_by_id = User.query.filter(User.name == form.update_as.data).first().id
+    card.cube_id = cube_id
+    card.is_original = True
+    card.version = 1
+
+    card_json = empty_card_json()
+    _card_update_copy_form_data_into_card_json(card_json, form)
+    card.set_json(card_json)
+
+    db.session.add(card)
+    db.session.commit()
+
+    card.latest_id = card.id
+    db.session.add(card)
+    db.session.commit()
+    
+    flash('Card Created')
+    return redirect(url_for('card_editor', card_id=card.id))
+
+
+@app.route("/cube/<cube_id>/creator")
+@login_required
+def card_creator(cube_id):
+    form = EditMultiFaceCardForm()
+    form.group_fields()
+    form.comment.data = f"Created by: {current_user.name}"
+    form.update_as.choices = User.all_names()
+    form.update_as.data = current_user.name
+
+    return render_template(
+        'card_editor.html',
+        title='Card Creator',
+        mode='create',
+        cube=Cube.query.get(cube_id),
+        card=None,
+        form=form,
+        scar=None,
+        read_only=False,
     )
 
 
@@ -77,6 +135,8 @@ def card_editor(card_id):
 
     return render_template(
         'card_editor.html',
+        title="Card Editor",
+        mode='edit',
         card=card,
         form=form,
         scar=scar,

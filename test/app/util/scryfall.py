@@ -29,7 +29,7 @@ class ConvertToCloStandardNormalFrameTestCase(unittest.TestCase):
         scryfall.convert_to_clo_standard_json(self.example)
 
         # Post-conditions
-        for key in scryfall.CardConsts.ROOT_KEYS:
+        for key in CardConsts.ROOT_KEYS:
             self.assertIn(key, self.example)
 
     def test_has_expected_face_fields(self):
@@ -40,7 +40,7 @@ class ConvertToCloStandardNormalFrameTestCase(unittest.TestCase):
         self.assertEqual(1, len(self.example['card_faces']))
 
         for face in self.example['card_faces']:
-            for key in scryfall.CardConsts.FACE_KEYS:
+            for key in CardConsts.FACE_KEYS:
                 self.assertIn(key, face)
 
 
@@ -52,7 +52,7 @@ class ConvertToCloStandardFlipFrameTestCase(unittest.TestCase):
         scryfall.convert_to_clo_standard_json(self.example)
 
         # Post-conditions
-        for key in scryfall.CardConsts.ROOT_KEYS:
+        for key in CardConsts.ROOT_KEYS:
             self.assertIn(key, self.example)
 
     def test_has_expected_face_fields(self):
@@ -62,7 +62,7 @@ class ConvertToCloStandardFlipFrameTestCase(unittest.TestCase):
         self.assertEqual(2, len(self.example['card_faces']))
 
         for face in self.example['card_faces']:
-            for key in scryfall.CardConsts.FACE_KEYS:
+            for key in CardConsts.FACE_KEYS:
                 self.assertIn(key, face)
 
 
@@ -74,7 +74,7 @@ class ConvertToCloStandardTransformFrameTestCase(unittest.TestCase):
         scryfall.convert_to_clo_standard_json(self.example)
 
         # Post-conditions
-        for key in scryfall.CardConsts.ROOT_KEYS:
+        for key in CardConsts.ROOT_KEYS:
             self.assertIn(key, self.example)
 
     def test_has_expected_face_fields(self):
@@ -84,5 +84,5 @@ class ConvertToCloStandardTransformFrameTestCase(unittest.TestCase):
         self.assertEqual(2, len(self.example['card_faces']))
 
         for face in self.example['card_faces']:
-            for key in scryfall.CardConsts.FACE_KEYS:
+            for key in CardConsts.FACE_KEYS:
                 self.assertIn(key, face)

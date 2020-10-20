@@ -78,3 +78,11 @@ def card_diff(card1, card2):
             face_diff[key] = diff
 
     return diffs
+
+
+def empty_card_json():
+    return {
+        'object': 'card',
+        'cmc': '0',
+        'card_faces': [],
+    }

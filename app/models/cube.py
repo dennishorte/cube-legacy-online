@@ -78,11 +78,17 @@ class CubeCard(db.Model):
     latest = db.Column(db.Boolean, default=True)
     json = db.Column(db.Text)
     comment = db.Column(db.Text)
-    
-    # Foreign Keys
-    latest_id = db.Column(db.Integer)  # Used to keep a family together.
-    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+
+    # True if created through the card_create form. False otherwise.
+    is_original = db.Column(db.Boolean, default=False)
+
+    # Group id: all versions of a single card have the same group id
+    latest_id = db.Column(db.Integer)
+
+    # Base id is only present if the card was imported from Scryfall. If it was added the
+    # the card create form, it will be null.
     base_id = db.Column(db.Integer, db.ForeignKey('base_card.id'))
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     edited_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))

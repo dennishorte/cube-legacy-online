@@ -1,16 +1,18 @@
 {% macro render_field_diff(diff, field_name) %}
-  <ul class="field-diff list-unstyled">
-    {% for change, line in diff[field_name] %}
-      <li class="
-                 {% if change == '+' %}
-                 text-success
-                 {% else %}
-                 text-danger
-                 {% endif %}
-                 "
-      >{{ change }} {{ line }}</li>
-    {% endfor %}
-  </ul>
+  {% if diff %}
+    <ul class="field-diff list-unstyled">
+      {% for change, line in diff[field_name] %}
+        <li class="
+                   {% if change == '+' %}
+                   text-success
+                   {% else %}
+                   text-danger
+                   {% endif %}
+                   "
+        >{{ change }} {{ line }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endmacro %}
 
 {% macro render_form_group(fields, diff, field_name) %}
@@ -51,7 +53,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Card Editor
+  {{ title }}
 {% endblock title %}
 
 {% block content %}
@@ -62,20 +64,28 @@
     </div>
   </div>
 
-  <hr>
-  
   <!-- edit form -->
   <div id="editForm" class="row">
     <div class="col col-md-12">
-      <form action="{{ url_for('card_update', card_id=card.id) }}" method="post" novalidate>
+      <form action="
+                    {% if mode == 'edit' %}
+                    {{ url_for('card_update', card_id=card.id) }}
+                    {% else %}
+                    {{ url_for('card_create', cube_id=cube.id) }}
+                    {% endif %}
+                    " method="post" novalidate>
         {{ form.hidden_tag() }}
 
         <!-- Big Card Name -->
-        <div class="row justify-content-md-center">
-          <div class="col ml-1 mr-1 bg-light rounded border">
-            <h2 class="mt-2 text-secondary text-center">~ {{ card.name() }} ~</h2>
+          <div class="row justify-content-md-center">
+            <div class="col ml-1 mr-1 bg-light rounded border">
+              {% if mode == 'edit' %}
+                <h2 class="mt-2 text-secondary text-center">~ {{ card.name() }} ~</h2>
+              {% else %}
+                <h2 class="mt-2 text-success text-center">~ New Card ~</h2>
+              {% endif %}
+            </div>
           </div>
-        </div>
         <!-- END: Big Card Name -->
 
         {% if scar %}
@@ -109,8 +119,13 @@
 
         <!-- Edit forms for each face -->
         <div class="row mt-1">
-          {{ face_form(form.faces[0], card.scar_diff[0], 'front') }}
-          {{ face_form(form.faces[1], card.scar_diff[1], 'back') }}
+          {% if card %}
+            {{ face_form(form.faces[0], card.scar_diff[0], 'front') }}
+            {{ face_form(form.faces[1], card.scar_diff[1], 'back') }}
+          {% else %}
+            {{ face_form(form.faces[0], None, 'front') }}
+            {{ face_form(form.faces[1], None, 'back') }}
+          {% endif %}
         </div>
         <!-- END: Edit forms for each face -->
 
