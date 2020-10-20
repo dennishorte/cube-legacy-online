@@ -6,6 +6,7 @@
   <div class="row">
     <!-- Card Details -->
     <div class="col col-md-8">
+      <h4>Current Cards</h4>
       <table class="table table-sm">
         <thead class="thead thead-light">
           <th>card name</th>
@@ -56,8 +57,32 @@
         </a>
       </div>
       <!-- END:Create card button -->
-    </div>
 
+      <hr>
+      
+      <div>
+        <h4>Removed Cards</h4>
+        <table class="table table-sm">
+          <thead class="thead thead-light">
+            <th>card name</th>
+            <th>removed by</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% for card in cube.cards_removed() %}
+              <tr>
+                <td>{{ card.name() }}</td>
+                <td>{{ card.removed_by }}</td>
+                <td>
+                  <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
+                    view
+                  </a>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   

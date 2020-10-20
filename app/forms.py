@@ -198,6 +198,11 @@ class ReallyUnlockForm(FlaskForm):
     submit = SubmitField('I Earned this Man')
 
 
+class RemoveCardForm(FlaskForm):
+    comment = TextAreaField('Reason for Removal')
+    submit = SubmitField('Remove Card from Cube')
+
+
 class ResultForm(FlaskForm):
     user_id = HiddenField('user_id')
     wins = IntegerField('wins', validators=[Optional()])

@@ -130,12 +130,12 @@
         <!-- END: Edit forms for each face -->
 
         <div class="row">
-          <div class="col bg-light m-1 rounded border" id="commentArea">
+          <div class="col bg-light m-1 rounded border p-2" id="commentArea">
             {{ form.comment.label }}
             {{ form.comment(class='form-control', rows='5') }}
           </div>
           
-          <div class="col bg-light m-1 rounded border" id="submitArea">
+          <div class="col bg-light m-1 rounded border p-2" id="submitArea">
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.layout.label }}
@@ -158,6 +158,36 @@
   </div>
   <!-- END: edit form -->
 
+  {% if mode == 'edit' and read_only != 'true' %}
+    <div class="row mt-2">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-warning"
+          data-toggle="collapse"
+          data-target="#reallyRemove">
+          Remove from Cube
+        </button>
+      </div>
+
+      <div class="col bg-light border p-2">
+        <div class="collapse" id="reallyRemove">
+          <form
+            action="{{ url_for('card_remove', card_id=card.id) }}"
+            method="post"
+            novalidate>
+            {{ rcform.hidden_tag() }}
+            <div class="form-group">
+              {{ rcform.comment.label }}
+              {{ rcform.comment(class='form-control', rows='3') }}
+            </div>
+            {{ rcform.submit(class='btn btn-danger') }}
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  
   <hr>
 
   <!-- edit history -->
@@ -176,6 +206,11 @@
    }
    
    $(document).ready(function() {
+     // Set the size of the remove card text area
+     $('#reallyRemove').on('show.bs.collapse', function (event) {
+       $(this).find('textarea').attr('rows', '3')
+     })
+     
      // Expand the textareas to display all of their content.
      $('textarea').each(function(index, element) {
        element.style.height = element.scrollHeight+3+'px'; 
@@ -194,7 +229,7 @@
        var back_face = $('#backFace')
        
        if (layout == 'normal' || layout == 'split' || layout == 'leveler' || layout == 'saga') {
-         back_face.hide()
+       back_face.hide()
        }
        else {
          back_face.show()

@@ -65,10 +65,22 @@ class Cube(db.Model):
         """
         Get only the latest version of the cards in the cube.
         """
-        return CubeCard.query.filter(
+        cards = CubeCard.query.filter(
             CubeCard.cube_id == self.id,
             CubeCard.latest == True,
+            CubeCard.removed_by_id == None,
         ).all()
+        cards.sort(key=lambda x: x.name())
+        return cards
+
+    def cards_removed(self):
+        cards = CubeCard.query.filter(
+            CubeCard.cube_id == self.id,
+            CubeCard.latest == True,
+            CubeCard.removed_by_id != None,
+        ).all()
+        cards.sort(key=lambda x: x.name())
+        return cards
 
 
 class CubeCard(db.Model):
@@ -91,7 +103,10 @@ class CubeCard(db.Model):
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     edited_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
     removed_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    removed_by_comment = db.Column(db.Text)
+    removed_by_timestamp = db.Column(db.DateTime)
 
     # Relationships
     draft_cards = db.relationship('PackCard', backref='cube_card')
@@ -108,6 +123,13 @@ class CubeCard(db.Model):
 
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
+
+    @functools.cached_property
+    def removed_by(self):
+        if not self.removed_by_id:
+            return None
+        else:
+            return User.query.get(self.removed_by_id).name
 
     def image_urls(self):
         data = self.get_json()

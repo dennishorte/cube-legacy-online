@@ -139,9 +139,27 @@ def card_editor(card_id):
         mode='edit',
         card=card,
         form=form,
+        rcform=RemoveCardForm(),
         scar=scar,
         read_only=request.args.get('read_only', ''),
     )
+
+
+@app.route("/card/<card_id>/remove", methods=["POST"])
+@login_required
+def card_remove(card_id):
+    form = RemoveCardForm()
+    
+    card = CubeCard.query.get(card_id)
+    card.removed_by_id = current_user.id
+    card.removed_by_comment = form.comment.data
+    card.removed_by_timestamp = datetime.utcnow()
+
+    db.session.add(card)
+    db.session.commit()
+
+    flash(f"Removed {card.name()} from cube.")
+    return redirect(url_for('cube_cards', cube_id=card.cube_id))
 
 
 @app.route("/card/<card_id>/update", methods=["POST"])
