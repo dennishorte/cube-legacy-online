@@ -276,7 +276,8 @@ class Scar(db.Model):
     def random_scars(cube_id, count):
         scars = Scar.query.filter(
             Scar.cube_id == cube_id,
-            Scar.locked_by_id == None
+            Scar.applied_to_id == None,
+            Scar.locked_by_id == None,
         ).all()
         random.shuffle(scars)
         return scars[:count]
