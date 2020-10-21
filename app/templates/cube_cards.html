@@ -19,7 +19,9 @@
               <td>
                 {{ card.name() }}
                 {% if card.name() != card.base.name %}
-                  ({{ card.base.name }})
+                  <span class="text-muted">
+                    ({{ card.base.name }})
+                  </span>
                 {% endif %}
               </td>
               <td>
