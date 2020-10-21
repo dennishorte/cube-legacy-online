@@ -32,9 +32,48 @@ Example card
 import datetime
 from lxml.etree import Element
 from lxml.etree import SubElement
+from lxml.etree import parse
 from lxml.etree import tostring
 
 from app.util.enum import Layout
+
+
+CONTRAPTION_SET_NAME = 'CNTRP'
+
+def contraption_extractor(cards_xml_filename):
+    tree = parse(cards_xml_filename)
+    root = tree.getroot()
+    cards = root.find('cards')
+
+    # Set up special contraptions set
+    root.remove(root.find('sets'))
+    sets = SubElement(root, 'sets')
+    _add_sets_xml(
+        sets,
+        set_name=CONTRAPTION_SET_NAME,
+        set_longname='Contraptions',
+        set_settype='Custom Contraptions',
+    )
+
+    _filter_non_contraptions(cards)
+
+
+    return tostring(tree, xml_declaration=True, encoding='UTF-8').decode('utf-8')
+    
+
+def _filter_non_contraptions(cards):
+    count = 1
+    for card in cards.findall('card'):
+        text = card.find('prop').find('type').text
+        if text.startswith('Artifact ') and text.endswith(' Contraption'):
+            token_elem = SubElement(card, 'token')
+            token_elem.text = '1'
+            card.find('tablerow').text = '-1'
+            card.find('set').text = CONTRAPTION_SET_NAME
+            card.find('name').text = f"CN{count:02} {card.find('name').text}"
+            count += 1
+        else:
+            card.getparent().remove(card)
 
 
 def export_to_cockatrice(cube):
@@ -58,13 +97,23 @@ def export_to_cockatrice(cube):
     sets_root = SubElement(root, 'sets')
     cards_root = SubElement(root, 'cards')
 
-    _add_sets_xml(sets_root)
+    _add_sets_xml(
+        sets_root,
+        set_name='clo',
+        set_longname=f'Cube Legacy Online',
+        set_settype='Custom Legacy',
+    )
     _add_cards_xml(cards_root, cube)
 
     return tostring(root, pretty_print=True).decode('utf-8')
     
 
-def _add_sets_xml(root):
+def _add_sets_xml(
+        root,
+        set_name,
+        set_longname,
+        set_settype,
+):
     """
     Output format:
     <set>
@@ -82,9 +131,9 @@ def _add_sets_xml(root):
 
     date_str = str(datetime.date.today())
     
-    name.text = 'clo'
-    longname.text = 'Cube Legacy Online: {}'.format(date_str)
-    settype.text = 'Custom'
+    name.text = set_name
+    longname.text = set_longname
+    settype.text = set_settype
     releasedate.text = date_str
     
     
