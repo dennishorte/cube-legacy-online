@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block content %}
+  <div class="row mb-3">
+    <div class="col">
+      <a href="#newDraftModal" data-toggle="modal">new draft</a>
+      /
+      <a href="#newCubeModal" data-toggle="modal">new cube</a>
+    </div>
+  </div>
+  
   <div class="row mb-5" >
     
     <!-- User drafts and achievements -->
@@ -33,7 +41,7 @@
       </div>
 
       <!-- List of Achievements -->
-      <h4 class="mt-4">Achievements</h4>
+      <h4 class="mt-4">My Achievements</h4>
       <div id="claimedAchievements" class="border bg-light p-2">
         <p>Claimed Achievements</p>
         <ul class="list-unstyled ml-4">
@@ -61,48 +69,105 @@
       </div>
       <!-- END: List of Achievements -->
 
-      <!-- Slack Test -->
-      <a class="btn btn-info mt-2" href="{{ url_for('slack_test') }}">Test Slack</a>
-      <!-- END: Slack Test -->
-
     </div>
     <!-- END: User drafts and achievements -->
 
-    <!-- New draft form -->
-    <div id="new_draft" class="col border bg-light col-md-6">
-      <h4 class="mt-2">New Draft</h4>
-      <form action="/draft/new" method="post" novalidate>
-        {{ new_draft_form.hidden_tag() }}
-        <div class="form-group">
-          {{ new_draft_form.name.label }}
-          {{ new_draft_form.name(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.cube.label }}
-          {{ new_draft_form.cube(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.packsize.label }}
-          {{ new_draft_form.packsize(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.numpacks.label }}
-          {{ new_draft_form.numpacks(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.scar_rounds.label }}
-          {{ new_draft_form.scar_rounds(class='form-control') }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.players.label }}
-          {{ new_draft_form.players(class='form-control', size=6) }}
-        </div>
-        <div class="form-group">
-          {{ new_draft_form.submit() }}
-        </div>
-      </form>
+    <!-- Right side column -->
+    <div class="col col-md-6">
+      <h4>Cubes</h4>
+      <div id="activeCubes" class="border p-2 bg-light">
+        <ul class="list-unstyled ml-4 mt-3">
+          {% for cube in cubes|sort(attribute='name') %}
+            <li>
+              <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>      
     </div>
-    <!-- END: New draft form -->
+    <!-- END: Right side column -->
 
   </div>
+
+  <!-- New Cube Modal -->
+  <div class="modal fade" id="newCubeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Cube</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>          
+        </div>
+        
+        <div class="modal-body">
+          <form action="{{ url_for('cubes_new') }}" method="post" novalidate>
+            {{ new_cube_form.hidden_tag() }}
+            <div class="form-group">
+              {{ new_cube_form.name.label }}
+              {{ new_cube_form.name(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_cube_form.style.label }}
+              {{ new_cube_form.style(class="list-unstyled") }}
+            </div>
+            <p>{{ new_cube_form.submit(class="btn btn-primary") }}</p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: New Cube Modal -->
+
+  <!-- New Draft Modal -->
+  <div class="modal fade" id="newDraftModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Draft</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>          
+        </div>
+        
+        <div class="modal-body">
+
+          <form action="/draft/new" method="post" novalidate>
+            {{ new_draft_form.hidden_tag() }}
+            <div class="form-group">
+              {{ new_draft_form.name.label }}
+              {{ new_draft_form.name(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.cube.label }}
+              {{ new_draft_form.cube(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.packsize.label }}
+              {{ new_draft_form.packsize(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.numpacks.label }}
+              {{ new_draft_form.numpacks(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.scar_rounds.label }}
+              {{ new_draft_form.scar_rounds(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.players.label }}
+              {{ new_draft_form.players(class='form-control', size=6) }}
+            </div>
+            <div class="form-group">
+              {{ new_draft_form.submit() }}
+            </div>
+          </form>          
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: New Draft Modal -->
+
 {% endblock %}

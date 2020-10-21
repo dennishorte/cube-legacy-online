@@ -34,6 +34,8 @@ def index():
 
     achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
+    cubes = Cube.query.all()
+
     
     return render_template(
         'index.html',
@@ -42,6 +44,8 @@ def index():
         achievements_unfinished=achievements_unfinished,
         achievements_finished=achievements_finished,
         new_draft_form=_new_draft_form(),
+        new_cube_form=NewCubeForm(),
+        cubes=cubes,
     )
 
 
@@ -429,12 +433,3 @@ def cockatrice_download(draft_id):
         as_attachment=True,
         cache_timeout=0 if force_rebuild else None,
     )
-
-
-@app.route('/slack_test')
-@login_required
-def slack_test():
-    from app.util import slack
-    user = User.query.get(current_user.id)
-    slack.test_direct_message(user)
-    return redirect(url_for('index'))

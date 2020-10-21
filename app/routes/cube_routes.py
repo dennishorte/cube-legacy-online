@@ -49,6 +49,27 @@ def cubes():
     )
 
 
+@app.route("/cubes/new", methods=['POST'])
+@login_required
+def cubes_new():
+    form = NewCubeForm()
+
+    if form.validate_on_submit():
+        cube = Cube.query.filter(Cube.name==form.name.data).first()
+        if cube is not None:
+            flash('A Cube with the name "{}" already exists.'.format(cube.name))
+            return redirect(url_for('cubes'))
+
+        cube = Cube(
+            name=form.name.data,
+            style=form.style.data,
+        )
+        db.session.add(cube)
+        db.session.commit()
+
+    return redirect(url_for('index'))
+
+
 @app.route("/cubes/<cube_id>/achievements")
 @login_required
 def cube_achievements(cube_id):
