@@ -1,3 +1,5 @@
+{% from "macros.html" import format_multi_line_text %}
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -40,18 +42,22 @@
       <hr>
 
       <div>
+
+        <!-- Story of This Achievement -->
+        <p class="text-primary">Story of This Achievement</p>
+        {{ format_multi_line_text(achievement.story) }}
+
         {% if achievement.finalized_timestamp %}
+          <div class="text-right">
+            <button type="button" onclick="$('#finalizeForm').toggle()" class="btn btn-secondary">
+              edit story
+            </button>
+          </div>
+        {% endif %}
+        <!-- END: Story of This Achievement -->
 
-          <!-- Story of This Achievement -->
-          <p class="text-primary">Story of This Achievement</p>
-          {% for line in achievement.story.split('\n') %}
-            <p>{{ line }}</p>
-          {% endfor %}
-          <!-- END: Story of This Achievement -->
-
-        {% else %}
-
-          <!-- Finalize Achievement -->
+        <!-- Finalize Achievement -->
+        <div id="finalizeForm">
           <form action="{{ url_for('achievement_finalize', achievement_id=achievement.id) }}" method="post" novalidate>
             {{ form.hidden_tag() }}
             <div class="form-group">
@@ -62,9 +68,9 @@
             </div>
             {{ form.submit(class='btn btn-primary') }}
           </form>
-          <!-- END: Finalize Achievement -->
+        </div>
+        <!-- END: Finalize Achievement -->
 
-        {% endif %}
       </div>
 
       <hr>
@@ -79,3 +85,13 @@
   </div>
   
 {% endblock content %}
+
+{% block scripts %}
+  <script>
+   {% if achievement.finalized_timestamp %}
+   $(document).ready(function() {
+     $('#finalizeForm').hide()
+   })
+   {% endif %}
+  </script>
+{% endblock scripts %}
