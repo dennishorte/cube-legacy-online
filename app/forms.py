@@ -216,3 +216,9 @@ class SaveDeckListForm(FlaskForm):
     name = StringField('Deck Name', validators=[DataRequired()])
     decklist = TextAreaField('Deck List', validators=[DataRequired()])
     submit = SubmitField('Save')
+
+
+class UseScarForm(FlaskForm):
+    scar_id = IntegerField('Scar ID')
+    card_name = SelectField('Card Name')
+    submit = SubmitField('Use')

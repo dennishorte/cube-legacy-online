@@ -82,6 +82,15 @@ class Cube(db.Model):
         cards.sort(key=lambda x: x.name())
         return cards
 
+    def get_card_by_name(self, name):
+        filtered = [x for x in self.cards() if x.name() == name]
+        if not filtered:
+            return None
+        elif len(filtered) == 1:
+            return filtered[0]
+        else:
+            return filtered
+
 
 class CubeCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)

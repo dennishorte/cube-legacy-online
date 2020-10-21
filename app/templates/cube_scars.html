@@ -35,15 +35,20 @@
               <td class="scar-restrictions">{{ scar.restrictions }}</td>
               <td>{{ scar.created_by.name }}</td>
 
-              {% if scar.applied_to %}
-                <td>
+              <td class="text-right">
+                {% if scar.applied_to %}
                   <a href="{{ url_for('card_editor', card_id=scar.applied_to_id) }}">
                     {{ scar.applied_to.name() }}
                   </a>
-                </td>
-              {% else %}
-                <td></td>
-              {% endif %}
+                {% else %}
+                  <a
+                    class="use-scar text-secondary"
+                    href="#useScar" 
+                    data-toggle="modal">
+                    use
+                  </button>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -72,7 +77,7 @@
           novalidate>
           
           {{ form.hidden_tag() }}
-          {{ form.update_id(id='scarUpdateId') }}
+          {{ form.update_id(class='scar-update-id') }}
           <div class="form-group">
             {{ form.text.label }}
             {{ form.text(class='form-control', rows=8, id='scarText') }}
@@ -97,15 +102,69 @@
     </div>
     <!-- END: New scar form -->
   </div>
+
+  <!-- Modal: Add scar to card. -->
+  <div class="modal fade" id="useScar" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Scar to Card</h5>
+        </div>
+        
+        <div class="modal-body">
+          <p class="badge badge-pill badge-danger">
+            Use this form after you've manually added a scar to a card.
+          </p>
+
+          <div class="m-2 p-2 bg-light border">
+            <p id="useScarText" class="mb-0"></p>
+          </div>
+          
+          <div>
+            <form
+              action="{{ url_for('cube_scars_use', cube_id=cube.id) }}"
+              id="useScarForm"
+              method="post"
+              novalidate>
+              
+              {{ usform.hidden_tag() }}
+              <div class="form-group">
+                {{ usform.scar_id(class="scar-update-id") }}
+              </div>
+              <div class="form-group">
+                {{ usform.card_name.label }}
+                {{ usform.card_name(class="form-control") }}
+              </div>
+              {{ usform.submit(class="btn btn-primary") }}
+            </form>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- loading cards modal -->
+
 {% endblock content %}
 
 {% block scripts %}
   <script>
    $(document).ready(function() {
-     $('#scarUpdateId').hide()
+     $('.scar-update-id').hide()
+
+     $('#scarTable tbody .use-scar').click(function() {
+       console.log('hello')
+       let row = $(this).closest('tr')
+       let scar_id = row.data('scar-id')
+       let scar_text = row.find('.scar-text').text()
+
+       let form = $('#useScarForm')
+       form.find('.scar-update-id').val(scar_id)
+       $('#useScarText').text(scar_text)
+     })
      
-     $('#scarTable tbody tr').click(function() {
-       let row = $(this)
+     $('#scarTable tbody .scar-text').click(function() {
+       let row = $(this).closest('tr')
        let scar_id = row.data('scar-id')
        let scar_text = row.find('.scar-text').text()
        let scar_rest = row.find('.scar-restrictions').text()
@@ -114,7 +173,7 @@
        form.removeClass('bg-light')
        form.addClass('bg-warning')
        form.find('#createScarTitle').text('Edit Scar')
-       form.find('#scarUpdateId').val(scar_id)
+       form.find('.scar-update-id').val(scar_id)
        form.find('#scarText').val(scar_text)
        form.find('#scarRestrictions').val(scar_rest)
 
