@@ -1,3 +1,4 @@
+{% from 'macros.html' import format_multi_line_text %}
 {% from 'macros.html' import show_achievement_form %}
 
 {% extends "cube_base.html" %}
@@ -70,6 +71,9 @@
               <span class="badge badge-pill badge-success">
                 {{ achievement.unlocked_by.name }}
               </span>
+              {% if achievement.multiunlock %}
+                <span class="badge badge-pill badge-warning">multi</span>
+              {% endif %}
             </div>
 
             <!-- Clone Button -->
@@ -80,14 +84,17 @@
             </div>
           </div>
 
-          <div
+          <div>
             <!-- Achievement Conditions -->
-            <div class="d-flex text-secondary">
+            <div class="text-secondary">
               {{ achievement.conditions }}
             </div>
-            
-            <hr>
+
+            <div class="text-info p-2">
+              {{ format_multi_line_text(achievement.story) }}
+            </div>
           </div>
+          <hr>
         {% endfor %}
       </div>
       <!-- END: Claimed Achievements -->

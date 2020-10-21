@@ -1,3 +1,13 @@
+{% macro format_multi_line_text(text) %}
+  {% if text %}
+    {% for line in text.split('\n') %}
+      {% if line.strip() %}
+        <p class="mb-0">{{ line }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
+
 {% macro show_achievement_form(form) %}
   <div class="bg-light border p-2">
     <form action="{{ url_for('achievement_submit') }}" method="post" novalidate>
