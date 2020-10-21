@@ -210,3 +210,9 @@ class ResultForm(FlaskForm):
     losses = IntegerField('losses', validators=[Optional()])
     draws = IntegerField('draws', validators=[Optional()])
     submit = SubmitField('update')
+
+
+class SaveDeckListForm(FlaskForm):
+    name = StringField('Deck Name', validators=[DataRequired()])
+    decklist = TextAreaField('Deck List', validators=[DataRequired()])
+    submit = SubmitField('Save')

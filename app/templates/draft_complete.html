@@ -1,3 +1,4 @@
+{% from "macros.html" import format_multi_line_text %}
 {% from "macros.html" import show_card_list %}
 {% from "macros.html" import show_picked_card_names %}
 
@@ -72,14 +73,56 @@
 
     <!-- Deck Info -->
     <div class="col">
-      <h3>Cockatrice Custom Set</h3>
-      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id) }}">
-        <button class="btn btn-primary">Download Cockatrice Cards XML</button>
-      </a>
-      
-      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
-        <button class="btn btn-secondary">Rebuild</button>
-      </a>
+      <div class="mt-2 bg-light border p-2">
+        <h3>Cockatrice Custom Set</h3>
+        <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id) }}">
+          <button class="btn btn-primary">Download Cockatrice Cards XML</button>
+        </a>
+        
+        <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
+          <button class="btn btn-secondary">Rebuild</button>
+        </a>
+      </div>
+
+      {% if d.decklist %}
+        <div class="mt-2 bg-light border p-2">
+          <h4>Deck List</h4>
+          <p class="text-primary">{{ d.decklist.name }}</p>
+          <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#mainboard">
+            Main Deck
+          </button>          
+          <button class="btn btn-warning" type="button" data-toggle="collapse" data-target="#sideboard">
+            Sideboard
+          </button>
+
+          <div id="mainboard" class="mt-2 p-2 collapse border">
+            <strong>Main Deck</strong> ({{ d.decklist.mainboard()|length }})
+            {{ format_multi_line_text('\n'.join(d.decklist.mainboard())) }}
+          </div>
+
+          <div id="sideboard" class="mt-2 p-2 collapse border">
+            <strong>Sideboard</strong> ({{ d.decklist.sideboard()|length }})
+            {{ format_multi_line_text('\n'.join(d.decklist.sideboard())) }}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Save decklist -->
+      <div id="saveDecklistForm" class="mt-2 bg-light border p-2">
+        <form action="{{ url_for('draft_save_decklist', draft_id=d.draft.id) }}" method="POST" novalidate>
+          {{ dlform.hidden_tag() }}
+          <div class="form-group">
+            {{ dlform.name.label }}
+            {{ dlform.name(class="form-control", placeholder="eg. RG Aggro") }}
+          </div>
+          <div class="form-group">
+            {{ dlform.decklist.label }}
+            {{ dlform.decklist(class="form-control", placeholder="Cockatrice -> Deck Editor -> Save to Clipboard -> Not Annotated") }}
+          </div>
+          {{ dlform.submit(class="btn btn-primary") }}
+        </form>
+      </div>
+      <!-- END: Save decklist -->
     </div>
     <!-- END: Deck Info -->
   </div>
@@ -97,3 +140,13 @@
   {{ show_picked_card_names(d.seat) }}
   <!-- END: Picks -->
 {% endblock content %}
+
+{% block scripts %}
+  <script>
+   {% if d.decklist %}
+   $(document).ready(function() {
+     $('#saveDecklistForm').hide()
+   })
+   {% endif %}
+  </script>
+{% endblock scripts %}

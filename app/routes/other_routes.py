@@ -302,7 +302,8 @@ def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
 
     if dw.draft.complete:
-        return render_template('draft_complete.html', d=dw)
+        form = SaveDeckListForm()
+        return render_template('draft_complete.html', d=dw, dlform=form)
     else:
         return render_template('draft_picker.html', d=dw)
 
@@ -375,6 +376,26 @@ def draft_debug(draft_id):
 def draft_new_scars(draft_id):
     d = DraftWrapper(draft_id, current_user)
     d.seat.unlock_scars()
+    return redirect(url_for('draft', draft_id=draft_id))
+
+
+@app.route("/draft/<draft_id>/save_decklist", methods=["POST"])
+@login_required
+def draft_save_decklist(draft_id):
+    form = SaveDeckListForm()
+    if form.validate_on_submit():
+        decklist = DeckList(
+            user_id=current_user.id,
+            draft_id=draft_id,
+            name=form.name.data.strip(),
+            decklist=normalize_newlines(form.decklist.data.strip()),
+        )
+        db.session.add(decklist)
+        db.session.commit()
+    
+    else:
+        flash('Error saving decklist')
+
     return redirect(url_for('draft', draft_id=draft_id))
 
 

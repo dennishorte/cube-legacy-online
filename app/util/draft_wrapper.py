@@ -19,6 +19,11 @@ class DraftWrapper(object):
         self.seat = next(x for x in self.seats if x.user_id == self.user.id)
         self.pack = self.seat.waiting_pack()
 
+        self.decklist = DeckList.query.filter(
+            DeckList.draft_id == self.draft.id,
+            DeckList.user_id == self.user.id,
+        ).first()
+
     def is_scarring_round(self):
         return self.pack and self.pack.is_scarring_round
 
