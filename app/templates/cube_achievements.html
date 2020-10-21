@@ -67,7 +67,9 @@
 
             <!-- Achievement Name -->
             <div class="mr-auto mt-1 text-primary">
-              {{ achievement.full_name() }}
+              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
+                {{ achievement.full_name() }}
+              </a>
               <span class="badge badge-pill badge-success">
                 {{ achievement.unlocked_by.name }}
               </span>
