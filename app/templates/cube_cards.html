@@ -16,7 +16,12 @@
         <tbody>
           {% for card in cube.cards() %}
             <tr>
-              <td>{{ card.name() }}</td>
+              <td>
+                {{ card.name() }}
+                {% if card.name() != card.base.name %}
+                  ({{ card.base.name }})
+                {% endif %}
+              </td>
               <td>
                 {% if card.is_scarred() %}
                   <span class="badge badge-warning">scarred</span>
