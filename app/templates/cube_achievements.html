@@ -62,11 +62,11 @@
       <!-- Claimed Achievements -->
       <div class="border bg-light p-2 mt-2">
         <h4>Claimed Achievements</h4>
-        {% for achievement in cube.achievements_completed() %}
+        {% for achievement in cube.achievements_completed()|sort(attribute='unlocked_timestamp', reverse=True) %}
           <div class="d-flex">
 
             <!-- Achievement Name -->
-            <div class="mr-auto mt-1 text-primary">
+            <div class="mr-auto mt-1">
               <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
                 {{ achievement.full_name() }}
               </a>
@@ -76,6 +76,10 @@
               {% if achievement.multiunlock %}
                 <span class="badge badge-pill badge-warning">multi</span>
               {% endif %}
+              <br>
+              <p class="ml-4 mb-0 text-muted font-weight-light" style="font-size:.8rem">
+                {{ achievement.unlocked_timestamp.strftime("%Y-%m-%d") }}
+              </p>
             </div>
 
             <!-- Clone Button -->
