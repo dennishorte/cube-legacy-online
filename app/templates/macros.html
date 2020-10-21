@@ -118,14 +118,20 @@
         </p>
         <!-- END: Card Image (and draft link) -->
 
-        <!-- Scarred Pill (and view link) -->
-        {% if card.cube_card.is_scarred() %}
-          <a class="btn btn-danger"
-             href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
-            Scarred
-          </a>
-        {% endif %}
-        <!-- END: Scarred Pill (and view link) -->
+        <!-- Scars -->
+        <ul class="list-unstyled mt-0">
+          {% for change, line in card.cube_card.scar_diff_flat() %}
+            <li class="
+                       {% if change == '+' %}
+                       text-success
+                       {% else %}
+                       text-danger
+                       {% endif %}
+                       "
+            >{{ change }} {{ line }}</li>
+          {% endfor %}
+        </ul>
+        <!-- END: Scars -->
 
       </div>
     {% endfor %}
