@@ -29,7 +29,7 @@
               <div id="collapse{{ loop.index }}" class="collapse" data-parent="#accordion">
                 <div class="card-body">
                   {% for line in group['text'].split('\n') %}
-                    <p>{{ group['text'] }}</p>
+                    <p>{{ line }}</p>
                   {% endfor %}
                 </div>
               </div>
