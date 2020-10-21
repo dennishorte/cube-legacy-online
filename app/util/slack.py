@@ -18,6 +18,9 @@ def send_your_pick_notification(user, draft):
     if Config.FLASK_ENV != 'production':
         return
 
+    if not user.should_send_notification():
+        return
+
     try:
         open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
@@ -26,9 +29,6 @@ def send_your_pick_notification(user, draft):
         draft_url = f"http://{domain_host}/draft/{draft.id}"
         message = f"Someone has passed you a pack in {draft.name}. Time to <{draft_url}|make a pick>."
         
-        if not user.should_send_notification():
-            message += "\nThis message would be filtered if the filter were turned on."    
-
         send_response = _client.chat_postMessage(
             channel=dm_channel,
             text=message,
