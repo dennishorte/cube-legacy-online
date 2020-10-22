@@ -85,16 +85,19 @@
         <!-- END: Card Image (and draft link) -->
 
         <!-- Scars -->
+        
         <ul class="list-unstyled mt-0">
-          {% for change, line in card.cube_card.scar_diff_flat() %}
+          {% for line in card.cube_card.card_diff().summary() %}
             <li class="
-                       {% if change == '+' %}
+                       {% if line.startswith('+ ') %}
                        text-success
-                       {% else %}
+                       {% elif line.startswith('- ') %}
                        text-danger
+                       {% elif line.startswith('. ') %}
+                       text-success
                        {% endif %}
                        "
-            >{{ change }} {{ line }}</li>
+            >{{ line }}</li>
           {% endfor %}
         </ul>
         <!-- END: Scars -->
@@ -130,15 +133,17 @@
 
         <!-- Scars -->
         <ul class="list-unstyled mt-0">
-          {% for change, line in card.cube_card.scar_diff_flat() %}
+          {% for line in card.cube_card.card_diff().summary() %}
             <li class="
-                       {% if change == '+' %}
+                       {% if line.startswith('+ ') %}
                        text-success
-                       {% else %}
+                       {% elif line.startswith('- ') %}
                        text-danger
+                       {% elif line.startswith('. ') %}
+                       text-success
                        {% endif %}
                        "
-            >{{ change }} {{ line }}</li>
+            >{{ line }}</li>
           {% endfor %}
         </ul>
         <!-- END: Scars -->

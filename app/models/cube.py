@@ -165,19 +165,14 @@ class CubeCard(db.Model):
         )
 
     @functools.cached_property        
-    def scar_diff(self):
-        original = CubeCard.query.filter(
+    def original(self):
+        return CubeCard.query.filter(
             CubeCard.version == 1,
             CubeCard.latest_id == self.latest_id,
         ).first()
-        return card_util.card_diff(original, self)
 
-    def scar_diff_flat(self):
-        lines = []
-        for face in self.scar_diff.data:
-            for key, changes in face.items():
-                lines += changes
-        return lines
+    def card_diff(self):
+        return card_util.CardDiffer(self.original, self)
                     
         
     @classmethod

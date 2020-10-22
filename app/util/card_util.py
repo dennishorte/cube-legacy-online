@@ -27,58 +27,83 @@ class CardConsts(object):
     )
 
 
-class FaceDiff(UserDict):
+class CardDiffer(object):
+    def __init__(self, old, new):
+        self.old = old
+        self.new = new
+
+        self.old_faces = self.old.card_faces()
+        self.new_faces = self.new.card_faces()
+
     def __getitem__(self, key):
-        if key in self.data:
-            return self.data[key]
+        return self._ndiff(key)
+
+    def summary(self):
+        base = [
+            self.name(),
+            self.mana_cost(),
+            self.type_line(),
+            self.flavor_text(),
+            self.pt(),
+            self.loyalty(),
+            self.oracle_text(),
+        ]
+        flat = []
+        for row in base:
+            if isinstance(row, list):
+                flat += row
+            else:
+                flat.append(row)
+
+        return [x for x in flat if x]
+
+    def name(self):
+        return self._simple_diff('name', 'name')
+
+    def mana_cost(self):
+        return self._simple_diff('mana_cost', 'cost')
+
+    def type_line(self):
+        return self._simple_diff('type_line', 'type')
+
+    def oracle_text(self):
+        diff = list(difflib.ndiff(
+            self.old_faces[0].get('oracle_text', '').split('\n'),
+            self.new_faces[0].get('oracle_text', '').split('\n'),
+        ))
+        diff = [x.rstrip() for x in diff if len(x.rstrip()) > 1 and not x.startswith('  ')]
+
+        if diff:
+            return [' rules:'] + diff
         else:
-            return []
+            return None
 
+    def flavor_text(self):
+        if self._simple_diff('flavor_text', ''):
+            return f". flavor: <changed>"
 
-class CardDiff(UserList):
-    def __getitem__(self, index):
-        if index < len(self.data):
-            return self.data[index]
+    def pt(self):
+        if self._simple_diff('power', '') or self._simple_diff('toughness', ''):
+            power = self.new_faces[0].get('power', '0')
+            tough = self.new_faces[0].get('toughness', '0')
+            return f". p/t: {power}/{tough}"
+
+    def loyalty(self):
+        return self._simple_diff('loyalty', 'loyalty')
+
+    def _ndiff(self, field):
+        diff = list(difflib.ndiff(
+            self.old_faces[0].get(field, '').split('\n'),
+            self.new_faces[0].get(field, '').split('\n'),
+        ))
+        return [x.rstrip() for x in diff if len(x.rstrip()) > 1 and not x.startswith('  ') and not x.startswith('?')]
+
+    def _simple_diff(self, field, display_name):
+        if self.old_faces[0].get(field) != self.new_faces[0].get(field):
+            return f". {display_name}: {self.new_faces[0].get(field)}"
         else:
-            return FaceDiff()
-
-    def dumps(self):
-        import json
-        a = []
-        for elem in self.data:
-            a.append(dict(elem))
-        return json.dumps(a, indent=2)
-        
-
-def card_diff(card1, card2):
-
-    faces1 = card1.card_faces().copy()
-    faces2 = card2.card_faces().copy()
-
-    diffs = CardDiff()
-    
-    for i in range(max(len(faces1),len(faces2))):
-        face_diff = FaceDiff()
-        diffs.append(face_diff)
-
-        if len(faces1) <= i:
-            faces1.append({})
-            
-        if len(faces2) <= i:
-            faces2.append({})
-
-        for key in CardConsts.FACE_KEYS:
-            diff = list(difflib.ndiff(
-                faces1[i].get(key, '').split('\n'),
-                faces2[i].get(key, '').split('\n'),
-            ))
-
-            diff = [x.rstrip() for x in diff if len(x.rstrip()) > 1]
-            diff = [(x[0], x[2:]) for x in diff if x.startswith('+ ') or x.startswith('- ')]
-            face_diff[key] = diff
-
-    return diffs
-
+            return None
+ 
 
 def empty_card_json():
     return {

@@ -1,15 +1,15 @@
 {% macro render_field_diff(diff, field_name) %}
   {% if diff %}
     <ul class="field-diff list-unstyled">
-      {% for change, line in diff[field_name] %}
+      {% for line in diff[field_name] %}
         <li class="
-                   {% if change == '+' %}
+                   {% if line.startswith('+ ') %}
                    text-success
                    {% else %}
                    text-danger
                    {% endif %}
                    "
-        >{{ change }} {{ line }}</li>
+        >{{ line }}</li>
       {% endfor %}
     </ul>
   {% endif %}
@@ -18,7 +18,7 @@
 {% macro render_form_group(fields, diff, field_name) %}
   <div class="form-group">
     {{ fields[field_name].label }}
-    {{ fields[field_name](class='form-control', rows='5') }}
+    {{ fields[field_name](class='form-control', rows='2') }}
     {{ render_field_diff(diff, field_name) }}
   </div>
 {% endmacro %}
@@ -26,7 +26,7 @@
 {% macro render_form_group_col(fields, diff, field_name) %}
   <div class="col form-group">
     {{ fields[field_name].label }}
-    {{ fields[field_name](class='form-control', rows='5') }}
+    {{ fields[field_name](class='form-control') }}
     {{ render_field_diff(diff, field_name) }}
   </div>
 {% endmacro %}
@@ -120,8 +120,8 @@
         <!-- Edit forms for each face -->
         <div class="row mt-1">
           {% if card %}
-            {{ face_form(form.faces[0], card.scar_diff[0], 'front') }}
-            {{ face_form(form.faces[1], card.scar_diff[1], 'back') }}
+            {{ face_form(form.faces[0], card.card_diff(), 'front') }}
+            {{ face_form(form.faces[1], None, 'back') }}
           {% else %}
             {{ face_form(form.faces[0], None, 'front') }}
             {{ face_form(form.faces[1], None, 'back') }}

@@ -19,7 +19,6 @@ from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
 from app.util import cockatrice
-from app.util.card_util import card_diff
 from app.util.card_util import empty_card_json
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
