@@ -215,6 +215,7 @@ class CubeCard(db.Model):
             self.json = json.dumps(new_json)
             self.edited_by_id = edited_by.id
             self.comment = comment
+            self.timestamp = datetime.utcnow()
 
             db.session.add(new_card)
             db.session.add(self)
