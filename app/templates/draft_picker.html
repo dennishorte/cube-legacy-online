@@ -11,7 +11,12 @@
     <div class="col col-md-4 border bg-light p-2">
       <ul class="list-unstyled">
         <li><strong>Draft: </strong>{{ d.draft.name }}</li>
-        <li><strong>Cube: </strong>{{ d.draft.cube.name }}</li>
+        <li>
+          <strong>Cube: </strong>
+          <a href="{{ url_for('cube_cards', cube_id=d.draft.cube.id) }}">
+            {{ d.draft.cube.name }}
+          </a>
+        </li>
         <li><strong>Packs: </strong>{{ d.draft.num_packs }}</li>
         <li><strong>Pack size: </strong>{{ d.draft.pack_size }}</li>
         {% if d.draft.scar_rounds_str %}
