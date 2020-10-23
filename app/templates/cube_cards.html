@@ -82,7 +82,7 @@
                 <td>{{ card.name() }}</td>
                 <td>{{ card.edited_by.name }}</td>
                 <td>
-                  <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
+                  <a href="{{ url_for('card_editor', card_id=card.latest_id, read_only='true') }}">
                     view
                   </a>
               </tr>

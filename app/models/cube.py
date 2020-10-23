@@ -87,7 +87,11 @@ class Cube(db.Model):
             CubeCard.cube_id == self.id,
             CubeCard.removed_by_id == None,
             CubeCard.edited_by_id != None,
-        ).order_by(CubeCard.timestamp.desc()).limit(limit)
+            CubeCard.id == CubeCard.latest_id,
+        ).order_by(
+            CubeCard.timestamp.desc(),
+            CubeCard.id,
+        ).limit(limit)
 
     def get_card_by_name(self, name):
         filtered = [x for x in self.cards() if x.name() == name]
@@ -139,6 +143,9 @@ class CubeCard(db.Model):
 
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
+
+    def days_since_last_edit(self):
+        return (datetime.utcnow() - self.timestamp).days
 
     @functools.cached_property
     def removed_by(self):
