@@ -82,6 +82,13 @@ class Cube(db.Model):
         cards.sort(key=lambda x: x.name())
         return cards
 
+    def cards_updated(self, limit=20):
+        return CubeCard.query.filter(
+            CubeCard.cube_id == self.id,
+            CubeCard.removed_by_id == None,
+            CubeCard.edited_by_id != None,
+        ).order_by(CubeCard.timestamp.desc()).limit(limit)
+
     def get_card_by_name(self, name):
         filtered = [x for x in self.cards() if x.name() == name]
         if not filtered:
@@ -172,8 +179,7 @@ class CubeCard(db.Model):
         ).first()
 
     def card_diff(self):
-        return card_util.CardDiffer(self.original, self)
-                    
+        return card_util.CardDiffer(self.original, self)                    
         
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):

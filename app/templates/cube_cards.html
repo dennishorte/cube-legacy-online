@@ -66,7 +66,33 @@
       <!-- END:Create card button -->
 
       <hr>
-      
+
+      <!-- Recent updates -->
+      <div>
+        <h4>Recent Updates</h4>
+        <table class="table table-sm">
+          <thead class="thead thead-light">
+            <th>card name</th>
+            <th>updated by</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% for card in cube.cards_updated(limit=20) %}
+              <tr>
+                <td>{{ card.name() }}</td>
+                <td>{{ card.edited_by.name }}</td>
+                <td>
+                  <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
+                    view
+                  </a>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Recent updates -->
+
+      <!-- Removed Cards -->
       <div>
         <h4>Removed Cards</h4>
         <table class="table table-sm">
@@ -79,7 +105,7 @@
             {% for card in cube.cards_removed() %}
               <tr>
                 <td>{{ card.name() }}</td>
-                <td>{{ card.removed_by }}</td>
+                <td>{{ card.removed_by.name }}</td>
                 <td>
                   <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
                     view
@@ -89,6 +115,8 @@
           </tbody>
         </table>
       </div>
+      <!-- END: Removed cards -->
+      
     </div>
   </div>
 
