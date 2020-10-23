@@ -28,12 +28,20 @@ class CardConsts(object):
 
 
 class CardDiffer(object):
-    def __init__(self, old, new):
+    def __init__(self, old, new, face=None):
         self.old = old
         self.new = new
+        self.face = face
 
-        self.old_faces = self.old.card_faces()
-        self.new_faces = self.new.card_faces()
+        if len(self.old.card_faces()) <= face:
+            self.old_face = {}
+        else:
+            self.old_face = self.old.card_faces()[self.face]
+
+        if len(self.new.card_faces()) <= face:
+            self.new_face = {}
+        else:
+            self.new_face = self.new.card_faces()[self.face]
 
     def __getitem__(self, key):
         return self._ndiff(key)
@@ -68,8 +76,8 @@ class CardDiffer(object):
 
     def oracle_text(self):
         diff = list(difflib.ndiff(
-            self.old_faces[0].get('oracle_text', '').split('\n'),
-            self.new_faces[0].get('oracle_text', '').split('\n'),
+            self.old_face.get('oracle_text', '').split('\n'),
+            self.new_face.get('oracle_text', '').split('\n'),
         ))
         diff = [x.rstrip() for x in diff if len(x.rstrip()) > 1 and not x.startswith('  ')]
 
@@ -84,8 +92,8 @@ class CardDiffer(object):
 
     def pt(self):
         if self._simple_diff('power', '') or self._simple_diff('toughness', ''):
-            power = self.new_faces[0].get('power', '0')
-            tough = self.new_faces[0].get('toughness', '0')
+            power = self.new_face.get('power', '0')
+            tough = self.new_face.get('toughness', '0')
             return f". p/t: {power}/{tough}"
 
     def loyalty(self):
@@ -93,14 +101,14 @@ class CardDiffer(object):
 
     def _ndiff(self, field):
         diff = list(difflib.ndiff(
-            self.old_faces[0].get(field, '').split('\n'),
-            self.new_faces[0].get(field, '').split('\n'),
+            self.old_face.get(field, '').split('\n'),
+            self.new_face.get(field, '').split('\n'),
         ))
         return [x.rstrip() for x in diff if len(x.rstrip()) > 1 and not x.startswith('  ') and not x.startswith('?')]
 
     def _simple_diff(self, field, display_name):
-        if self.old_faces[0].get(field) != self.new_faces[0].get(field):
-            return f". {display_name}: {self.new_faces[0].get(field)}"
+        if self.old_face.get(field) != self.new_face.get(field):
+            return f". {display_name}: {self.new_face.get(field)}"
         else:
             return None
  

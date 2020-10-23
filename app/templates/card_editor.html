@@ -120,8 +120,8 @@
         <!-- Edit forms for each face -->
         <div class="row mt-1">
           {% if card %}
-            {{ face_form(form.faces[0], card.card_diff(), 'front') }}
-            {{ face_form(form.faces[1], None, 'back') }}
+            {{ face_form(form.faces[0], card.card_diff(face=0), 'front') }}
+            {{ face_form(form.faces[1], card.card_diff(face=1), 'back') }}
           {% else %}
             {{ face_form(form.faces[0], None, 'front') }}
             {{ face_form(form.faces[1], None, 'back') }}

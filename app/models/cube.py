@@ -185,8 +185,8 @@ class CubeCard(db.Model):
             CubeCard.latest_id == self.latest_id,
         ).first()
 
-    def card_diff(self):
-        return card_util.CardDiffer(self.original, self)                    
+    def card_diff(self, face=None):
+        return card_util.CardDiffer(self.original, self, face)                    
         
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
