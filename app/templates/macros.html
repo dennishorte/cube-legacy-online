@@ -58,6 +58,25 @@
   </div>
 {% endmacro %}
 
+{% macro show_card_diff(card) %}
+  <ul class="list-unstyled mt-0">
+    {% for face in [0, 1] %}
+      {% for line in card.cube_card.card_diff(face=face).summary() %}
+        <li class="
+                   {% if line.startswith('+ ') %}
+                   text-success
+                   {% elif line.startswith('- ') %}
+                   text-danger
+                   {% elif line.startswith('. ') %}
+                   text-success
+                   {% endif %}
+                   "
+        >{{ line }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
 {% macro show_draft_card_list(cards, draft_id) %}
   <div class="row no-gutters">
     {% for card in cards if card.pack.can_be_seen(card) %}
@@ -84,23 +103,7 @@
         </p>
         <!-- END: Card Image (and draft link) -->
 
-        <!-- Scars -->
-        
-        <ul class="list-unstyled mt-0">
-          {% for line in card.cube_card.card_diff().summary() %}
-            <li class="
-                       {% if line.startswith('+ ') %}
-                       text-success
-                       {% elif line.startswith('- ') %}
-                       text-danger
-                       {% elif line.startswith('. ') %}
-                       text-success
-                       {% endif %}
-                       "
-            >{{ line }}</li>
-          {% endfor %}
-        </ul>
-        <!-- END: Scars -->
+        {{ show_card_diff(card) }}
 
         <!-- Add Scars Buttons -->
         {% if draft_id and card.pack.is_scarring_round %}
@@ -131,22 +134,7 @@
         </p>
         <!-- END: Card Image (and draft link) -->
 
-        <!-- Scars -->
-        <ul class="list-unstyled mt-0">
-          {% for line in card.cube_card.card_diff().summary() %}
-            <li class="
-                       {% if line.startswith('+ ') %}
-                       text-success
-                       {% elif line.startswith('- ') %}
-                       text-danger
-                       {% elif line.startswith('. ') %}
-                       text-success
-                       {% endif %}
-                       "
-            >{{ line }}</li>
-          {% endfor %}
-        </ul>
-        <!-- END: Scars -->
+        {{ show_card_diff(card) }}
 
       </div>
     {% endfor %}
