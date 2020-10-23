@@ -15,9 +15,21 @@
   {% endif %}
 {% endmacro %}
 
+{% macro render_image_popup(field_name) %}
+  {% if field_name == 'image_url' %}
+    <a
+      data-toggle="modal"
+      onclick="update_preview_images()"
+      href="#imagePreviewModal">
+      show
+    </a>
+  {% endif %}
+{% endmacro %}
+
 {% macro render_form_group(fields, diff, field_name) %}
   <div class="form-group">
     {{ fields[field_name].label }}
+    {{ render_image_popup(field_name) }}
     {{ fields[field_name](class='form-control', rows='2') }}
     {{ render_field_diff(diff, field_name) }}
   </div>
@@ -197,12 +209,52 @@
     </div>
   </div>
   <!-- END: edit history -->
+
+  <!-- Image Preview Modal -->
+  <div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Image Preview</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            &times;
+          </button>          
+        </div>
+        
+        <div class="modal-body d-flex justify-content-between">
+          <div id="frontImagePreview">
+            <img
+              style="max-width:200px"
+              src=""
+              alt="front">
+          </div>
+
+          <div id="backImagePreview">
+            <img
+              style="max-width:200px"
+              src=""
+              alt="back">
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <!-- END: Image Preview Modal -->  
 {% endblock content %}
 
 {% block scripts %}
   <script>
    function toggle_diff() {
      $('.field-diff').toggle()
+   }
+
+   function update_preview_images() {
+     let front_image_url = $('#face_0_image_url').val()
+     let back_image_url = $('#face_1_image_url').val()
+
+     $('#frontImagePreview img').attr('src', front_image_url)
+     $('#backImagePreview img').attr('src', back_image_url)
    }
    
    $(document).ready(function() {
