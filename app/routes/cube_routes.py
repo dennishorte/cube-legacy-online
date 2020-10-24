@@ -21,34 +21,6 @@ from app.models.user import *
 from app.util.cube_util import add_cards_to_cube
 
 
-
-@app.route("/cubes", methods=['GET', 'POST'])
-@login_required
-def cubes():
-    form = NewCubeForm()
-
-    if form.validate_on_submit():
-        cube = Cube.query.filter(Cube.name==form.name.data).first()
-        if cube is not None:
-            flash('A Cube with the name "{}" already exists.'.format(cube.name))
-            return redirect(url_for('cubes'))
-
-        cube = Cube(
-            name=form.name.data,
-            style=form.style.data,
-        )
-        db.session.add(cube)
-        db.session.commit()
-    
-    cubes = Cube.query.all()
-    return render_template(
-        'cubes.html',
-        active=[x for x in cubes if x.active],
-        inactive=[x for x in cubes if not x.active],
-        form=form
-    )
-
-
 @app.route("/cubes/new", methods=['POST'])
 @login_required
 def cubes_new():
@@ -58,7 +30,7 @@ def cubes_new():
         cube = Cube.query.filter(Cube.name==form.name.data).first()
         if cube is not None:
             flash('A Cube with the name "{}" already exists.'.format(cube.name))
-            return redirect(url_for('cubes'))
+            return redirect(url_for('index'))
 
         cube = Cube(
             name=form.name.data,
