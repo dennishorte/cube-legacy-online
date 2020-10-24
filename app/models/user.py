@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     match_results = db.relationship('MatchResult', backref='user')
 
     cards_edited = db.relationship('CubeCard', backref='edited_by', foreign_keys='CubeCard.edited_by_id')
+    cards_removed = db.relationship('CubeCard', backref='removed_by', foreign_keys='CubeCard.removed_by_id')
     
     scars_created = db.relationship('Scar', backref='created_by', foreign_keys='Scar.created_by_id')
     scars_added = db.relationship('Scar', backref='applied_by', foreign_keys='Scar.applied_by_id')
