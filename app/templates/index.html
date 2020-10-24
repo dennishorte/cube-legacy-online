@@ -74,16 +74,51 @@
 
     <!-- Right side column -->
     <div class="col col-md-6">
-      <h4>Cubes</h4>
-      <div id="activeCubes" class="border p-2 bg-light">
-        <ul class="list-unstyled ml-4 mt-3">
-          {% for cube in cubes|sort(attribute='name') %}
-            <li>
-              <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>      
+
+      <!-- Cube List -->
+      <div>
+        <h4>Cubes</h4>
+        <div id="activeCubes" class="border p-2 bg-light">
+          <ul class="list-unstyled ml-4 mt-3">
+            {% for cube in cubes|sort(attribute='name') %}
+              <li>
+                <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- END: Cube List -->
+
+      <!-- Tools -->
+      <div class="mt-2">
+        <h3>Tools</h3>
+        <div class="border p-2 bg-light">
+          <h5>Pack Generator</h5>
+          <form action="{{ url_for('make_pack') }}" method="post" novalidate>
+            {{ pack_maker_form.hidden_tag() }}
+            <div class="form-group row">
+              <div class="col col-2 pl-4">
+                {{ pack_maker_form.cube_name.label(class='col-form-label') }}
+              </div>
+              <div class="col">
+                {{ pack_maker_form.cube_name(class='form-control') }}
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col col-2 pl-4">
+                {{ pack_maker_form.count.label(class='col-form-label') }}
+              </div>
+              <div class="col">
+                {{ pack_maker_form.count(class='form-control') }}
+              </div>
+            </div>
+            {{ pack_maker_form.submit(class='btn btn-secondary ml-2') }}
+          </form>
+        </div>
+      </div>
+      <!-- END: Tools -->
+      
     </div>
     <!-- END: Right side column -->
 

@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from random import random
 
 from flask import current_app
 from flask import flash
@@ -35,7 +36,6 @@ def index():
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
     cubes = Cube.query.all()
 
-    
     return render_template(
         'index.html',
         active=active_seats,
@@ -44,8 +44,34 @@ def index():
         achievements_finished=achievements_finished,
         new_draft_form=_new_draft_form(),
         new_cube_form=NewCubeForm(),
+        pack_maker_form=PackMakerForm.factory(15),
         cubes=cubes,
     )
+
+
+@app.route("/make_pack", methods=["POST"])
+@login_required
+def make_pack():
+    form = PackMakerForm.factory()
+
+    # Get form data
+    cube = Cube.query.filter(Cube.name == form.cube_name.data).first()
+    count = int(form.count.data)
+
+    # Make pack
+    cards = cube.cards()
+    random.shuffle(cards)
+    cards = cards[:count]
+
+    if form.validate_on_submit():
+        return render_template(
+            'pack_of_cards.html',
+            title=f"Pack of {count} cards from {cube.name}",
+            cards=cards,
+        )
+
+    else:
+        return 'Error making pack'
 
 
 @app.route("/cube/<cube_id>/create", methods=["POST"])

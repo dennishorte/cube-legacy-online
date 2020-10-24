@@ -190,6 +190,21 @@ class NewScarForm(FlaskForm):
     submit = SubmitField('Create')
 
 
+class PackMakerForm(FlaskForm):
+    cube_name = SelectField('Cube')
+    count = SelectField('Count', choices=range(1, 16))
+    submit = SubmitField('Make Pack')
+
+    @staticmethod
+    def factory(count=None):
+        from app.models.cube import Cube
+        form = PackMakerForm()
+        form.cube_name.choices = [x.name for x in Cube.query.order_by('name')]
+        if count:
+            form.count.data = str(count)
+        return form
+
+
 class RandomScarsForm(FlaskForm):
     count = SelectField('Count', choices=range(1, 10))
     submit = SubmitField('Random Scars')
