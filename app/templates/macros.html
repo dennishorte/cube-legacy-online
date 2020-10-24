@@ -59,9 +59,10 @@
 {% endmacro %}
 
 {% macro show_card_diff(card) %}
+  {% set card = card|cube_cardify %}
   <ul class="list-unstyled mt-0">
     {% for face in [0, 1] %}
-      {% for line in card.cube_card.card_diff(face=face).summary() %}
+      {% for line in card.card_diff(face=face).summary() %}
         <li class="
                    {% if line.startswith('+ ') %}
                    text-success
@@ -122,14 +123,15 @@
 {% macro show_card_list(cards) %}
   <div class="row no-gutters">
     {% for card in cards %}
+      {% set card = card|cube_cardify %}
       <div class="col border rounded border-secondary m-1 p-2 bg-light">
         <!-- Card Image (and draft link) -->
         <p>
-          {% for image_url in card.cube_card.image_urls() %}
+          {% for image_url in card.image_urls() %}
             <img
               style="max-width:200px"
               src="{{image_url}}"
-              alt="{{card.cube_card.name()}}">
+              alt="{{card.name()}}">
           {% endfor %}
         </p>
         <!-- END: Card Image (and draft link) -->
