@@ -59,9 +59,15 @@ def make_pack():
     count = int(form.count.data)
 
     # Make pack
-    cards = cube.cards()
-    random.shuffle(cards)
-    cards = cards[:count]
+    if form.obj_type.data == 'Cards':
+        cards = cube.cards()
+        random.shuffle(cards)
+        cards = cards[:count]
+
+    elif form.obj_type.data == 'Dead Interns':
+        removed_cards = cube.cards_removed()
+        interns = [x for x in removed_cards if 'intern of ' in x.get_json()['oracle_text'].lower()]
+        cards = interns[:count]
 
     if form.validate_on_submit():
         return render_template(

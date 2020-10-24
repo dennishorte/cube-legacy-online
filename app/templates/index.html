@@ -99,6 +99,14 @@
             {{ pack_maker_form.hidden_tag() }}
             <div class="form-group row">
               <div class="col col-2 pl-4">
+                {{ pack_maker_form.obj_type.label(class='col-form-label') }}
+              </div>
+              <div class="col">
+                {{ pack_maker_form.obj_type(class='form-control') }}
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col col-2 pl-4">
                 {{ pack_maker_form.cube_name.label(class='col-form-label') }}
               </div>
               <div class="col">

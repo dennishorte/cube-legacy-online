@@ -191,6 +191,7 @@ class NewScarForm(FlaskForm):
 
 
 class PackMakerForm(FlaskForm):
+    obj_type = SelectField('Type', choices=['Cards', 'Dead Interns'])
     cube_name = SelectField('Cube')
     count = SelectField('Count', choices=range(1, 16))
     submit = SubmitField('Make Pack')
