@@ -168,6 +168,11 @@ def card_editor(card_id):
         form.comment.data = "{} added scar during draft: {}".format(current_user.name, scar.text)
         form.scar_id.data = scar_id
 
+    if card.removed_by_timestamp:
+        read_only = 'true'
+    else:
+        read_only = request.args.get('read_only', ''),
+
     return render_template(
         'card_editor.html',
         title="Card Editor",
@@ -176,7 +181,7 @@ def card_editor(card_id):
         form=form,
         rcform=RemoveCardForm(),
         scar=scar,
-        read_only=request.args.get('read_only', ''),
+        read_only=read_only,
     )
 
 

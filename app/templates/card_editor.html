@@ -89,16 +89,43 @@
         {{ form.hidden_tag() }}
 
         <!-- Big Card Name -->
-          <div class="row justify-content-md-center">
-            <div class="col ml-1 mr-1 bg-light rounded border">
-              {% if mode == 'edit' %}
-                <h2 class="mt-2 text-secondary text-center">~ {{ card.name() }} ~</h2>
-              {% else %}
-                <h2 class="mt-2 text-success text-center">~ New Card ~</h2>
-              {% endif %}
+        <div class="row">
+          <div class="col ml-1 mr-1 bg-light rounded border">
+            {% if mode == 'edit' %}
+              <h2 class="mt-2 text-secondary text-center">~ {{ card.name() }} ~</h2>
+            {% else %}
+              <h2 class="mt-2 text-success text-center">~ New Card ~</h2>
+            {% endif %}
+          </div>
+        </div>
+        <!-- END: Big Card Name -->
+
+        <!-- Removed from cube? -->
+        {% if card.removed_by_timestamp %}
+          <div class="row">
+            <div class="col bg-danger text-white rounded border p-2 m-1 mt-2">
+              <div class="row">
+                <div class="col">
+                </div>
+                <div class="col">
+                  
+                  <h5 class="text-center">This card was removed from the cube.</h5>
+                  <em>
+                    {% for line in card.removed_by_comment.split('\n') %}
+                      <p class="text-center mb-0">
+                        {{ line }}
+                      </p>
+                    {% endfor %}
+                  </em>
+                  <p class="text-center ml-6 mb-0">- {{ card.removed_by.name }}</p>
+                </div>
+                <div class="col">
+                </div>
+              </div>
             </div>
           </div>
-        <!-- END: Big Card Name -->
+        {% endif %}
+        <!-- END: Removed from cube? -->
 
         {% if scar %}
           <!-- Scar -->
