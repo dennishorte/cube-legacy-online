@@ -1,0 +1,11 @@
+{% from 'macros.html' import show_card_list %}
+
+{% extends "base.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock title %}
+
+{% block content %}
+  {{ show_card_list(cards) }}
+{% endblock content %}
