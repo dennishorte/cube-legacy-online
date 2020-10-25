@@ -284,8 +284,11 @@ class Scar(db.Model):
 
     @staticmethod
     def lock_random_scars(pack_id, user_id, count):
+        from app.models.draft import Pack
         pack = Pack.query.get(pack_id)
-        for scar in Scar.random_scars(pack.draft.cube_id, count):
+
+        scars = Scar.random_scars(pack.draft.cube_id, count)
+        for scar in scars:
             scar.lock(pack_id, user_id)
 
         return scars
