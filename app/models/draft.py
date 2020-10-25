@@ -128,6 +128,7 @@ class Pack(db.Model):
             self.can_be_seen(pack_card)           # Is possible to see the card at all
             and not self.just_scarred(pack_card)  # Not just scarred by current drafter
             and pack_card.pick_number == -1       # Not picked yet
+            and not self.is_scarring_round        # Already placed scar, if scarring round
         )
 
     def can_be_seen(self, pack_card):
