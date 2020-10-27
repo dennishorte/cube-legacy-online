@@ -1,4 +1,5 @@
 {% from 'macros.html' import format_multi_line_text %}
+{% from 'macros.html' import show_achievement %}
 {% from 'macros.html' import show_achievement_form %}
 
 {% extends "cube_base.html" %}
@@ -13,39 +14,7 @@
 
       <div class="bg-light border border-round p-2">
         {% for achievement in cube.achievements_avaiable() %}
-          <div class="d-flex">
-
-            <!-- Achievement Name -->
-            <div class="mr-auto mt-1 text-primary">
-              {{ achievement.full_name() }}
-              {% if achievement.multiunlock %}
-                <span class="badge badge-pill badge-warning">multi</span>
-              {% endif %}
-            </div>
-
-            <!-- Edit Button -->
-            {% if achievement.created_by_id == current_user.id %}
-              <div class="mr-1">
-                <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
-                  <button class="btn btn-warning">edit</button>
-                </a>
-              </div>
-            {% endif %}
-
-            <!-- Claim Button -->
-            <div>
-              <a href="{{ url_for('achievement_claim_confirmation', achievement_id=achievement.id) }}">
-                <button class="btn btn-success">unlock</button>
-              </a>
-            </div>
-          </div>
-
-          <!-- Achievement Conditions -->
-          <div class="d-flex text-secondary">
-            {{ achievement.conditions }}
-          </div>
-          
-          <hr>
+          {{ show_achievement(achievement, current_user) }}
         {% endfor %}
       </div>
     </div>

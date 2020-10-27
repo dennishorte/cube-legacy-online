@@ -8,6 +8,42 @@
   {% endif %}
 {% endmacro %}
 
+{% macro show_achievement(achievement, current_user) %}
+  <div class="d-flex">
+
+    <!-- Achievement Name -->
+    <div class="mr-auto mt-1 text-primary">
+      {{ achievement.full_name() }}
+      {% if achievement.multiunlock %}
+        <span class="badge badge-pill badge-warning">multi</span>
+      {% endif %}
+    </div>
+
+    <!-- Edit Button -->
+    {% if current_user and achievement.created_by_id == current_user.id %}
+      <div class="mr-1">
+        <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
+          <button class="btn btn-warning">edit</button>
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Claim Button -->
+    <div>
+      <a href="{{ url_for('achievement_claim_confirmation', achievement_id=achievement.id) }}">
+        <button class="btn btn-success">unlock</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Achievement Conditions -->
+  <div class="d-flex text-secondary">
+    {{ achievement.conditions }}
+  </div>
+  
+  <hr>
+{% endmacro %}
+
 {% macro show_achievement_form(form) %}
   <div class="bg-light border p-2">
     <form action="{{ url_for('achievement_submit') }}" method="post" novalidate>
