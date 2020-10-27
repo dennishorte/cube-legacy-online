@@ -180,7 +180,7 @@
 
 {% macro show_card_list(cards) %}
   <div class="row no-gutters">
-    {% for card in cards %}
+    {% for card in cards|sort(attribute='picked_at', reverse=True) %}
       {% set card = card|cube_cardify %}
       <div class="col border rounded border-secondary m-1 p-2 bg-light">
         <!-- Card Image (and draft link) -->
