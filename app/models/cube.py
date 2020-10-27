@@ -130,6 +130,7 @@ class CubeCard(db.Model):
 
     # Relationships
     draft_cards = db.relationship('PackCard', backref='cube_card')
+    linked_achs = db.relationship('AchievementLink', backref='card')
     scars = db.relationship('Scar', backref='applied_to')
 
     def __repr__(self):
@@ -336,6 +337,9 @@ class Achievement(db.Model):
     # Deprecated (use unlock_json instead)
     unlock = db.Column(db.Text)
 
+    # Relationships
+    linked_cards = db.relationship('AchievementLink', backref='achievement')
+
     def available(self):
         return self.unlocked_by_id is None
 
@@ -368,3 +372,9 @@ class Achievement(db.Model):
 
     def unlock_lines(self):
         return [x.strip() for x in self.unlock.split('\n') if x.strip()]
+
+
+class AchievementLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    card_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
+    ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'))
