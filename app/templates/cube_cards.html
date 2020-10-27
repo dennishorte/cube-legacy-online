@@ -24,7 +24,10 @@
                   </span>
                 {% endif %}
               </td>
-              <td>
+              <td class="text-right">
+                {% if card.linked_achs %}
+                  <span class="badge badge-info">achievements</span>
+                {% endif %}
                 {% if card.is_scarred() %}
                   <span class="badge badge-warning">scarred</span>
                 {% endif %}
