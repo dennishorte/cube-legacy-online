@@ -41,6 +41,19 @@
     {{ achievement.conditions }}
   </div>
   
+  <!-- Linked Cards -->
+  <div>
+    <ul class="list-unstyled ml-4">
+      {% for link in achievement.linked_cards %}
+        <li>
+          <a href="{{ url_for('card_editor', card_id=link.card.id) }}">
+            <span class="text-info">{{ link.card.name() }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  
   <hr>
 {% endmacro %}
 
