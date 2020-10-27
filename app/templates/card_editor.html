@@ -1,3 +1,5 @@
+{% from 'macros.html' import show_achievement %}
+
 {% macro render_field_diff(diff, field_name) %}
   {% if diff %}
     <ul class="field-diff list-unstyled">
@@ -207,6 +209,14 @@
           data-target="#reallyRemove">
           Remove from Cube
         </button>
+
+        <button
+          type="button"
+          class="btn btn-info ml-2"
+          data-toggle="collapse"
+          data-target="#achievementLink">
+          Link to Achievement
+        </button>          
       </div>
 
       <div class="col bg-light border p-2">
@@ -223,19 +233,38 @@
             {{ rcform.submit(class='btn btn-danger') }}
           </form>
         </div>
+
+        <div class="collapse" id="achievementLink">
+          <form
+            action="{{ url_for('cube_link_achievement', cube_id=card.cube_id) }}"
+            method="post"
+            novalidate>
+            {{ alform.hidden_tag() }}
+            {{ alform.card(id="achLinkCard") }}
+            <div class="form-group">
+              {{ alform.achievement.label(class='col-form-label') }}
+              {{ alform.achievement(class='form-control') }}
+            </div>
+            {{ alform.submit(class="btn btn-primary") }}
+          </form>
+        </div>
       </div>
     </div>
   {% endif %}
   
   <hr>
 
-  <!-- edit history -->
-  <div id="editHistory" class="row">
+  <!-- Linked Achievements -->
+  <div id="linkedAchievements" class="row">
     <div class="col">
-      <h4>Edit History</h4>
+      <h4>Linked Achievements</h4>
+      <hr>
+      {% for link in card.linked_achs %}
+        {{ show_achievement(link.achievement, current_user) }}
+      {% endfor %}
     </div>
   </div>
-  <!-- END: edit history -->
+  <!-- END: Linked Achievements -->
 
   <!-- Image Preview Modal -->
   <div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog">
@@ -285,6 +314,9 @@
    }
    
    $(document).ready(function() {
+     // Hide the card_id in achievement link, since that is fixed in this template.
+     $('#achLinkCard').hide()
+     
      // Set the size of the remove card text area
      $('#reallyRemove').on('show.bs.collapse', function (event) {
        $(this).find('textarea').attr('rows', '3')

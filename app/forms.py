@@ -85,6 +85,41 @@ class FinalizeAchievementForm(FlaskForm):
     submit = SubmitField("I've done all the things")
 
 
+class LinkAchievemetAndCardForm(FlaskForm):
+    card = SelectField('Card')
+    achievement = SelectField('Achievement')
+    submit = SubmitField('Link')
+
+    @staticmethod
+    def factory(cube_id, card=None, achievement=None):
+        from app.models.cube import Achievement
+        from app.models.cube import CubeCard
+
+        form = LinkAchievemetAndCardForm()
+
+        if card is None:
+            cards = CubeCard.query.filter(
+                CubeCard.cube_id == cube_id,
+                CubeCard.removed_by_timestamp == None,
+            ).all()
+            cards.sort(key=lambda x: x.name())
+            form.card.choices = [(x.id, x.name()) for x in cards]
+        else:
+            form.card.choices = [(card.id, card.name())]
+
+        if achievement is None:
+            achs = Achievement.query.filter(
+                Achievement.cube_id == cube_id,
+                Achievement.unlocked_timestamp == None,
+            ).all()
+            achs.sort(key=lambda x: x.name)
+            form.achievement.choices = [(x.id, x.name) for x in achs]
+        else:
+            form.achievement.choices = [(achievement.id, achievement.name)]
+
+        return form
+
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

@@ -161,6 +161,12 @@ def card_editor(card_id):
     form.update_as.choices = User.all_names()
     form.update_as.data = current_user.name
 
+    # Achievement link form
+    alform = LinkAchievemetAndCardForm.factory(
+        cube_id=card.cube_id,
+        card=card
+    )
+
     # Adding a specific scar?
     scar_id = request.args.get('scar_id')
     scar = Scar.query.get(scar_id)
@@ -178,10 +184,11 @@ def card_editor(card_id):
         title="Card Editor",
         mode='edit',
         card=card,
-        form=form,
         rcform=RemoveCardForm(),
         scar=scar,
         read_only=read_only,
+        form=form,
+        alform=alform,
     )
 
 

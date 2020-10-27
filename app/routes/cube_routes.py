@@ -10,6 +10,7 @@ from flask_login import login_required
 
 from app import app
 from app.forms import AddCardsForm
+from app.forms import LinkAchievemetAndCardForm
 from app.forms import NewAchievementForm
 from app.forms import NewCubeForm
 from app.forms import NewScarForm
@@ -94,6 +95,35 @@ def cube_cards(cube_id):
         cube=cube,
         add_cards_form=add_cards_form,
     )
+
+
+@app.route("/cube/<cube_id>/link_achievement", methods=["POST"])
+@login_required
+def cube_link_achievement(cube_id):
+    form = LinkAchievemetAndCardForm.factory(cube_id)
+    
+    card = CubeCard.query.get(form.card.data)
+    ach = Achievement.query.get(form.achievement.data)
+    assert card.cube_id == ach.cube_id
+
+    existing_link = AchievementLink.query.filter(
+        AchievementLink.card_id == card.id,
+        AchievementLink.ach_id == ach.id,
+    ).first()
+
+    if existing_link:
+        flash(f"Link already exists for {card.name()} to {ach.name}")
+
+    else:
+        link = AchievementLink(
+            card_id=card.id,
+            ach_id=ach.id,
+        )
+        db.session.add(link)
+        db.session.commit()
+        flash(f"Linked {card.name()} to {ach.name}")
+
+    return redirect(request.referrer)
 
 
 @app.route("/cubes/<cube_id>/scars", methods=["GET", "POST"])
