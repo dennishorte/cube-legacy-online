@@ -155,6 +155,15 @@
 
         {{ show_card_diff(card) }}
 
+        <!-- Linked Achievements -->
+        {% if card.cube_card.linked_achs %}
+          <div>
+            <a class="btn btn-info" href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
+              Has linked achievements
+            </a>
+          </div>
+        {% endif %}
+
         <!-- Add Scars Buttons -->
         {% if draft_id and card.pack.is_scarring_round %}
           {% for scar in card.pack.scar_options() %}
@@ -186,6 +195,15 @@
         <!-- END: Card Image (and draft link) -->
 
         {{ show_card_diff(card) }}
+
+        <!-- Linked Achievements -->
+        {% if card.linked_achs %}
+          <div>
+            <a class="btn btn-info" href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
+              Has linked achievements
+            </a>
+          </div>
+        {% endif %}
 
       </div>
     {% endfor %}
