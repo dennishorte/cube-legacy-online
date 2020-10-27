@@ -61,6 +61,7 @@ def _make_packs(cube, pack_size, num_packs, num_players):
     cards = CubeCard.query.filter(
         CubeCard.cube_id == cube.id,
         CubeCard.latest == True,
+        CubeCard.removed_by_timestamp == None,
     ).all()
     
     total_cards = pack_size * num_packs * num_players
