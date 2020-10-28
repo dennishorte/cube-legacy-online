@@ -2,12 +2,14 @@ import enum
 import functools
 import json
 import random
+import re
 from datetime import datetime
 
 from app import db
 from app.models.user import *
 from app.util import card_util
 from app.util import cockatrice
+from app.util.card_util import color_sort_key
 from app.util.enum import Layout
 
 
@@ -149,6 +151,21 @@ class CubeCard(db.Model):
             face_index=0,
             scarred=self.is_scarred(),
         )
+
+    def color_identity(self):
+        pattern = r"{(.*?)}"
+        identity = set()
+        for face in self.card_faces():
+            texts = [face['mana_cost']] + re.findall(pattern, face['oracle_text'])
+            for text in texts:
+                for ch in face['mana_cost'].upper():
+                    if ch in 'WUBRG':
+                        identity.add(ch)
+
+        identity = sorted(identity, key=color_sort_key)
+        identity = ''.join(identity)
+
+        return identity
 
     def days_since_last_edit(self):
         return (datetime.utcnow() - self.timestamp).days

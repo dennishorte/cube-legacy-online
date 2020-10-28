@@ -119,3 +119,21 @@ def empty_card_json():
         'cmc': '0',
         'card_faces': [],
     }
+
+
+def color_sort_key(color_ch):
+    ch = color_ch.upper()
+    if ch.isnumeric():
+        return 0
+    elif ch == 'W':
+        return 1
+    elif ch == 'U':
+        return 2
+    elif ch == 'B':
+        return 3
+    elif ch == 'R':
+        return 4
+    elif ch == 'G':
+        return 5
+    else:
+        return 6
