@@ -17,6 +17,9 @@
       {% if achievement.multiunlock %}
         <span class="badge badge-pill badge-warning">multi</span>
       {% endif %}
+      <p class="text-secondary font-weight-light ml-3 mb-0" style="font-size:.8rem">
+        by: {{ achievement.created_by.name }}
+      </p>
     </div>
 
     <!-- Edit Button -->

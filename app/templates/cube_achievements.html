@@ -68,15 +68,13 @@
               <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
                 {{ achievement.full_name() }}
               </a>
-              <span class="badge badge-pill badge-success">
-                {{ achievement.unlocked_by.name }}
-              </span>
               {% if achievement.multiunlock %}
                 <span class="badge badge-pill badge-warning">multi</span>
               {% endif %}
               <br>
               <p class="ml-4 mb-0 text-muted font-weight-light" style="font-size:.8rem">
-                {{ achievement.unlocked_timestamp.strftime("%Y-%m-%d") }}
+                unlocked: {{ achievement.unlocked_by.name }}
+                on {{ achievement.unlocked_timestamp.strftime("%Y-%m-%d") }}
               </p>
             </div>
 
