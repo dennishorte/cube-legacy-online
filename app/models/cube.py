@@ -136,24 +136,35 @@ class CubeCard(db.Model):
     def __repr__(self):
         return '<CubeCard {}>'.format(self.get_json()['name'])
 
-    def get_json(self):
-        return json.loads(self.json)
-    
-    def set_json(self, json_obj):
-        self.json = json.dumps(json_obj)
+    def card_diff(self, face=None):
+        return card_util.CardDiffer(self.original, self, face)                    
+        
+    def card_faces(self):
+        return self.get_json()['card_faces']
 
-    def name(self):
-        return self.get_json().get('name', 'NO_NAME')
+    def cockatrice_name(self):
+        data = self.get_json()
+        return cockatrice._card_name(
+            card_data=data,
+            face_index=0,
+            scarred=self.is_scarred(),
+        )
 
     def days_since_last_edit(self):
         return (datetime.utcnow() - self.timestamp).days
 
-    @functools.cached_property
-    def removed_by(self):
-        if not self.removed_by_id:
-            return None
-        else:
-            return User.query.get(self.removed_by_id).name
+    @classmethod
+    def from_base_card(cls, cube_id, base_card, added_by):
+        return CubeCard(
+            version=1,
+            cube_id=cube_id,
+            base_id=base_card.id,
+            json=base_card.json,
+            added_by_id=added_by.id,
+        )
+
+    def get_json(self):
+        return json.loads(self.json)
 
     def image_urls(self):
         data = self.get_json()
@@ -168,36 +179,25 @@ class CubeCard(db.Model):
     def is_scarred(self):
         return self.version > 1
 
-    def card_faces(self):
-        return self.get_json()['card_faces']
+    def name(self):
+        return self.get_json().get('name', 'NO_NAME')
 
-    def cockatrice_name(self):
-        data = self.get_json()
-        return cockatrice._card_name(
-            card_data=data,
-            face_index=0,
-            scarred=self.is_scarred(),
-        )
-
-    @functools.cached_property        
+    @functools.cached_property
     def original(self):
         return CubeCard.query.filter(
             CubeCard.version == 1,
             CubeCard.latest_id == self.latest_id,
         ).first()
 
-    def card_diff(self, face=None):
-        return card_util.CardDiffer(self.original, self, face)                    
-        
-    @classmethod
-    def from_base_card(cls, cube_id, base_card, added_by):
-        return CubeCard(
-            version=1,
-            cube_id=cube_id,
-            base_id=base_card.id,
-            json=base_card.json,
-            added_by_id=added_by.id,
-        )
+    @functools.cached_property
+    def removed_by(self):
+        if not self.removed_by_id:
+            return None
+        else:
+            return User.query.get(self.removed_by_id).name
+
+    def set_json(self, json_obj):
+        self.json = json.dumps(json_obj)
 
     def update(self, new_json, edited_by, comment, commit=True):
         """
