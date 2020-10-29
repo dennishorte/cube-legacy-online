@@ -176,7 +176,7 @@ def _add_one_card_xmls(card, root):
         tablerow.text = _table_row(card_data, face_index)
 
         text = SubElement(card_elem, 'text')
-        text.text = _oracle_text(card_data, face_index)
+        text.text = _oracle_text(card, card_data, face_index)
 
         # Props
         props = SubElement(card_elem, 'prop')
@@ -252,17 +252,25 @@ def _mana_cost(card_data, face_index):
         raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
 
 
-def _oracle_text(card_data, face_index):
+def _oracle_text(card, card_data, face_index):
     layout = card_data['layout']
 
     if Layout.simple_faced_layout(layout) or Layout.double_sided_layout(layout):
-        return card_data['card_faces'][face_index]['oracle_text']
-    
+        rules_text = card_data['card_faces'][face_index]['oracle_text']
     elif Layout.split_faced_layout(layout):
-        return card_data['oracle_text']
-
+        rules_text = card_data['oracle_text']
     else:
         raise NotImplementedError(f"Don't have a Cockatrice pattern for text of: {layout}")
+
+    achievement_lines = []
+    if card.linked_achs:
+        achievement_lines.append("\n\n***")
+        for link in card.linked_achs:
+            achievement_lines.append(link.achievement.conditions)
+
+        rules_text += '\n\n'.join(achievement_lines)
+
+    return rules_text
     
 
 def _clean_mana_cost(mana_cost):
