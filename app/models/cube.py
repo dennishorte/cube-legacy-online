@@ -180,6 +180,7 @@ class CubeCard(db.Model):
             added_by_id=added_by.id,
         )
 
+    @functools.lru_cache
     def get_json(self):
         return json.loads(self.json)
 
@@ -195,9 +196,6 @@ class CubeCard(db.Model):
 
     def is_scarred(self):
         return self.version > 1
-
-    def name(self):
-        return self.get_json().get('name', 'NO_NAME')
 
     @functools.cached_property
     def original(self):
@@ -258,6 +256,15 @@ class CubeCard(db.Model):
 
         else:
             return False  # No change detected
+
+    def cmc(self):
+        return self.get_json().get('cmc', 0)
+        
+    def name(self):
+        return self.get_json().get('name', 'NO_NAME')
+
+    def is_creature(self):
+        return 'creature' in self.get_json().get('type_line', '').lower()
 
 
 class Scar(db.Model):

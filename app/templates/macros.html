@@ -213,6 +213,48 @@
   </div>
 {% endmacro %}
 
+{% macro show_card_list_cmc_breakdown(cards) %}
+  <div class="row card-table">
+    {% for i in [0,1,2,3,4,5,6,7] %}
+      <div class="col" style="width:12.5%">
+        <div class="table-column-header">
+          CMC = {{ i }}
+        </div>
+
+        <div class="table-section">
+          <ul class="list-unstyled">
+            {% for card in cards %}
+              {% set card = card|cube_cardify %}
+              {% if card.cmc() == i and card.is_creature() %}
+                <li class="card-list-item">{{ card.name() }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        
+      </div>
+    {% endfor %}
+  </div>
+  <div class="row card-table">
+    {% for i in [0,1,2,3,4,5,6,7] %}
+      <div class="col" style="width:12.5%">
+
+        <div class="table-section">
+          <ul class="list-unstyled">
+            {% for card in cards %}
+              {% set card = card|cube_cardify %}
+              {% if card.cmc() == i and not card.is_creature() %}
+                <li class="card-list-item">{{ card.name() }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
 {% macro show_picked_card_names(seat) %}
   <div class="row">
     <div class="col">
