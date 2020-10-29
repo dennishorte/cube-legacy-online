@@ -180,7 +180,6 @@ class CubeCard(db.Model):
             added_by_id=added_by.id,
         )
 
-    @functools.lru_cache
     def get_json(self):
         return json.loads(self.json)
 
