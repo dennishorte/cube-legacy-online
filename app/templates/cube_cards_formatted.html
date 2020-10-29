@@ -1,0 +1,136 @@
+{% extends 'cube_base.html' %}
+
+{% block styles %}
+  <style>
+   :root {
+     --card-white: #ffffeb;
+     --card-blue: #d4edff;
+     --card-black: #d6cbd6;
+     --card-red: #fec8c8;
+     --card-green: #e9ffd4;
+     --card-gold: #fcf8a9;
+     --card-colorless: #e9e7eb;
+     --card-land: #ffe0c0;
+
+     --table-header: #f8f9fa;
+   }
+
+   .white {
+     background-color: var(--card-white);
+   }
+
+   .blue {
+     background-color: var(--card-blue);    
+   }
+
+   .black {
+     background-color: var(--card-black);    
+   }
+
+   .red {
+     background-color: var(--card-red);    
+   }
+
+   .green {
+     background-color: var(--card-green);    
+   }
+
+   .gold {
+     background-color: var(--card-gold);    
+   }
+
+   .colorless {
+     background-color: var(--card-colorless);    
+   }
+
+   .land {
+     background-color: var(--card-land);    
+   }
+
+   .table-section ul {
+     list-style-type: none;
+     margin: 2px;
+     padding: 0;
+     font-size: .8em;
+   }
+
+   .card-table .col {
+     padding: 2px;
+   }
+
+   .table-column-header {
+     text-align: center;
+   }
+
+   .table-section-header {
+     text-align: center;
+     background-color: var(--table-header);
+   }
+
+   .table-section {
+     border: 1px solid;
+     border-color: var(--dark);
+     margin-top: 4px;
+   }
+
+   .card-list-item {
+     overflow: hidden;
+     white-space: nowrap;
+     text-overflow: ellipsis;
+   }
+  </style>
+{% endblock %}
+
+{% block content %}
+  {{ super() }}
+
+  <div id="cards" class="row card-table">
+
+    {% for col in columns %}
+      <div class="col" style="width:12.5%">
+        <div class="table-column-header">
+          {{ col.name }}
+        </div>
+        {% for section in col.sections %}
+          <div class="table-section {{ col.name }}">
+            <div class="table-section-header">
+              {{ section.name }}
+            </div>
+            <ul>
+              {% for card in section.cards %}
+                <li
+                  class="card-list-item"
+                  data-toggle="card-image-popup"
+                  data-front="{{ card.image_urls()[0] }}"
+                  {% if card.image_urls()|length > 1 and card.image_urls()[0] != card.image_urls()[1] %}
+                    data-back="{{ card.image_urls()[1] }}"
+                  {% endif %}
+                >
+                  {{ card.name() }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+  </div>
+
+  <div id="imagePopup" style="max-width: 150px">
+    <img src="">
+  </div>
+{% endblock content %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $('.card-list-item').mouseover(function() {
+        let front_url = $(this).data('front')
+        $('#imagePopup').attr('src', front_url).show()
+      }).mouseleave(function() {
+        $('#imagePopup').hide()
+      })
+    })
+  </script>
+{% endblock %}
