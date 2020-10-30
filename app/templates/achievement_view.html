@@ -47,7 +47,7 @@
         <p class="text-primary">Story of This Achievement</p>
         {{ format_multi_line_text(achievement.story) }}
 
-        {% if achievement.finalized_timestamp %}
+        {% if achievement.finalized_timestamp and achievement.unlocked_by_id == current_user.id %}
           <div class="text-right">
             <button type="button" onclick="$('#finalizeForm').toggle()" class="btn btn-secondary">
               edit story
