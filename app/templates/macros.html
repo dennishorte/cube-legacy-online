@@ -256,12 +256,12 @@
     </div>
 
     {% set num_maindeck = draft_wrapper.picks_creatures()|length + draft_wrapper.picks_non_creatures()|length %}
-    <h6>Main Deck ({{ num_maindeck }})</h6>
+    <h6 class="mb-1">Main Deck ({{ num_maindeck }})</h6>
     {{ show_card_list_cmc_breakdown(draft_wrapper.picks_creatures()) }}
     {{ show_card_list_cmc_breakdown(draft_wrapper.picks_non_creatures()) }}
 
     {% set num_sideboard = draft_wrapper.picks_sideboard()|length %}
-    <h6>Sideboard ({{ num_sideboard }})</h6>
+    <h6 class="mt-2 mb-1">Sideboard ({{ num_sideboard }})</h6>
     {{ show_card_list_cmc_breakdown(draft_wrapper.picks_sideboard()) }}
   </div>
 {% endmacro %}
