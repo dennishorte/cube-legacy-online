@@ -69,6 +69,10 @@
   padding: 2px;
 }
 
+.add-scar-btn {
+  font-size: .8rem;
+}
+
 .table-column-header {
   text-align: center;
 }
