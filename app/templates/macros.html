@@ -160,12 +160,15 @@
 
         <!-- Linked Achievements -->
         {% if card.cube_card.linked_achs %}
-          <div>
-            <a class="btn btn-info" href="{{ url_for('card_editor', card_id=card.cube_card.id, read_only='true') }}">
-              Has linked achievements
-            </a>
+          <div class="ml-1 text-muted" style="font-size:.8rem">
+            Linked Achievements
           </div>
         {% endif %}
+        {% for link in card.cube_card.linked_achs %}
+          <div class="linked-achievement text-secondary border-top">
+            {{ link.achievement.conditions }}
+          </div>
+        {% endfor %}
 
         <!-- Add Scars Buttons -->
         {% if draft_id and card.pack.is_scarring_round %}
@@ -201,12 +204,15 @@
 
         <!-- Linked Achievements -->
         {% if card.linked_achs %}
-          <div>
-            <a class="btn btn-info" href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
-              Has linked achievements
-            </a>
+          <div class="ml-1 text-muted" style="font-size:.8rem">
+            Linked Achievements
           </div>
         {% endif %}
+        {% for link in card.linked_achs %}
+          <div class="linked-achievement text-secondary border-top">
+            {{ link.achievement.conditions }}
+          </div>
+        {% endfor %}
 
       </div>
     {% endfor %}
