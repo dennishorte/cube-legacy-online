@@ -1,7 +1,7 @@
 {% from "macros.html" import show_card_list %}
-{% from "macros.html" import show_card_list_cmc_breakdown %}
 {% from "macros.html" import show_draft_card_list %}
 {% from "macros.html" import show_picked_card_names %}
+{% from "macros.html" import show_picks_breakdown_table %}
 
 {% extends "base.html" %}
 
@@ -117,7 +117,7 @@
   <!-- Picked Cards -->
   <div id="picks" class="no-gutters">
     <h2 class="text-secondary">Your Picks</h2>
-    {{ show_card_list_cmc_breakdown(d.seat.picks) }}
+    {{ show_picks_breakdown_table(d) }}
     {{ show_card_list(d.seat.picks) }}
   </div>
 

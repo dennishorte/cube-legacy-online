@@ -24,6 +24,16 @@ class DraftWrapper(object):
             DeckList.user_id == self.user.id,
         ).first()
 
+    def picks_creatures(self):
+        return [x for x in self.seat.picks if not x.sideboard and x.cube_card.is_creature()]
+
+    def picks_non_creatures(self):
+        print([x for x in self.seat.picks if not x.sideboard and not x.cube_card.is_creature()])
+        return [x for x in self.seat.picks if not x.sideboard and not x.cube_card.is_creature()]
+
+    def picks_sideboard(self):
+        return [x for x in self.seat.picks if x.sideboard]
+
     def is_scarring_round(self):
         return self.pack and self.pack.is_scarring_round
 

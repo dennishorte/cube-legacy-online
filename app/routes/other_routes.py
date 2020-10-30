@@ -355,6 +355,17 @@ def draft(draft_id):
         return render_template('draft_picker.html', d=dw)
 
 
+@app.route("/draft/swap_sideboard/<card_id>")
+@login_required
+def draft_swap_sideboard(card_id):
+    card = PackCard.query.get(card_id)
+    card.sideboard = not card.sideboard
+    db.session.add(card)
+    db.session.commit()
+
+    return redirect(url_for('draft', draft_id=card.draft_id))
+    
+
 @app.route("/draft/<draft_id>/results", methods=["POST"])
 @login_required
 def draft_result(draft_id):

@@ -75,3 +75,7 @@
   text-overflow: ellipsis;
 }
 
+.card-list-item a {
+  color: inherit;
+  text-decoration: inherit;
+}

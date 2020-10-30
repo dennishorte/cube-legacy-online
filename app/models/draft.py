@@ -222,6 +222,9 @@ class PackCard(db.Model):
     pick_number = db.Column(db.Integer, default=-1)
     picked_at = db.Column(db.DateTime)
 
+    # During a draft, players can mark cards for their sideboard
+    sideboard = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return '<PackCard {}>'.format(self.cube_card.name())
 
