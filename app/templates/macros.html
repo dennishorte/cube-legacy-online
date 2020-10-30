@@ -61,7 +61,7 @@
 {% endmacro %}
 
 {% macro show_achievement_form(form) %}
-  <div class="bg-light border p-2">
+  <div class="framed">
     <form action="{{ url_for('achievement_submit') }}" method="post" novalidate>
       {{ form.hidden_tag() }}
       {{ form.cube_id() }}
@@ -131,10 +131,10 @@
 {% endmacro %}
 
 {% macro show_draft_card_list(cards, draft_id) %}
-  <div class="row no-gutters">
+  <div class="d-flex">
     {% for card in cards if card.pack.can_be_seen(card) %}
       {% set can_be_drafted = card.pack.can_be_drafted(card) %}
-      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+      <div class="col framed card-frame">
         <!-- Card Image (and draft link) -->
         <p class="mb-0">
           {% if can_be_drafted %}
@@ -160,7 +160,7 @@
 
         <!-- Linked Achievements -->
         {% if card.cube_card.linked_achs %}
-          <div class="ml-1 text-muted" style="font-size:.8rem">
+          <div class="ml-1 text-muted text-xs">
             Linked Achievements
           </div>
         {% endif %}
@@ -185,10 +185,10 @@
 {% endmacro %}
 
 {% macro show_card_list(cards) %}
-  <div class="row no-gutters">
+  <div class="row ">
     {% for card in cards|sort(attribute='picked_at', reverse=True) %}
       {% set card = card|cube_cardify %}
-      <div class="col border rounded border-secondary m-1 p-2 bg-light">
+      <div class="framed card-frame">
         <!-- Card Image (and draft link) -->
         <p>
           {% for image_url in card.image_urls() %}
@@ -204,7 +204,7 @@
 
         <!-- Linked Achievements -->
         {% if card.linked_achs %}
-          <div class="ml-1 text-muted" style="font-size:.8rem">
+          <div class="ml-1 text-muted text-xs">
             Linked Achievements
           </div>
         {% endif %}

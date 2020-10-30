@@ -43,6 +43,24 @@
   background-color: var(--card-land);    
 }
 
+.text-xs {
+  font-size: .6rem!important;
+}
+
+.framed {
+  background-color: var(--light);
+  border: 1px solid #dee2e6!important;
+  border-color: var(--secondard);
+  border-radius: .25rem;
+  padding: .5rem!important;
+}
+
+.card-frame {
+  margin: .25rem!important;
+  max-width: 220px;
+  font-size: .8rem;
+}
+
 .card-table {
   min-width: 1000px;
 }
