@@ -35,6 +35,7 @@ from lxml.etree import SubElement
 from lxml.etree import parse
 from lxml.etree import tostring
 
+from app.util.card_util import CardConsts
 from app.util.enum import Layout
 
 
@@ -190,6 +191,9 @@ def _add_one_card_xmls(card, root):
         props_side = SubElement(props, 'side')
         props_side.text = 'front' if face_index == 0 else 'back'
 
+        props_type = SubElement(props, 'type')
+        props_type.text = _card_type(card)
+
         mana_cost = _mana_cost(card_data, face_index)
         if mana_cost:  # Most double faced cards have no mana cost on the back.
             props_manacost = SubElement(props, 'manacost')
@@ -225,6 +229,16 @@ def _card_name(card_data, face_index, scarred):
         return f"{name}++"
     else:
         return f"{name}'"
+
+
+def _card_type(card):
+    front_face = card.card_faces()[0]
+    type_line = front_face['type_line'].lower()
+    for typ in CardConsts.CARD_TYPES:
+        if typ in type_line:
+            return typ.title()
+
+    return 'UNKNOWN'
     
 
 def _image_url(card_data, face_index):
