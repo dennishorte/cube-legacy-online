@@ -24,6 +24,16 @@
           <li><strong>Scar rounds: </strong>{{ d.draft.scar_rounds_str }}</li>
         {% endif %}
       </ul>
+
+      <p class="text-secondary border-bottom mb-0">Cockatrice Custom Set</p>
+      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id) }}">
+        Download Cockatrice Custom Cards File
+      </a>
+      <br>
+      <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
+        Rebuild File
+      </a>
+      
     </div>
     <!-- END: Draft Info -->
     
