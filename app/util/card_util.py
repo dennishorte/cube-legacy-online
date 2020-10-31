@@ -1,6 +1,5 @@
 import difflib
-from collections import UserDict
-from collections import UserList
+
 
 class CardConsts(object):
     ROOT_KEYS = (
