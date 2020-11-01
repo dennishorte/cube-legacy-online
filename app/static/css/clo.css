@@ -47,6 +47,10 @@
   font-size: .6rem!important;
 }
 
+.d-none {
+  display: none!important;
+}
+
 .framed {
   background-color: var(--light);
   border: 1px solid #dee2e6!important;
@@ -104,4 +108,13 @@
 .card-list-item a {
   color: inherit;
   text-decoration: inherit;
+}
+
+#autocardPopup {
+  width: 15rem;
+  position: absolute;
+}
+
+#autocardPopup img {
+  width: 15rem;
 }

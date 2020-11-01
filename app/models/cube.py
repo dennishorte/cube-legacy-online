@@ -184,6 +184,14 @@ class CubeCard(db.Model):
     def get_json(self):
         return json.loads(self.json)
 
+    def image_back(self):
+        images = self.image_urls()
+        if len(images) > 1:
+            return images[1]
+
+    def image_front(self):
+        return self.image_urls()[0]
+
     def image_urls(self):
         data = self.get_json()
         layout = data['layout']

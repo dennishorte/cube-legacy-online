@@ -136,4 +136,26 @@
   {{ show_picked_card_names(d.seat) }}
   <!-- END: Picked Cards -->
 
-{% endblock %}
+  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
+    <div class="autocard-background">
+      <div class="row no-gutters">
+        <div class="position-relative">
+          <img id="autocardImageFront" alt="">
+        </div>
+        <div class="position-relative">
+          <img id="autocardImageBack" alt="" class="d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     autocard_init('card-list-item')
+   })
+  </script>
+{% endblock scripts %}
