@@ -1,3 +1,4 @@
+{% set version = 2 %}
 <!doctype html>
 <html>
   <head>
@@ -11,7 +12,7 @@
       crossorigin="anonymous">
     <link
       rel="stylesheet"
-      href="/static/css/clo.css">
+      href="/static/css/clo.css?version={{ version }}">
     {% block styles %}{% endblock %}
 
     <title>Cube Legacy Online</title>
@@ -61,7 +62,7 @@
       integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
       crossorigin="anonymous">
     </script>
-    <script src="/static/js/autocard.js"></script>
+    <script src="/static/js/autocard.js?version={{ version }}"></script>
 
     {% block scripts %}{% endblock %}
   </body>
