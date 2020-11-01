@@ -13,6 +13,7 @@ from app.forms import AddCardsForm
 from app.forms import LinkAchievemetAndCardForm
 from app.forms import NewAchievementForm
 from app.forms import NewCubeForm
+from app.forms import NewFactionForm
 from app.forms import NewScarForm
 from app.forms import RandomScarsForm
 from app.forms import UseScarForm
@@ -110,6 +111,44 @@ def cube_cards_formatted(cube_id):
         cube=cube,
         columns=columns,
     )
+
+
+@app.route("/cube/<cube_id>/factions")
+@login_required
+def cube_factions(cube_id):
+    cube = Cube.query.get(cube_id)
+    form = NewFactionForm()
+    
+    return render_template(
+        'cube_factions.html',
+        cube=cube,
+        form=form,
+    )
+
+
+@app.route("/cube/<cube_id>/factions/new", methods=["POST"])
+@login_required
+def cube_new_faction(cube_id):
+    cube = Cube.query.get(cube_id)
+    form = NewFactionForm()
+
+    if form.validate_on_submit():
+        faction = Faction()
+        faction.cube_id = cube_id
+        faction.name = form.name.data.strip()
+        faction.desc = form.desc.data.strip()
+        faction.memb = form.memb.data.strip()
+        faction.note = form.note.data.strip()
+
+        db.session.add(faction)
+        db.session.commit()
+        
+        flash('New faction created!')
+
+    else:
+        flash('Error creating new faction')
+
+    return redirect(url_for('cube_factions', cube_id=cube_id))
 
 
 @app.route("/cube/<cube_id>/link_achievement", methods=["POST"])

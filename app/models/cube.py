@@ -52,6 +52,7 @@ class Cube(db.Model):
     _cards = db.relationship('CubeCard', backref='cube')
     achievements = db.relationship('Achievement', backref='cube')
     drafts = db.relationship('Draft', backref='cube')
+    factions= db.relationship('Faction', backref='cube')
     scars = db.relationship('Scar', backref='cube')
 
     def __repr__(self):
@@ -401,3 +402,14 @@ class AchievementLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     card_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
     ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'))
+
+
+class Faction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+    name = db.Column(db.String(128))
+    desc = db.Column(db.Text)  # Description
+    memb = db.Column(db.Text)  # Membership criteria
+    note = db.Column(db.Text)  # Notes

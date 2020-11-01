@@ -214,7 +214,14 @@ class NewAchievementForm(FlaskForm):
                 'text': normalize_newlines(group['text'].data.strip()),
             })
         return flat
-                
+
+
+class NewFactionForm(FlaskForm):
+    name = StringField('Faction Name')
+    desc = TextAreaField('Description')
+    memb = TextAreaField('Membership Criteria')
+    note = TextAreaField('Notes')
+    submit = SubmitField('Create')
 
 
 class NewScarForm(FlaskForm):
