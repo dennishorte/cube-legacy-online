@@ -1,6 +1,7 @@
 {% from "macros.html" import format_multi_line_text %}
 {% from "macros.html" import show_card_list %}
 {% from "macros.html" import show_picked_card_names %}
+{% from "macros.html" import show_picks_breakdown_table %}
 
 {% extends "base.html" %}
 
@@ -128,25 +129,40 @@
   </div>
 
   <!-- Picks -->
-  <div class="row">
-    <div class="col">
-      <h3>Your Picks</h3>
-    </div>
+  <div>
+    <h3 class="text-secondary">Your Picks</h3>
+    {{ show_picks_breakdown_table(d) }}
+    {{ show_card_list(d.seat.picks) }}
   </div>
-  {{ show_card_list(d.seat.picks) }}
 
   <hr>
   
   {{ show_picked_card_names(d.seat) }}
   <!-- END: Picks -->
+
+  <!-- Card Image Popup -->
+  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
+    <div class="autocard-background">
+      <div class="row no-gutters">
+        <div class="position-relative">
+          <img id="autocardImageFront" alt="">
+        </div>
+        <div class="position-relative">
+          <img id="autocardImageBack" alt="" class="d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Card Image Popup -->
 {% endblock content %}
 
 {% block scripts %}
   <script>
-   {% if d.decklist %}
    $(document).ready(function() {
+     {% if d.decklist %}
      $('#saveDecklistForm').hide()
+     {% endif %}
+     autocard_init('card-list-item')
    })
-   {% endif %}
   </script>
 {% endblock scripts %}
