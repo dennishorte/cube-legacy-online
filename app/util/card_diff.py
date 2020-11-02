@@ -1,12 +1,17 @@
 import difflib
+import functools
 
 
 class BaseDiffer(object):
     def __init__(self, old_json, new_json):
         self.old = old_json
         self.new = new_json
+        self.no_changes = self.old == self.new
 
     def changed_fields(self):
+        if self.no_changes:
+            return {}
+        
         changes = {}
 
         for field in self.old:
@@ -16,12 +21,16 @@ class BaseDiffer(object):
         return changes
 
     def is_changed(self, field):
+        if self.no_changes:
+            return False
+        
         for line in self._ndiff(field):
             if not line.startswith('  '):
                 return True
 
         return False
 
+    @functools.lru_cache
     def _ndiff(self, field):
         return list(difflib.ndiff(
             self.old.get(field, '').strip().split('\n'),
@@ -41,7 +50,6 @@ class FaceDiffer(BaseDiffer):
 
         return len(self.changed_fields()) > 0
 
-    
     def is_significant(self):
         # Card face added or removed is always significant.
         if (self.old or self.new) and (not self.old or not self.new):
