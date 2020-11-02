@@ -1,10 +1,24 @@
 {% extends "cube_base.html" %}
 
+{% block more_nav %}
+  <li>
+    <a href="#addCardsModal" data-toggle="modal">
+      Add Cards
+    </a>
+  </li>
+
+  <li>
+    <a href="{{ url_for('card_creator', cube_id=cube.id) }}">
+      Create an Original Card
+    </a>
+  </li>
+{% endblock more_nav %}
+
 {% block content %}
   {{ super() }}
 
   <!-- Formatted Cards Table -->
-  <div id="cards" class="row card-table">
+  <div id="cards" class="row card-table mt-2">
 
     {% for col in t.columns %}
       <div class="col table-column">
@@ -52,28 +66,40 @@
   </div>
   <!-- END: Formatted Cards Table -->
 
-  
+
   <div class="row mt-2">
+    
+    <!-- Removed Cards -->
     <div class="col framed">
-      <h5>Renamed Card Finder</h5>
-      <ul class="list-unstyled">
-        {% for card in cube.cards() %}
-          {% if card.differ().is_changed('name') %}
-            <li>
-              <a href="{{ url_for('card_editor', card_id=card.id) }}">
-                {{ card.original.name() }} &#x2014; {{ card.name() }}
-              </a>
-            </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
+      <div>
+        <h4>Removed Cards</h4>
+        <table class="table table-sm">
+          <thead class="thead thead-light">
+            <th>card name</th>
+            <th>removed by</th>
+            <th></th>
+          </thead>
+          <tbody>
+            {% for card in cube.cards_removed() %}
+              <tr>
+                <td>{{ card.name() }}</td>
+                <td>{{ card.removed_by.name }}</td>
+                <td>
+                  <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
+                    view
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+    <!-- END: Removed cards -->
 
-
-  <div class="row">
-    <div class="col">
-      <!-- Recent updates -->
+    
+    <!-- Recent updates -->
+    <div class="col framed ml-2">
       <div>
         <h4>Recent Updates</h4>
         <table class="table table-sm">
@@ -91,78 +117,36 @@
                   <a href="{{ url_for('card_editor', card_id=card.latest_id, read_only='true') }}">
                     view
                   </a>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-      <!-- Recent updates -->
-
-      <!-- Removed Cards -->
-      <div>
-        <h4>Removed Cards</h4>
-        <div class="d-flex justify-content-end">
-          <a
-            href="{{ url_for('pack_of_dead_interns', cube_id=cube.id) }}"
-            class="btn btn-sm btn-secondary mb-2">
-            Pack of Dead Interns
-          </a>
-        </div>
-        <table class="table table-sm">
-          <thead class="thead thead-light">
-            <th>card name</th>
-            <th>removed by</th>
-            <th></th>
-          </thead>
-          <tbody>
-            {% for card in cube.cards_removed() %}
-              <tr>
-                <td>{{ card.name() }}</td>
-                <td>{{ card.removed_by.name }}</td>
-                <td>
-                  <a href="{{ url_for('card_editor', card_id=card.id, read_only='true') }}">
-                    view
-                  </a>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <!-- END: Removed cards -->
-
     </div>
-
+    <!-- END: Recent updates -->
     
-    <div class="col col-md-4">
-      <!-- Add Cards Form -->
-      <div>
-        <form action="" method="post" novalidate>
-          {{ add_cards_form.hidden_tag() }}
-          <div class="form-group">
-            {{ add_cards_form.cardnames.label }}
-            {{ add_cards_form.cardnames(class='form-control') }}
-          </div>
-          <div class="form-group">
-            {{ add_cards_form.add_as_starter() }}
-            {{ add_cards_form.add_as_starter.label }}
-          </div>
-        </form>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#waitWhileAddingCards">Add Cards</button>
-      </div>
-      <!-- END: Add Cards Form -->
+  </div>
 
-      <hr>
-      
-      <!-- Create card button -->
-      <div>
-        <a class="btn btn-info" href="{{ url_for('card_creator', cube_id=cube.id) }}">
-          Create an Original Card
-        </a>
-      </div>
-      <!-- END:Create card button -->
-
+  
+  <!-- Renamed Cards Finder -->
+  <div class="row mt-2">
+    <div class="col framed">
+      <h5>Renamed Card Finder</h5>
+      <ul class="list-unstyled">
+        {% for card in cube.cards() %}
+          {% if card.differ().is_changed('name') %}
+            <li>
+              <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                {{ card.original.name() }} &#x2014; {{ card.name() }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
     </div>
   </div>
+  <!-- END: Renamed Cards Finder -->
 
 
 
@@ -180,34 +164,67 @@
     </div>
   </div>
   <!-- END: Card Image Popup -->
-  
 
-  
-  <!-- Modal: Please wait while the server loads the card data. -->
-  <div class="modal fade" id="waitWhileAddingCards" tabindex="-1" role="dialog">
+
+
+  <!-- Add Cards Modal -->
+  <div class="modal fade" id="addCardsModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Adding New Cards</h5>
+          <h5 class="modal-title">Add Cards</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span>&times;</span>
+          </button>          
         </div>
         
         <div class="modal-body">
-          <p>Now adding these cards to the database. Adding cards includes fetching data from Scryfall, which can take a few minutes if many cards were added at once.</p>
-          
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>          
+
+          <form action="" method="post" id="addCardsForm" novalidate>
+            {{ add_cards_form.hidden_tag() }}
+            <div class="form-group">
+              {{ add_cards_form.cardnames.label }}
+              {{ add_cards_form.cardnames(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ add_cards_form.add_as_starter() }}
+              {{ add_cards_form.add_as_starter.label }}
+            </div>
+          </form>
+          <button class="btn btn-primary" type="button" id="addCardsButton">Add Cards</button>
+
+          <div id="addCardsWaitMessage" class="d-none">
+            <hr>
+
+            <p class="text-danger">
+              Now loading cards. This can take a few seconds to several minutes, depending on how many cards you have added.
+            </p>
+            <p>A message will be displayed here when the loading has completed.</p>
+          </div>
         </div>
         
-        <div class="modal-footer">
-          <a href="{{ url_for('cube_cards', cube_id=cube.id) }}"
-            <button type="button" class="btn btn-primary">Reload Page</button>
+        <div class="modal-footer d-none">
+          <div id="addCardsSuccess" class="text-success d-none">
+            Cards added successfully!
+          </div>
+
+          <div id="addCardsFailure" class="text-warning d-none">
+            There was an error while loading the cards. Reload the page to see if they were actually added.
+          </div>
+          
+          <a
+            id="#reloadPage"
+            href="{{ url_for('cube_cards', cube_id=cube.id) }}"
+            class="btn btn-primary">
+            Reload Page
           </a>
         </div>
+        
       </div>
     </div>
   </div>
-  <!-- loading cards modal -->
+  <!-- END: New Cube Modal -->  
+
 {% endblock content %}
 
 {% block scripts %}
@@ -215,31 +232,34 @@
    $(document).ready(function() {
      autocard_init('card-list-item')
      
-     $('#waitWhileAddingCards').on('show.bs.modal', function (event) {
-       var modal = $(this)
-       modal_reload_button = modal.find('.modal-footer button')
-       modal_reload_button.hide()
+     $('#addCardsButton').click(function () {
+       let modal = $('#addCardsModal')
+       let body = modal.find('.modal-body')
+       let footer = modal.find('.modal-footer')
+
+       // Prevent clicking on the submit button more than once.
+       body.find('button').hide()
+
+       // Prevent changes to the form after submitting.
+       $('#addCardsForm').find('input, textarea').attr('disabled', 'disabled')
+
+       // Show the loading message
+       $('#addCardsWaitMessage').removeClass('d-none')
        
        $.ajax({
          type: "POST",
          url: "{{ url_for('cube_add_cards', cube_id=cube.id) }}",
-         data: $('form').serialize(), // serializes the form's elements.
+         data: $('#addCardsForm').serialize(), // serializes the form's elements.
          beforeSend: function(request) {
            request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
          },         
          success: function (data) {
-           modal_reload_button.show()
-
-           var body = modal.find('.modal-body')
-           body.empty()
-           body.text('Cards added successfully. Reload page to see them.')
-           body.addClass('text-success')
+           footer.removeClass('d-none')
+           $('#addCardsSuccess').removeClass('d-none')
          },
          error: function(data) {
-           var body = modal.find('.modal-body')
-           body.empty()
-           body.text("Something went wrong. Reload the page to see if your cards were added.")
-           body.addClass('text-warn')
+           footer.removeClass('d-none')
+           $('#addCardsFailure').removeClass('d-none')
          }
        })
      })
