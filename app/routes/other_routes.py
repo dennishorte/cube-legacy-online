@@ -29,7 +29,7 @@ from app.util.string import normalize_newlines
 @app.route("/", methods=['GET', 'POST'])
 @login_required
 def index():
-    active_seats = [x for x in current_user.draft_seats if not x.draft.complete]
+    active_seats = [x for x in current_user.draft_seats if not x.draft.complete and not x.draft.killed]
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
 
     achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
@@ -354,6 +354,17 @@ def draft(draft_id):
     else:
         return render_template('draft_picker.html', d=dw)
 
+
+@app.route("/draft/<draft_id>/kill")
+@login_required
+def draft_kill(draft_id):
+    draft = Draft.query.get(draft_id)
+    draft.killed = True
+    db.session.add(draft)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+    
 
 @app.route("/draft/swap_sideboard/<card_id>")
 @login_required

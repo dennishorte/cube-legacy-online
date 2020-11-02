@@ -33,6 +33,10 @@
       <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
         Rebuild File
       </a>
+
+      <hr>
+
+      <a href="{{ url_for('draft_kill', draft_id=d.draft.id) }}">kill</a>
       
     </div>
     <!-- END: Draft Info -->

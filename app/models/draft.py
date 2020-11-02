@@ -10,6 +10,7 @@ class Draft(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64))
+    killed = db.Column(db.Boolean, default=False)
 
     # Setup info
     pack_size = db.Column(db.Integer)
