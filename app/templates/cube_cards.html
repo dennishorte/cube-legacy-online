@@ -28,6 +28,12 @@
                     data-back="{{ card.image_back() }}"
                   {% endif %}
                 >
+                  {% if card.linked_achs %}
+                    <i class="fab fa-font-awesome-flag"></i>
+                  {% endif %}
+                  {% if card.is_scarred() %}
+                    <i class="fas fa-bolt"></i>
+                  {% endif %}
                   <a href="{{ url_for('card_editor', card_id=card.id) }}">
                     {{ card.name() }}
                   </a>

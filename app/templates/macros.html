@@ -131,7 +131,7 @@
 {% endmacro %}
 
 {% macro show_draft_card_list(cards, draft_id) %}
-  <div class="row d-flex">
+  <div class="row">
     {% for card in cards if card.pack.can_be_seen(card) %}
       {% set can_be_drafted = card.pack.can_be_drafted(card) %}
       <div class="col framed card-frame">
