@@ -54,7 +54,7 @@
 .framed {
   background-color: var(--light);
   border: 1px solid #dee2e6!important;
-  border-color: var(--secondard);
+  border-color: var(--secondary);
   border-radius: .25rem;
   padding: .5rem!important;
 }
@@ -77,6 +77,10 @@
   font-size: .8rem;
 }
 
+.table-column {
+  max-width: 12.5%!important;
+}
+
 .table-column-header {
   text-align: center;
 }
@@ -89,7 +93,7 @@
 
 .table-section ul {
   list-style-type: none;
-  margin: 2px;
+  margin: 4px;
   padding: 0;
   font-size: .8em;
 }
@@ -97,6 +101,11 @@
 .table-section-header {
   text-align: center;
   background-color: var(--table-header);
+}
+
+.table-section-divider {
+  border-top: 1px solid;
+  border-color: var(--secondary);
 }
 
 .card-list-item {

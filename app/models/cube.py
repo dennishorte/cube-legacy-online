@@ -267,12 +267,21 @@ class CubeCard(db.Model):
 
     def cmc(self):
         return self.get_json().get('cmc', 0)
+
+    def has_type(self, card_type):
+        return card_type.lower() in self.card_faces()[0].get('type_line', '').lower()
         
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
 
     def is_creature(self):
-        return 'creature' in self.get_json().get('type_line', '').lower()
+        return 'creature' in self.card_faces()[0].get('type_line', '').lower()
+
+    def is_land(self):
+        return 'land' in self.card_faces()[0].get('type_line', '').lower()
+
+    def type_line(self):
+        return self.get_json().get('type_line', 'NO_TYPE')
 
 
 class Scar(db.Model):

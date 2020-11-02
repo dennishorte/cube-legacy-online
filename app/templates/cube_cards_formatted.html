@@ -5,51 +5,62 @@
 
   <div id="cards" class="row card-table">
 
-    {% for col in columns %}
-      <div class="col" style="width:12.5%">
+    {% for col in t.columns %}
+      <div class="col table-column">
         <div class="table-column-header">
-          {{ col.name }}
+          {{ col.header }}
         </div>
+        
         {% for section in col.sections %}
-          <div class="table-section {{ col.name }}">
+          <div class="table-section {{ col.color_class }}">
+            
             <div class="table-section-header">
-              {{ section.name }}
+              {{ section.header }}
             </div>
+
             <ul>
               {% for card in section.cards %}
                 <li
-                  class="card-list-item"
-                  data-toggle="card-image-popup"
-                  data-front="{{ card.image_urls()[0] }}"
-                  {% if card.image_urls()|length > 1 and card.image_urls()[0] != card.image_urls()[1] %}
-                    data-back="{{ card.image_urls()[1] }}"
+                  class="card-list-item {{ card.section_divider }}"
+                  data-front="{{ card.image_front() }}"
+                  {% if card.image_back() %}
+                    data-back="{{ card.image_back() }}"
                   {% endif %}
                 >
                   {{ card.name() }}
                 </li>
               {% endfor %}
             </ul>
+            
           </div>
         {% endfor %}
+        
       </div>
     {% endfor %}
 
   </div>
 
-  <div id="imagePopup" style="max-width: 150px">
-    <img src="">
+  <!-- Card Image Popup -->
+  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
+    <div class="autocard-background">
+      <div class="row no-gutters">
+        <div class="position-relative">
+          <img id="autocardImageFront" alt="">
+        </div>
+        <div class="position-relative">
+          <img id="autocardImageBack" alt="" class="d-none">
+        </div>
+      </div>
+    </div>
   </div>
+  <!-- END: Card Image Popup -->
+
 {% endblock content %}
 
 {% block scripts %}
   <script>
-    $(document).ready(function() {
-      $('.card-list-item').mouseover(function() {
-        let front_url = $(this).data('front')
-        $('#imagePopup').attr('src', front_url).show()
-      }).mouseleave(function() {
-        $('#imagePopup').hide()
-      })
-    })
+   $(document).ready(function() {
+     autocard_init('card-list-item')
+   })
   </script>
 {% endblock %}

@@ -36,22 +36,6 @@ class CardConsts(object):
     )
         
 
-
-class CardColumn(object):
-    def __init__(self, name, sections):
-        self.name = name
-        self.sections = sections
-
-    def num_cards(self):
-        return sum([len(x.cards) for x in self.sections])
-
-
-class CardColumnSection(object):
-    def __init__(self, name, cards):
-        self.name = name
-        self.cards = cards
-
-
 class CardDiffer(object):
     def __init__(self, old, new, face=None):
         self.old = old
@@ -162,62 +146,3 @@ def color_sort_key(color_ch):
         return 5
     else:
         return 6
-
-
-def color_symbol_to_name(symbol):
-    if symbol == 'W':
-        return 'white'
-    elif symbol == 'U':
-        return 'blue'
-    elif symbol == 'B':
-        return 'black'
-    elif symbol == 'R':
-        return 'red'
-    elif symbol == 'G':
-        return 'green'
-
-
-def _divide_cards_by_type(cards):
-    divided = {}
-    for card in cards:
-        for typ in CardConsts.CARD_TYPES:
-            if typ in type_line(card).lower():
-                divided.setdefault(typ, []).append(card)
-                break
-        else:
-            divided.setdefault('other', []).append(card)
-
-    for card_list in divided.values():
-        card_list.sort(key=lambda x: (int(cmc(x)), x.name()))
-
-    return divided
-
-
-def group_cards_in_columns(cards):
-    columns = []
-    
-    for color in 'WUBRG':
-        colored = [x for x in cards if x.color_identity() == color]
-        grouped = _divide_cards_by_type(colored)
-        sections = []
-        for card_type in CardConsts.CARD_TYPES + ('other',):
-            sections.append(CardColumnSection(
-                card_type,
-                grouped.get(card_type, []),
-            ))
-
-        columns.append(CardColumn(color_symbol_to_name(color), sections))
-
-    return columns
-        
-    groups['land'] = [x for x in cards if 'land' in type_line(x).lower()]
-    groups['gold'] = [x for x in cards if len(x.color_identity()) > 1 and not 'land' in type_line(x).lower()]
-    groups['gray'] = [x for x in cards if len(x.color_identity()) == 0 and not 'land' in type_line(x).lower()]
-
-
-def cmc(card):
-    return card.get_json().get('cmc', '0') or '0'
-
-
-def type_line(card):
-    return card.get_json().get('type_line', '')

@@ -78,10 +78,6 @@ function autocard_show_card(card_image, card_flip) {
   const popupImg = document.getElementById('autocardImageFront');
   const popupImgBack = document.getElementById('autocardImageBack');
 
-  console.log("=====\nautocard_show_card")
-  console.log(card_image)
-  console.log(card_flip)
-
   if (card_flip) {
     popup.classList.add('double-width');
   } else {

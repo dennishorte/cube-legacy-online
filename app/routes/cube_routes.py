@@ -20,7 +20,7 @@ from app.forms import UseScarForm
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
-from app.util import card_util
+from app.util.card_table import CardTable
 from app.util.cube_util import add_cards_to_cube
 
 
@@ -103,13 +103,10 @@ def cube_cards(cube_id):
 @login_required
 def cube_cards_formatted(cube_id):
     cube = Cube.query.get(cube_id)
-
-    columns = card_util.group_cards_in_columns(cube.cards())
-    
     return render_template(
         'cube_cards_formatted.html',
         cube=cube,
-        columns=columns,
+        t=CardTable(cube),
     )
 
 
