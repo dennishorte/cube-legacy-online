@@ -7,6 +7,7 @@ from datetime import datetime
 
 from app import db
 from app.models.user import *
+from app.util import card_diff
 from app.util import card_util
 from app.util import cockatrice
 from app.util.card_util import color_sort_key
@@ -150,6 +151,7 @@ class CubeCard(db.Model):
         return '<CubeCard {}>'.format(self.get_json()['name'])
 
     def card_diff(self, face=None):
+        # Deprecated. Use differ().
         return card_util.CardDiffer(self.original, self, face)                    
         
     def card_faces(self):
@@ -177,6 +179,9 @@ class CubeCard(db.Model):
         identity = ''.join(identity)
 
         return identity
+
+    def differ(self):
+        return card_diff.CardDiffer(self.original, self)
 
     def days_since_last_edit(self):
         return (datetime.utcnow() - self.timestamp).days

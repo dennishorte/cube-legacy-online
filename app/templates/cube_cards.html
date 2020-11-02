@@ -31,8 +31,10 @@
                   {% if card.linked_achs %}
                     <i class="fab fa-font-awesome-flag"></i>
                   {% endif %}
-                  {% if card.is_scarred() %}
+                  {% if card.differ().is_significant() %}
                     <i class="fas fa-bolt"></i>
+                  {% elif card.differ().is_minor() %}
+                    <i class="fas fa-bolt text-muted"></i>
                   {% endif %}
                   <a href="{{ url_for('card_editor', card_id=card.id) }}">
                     {{ card.name() }}

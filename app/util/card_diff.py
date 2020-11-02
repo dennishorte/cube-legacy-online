@@ -6,6 +6,22 @@ class BaseDiffer(object):
         self.old = old_json
         self.new = new_json
 
+    def changed_fields(self):
+        changes = {}
+
+        for field in self.old:
+            if self.is_changed(field):
+                changes[field] = True
+
+        return changes
+
+    def is_changed(self, field):
+        for line in self._ndiff(field):
+            if not line.startswith('  '):
+                return True
+
+        return False
+
     def _ndiff(self, field):
         return list(difflib.ndiff(
             self.old.get(field, '').strip().split('\n'),
@@ -14,30 +30,63 @@ class BaseDiffer(object):
 
 
 class FaceDiffer(BaseDiffer):
-    pass
+    def is_flavor(self):
+        """Only flavor text is changed."""
+        changes = self.changed_fields()
+        return len(changes) == 1 and 'flavor_text' in changes
+    
+    def is_minor(self):
+        if self.is_significant() or self.is_flavor():
+            return False
+
+        return len(self.changed_fields()) > 0
+
+    
+    def is_significant(self):
+        # Card face added or removed is always significant.
+        if (self.old or self.new) and (not self.old or not self.new):
+            return True
+
+        if self.is_changed('oracle_text'):
+            return True
+        
+        return False
     
 
 class CardDiffer(object):
     def __init__(self, old_card, new_card):
         self.old_card = old_card
         self.new_card = new_card
-        self.face_differs = self._init_face_diffs()
+        self.face_differs = []
+
+        self._init_face_diffs()
+
+    def is_minor(self):
+        """
+        True if the diff has some change, but not likely to impact gameplay.
+        A common example is when just the name is changed.
+        """
+        return (
+            not self.is_significant()
+            and any([x.is_minor() for x in self.face_differs])
+        )
+
+    def is_significant(self):
+        """True if the diff is likely to have an effect on gameplay."""
+        return any([x.is_significant() for x in self.face_differs])
 
     def _init_face_diffs(self):
-        num_faces = max(len(self.old_card.card_faces()), len(self.new_card.card_faces()))
-        face_diffs = []
-        for i in range(num_faces):
+        for i in range(10):
             old_face = self._get_face(self.old_card, i)
             new_face = self._get_face(self.new_card, i)
-            face_diffs.append(FaceDiffer(old_face, new_face))
 
-        return face_diffs
+            if old_face is None and new_face is None:
+                return
+            self.face_differs.append(FaceDiffer(old_face, new_face))
 
-    @staticmethod
-    def _get_face(card, face_index):
+    def _get_face(self, card, face_index):
         faces = card.card_faces()
         if len(faces) <= face_index:
-            new_face = {}
+            return {}
         else:
-            new_face = faces[face_index]
-
+            return faces[face_index]
