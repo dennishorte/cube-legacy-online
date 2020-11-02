@@ -28,7 +28,6 @@ class DraftWrapper(object):
         return [x for x in self.seat.picks if not x.sideboard and x.cube_card.is_creature()]
 
     def picks_non_creatures(self):
-        print([x for x in self.seat.picks if not x.sideboard and not x.cube_card.is_creature()])
         return [x for x in self.seat.picks if not x.sideboard and not x.cube_card.is_creature()]
 
     def picks_sideboard(self):

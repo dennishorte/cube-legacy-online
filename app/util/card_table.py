@@ -76,7 +76,6 @@ class CardTable(object):
 
     def _divide_cards_by_column(self):
         columns = {x: [] for x in self.HEADERS}
-        print(columns)
         
         for card in self.cube.cards():
             if card.color_identity() == 'W':
