@@ -52,10 +52,37 @@ class CardTable(object):
         
         for header in self.HEADERS:
             column = CardColumn(header, header.lower())
-            column.sections = self._divide_cards_by_type(divided_cards[header])
+
+            if header == 'Gold':
+                # column.sections = [CardColumnSection('Cards', divided_cards[header])]
+                column.sections = self._divide_gold_by_guild(divided_cards[header])
+            else:
+                column.sections = self._divide_cards_by_type(divided_cards[header])
+                
             for section in column.sections:
                 section.sort_cards_by_cmc()
             self.columns.append(column)
+
+    def _divide_gold_by_guild(self, cards):
+        guilds = {x: [] for x in CardConsts.MULTICOLOR_MAP}
+
+        for card in cards:
+            identity = card.color_identity().upper()
+            identity = ''.join(sorted(identity))
+            guilds[identity].append(card)
+
+        sections = []
+        for identity, cards in guilds.items():
+            sections.append(CardColumnSection(
+                identity,
+                cards,
+            ))
+        sections.sort(key=lambda x: (len(x.header), CardConsts.MULTICOLOR_MAP[x.header]))
+        for section in sections:
+            section.header = CardConsts.MULTICOLOR_MAP[section.header]
+
+        return sections
+            
 
     def _divide_cards_by_type(self, cards):
         types = {x: [] for x in CardConsts.CARD_TYPES}
@@ -68,11 +95,11 @@ class CardTable(object):
             else:
                 raise ValueError(f"Card {card.name()} has unknown type {card.type_line()}")
 
-        columns = []
+        sections = []
         for type, cards in types.items():
-            columns.append(CardColumnSection(type.title(), cards))
+            sections.append(CardColumnSection(type.title(), cards))
             
-        return columns
+        return sections
 
     def _divide_cards_by_column(self):
         columns = {x: [] for x in self.HEADERS}

@@ -34,6 +34,38 @@ class CardConsts(object):
         'enchantment',
         'land',
     )
+
+    MULTICOLOR_MAP = {
+        'BG': 'Golgari',
+        'BR': 'Rakdos',
+        'BU': 'Dimir',
+        'BW': 'Orzhov',
+        'GR': 'Gruul',
+        'GU': 'Simic',
+        'GW': 'Selesnya',
+        'RU': 'Izzet',
+        'RW': 'Boros',
+        'UW': 'Azorius',
+
+        'BGR': 'Jund',
+        'BGU': 'Sultai',
+        'BGW': 'Abzan',
+        'BRU': 'Grixis',
+        'BRW': 'Mardu',
+        'BUW': 'Esper',
+        'GRU': 'Temur',
+        'GRW': 'Naya',
+        'GUW': 'Bant',
+        'RUW': 'Jeskai',
+
+        'BGRU': 'Non-White',
+        'BGRW': 'Non-Blue',
+        'BGUW': 'Non-Red',
+        'BRUW': 'Non-Green',
+        'GRUW': 'Non-Black',
+
+        'BGRUW': '5-Color',
+    }
         
 
 class CardDiffer(object):
