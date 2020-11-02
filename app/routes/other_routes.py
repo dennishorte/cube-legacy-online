@@ -221,7 +221,7 @@ def card_update(card_id):
         return redirect(url_for('card_editor', card_id=card_id))
 
     card = CubeCard.query.get(card_id)
-    card_json = card.get_json()
+    card_json = card.get_json().copy()
     _card_update_copy_form_data_into_card_json(card_json, form)
 
     if not form.comment.data:
