@@ -39,6 +39,12 @@
             ({{ cube.factions|length }})
           </li>
         {% endif %}
+
+        <li>
+          <a href="{{ url_for('cube_data', cube_id=cube.id) }}">
+            Data
+          </a>
+        </li>
       </ul>
 
       <hr>

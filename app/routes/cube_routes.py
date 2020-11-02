@@ -21,6 +21,7 @@ from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
 from app.util.card_table import CardTable
+from app.util.cube_data import CubeData
 from app.util.cube_util import add_cards_to_cube
 
 
@@ -97,6 +98,19 @@ def cube_cards(cube_id):
         cube=cube,
         t=CardTable(cube),
         add_cards_form=add_cards_form,
+    )
+
+
+@app.route("/cubes/<cube_id>/data")
+@login_required
+def cube_data(cube_id):
+    cube = Cube.query.get(cube_id)
+    data = CubeData(cube)
+
+    return render_template(
+        'cube_data.html',
+        cube=cube,
+        d=data,
     )
 
 

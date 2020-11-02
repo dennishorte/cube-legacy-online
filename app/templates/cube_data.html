@@ -1,0 +1,40 @@
+{% extends "cube_base.html" %}
+
+{% block content %}
+  {{ super() }}
+
+  <div class="row mt-2">
+
+    <!-- Creature Type Breakdown -->
+    <div class="col framed">
+      <ul class="list-unstyled">
+        {% for type, cards in d.creature_types() %}
+          <li>{{ type }} ({{ cards|length }})</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <!-- END: Creature Type Breakdown -->
+
+    
+    <!-- Creatures Display -->
+    <div class="col framed ml-2">
+      {% for type, cards in d.creature_types() %}
+        <div class="creature-group" id="{{ type }}CreatureGroup">
+          <h5>{{ type }}</h5>
+          <ul class="list-unstyled">
+            {% for card in cards %}
+              <li>
+                <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                  {{ card.name() }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- END: Creatures Display -->
+    
+  </div>
+  
+{% endblock content %}
