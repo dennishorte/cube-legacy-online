@@ -95,6 +95,7 @@ def cube_cards(cube_id):
     return render_template(
         'cube_cards.html',
         cube=cube,
+        t=CardTable(cube),
         add_cards_form=add_cards_form,
     )
 

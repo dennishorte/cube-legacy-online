@@ -6,36 +6,64 @@
 
 {% block content %}
   <div class="row">
-    <div class="col">
-      <p>Cube Style: {{ cube.style.name }}</p>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col bg-light border mb-2">
-
-      <ul class="nav">
-        <li class="card-link">
-          <a class="nav-link" href="{{ url_for('cube_cards', cube_id=cube.id) }}">Cards</a>
+    <!-- Cube Navigation -->
+    <div id="cubeNav" class="col framed">
+      <ul class="list-unstyled">
+        <li>
+          <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">
+            Cards
+          </a>
+          ({{ cube.cards()|length }})
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('cube_achievements', cube_id=cube.id) }}">Achievements</a>
+        <li>
+          <a href="{{ url_for('cube_achievements', cube_id=cube.id) }}">
+            Achievements
+          </a>
+          ({{ cube.achievements|length }})
         </li>
 
         {% if cube.style.name == 'legacy' %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cube_scars', cube_id=cube.id) }}">Scars</a>
+          <li>
+            <a href="{{ url_for('cube_scars', cube_id=cube.id) }}">
+              Scars
+            </a>
+            ({{ cube.scars|length }})
           </li>
 
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cube_factions', cube_id=cube.id) }}">Factions</a>
+          <li>
+            <a href="{{ url_for('cube_factions', cube_id=cube.id) }}">
+              Factions
+            </a>
+            ({{ cube.factions|length }})
           </li>
         {% endif %}
       </ul>
+
+      <hr>
       
+      <ul class="nav">
+        {% block more_nav %}
+        {% endblock %}
+      </ul>
+      
+
     </div>
+    <!-- END: Cube Navigation -->
+
+    <!-- Cube Details -->
+    <div class="col framed ml-2">
+      <ul class="list-unstyled">
+        <li>Name: {{ cube.name }}</li>
+        <li>Style: {{ cube.style.name }}</li>
+        <li>Age: {{ cube.age() }}
+      </ul>
+    </div>
+    <!-- END: Cube Details -->
+    
   </div>
+
 {% endblock content %}
 
 {% block scripts %}

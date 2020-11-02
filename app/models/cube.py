@@ -64,6 +64,16 @@ class Cube(db.Model):
     def achievements_completed(self):
         return [x for x in self.achievements if not x.available()]
 
+    def age(self):
+        age = datetime.utcnow() - self.timestamp
+        years = age.days // 365
+        days = age.days % 365
+
+        if years > 0:
+            return f"{years} years {days} days"
+        else:
+            return f"{days} days"
+
     def cards(self):
         """
         Get only the latest version of the cards in the cube.

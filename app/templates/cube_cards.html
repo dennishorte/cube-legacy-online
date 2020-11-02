@@ -3,6 +3,66 @@
 {% block content %}
   {{ super() }}
 
+  <!-- Formatted Cards Table -->
+  <div id="cards" class="row card-table">
+
+    {% for col in t.columns %}
+      <div class="col table-column">
+        <div class="table-column-header">
+          {{ col.header }}
+        </div>
+        
+        {% for section in col.sections %}
+          <div class="table-section {{ col.color_class }}">
+            
+            <div class="table-section-header">
+              {{ section.header }}
+            </div>
+
+            <ul>
+              {% for card in section.cards %}
+                <li
+                  class="card-list-item {{ card.section_divider }}"
+                  data-front="{{ card.image_front() }}"
+                  {% if card.image_back() %}
+                    data-back="{{ card.image_back() }}"
+                  {% endif %}
+                >
+                  <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                    {{ card.name() }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+            
+          </div>
+        {% endfor %}
+        
+      </div>
+    {% endfor %}
+
+  </div>
+  <!-- END: Formatted Cards Table -->
+
+  
+  <div class="row mt-2">
+    <div class="col framed">
+      <h5>Renamed Card Finder</h5>
+      <ul class="list-unstyled">
+        {% for card in cube.cards() %}
+          {% if card.version != 1 %}
+            <li>
+              <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                {{ card.original.name() }} &#x2014; {{ card.name() }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+
   <div class="row">
     <!-- Card Details -->
     <div class="col col-md-8">
@@ -130,6 +190,24 @@
     </div>
   </div>
 
+
+
+  <!-- Card Image Popup -->
+  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
+    <div class="autocard-background">
+      <div class="row no-gutters">
+        <div class="position-relative">
+          <img id="autocardImageFront" alt="">
+        </div>
+        <div class="position-relative">
+          <img id="autocardImageBack" alt="" class="d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Card Image Popup -->
+  
+
   
   <!-- Modal: Please wait while the server loads the card data. -->
   <div class="modal fade" id="waitWhileAddingCards" tabindex="-1" role="dialog">
@@ -161,6 +239,8 @@
 {% block scripts %}
   <script>
    $(document).ready(function() {
+     autocard_init('card-list-item')
+     
      $('#waitWhileAddingCards').on('show.bs.modal', function (event) {
        var modal = $(this)
        modal_reload_button = modal.find('.modal-footer button')
