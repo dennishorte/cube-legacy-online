@@ -15,12 +15,18 @@ class CardColumnSection(object):
             else:
                 self.cards[i].section_divider = ''
 
+    def num_cards(self):
+        return len(self.cards)
+
 
 class CardColumn(object):
     def __init__(self, header, color):
         self.header = header
         self.color_class = color
         self.sections = []
+
+    def num_cards(self):
+        return sum([x.num_cards() for x in self.sections])
 
 
 class CardTable(object):

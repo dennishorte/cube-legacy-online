@@ -9,14 +9,14 @@
     {% for col in t.columns %}
       <div class="col table-column">
         <div class="table-column-header">
-          {{ col.header }}
+          {{ col.header }} ({{ col.num_cards() }})
         </div>
         
         {% for section in col.sections %}
           <div class="table-section {{ col.color_class }}">
             
             <div class="table-section-header">
-              {{ section.header }}
+              {{ section.header }} ({{ section.num_cards() }})
             </div>
 
             <ul>
