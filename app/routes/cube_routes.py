@@ -100,17 +100,6 @@ def cube_cards(cube_id):
     )
 
 
-@app.route("/cubes/<cube_id>/cards_formatted")
-@login_required
-def cube_cards_formatted(cube_id):
-    cube = Cube.query.get(cube_id)
-    return render_template(
-        'cube_cards_formatted.html',
-        cube=cube,
-        t=CardTable(cube),
-    )
-
-
 @app.route("/cube/<cube_id>/factions")
 @login_required
 def cube_factions(cube_id):
