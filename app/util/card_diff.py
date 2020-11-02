@@ -61,6 +61,9 @@ class CardDiffer(object):
 
         self._init_face_diffs()
 
+    def is_changed(self, field):
+        return any([x.is_changed(field) for x in self.face_differs])
+
     def is_minor(self):
         """
         True if the diff has some change, but not likely to impact gameplay.

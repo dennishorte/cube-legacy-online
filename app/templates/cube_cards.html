@@ -58,7 +58,7 @@
       <h5>Renamed Card Finder</h5>
       <ul class="list-unstyled">
         {% for card in cube.cards() %}
-          {% if card.version != 1 %}
+          {% if card.differ().is_changed('name') %}
             <li>
               <a href="{{ url_for('card_editor', card_id=card.id) }}">
                 {{ card.original.name() }} &#x2014; {{ card.name() }}
