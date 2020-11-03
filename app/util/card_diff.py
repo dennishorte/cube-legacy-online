@@ -55,7 +55,7 @@ class FaceDiffer(BaseDiffer):
         if (self.old or self.new) and (not self.old or not self.new):
             return True
 
-        if self.is_changed('oracle_text'):
+        if self.is_changed('oracle_text') or self.is_changed('mana_cost'):
             return True
         
         return False
