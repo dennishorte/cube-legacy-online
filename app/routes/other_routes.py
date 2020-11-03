@@ -355,7 +355,7 @@ def _new_draft_form():
 @login_required
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
-    return render_template('draft_picker.html', d=dw)
+    return render_template('draft.html', d=dw)
 
 
 @app.route("/draft/<draft_id>/kill")
