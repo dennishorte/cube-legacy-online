@@ -9,6 +9,9 @@ class CardColumnSection(object):
     def sort_cards_by_cmc(self):
         self.cards.sort(key=lambda x: (x.cmc(), x.name()))
 
+        if self.cards:
+            self.cards[0].section_divider = 'table-section-divider'
+
         for i in range(1, len(self.cards)):
             if self.cards[i-1].cmc() < self.cards[i].cmc():
                 self.cards[i].section_divider = 'table-section-divider'
