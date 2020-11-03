@@ -43,6 +43,10 @@
   background-color: var(--card-land);    
 }
 
+.text-s {
+  font-size: .8rem!important;
+}
+
 .text-xs {
   font-size: .6rem!important;
 }

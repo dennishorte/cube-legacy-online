@@ -267,6 +267,12 @@ class CubeCard(db.Model):
         else:
             return False  # No change detected
 
+    def versions(self):
+        return CubeCard \
+            .query \
+            .filter(CubeCard.latest_id == self.latest_id) \
+            .order_by(CubeCard.version.desc())
+
     def cmc(self):
         cost = 0
         cost += card_util.cmc_from_string(self.card_faces()[0]['mana_cost'])

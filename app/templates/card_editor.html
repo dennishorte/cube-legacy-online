@@ -212,7 +212,7 @@
 
         <button
           type="button"
-          class="btn btn-info ml-2"
+          class="btn btn-info"
           data-toggle="collapse"
           data-target="#achievementLink">
           Link to Achievement
@@ -254,17 +254,30 @@
   
   <hr>
 
-  <!-- Linked Achievements -->
   <div id="linkedAchievements" class="row">
-    <div class="col">
+    <!-- Linked Achievements -->
+    <div class="col framed">
       <h4>Linked Achievements</h4>
       <hr>
       {% for link in card.linked_achs %}
         {{ show_achievement(link.achievement, current_user) }}
       {% endfor %}
     </div>
+    <!-- END: Linked Achievements -->
+
+
+    <!-- Comments from previous versions -->
+    <div class="col framed ml-2">
+      <h4>Comments</h4>
+      <hr>
+      {% for version in card.versions() %}
+        <p class="mb-0 ml-2 text-secondary text-s">{{ version.timestamp.date() }}</p>
+        <p>{{ version.comment }}</p>
+      {% endfor %}
+    </div>
+    <!-- END: Comments from previous versions -->
+    
   </div>
-  <!-- END: Linked Achievements -->
 
   <!-- Image Preview Modal -->
   <div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog">
