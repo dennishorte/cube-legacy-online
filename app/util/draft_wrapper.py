@@ -6,6 +6,7 @@ from app.config import Config
 from app.forms import ResultForm
 from app.models.draft import *
 from app.util import slack
+from app.util.enum import DraftFaceUp
 
 
 class DraftWrapper(object):
@@ -23,6 +24,21 @@ class DraftWrapper(object):
             DeckList.draft_id == self.draft.id,
             DeckList.user_id == self.user.id,
         ).first()
+
+    def face_up_cards(self):
+        cards = PackCard.query.filter(
+            PackCard.draft_id == self.draft.id,
+            PackCard.faceup == True,
+        ).all()
+
+        if not cards:
+            return None
+
+        by_seat = {}
+        for card in cards:
+            by_seat.setdefault(card.picked_by, []).append(card)
+
+        return by_seat
 
     def picks_creatures(self):
         return [x for x in self.seat.picks if not x.sideboard and x.cube_card.is_creature()]
@@ -52,7 +68,7 @@ class DraftWrapper(object):
 
         return self.seats[next_seat]
 
-    def pick_card(self, card_id):
+    def pick_card(self, card_id, face_up=DraftFaceUp.false):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
 
         if not self.pack:
@@ -60,6 +76,18 @@ class DraftWrapper(object):
         
         if not pack_card.pack_id == self.pack.id:
             raise ValueError(f"{card_id}: {card.cube_card.name()} is not part of pack {self.pack.id}. It's in pack {card.pack_id}.")
+
+        if face_up == DraftFaceUp.optional:
+            raise ValueError("Can't choose optional for draft face up. Please specify t or f")
+
+        # If the card was drafted face up.
+        if face_up == DraftFaceUp.true \
+           or pack_card.cube_card.draft_face_up() == DraftFaceUp.true:
+            pack_card.faceup = True
+            message = Message()
+            message.draft_id = self.draft.id
+            message.text = f"{self.user.name} drafted {pack_card.cube_card.name()} face up."
+            db.session.add(message)
         
         pack_card.picked_by_id = self.seat.id
         pack_card.pick_number = self.pack.num_picked

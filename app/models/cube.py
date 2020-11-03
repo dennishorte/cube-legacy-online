@@ -11,6 +11,7 @@ from app.util import card_diff
 from app.util import card_util
 from app.util import cockatrice
 from app.util.card_util import color_sort_key
+from app.util.enum import DraftFaceUp
 from app.util.enum import Layout
 
 
@@ -167,6 +168,19 @@ class CubeCard(db.Model):
             scarred=self.is_scarred(),
         )
 
+    def draft_face_up(self):
+        rules = self.oracle_text()
+        may_pattern = r'[Mm]ay draft.*?face up'
+        if re.search(may_pattern, rules):
+            return DraftFaceUp.optional
+        
+        pattern = r'[Dd]raft.*?face up'
+        if re.search(pattern, rules):
+            return DraftFaceUp.true
+
+        else:
+            return DraftFaceUp.false
+
     def differ(self):
         return card_diff.CardDiffer(self.original, self)
 
@@ -312,6 +326,9 @@ class CubeCard(db.Model):
 
     def is_land(self):
         return 'land' in self.card_faces()[0].get('type_line', '').lower()
+
+    def oracle_text(self):
+        return self.get_json()['oracle_text']
 
     def type_line(self):
         return self.get_json().get('type_line', 'NO_TYPE')

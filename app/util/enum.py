@@ -1,6 +1,12 @@
 import enum
 
 
+class DraftFaceUp(enum.Enum):
+    false = 0
+    true = 1
+    optional = 2
+
+
 class Layout(enum.Enum):
     normal = 0  # A standard Magic card with one face
     split = 1  # A split-faced card

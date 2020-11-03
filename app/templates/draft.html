@@ -149,6 +149,43 @@
 
   </div>
 
+  <div class="row mt-2">
+    <!-- Draft Messages -->
+    <div class="col col-md-4 framed">
+      <h5>Messages</h5>
+        {% for message in d.draft.messages|sort(attribute=timestamp, reverse=True) %}
+          <p class="text-secondary text-s">{{ message.text }}</p>
+        {% endfor %}
+    </div>
+    <!-- END: Draft Messages -->
+
+    <!-- Face up cards -->
+    {% if d.face_up_cards() %}
+      <div class="col framed ml-2">
+        <h5>Faceup Cards</h5>
+        <div class="row ml-0 mr-0">
+          {% for seat, cards in d.face_up_cards().items() %}
+            <div class="col framed ml-2">
+              <p class="mb-0"><strong>{{ seat.user.name }}</strong></p>
+              {% for card in cards %}
+                <p
+                  class="card-list-item"
+                  data-front="{{ card.cube_card.image_front() }}"
+                  {% if card.cube_card.image_back() %}
+                    data-back="{{ card.cube_card.image_back() }}"
+                  {% endif %}
+                >
+                  {{ card.cube_card.name() }}
+                </p>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+    <!-- END: Face up cards -->
+  </div>
+
   <!-- Scars to Add -->
   {% if d.is_scarring_round() %}
     <div class="row">
