@@ -36,6 +36,7 @@
             {% for card in section.cards %}
               {% if card.section_divider == 'table-section-divider' %}
                 <div class="card-list-divider">
+                  <span class="bar"></span>
                   {% for n in range(card.cmc()) %}
                     {% if (n % 5) == 4 %}
                       <span class="small-dot"></span>
@@ -43,6 +44,7 @@
                       <span class="tiny-dot"></span>
                     {% endif %}
                   {% endfor %}
+                  <span class="bar"></span>
                 </div>
               {% endif %}
               <p

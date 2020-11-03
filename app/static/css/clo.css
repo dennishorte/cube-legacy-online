@@ -142,6 +142,16 @@
   justify-content: center;
 }
 
+.bar {
+  height: 1px;
+  width: 100%;
+  background-color: gray;
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0;
+  flex-grow: 1;
+}
+
 .tiny-dot {
   height: 2px;
   width: 2px;
@@ -150,6 +160,7 @@
   display: inline-block;
   margin: 0 2px;
   padding: 0;
+  flex-shrink: 0;
 }
 
 .small-dot {
@@ -160,4 +171,5 @@
   display: inline-block;
   margin: 0 2px;
   padding: 0;
+  flex-shrink: 0;
 }
