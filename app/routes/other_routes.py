@@ -30,10 +30,18 @@ from app.util.string import normalize_newlines
 @login_required
 def index():
     active_seats = [x for x in current_user.draft_seats if not x.draft.complete and not x.draft.killed]
+    active_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
+    
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
+    complete_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
 
     achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
+    achievements_unfinished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
+
+    
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
+    achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
+
     cubes = Cube.query.all()
 
     return render_template(
