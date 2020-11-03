@@ -154,7 +154,7 @@
     <div class="col col-md-4 framed">
       <h5>Messages</h5>
         {% for message in d.draft.messages|sort(attribute=timestamp, reverse=True) %}
-          <p class="text-secondary text-s">{{ message.text }}</p>
+          <p class="text-secondary text-s mb-1">{{ message.text }}</p>
         {% endfor %}
     </div>
     <!-- END: Draft Messages -->
@@ -261,6 +261,27 @@
   </div>
   <!-- END: Card Image Popup -->
 
+
+  <!-- Draft Faceup Optional Modal -->
+  <div class="modal fade" id="draftFaceUpModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">How do you want to draft this card?</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <h6 id="cardName"></h6>
+          <div class=" d-flex justify-content-between">
+            <a id="pickFaceUp" class="btn btn-primary">Face Up</a>
+            <a id="pickFaceDown" class="btn btn-secondary">Face Down</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Draft Faceup Optional Modal -->  
 {% endblock content %}
 
 
@@ -268,6 +289,20 @@
   <script>
    $(document).ready(function() {
      autocard_init('card-list-item')
+     
+     $('#draftFaceUpModal').on('show.bs.modal', function (event) {
+       let button = $(event.relatedTarget) // Button that triggered the modal
+       let card_name = button.data('card-name')
+       let card_id = button.data('card-id')
+
+       let modal = $(this)
+
+       let url = "/draft/" + {{ d.draft.id }} + "/pick/" + card_id + "?face_up="
+
+       modal.find('#cardName').text(card_name)
+       modal.find('#pickFaceUp').attr('href', url + 'true')
+       modal.find('#pickFaceDown').attr('href', url + 'false')
+     }) 
    })
   </script>
 {% endblock scripts %}

@@ -134,12 +134,20 @@
   <div class="row">
     {% for card in cards if card.pack.can_be_seen(card) %}
       {% set can_be_drafted = card.pack.can_be_drafted(card) %}
+      {% set face_up_optional = card.cube_card.draft_face_up().name == 'optional' %}
       <div class="col framed card-frame">
         <!-- Card Image (and draft link) -->
         <p class="mb-0">
-          {% if can_be_drafted %}
-            <a href="/draft/{{draft_id}}/pick/{{card.id}}">
-          {% endif %}
+          <a
+            {% if face_up_optional %}
+              href="#draftFaceUpModal"
+              data-toggle="modal"
+              data-card-name="{{ card.cube_card.name() }}"
+              data-card-id="{{ card.id }}"
+            {% elif can_be_drafted %}
+              href="/draft/{{draft_id}}/pick/{{card.id}}"
+            {% endif %}
+          >
           {% for image_url in card.cube_card.image_urls() %}
             <img
               style="max-width:200px
@@ -150,9 +158,7 @@
               src="{{image_url}}"
               alt="{{card.cube_card.name()}}">
           {% endfor %}
-          {% if can_be_drafted %}
-            </a>
-          {% endif %}
+          </a>
         </p>
         <!-- END: Card Image (and draft link) -->
 

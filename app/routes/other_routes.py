@@ -417,8 +417,12 @@ def draft_result(draft_id):
 @app.route("/draft/<draft_id>/pick/<card_id>")
 @login_required
 def draft_pick(draft_id, card_id):
+    face_up = request.args.get('face_up', None)
+    if face_up:
+        face_up = DraftFaceUp[face_up]
+    
     dw = DraftWrapper(draft_id, current_user)
-    dw.pick_card(card_id)
+    dw.pick_card(card_id, face_up)
     return redirect("/draft/{}".format(draft_id))
 
 
