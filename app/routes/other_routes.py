@@ -355,12 +355,7 @@ def _new_draft_form():
 @login_required
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
-
-    if dw.draft.complete:
-        form = SaveDeckListForm()
-        return render_template('draft_complete.html', d=dw, dlform=form)
-    else:
-        return render_template('draft_picker.html', d=dw)
+    return render_template('draft_picker.html', d=dw)
 
 
 @app.route("/draft/<draft_id>/kill")
