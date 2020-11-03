@@ -223,6 +223,10 @@ class PackCard(db.Model):
     pick_number = db.Column(db.Integer, default=-1)
     picked_at = db.Column(db.DateTime)
 
+    # When a card is drafted face up, this is true. It can be swapped to false if the
+    # conditions of the card are met.
+    faceup = db.Column(db.Boolean, default=False)
+    
     # During a draft, players can mark cards for their sideboard
     sideboard = db.Column(db.Boolean, default=False)
 
