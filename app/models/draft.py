@@ -26,6 +26,7 @@ class Draft(db.Model):
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
     match_results = db.relationship('MatchResult', backref='draft')
+    messages = db.relationship('Message', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
@@ -292,3 +293,10 @@ class DeckList(db.Model):
 
         else:
             return card_names, []
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    text = db.Column(db.Text)
