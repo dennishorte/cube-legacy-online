@@ -109,7 +109,7 @@
         {% for scar in cube.scars|sort(attribute=applied_timestamp, reverse=True) %}
           {% if scar.applied_to_id %}
             <p class="mb-0">{{ scar.text }}</p>
-            <p class="text-s text-secondary ml-2 mb-0">
+            <p class="text-s text-secondary ml-2">
               {{ scar.applied_to.name() }}, <em>{{ scar.applied_by.name }}</em>
             </p>
           {% endif %}
