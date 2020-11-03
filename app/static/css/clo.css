@@ -127,3 +127,7 @@
 #autocardPopup img {
   width: 15rem;
 }
+
+#autocardPopup.double-width {
+  width: 30rem;
+}
