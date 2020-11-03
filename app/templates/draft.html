@@ -128,12 +128,6 @@
       <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
         Rebuild File
       </a>
-
-      {% if not d.draft.complete %}
-        <hr>
-        <a href="{{ url_for('draft_kill', draft_id=d.draft.id) }}">kill</a>
-      {% endif %}
-      
     </div>
     <!-- END: Draft Info -->
 
