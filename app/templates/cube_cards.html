@@ -33,29 +33,38 @@
               {{ section.header }} ({{ section.num_cards() }})
             </div>
 
-            <ul>
-              {% for card in section.cards %}
-                <li
-                  class="card-list-item {{ card.section_divider }}"
-                  data-front="{{ card.image_front() }}"
-                  {% if card.image_back() %}
-                    data-back="{{ card.image_back() }}"
-                  {% endif %}
-                >
-                  {% if card.linked_achs %}
-                    <i class="fab fa-font-awesome-flag"></i>
-                  {% endif %}
-                  {% if card.differ().is_significant() %}
-                    <i class="fas fa-bolt"></i>
-                  {% elif card.differ().is_minor() %}
-                    <i class="fas fa-bolt text-muted"></i>
-                  {% endif %}
-                  <a href="{{ url_for('card_editor', card_id=card.id) }}">
-                    {{ card.name() }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+            {% for card in section.cards %}
+              {% if card.section_divider == 'table-section-divider' %}
+                <div class="card-list-divider">
+                  {% for n in range(card.cmc()) %}
+                    {% if (n % 5) == 4 %}
+                      <span class="small-dot"></span>
+                    {% else %}
+                      <span class="tiny-dot"></span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <p
+                class="card-list-item mb-0"
+                data-front="{{ card.image_front() }}"
+                {% if card.image_back() %}
+                  data-back="{{ card.image_back() }}"
+                {% endif %}
+              >
+                {% if card.linked_achs %}
+                  <i class="fab fa-font-awesome-flag"></i>
+                {% endif %}
+                {% if card.differ().is_significant() %}
+                  <i class="fas fa-bolt"></i>
+                {% elif card.differ().is_minor() %}
+                  <i class="fas fa-bolt text-muted"></i>
+                {% endif %}
+                <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                  {{ card.name() }}
+                </a>
+              </p>
+            {% endfor %}
             
           </div>
         {% endfor %}

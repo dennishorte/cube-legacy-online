@@ -91,9 +91,9 @@
   margin-top: 4px;
 }
 
-.table-section ul {
+.table-section p {
   list-style-type: none;
-  margin: 4px;
+  margin: 0 4px;
   padding: 0;
   font-size: .8em;
 }
@@ -130,4 +130,30 @@
 
 #autocardPopup.double-width {
   width: 30rem;
+}
+
+.card-list-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tiny-dot {
+  height: 2px;
+  width: 2px;
+  background-color: black;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0;
+}
+
+.small-dot {
+  height: 3px;
+  width: 3px;
+  background-color: black;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0;
 }
