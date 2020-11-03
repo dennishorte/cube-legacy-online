@@ -93,8 +93,9 @@ class Cube(db.Model):
             CubeCard.cube_id == self.id,
             CubeCard.latest == True,
             CubeCard.removed_by_id != None,
+        ).order_by(
+            CubeCard.removed_by_timestamp.desc()
         ).all()
-        cards.sort(key=lambda x: x.name())
         return cards
 
     def cards_updated(self, limit=20):
