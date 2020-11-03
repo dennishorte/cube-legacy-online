@@ -225,10 +225,9 @@
       <div class="col" style="width:12.5%">
         
         <div class="table-section">
-          <ul class="list-unstyled">
             {% for card in cards %}
               {% if card.cube_card.cmc() == i or (card.cube_card.cmc() > i and i == 7) %}
-                <li
+                <p
                   class="card-list-item"
                   data-front="{{ card.cube_card.image_front() }}"
                   {% if card.cube_card.image_back() %}
@@ -238,10 +237,9 @@
                   <a href="{{ url_for('draft_swap_sideboard', card_id=card.id) }}">
                     {{ card.cube_card.name() }}
                   </a>
-                </li>
+                </p>
               {% endif %}
             {% endfor %}
-          </ul>
         </div>
         
       </div>
