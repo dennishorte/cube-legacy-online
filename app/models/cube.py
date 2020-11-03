@@ -166,21 +166,6 @@ class CubeCard(db.Model):
             scarred=self.is_scarred(),
         )
 
-    def color_identity(self):
-        pattern = r"{(.*?)}"
-        identity = set()
-        for face in self.card_faces():
-            texts = [face['mana_cost']] + re.findall(pattern, face['oracle_text'])
-            for text in texts:
-                for ch in face['mana_cost'].upper():
-                    if ch in 'WUBRG':
-                        identity.add(ch)
-
-        identity = sorted(identity, key=color_sort_key)
-        identity = ''.join(identity)
-
-        return identity
-
     def differ(self):
         return card_diff.CardDiffer(self.original, self)
 
@@ -283,10 +268,34 @@ class CubeCard(db.Model):
             return False  # No change detected
 
     def cmc(self):
-        return self.get_json().get('cmc', 0)
+        cost = 0
+        cost += card_util.cmc_from_string(self.card_faces()[0]['mana_cost'])
+
+        if self.layout() == Layout.split.name:
+            cost += card_util.cmc_from_string(self.card_faces()[1]['mana_cost'])
+
+        return cost
+
+    def color_identity(self):
+        pattern = r"{(.*?)}"
+        identity = set()
+        for face in self.card_faces():
+            texts = [face['mana_cost']] + re.findall(pattern, face['oracle_text'])
+            for text in texts:
+                for ch in face['mana_cost'].upper():
+                    if ch in 'WUBRG':
+                        identity.add(ch)
+
+        identity = sorted(identity, key=color_sort_key)
+        identity = ''.join(identity)
+
+        return identity
 
     def has_type(self, card_type):
         return card_type.lower() in self.card_faces()[0].get('type_line', '').lower()
+
+    def layout(self):
+        return self.get_json()['layout']
         
     def name(self):
         return self.get_json().get('name', 'NO_NAME')

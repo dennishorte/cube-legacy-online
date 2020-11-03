@@ -1,4 +1,5 @@
 import difflib
+import re
 
 
 class CardConsts(object):
@@ -178,3 +179,21 @@ def color_sort_key(color_ch):
         return 5
     else:
         return 6
+
+
+def cmc_from_string(cost_string):
+    cost = 0
+    
+    cost_string = cost_string.upper()
+    pattern = r"{(.*?)}"
+    for mana_symbol in re.findall(pattern, cost_string):
+        if mana_symbol.isnumeric():
+            cost += int(mana_symbol)
+            
+        elif mana_symbol.startswith('2/'):
+            cost += 2
+
+        else:
+            cost += 1
+
+    return cost
