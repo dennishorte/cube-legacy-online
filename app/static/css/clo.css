@@ -61,6 +61,8 @@
   border-color: var(--secondary);
   border-radius: .25rem;
   padding: .5rem!important;
+  margin-top: .5rem!important;
+  margin-left: .5rem!important;
 }
 
 .card-frame {

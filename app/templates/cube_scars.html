@@ -16,10 +16,10 @@
   {% endif %}
   <!-- END: Random Scars -->
 
-  <div class="row mt-2">
+  <div class="row">
 
     <!-- Table of existing scars -->
-    <div class="col col-md-8">
+    <div class="col col-md-8 framed">
       <h4>Scars</h4>
       <table class="table table-sm" id="scarTable">
         <thead class="thead thead-light">
@@ -29,37 +29,39 @@
           <th>card</th>
         </thead>
         <tbody>
-          {% for scar in cube.scars %}
-            <tr data-scar-id="{{ scar.id }}">
-              <td class="scar-text">{{ scar.text }}</td>
-              <td class="scar-restrictions">{{ scar.restrictions }}</td>
-              <td>{{ scar.created_by.name }}</td>
+          {% for scar in cube.scars|sort(attribute=created_timestamp, reverse=True) %}
+            {% if not scar.applied_to_id %}
+              <tr data-scar-id="{{ scar.id }}">
+                <td class="scar-text">{{ scar.text }}</td>
+                <td class="scar-restrictions">{{ scar.restrictions }}</td>
+                <td>{{ scar.created_by.name }}</td>
 
-              <td class="text-right">
-                {% if scar.applied_to %}
-                  <a href="{{ url_for('card_editor', card_id=scar.applied_to_id) }}">
-                    {{ scar.applied_to.name() }}
-                  </a>
-                {% else %}
-                  <a
-                    class="use-scar text-secondary"
-                    href="#useScar" 
-                    data-toggle="modal">
-                    use
+                <td class="text-right">
+                  {% if scar.applied_to %}
+                    <a href="{{ url_for('card_editor', card_id=scar.applied_to_id) }}">
+                      {{ scar.applied_to.name() }}
+                    </a>
+                  {% else %}
+                    <a
+                      class="use-scar text-secondary"
+                      href="#useScar" 
+                      data-toggle="modal">
+                      use
                   </button>
-                {% endif %}
-              </td>
-            </tr>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
           {% endfor %}
         </tbody>
       </table>
     </div>
     <!-- END: Table of existing scars -->
 
-    <div class="col col-md-4 ">
+    <div class="col p-0">
 
       <!-- Utilities -->
-      <div class="bg-light border p-2">
+      <div class="framed">
         <form action="{{ url_for('cube_scars', cube_id=cube.id) }}" method="post" novalidate>
           {{ rsform.hidden_tag() }}
           {{ rsform.submit(class="btn btn-info") }}
@@ -69,7 +71,7 @@
       <!-- END: Utilities -->
 
       <!-- New scar form -->
-      <div id="createScarForm" class="bg-light border p-2 mt-2">
+      <div id="createScarForm" class="framed">
         <h4 id="createScarTitle">Create Scar</h4>
         <form
           action="{{ url_for('cube_scars_add', cube_id=cube.id) }}"
@@ -99,8 +101,23 @@
           </div>
         </form>
       </div>
+      <!-- END: New scar form -->
+
+      <!-- Used Scars -->
+      <div class="framed">
+        <h5>Used Scars</h5>
+        {% for scar in cube.scars|sort(attribute=applied_timestamp, reverse=True) %}
+          {% if scar.applied_to_id %}
+            <p class="mb-0">{{ scar.text }}</p>
+            <p class="text-s text-secondary ml-2 mb-0">
+              {{ scar.applied_to.name() }}, <em>{{ scar.applied_by.name }}</em>
+            </p>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <!-- END: Used Scars -->
+      
     </div>
-    <!-- END: New scar form -->
   </div>
 
   <!-- Modal: Add scar to card. -->
