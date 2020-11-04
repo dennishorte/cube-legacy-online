@@ -29,7 +29,7 @@
           <th>card</th>
         </thead>
         <tbody>
-          {% for scar in cube.scars|sort(attribute=created_timestamp, reverse=True) %}
+          {% for scar in cube.scars|sort(attribute='created_timestamp', reverse=True) %}
             {% if not scar.applied_to_id %}
               <tr data-scar-id="{{ scar.id }}">
                 <td class="scar-text">{{ scar.text }}</td>
@@ -106,7 +106,7 @@
       <!-- Used Scars -->
       <div class="framed">
         <h5>Used Scars</h5>
-        {% for scar in cube.scars|sort(attribute=applied_timestamp, reverse=True) %}
+        {% for scar in cube.scars|sort(attribute='applied_timestamp', reverse=True) %}
           {% if scar.applied_to_id %}
             <p class="mb-0">{{ scar.text }}</p>
             <p class="text-s text-secondary ml-2">
