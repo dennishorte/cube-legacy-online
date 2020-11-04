@@ -4,128 +4,112 @@
 
 {% extends "cube_base.html" %}
 
+{% block more_nav %}
+  <li>
+    <a href="#availableAchievements">Available Achievements</a>
+  </li>
+
+  <li>
+    <a href="#claimedAchievements">Claimed Achievements</a>
+  </li>
+
+  <li>
+    <a href="#linkedAchievements">Linked Achievements</a>
+  </li>
+
+  <li>
+    <a href="#newAchievement">New Achievement Form</a>
+  </li>
+
+{% endblock more_nav %}
+
 {% block content %}
   {{ super() }}
-
-  <!-- Navigation -->
-  <div class="row">
-    <div class="col bg-light border mb-2">
-
-      <ul class="nav">
-        <li class="nav-item">
-          <span class="nav-link">Achivement Links: </span>
-        </li>
-        
-        <li class="nav-item">
-          <a class="nav-link" href="#availableAchievements">Available</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#claimedAchievements">Claimed</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#linkedAchievements">Linked</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#newAchievement">Create</a>
-        </li>
-      </ul>
-      
-    </div>
-  </div>
-  <!-- END: Navigation -->
-
+  
   <!-- First Row -->
   <div class="row">
     
     <!-- Available Achievements -->
-    <div class="col col-md-6">
+    <div class="col framed">
       <a name="availableAchievements"></a>
       <h4>Available Achievements</h4>
 
-      <div class="bg-light border border-round p-2">
-        {% for achievement in cube.achievements_avaiable() %}
-          {% if not achievement.linked_cards %}
-            {{ show_achievement(achievement, current_user) }}
-          {% endif %}
-        {% endfor %}
-      </div>
+      {% for achievement in cube.achievements_avaiable() %}
+        {% if not achievement.linked_cards %}
+          {{ show_achievement(achievement, current_user) }}
+        {% endif %}
+      {% endfor %}
     </div>
     <!-- END: Available Achievements -->
 
     <!-- Claimed Achievements -->
-    <div class="col">
+    <div class="col framed">
       <a name="claimedAchievements"></a>
       <h4>Claimed Achievements</h4>
-      <div class="border bg-light p-2 mt-2">
-        {% for achievement in cube.achievements_completed()|sort(attribute='unlocked_timestamp', reverse=True) %}
-          <div class="d-flex">
+      
+      {% for achievement in cube.achievements_completed()|sort(attribute='unlocked_timestamp', reverse=True) %}
+        <div class="d-flex">
 
-            <!-- Achievement Name -->
-            <div class="mr-auto mt-1">
-              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
-                {{ achievement.full_name() }}
-              </a>
-              {% if achievement.multiunlock %}
-                <span class="badge badge-pill badge-warning">multi</span>
-              {% endif %}
-              <br>
-              <p class="ml-4 mb-0 text-muted font-weight-light" style="font-size:.8rem">
-                unlocked: {{ achievement.unlocked_by.name }}
-                on {{ achievement.unlocked_timestamp.strftime("%Y-%m-%d") }}
-              </p>
-            </div>
-
-            <!-- Clone Button -->
-            <div class="mr-1">
-              <a href="{{ url_for('achievement_clone', achievement_id=achievement.id) }}">
-                <button class="btn btn-info">clone</button>
-              </a>
-            </div>
+          <!-- Achievement Name -->
+          <div class="mr-auto mt-1">
+            <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
+              {{ achievement.full_name() }}
+            </a>
+            {% if achievement.multiunlock %}
+              <span class="badge badge-pill badge-warning">multi</span>
+            {% endif %}
+            <br>
+            <p class="ml-4 mb-0 text-muted font-weight-light" style="font-size:.8rem">
+              unlocked: {{ achievement.unlocked_by.name }}
+              on {{ achievement.unlocked_timestamp.strftime("%Y-%m-%d") }}
+            </p>
           </div>
 
-          <div>
-            <!-- Achievement Conditions -->
-            <div class="text-secondary">
-              {{ achievement.conditions }}
-            </div>
-
-            <div class="text-info p-2">
-              {{ format_multi_line_text(achievement.story) }}
-            </div>
+          <!-- Clone Button -->
+          <div class="mr-1">
+            <a href="{{ url_for('achievement_clone', achievement_id=achievement.id) }}">
+              <button class="btn btn-info">clone</button>
+            </a>
           </div>
-          <hr>
-        {% endfor %}
-      </div>
+        </div>
+
+        <div>
+          <!-- Achievement Conditions -->
+          <div class="text-secondary">
+            {{ achievement.conditions }}
+          </div>
+
+          <div class="text-info p-2">
+            {{ format_multi_line_text(achievement.story) }}
+          </div>
+        </div>
+        <hr>
+      {% endfor %}
     </div>
     <!-- END: Claimed Achievements -->
   </div>
   <!-- END: First Row -->
 
   <!-- Second Row -->
-  <div class="row mt-4">
+  <div class="row">
     <!-- Linked Achievements -->
-    <div class="col col-md-6">
+    <div class="col framed">
       <a name="linkedAchievements"></a>
       <h4 class="mb-0">Linked Achievements</h4>
       <p class="text-muted">
         <em>Achievements that are linked to specific cards.</em>
       </p>
 
-      <div class="bg-light border border-round p-2">
-        {% for achievement in cube.achievements_avaiable() %}
-          {% if achievement.linked_cards %}
-            {{ show_achievement(achievement, current_user) }}
-          {% endif %}
-        {% endfor %}
-      </div>
+      {% for achievement in cube.achievements_avaiable() %}
+        {% if achievement.linked_cards %}
+          {{ show_achievement(achievement, current_user) }}
+        {% endif %}
+      {% endfor %}
     </div>
     <!-- END: Linked Achievements -->
     
     <!-- New achievement form -->
-    <div class="col col-md-6">
+    <div class="col framed">
       <a name="newAchievement"></a>
       <h4>Create Achievement</h4>
       {{ show_achievement_form(form) }}
