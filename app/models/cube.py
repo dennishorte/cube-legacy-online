@@ -119,6 +119,11 @@ class Cube(db.Model):
         else:
             return filtered
 
+    def used_scars(self):
+        used = [x for x in self.scars if x.applied_timestamp]
+        used.sort(key=lambda x: x.applied_timestamp, reverse=True)
+        return used
+
 
 class CubeCard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
