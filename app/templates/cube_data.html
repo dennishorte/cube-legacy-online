@@ -3,7 +3,7 @@
 {% block content %}
   {{ super() }}
 
-  <div class="row mt-2">
+  <div class="row">
 
     <!-- Creature Type Breakdown -->
     <div class="col framed">
@@ -17,7 +17,7 @@
 
     
     <!-- Creatures Display -->
-    <div class="col framed ml-2">
+    <div class="col framed">
       {% for type, cards in d.creature_types() %}
         <div class="creature-group" id="{{ type }}CreatureGroup">
           <h5>{{ type }}</h5>
