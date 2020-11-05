@@ -32,7 +32,7 @@
             <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
           {% endfor %}
           <td>
-            <a href="/draft/{{d.draft.id}}/force/{{s.user.id}}">force</a>
+            <a href="{{ url_for('draft_force', draft_id=d.draft.id, user_id=s.user_id) }}">force</a>
           </td>
         </tr>
       {% endfor %}

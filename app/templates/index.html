@@ -172,7 +172,7 @@
         
         <div class="modal-body">
 
-          <form action="/draft/new" method="post" novalidate>
+          <form action="{{ url_for('draft_new') }}" method="post" novalidate>
             {{ new_draft_form.hidden_tag() }}
             <div class="form-group">
               {{ new_draft_form.name.label }}

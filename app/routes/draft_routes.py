@@ -26,9 +26,37 @@ from app.util.draft_wrapper import DraftWrapper
 from app.util.string import normalize_newlines
 
 
+@app.route("/draft/<draft_id>")
+@login_required
+def draft(draft_id):
+    dw = DraftWrapper(draft_id, current_user)
+    return render_template('draft.html', d=dw)
+
+
+@app.route("/draft/<draft_id>/debug")
+@login_required
+def draft_debug(draft_id):
+    draft_debugger = DraftDebugger(draft_id)
+    return render_template('draft_debug.html', d=draft_debugger)
+
+
+@app.route("/draft/<draft_id>/force/<user_id>")
+@login_required
+def draft_force(draft_id, user_id):
+    user = User.query.get(user_id)
+    dw = DraftWrapper(draft_id, user)
+
+    # Pick the first card in the pack.
+    if dw.pack:
+        dw.seat.unlock_scars()
+        dw.pick_card(dw.pack.unpicked_cards()[0].id)
+        
+    return redirect("/draft/{}".format(draft_id))
+
+
 @app.route('/draft/new', methods=['POST'])
 @login_required
-def new_draft():
+def draft_new():
     form = NewDraftForm.factory()
 
     if form.validate_on_submit():
@@ -47,13 +75,6 @@ def new_draft():
         return "Unable to create new draft"
 
 
-@app.route("/draft/<draft_id>")
-@login_required
-def draft(draft_id):
-    dw = DraftWrapper(draft_id, current_user)
-    return render_template('draft.html', d=dw)
-
-
 @app.route("/draft/<draft_id>/kill")
 @login_required
 def draft_kill(draft_id):
@@ -63,17 +84,26 @@ def draft_kill(draft_id):
     db.session.commit()
 
     return redirect(url_for('index'))
-    
 
-@app.route("/draft/swap_sideboard/<card_id>")
+
+@app.route("/draft/<draft_id>/new_scars")
 @login_required
-def draft_swap_sideboard(card_id):
-    card = PackCard.query.get(card_id)
-    card.sideboard = not card.sideboard
-    db.session.add(card)
-    db.session.commit()
+def draft_new_scars(draft_id):
+    d = DraftWrapper(draft_id, current_user)
+    d.seat.unlock_scars()
+    return redirect(url_for('draft', draft_id=draft_id))
 
-    return redirect(url_for('draft', draft_id=card.draft_id))
+
+@app.route("/draft/<draft_id>/pick/<card_id>")
+@login_required
+def draft_pick(draft_id, card_id):
+    face_up = request.args.get('face_up', None)
+    if face_up:
+        face_up = DraftFaceUp[face_up]
+    
+    dw = DraftWrapper(draft_id, current_user)
+    dw.pick_card(card_id, face_up)
+    return redirect("/draft/{}".format(draft_id))
     
 
 @app.route("/draft/<draft_id>/results", methods=["POST"])
@@ -108,47 +138,17 @@ def draft_result(draft_id):
         flash("Error submitting form")
 
     return redirect(url_for('draft', draft_id=draft_id))
-
-
-@app.route("/draft/<draft_id>/pick/<card_id>")
-@login_required
-def draft_pick(draft_id, card_id):
-    face_up = request.args.get('face_up', None)
-    if face_up:
-        face_up = DraftFaceUp[face_up]
     
-    dw = DraftWrapper(draft_id, current_user)
-    dw.pick_card(card_id, face_up)
-    return redirect("/draft/{}".format(draft_id))
 
-
-@app.route("/draft/<draft_id>/force/<user_id>")
+@app.route("/draft/swap_sideboard/<card_id>")
 @login_required
-def force_pick(draft_id, user_id):
-    user = User.query.get(user_id)
-    dw = DraftWrapper(draft_id, user)
+def draft_swap_sideboard(card_id):
+    card = PackCard.query.get(card_id)
+    card.sideboard = not card.sideboard
+    db.session.add(card)
+    db.session.commit()
 
-    # Pick the first card in the pack.
-    if dw.pack:
-        dw.seat.unlock_scars()
-        dw.pick_card(dw.pack.unpicked_cards()[0].id)
-        
-    return redirect("/draft/{}".format(draft_id))
-
-
-@app.route("/draft/<draft_id>/debug")
-@login_required
-def draft_debug(draft_id):
-    draft_debugger = DraftDebugger(draft_id)
-    return render_template('draft_debug.html', d=draft_debugger)
-
-
-@app.route("/draft/<draft_id>/new_scars")
-@login_required
-def draft_new_scars(draft_id):
-    d = DraftWrapper(draft_id, current_user)
-    d.seat.unlock_scars()
-    return redirect(url_for('draft', draft_id=draft_id))
+    return redirect(url_for('draft', draft_id=card.draft_id))
 
 
 @app.route("/draft/<draft_id>/save_decklist", methods=["POST"])
