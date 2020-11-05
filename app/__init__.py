@@ -20,6 +20,7 @@ from app.routes import auth_routes
 from app.routes import achievement_routes
 from app.routes import cube_routes
 from app.routes import custom_routes
+from app.routes import draft_routes
 from app.routes import other_routes
 
 # Load custom filters

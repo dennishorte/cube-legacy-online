@@ -142,6 +142,20 @@ class NewDraftForm(FlaskForm):
     players = SelectMultipleField('Players', validators=[DataRequired()])
     submit = SubmitField('Create')
 
+    @staticmethod
+    def factory():
+        from app.models.cube import Cube
+        from app.models.user import User
+        
+        cubes = [x.name for x in Cube.query.order_by('name')]
+        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+
+        form = NewDraftForm()
+        form.cube.choices = cubes
+        form.players.choices = users
+
+        return form
+
 
 class NewAchievementForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
