@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% macro card_list(header, cards) %}
+{% macro card_list(header, class, cards) %}
   <div class="card-list-divider">
     <p>{{ header }}</p>
   </div>
@@ -9,7 +9,7 @@
     {% for pack_card in cards %}
       {% set card = pack_card.cube_card %}
       <li
-        class="card-list-item"
+        class="card-list-item {{ class }}"
         data-front="{{ card.image_front() }}"
         {% if card.image_back() %}
           data-back="{{ card.image_back() }}"
@@ -28,11 +28,17 @@
     <div class="row">
       
       <div class="col col-3 text-center">
-        <h5>Main Deck</h5>
+        <h5>
+          Main Deck
+          (<span id="maindeckCount">{{ card_set.maindeck().cards|length }}</span>)
+        </h5>
       </div>
 
       <div class="col col-3 text-center">
-        <h5>Sideboard</h5>
+        <h5>
+          Sideboard
+          (<span id="sideboardCount">{{ card_set.sideboard().cards|length }}</span>)
+        </h5>
       </div>
       
     </div>
@@ -41,12 +47,12 @@
     <!-- Land Row -->
     <div class="row">
       
-      <div class="col col-3 framed">
-        {{ card_list('land', card_set.maindeck().land().cards) }}
+      <div class="col col-3 framed maindeck">
+        {{ card_list('land', 'land-card', card_set.maindeck().land().cards) }}
       </div>
       
-      <div class="col col-3 framed">
-        {{ card_list('land', card_set.sideboard().land().cards) }}
+      <div class="col col-3 framed sideboard">
+        {{ card_list('land', 'land-card', card_set.sideboard().land().cards) }}
       </div>
 
     </div>
@@ -55,7 +61,7 @@
     {% for cmc in range(8) %}
 
       {# Cards under this header #}
-      {% if header == 7 %}
+      {% if cmc == 7 %}
         {% set cards = card_set.cmc_gte(7) %}
         {% set cmc_string = '7+' %}
       {% else %}
@@ -68,14 +74,14 @@
       {% set sideboard = cards.sideboard() %}
 
       <div class="row">
-        <div class="col col-3 framed">
-          {{ card_list('creatures '+cmc_string, maindeck.creatures().cards) }}
-          {{ card_list('other '+cmc_string, maindeck.other().cards) }}
+        <div class="col col-3 framed maindeck">
+          {{ card_list('creatures '+cmc_string, 'creature', maindeck.creatures().cards) }}
+          {{ card_list('other '+cmc_string, 'other', maindeck.other().cards) }}
         </div>
 
-        <div class="col col-3 framed">
-          {{ card_list('creatures '+cmc_string, sideboard.creatures().cards) }}
-          {{ card_list('other '+cmc_string, sideboard.other().cards) }}
+        <div class="col col-3 framed sideboard">
+          {{ card_list('creatures '+cmc_string, 'creature', sideboard.creatures().cards) }}
+          {{ card_list('other '+cmc_string, 'other', sideboard.other().cards) }}
         </div>
       </div>
 
@@ -92,6 +98,25 @@
   </div>
 
   <div class="row mt-2 deckbuilder justify-content-center">
+    <div class="col col-2 framed">
+      <h5>Main Deck</h5>
+      <p>
+        Total:
+        <span id="countMaindeck"></span>
+      </p>
+      <p>
+        Lands:
+        <span id="countLands"</span>
+      </p>
+      <p>
+        Creatures:
+        <span id="countCreatures"</span>
+      </p>
+      <p>
+        Others:
+        <span id="countOther"</span>
+      </p>
+    </div>
     {{ card_column(d.card_set) }}
   </div>
 
@@ -115,15 +140,34 @@
 
 {% block scripts %}
   <script>
-   autocard_init('card-list-item')
+   function update_counts() {
+     let maindeckCount = $('.maindeck .card-list-item').length
+     let sideboardCount = $('.sideboard .card-list-item').length
+
+     $('#maindeckCount').text(maindeckCount)
+     $('#sideboardCount').text(sideboardCount)
+
+     let creatures = $('.maindeck li.creature').length
+     let other = $('.maindeck li.other').length
+     let land = $('.maindeck li.land-card').length
+
+     $('#countMaindeck').text(maindeckCount)
+     $('#countCreatures').text(creatures)
+     $('#countOther').text(other)
+     $('#countLands').text(land)
+   }
 
    $(document).ready(function() {
+     update_counts()
+     autocard_init('card-list-item')
+
      $( ".sortable" ).sortable({
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
        start: function(e, ui){
          ui.placeholder.height(ui.item.height());
-       }
+       },
+       stop: update_counts
      });
      $( ".sortable" ).disableSelection();     
    })
