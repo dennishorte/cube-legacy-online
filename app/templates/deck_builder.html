@@ -100,6 +100,21 @@
       
     </div>
 
+    <div class="col col-2 framed">
+      <h5>Basic Lands</h5>
+
+      {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
+        <div class="basic-selector">
+          <i class="far fa-plus-square basic-adjust basic-add"></i>
+          <i class="far fa-minus-square basic-adjust basic-remove"></i>
+          <span class="basic-type">{{ basic }}</span>
+          ...
+          <span class="basic-count">0</span>
+        </div>
+      {% endfor %}
+      
+    </div>
+
   </div>
 
 
@@ -112,12 +127,30 @@
      let land = $('#maindeckOther li.card-type-land').length
      let other = $('#maindeckOther li').length - land
 
-     let total = creatures + other + land
+     var basic_land = 0
+     $('.basic-count').each(function (i, elem) {
+       basic_land += parseInt($(elem).text())
+     })
+
+     let total = creatures + other + land + basic_land
 
      $('#countMaindeck').text(total)
      $('#countCreatures').text(creatures)
      $('#countOther').text(other)
-     $('#countLands').text(land)
+     $('#countLands').text(land + basic_land)
+   }
+
+   function basic_land_adjust() {
+     let button = $(this)
+     let parent = button.parent('.basic-selector')
+     
+     let diff = button.hasClass('basic-add') ? 1 : -1
+     let count_span = parent.find('.basic-count')
+     let count = Math.max(0, parseInt(count_span.text()) + diff)
+
+     count_span.text(count)
+
+     update_counts()
    }
 
    $(document).ready(function() {
@@ -137,6 +170,9 @@
      })
      $( ".sortable" ).disableSelection()
 
+     // Basic Land Selectors
+     $('.basic-adjust').click(basic_land_adjust)
+     $('.basic-selector').disableSelection()
 
      // Save the deck
      $("#saveLink").click(function() {
