@@ -1,48 +1,54 @@
 {% extends 'base.html' %}
 
+{% macro card_list(header, cards) %}
+  <div class="card-list-divider">
+    <p>{{ header }}</p>
+  </div>
+  
+  <ul class="list-unstyled card-list sortable">
+    {% for pack_card in cards %}
+      {% set card = pack_card.cube_card %}
+      <li
+        class="card-list-item"
+        data-front="{{ card.image_front() }}"
+        {% if card.image_back() %}
+          data-back="{{ card.image_back() }}"
+        {% endif %}
+      >
+        {{ card.name() }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+
 {% macro card_column(card_set) %}
-
-
   <div class="col">
 
     <!-- Header Row -->
     <div class="row">
-      <div class="col col-3">
+      
+      <div class="col col-3 text-center">
         <h5>Main Deck</h5>
       </div>
 
-      <div class="col col-3">
+      <div class="col col-3 text-center">
         <h5>Sideboard</h5>
       </div>
+      
     </div>
     <!-- END: Header Row -->
 
     <!-- Land Row -->
     <div class="row">
+      
       <div class="col col-3 framed">
-        <div class="card-list-divider">
-          <p>land</p>
-        </div>
-
-        <ul class="list-unstyled card-list sortable">
-          {% for card in card_set.maindeck().land().cards %}
-            <li class="card-list-item">{{ card.cube_card.name() }}</li>
-          {% endfor %}
-        </ul>
+        {{ card_list('land', card_set.maindeck().land().cards) }}
+      </div>
+      
+      <div class="col col-3 framed">
+        {{ card_list('land', card_set.sideboard().land().cards) }}
       </div>
 
-      <div class="col col-3 framed">
-        <div class="card-list-divider">
-          <p>land</p>
-        </div>
-        
-
-        <ul class="list-unstyled card-list sortable">
-          {% for card in card_set.sideboard().land().cards %}
-            <li class="card-list-item">{{ card.cube_card.name() }}</li>
-          {% endfor %}
-        </ul>
-      </div>
     </div>
     <!-- END: Land Row -->
 
@@ -54,7 +60,7 @@
         {% set cmc_string = '7+' %}
       {% else %}
         {% set cards = card_set.cmc(cmc) %}
-        {% set cmc_string = cmc %}
+        {% set cmc_string = cmc|string %}
       {% endif %}
 
       {# Maindeck/Sideboard breakdown #}
@@ -63,48 +69,13 @@
 
       <div class="row">
         <div class="col col-3 framed">
-          <div class="card-list-divider">
-            <p>creatures {{ cmc_string }}</p>
-          </div>
-          
-          <ul class="list-unstyled card-list sortable">
-            {% for card in maindeck.creatures().cards %}
-              <li class="card-list-item">{{ card.cube_card.name() }}</li>
-            {% endfor %}
-          </ul>
-
-          <div class="card-list-divider">
-            <p>other {{ cmc_string }}</p>
-          </div>
-
-          <ul class="list-unstyled card-list sortable">
-            {% for card in maindeck.other().cards %}
-              <li class="card-list-item">{{ card.cube_card.name() }}</li>
-            {% endfor %}
-          </ul>
+          {{ card_list('creatures '+cmc_string, maindeck.creatures().cards) }}
+          {{ card_list('other '+cmc_string, maindeck.other().cards) }}
         </div>
 
         <div class="col col-3 framed">
-          <div class="card-list-divider">
-            <p>creatures {{ cmc_string }}</p>
-          </div>
-          
-
-          <ul class="list-unstyled card-list sortable">
-            {% for card in sideboard.creatures().cards %}
-              <li class="card-list-item">{{ card.cube_card.name() }}</li>
-            {% endfor %}
-          </ul>
-
-          <div class="card-list-divider">
-            <p>other {{ cmc_string }}</p>
-          </div>
-
-          <ul class="list-unstyled card-list sortable">
-            {% for card in sideboard.other().cards %}
-              <li class="card-list-item">{{ card.cube_card.name() }}</li>
-            {% endfor %}
-          </ul>
+          {{ card_list('creatures '+cmc_string, sideboard.creatures().cards) }}
+          {{ card_list('other '+cmc_string, sideboard.other().cards) }}
         </div>
       </div>
 
@@ -120,10 +91,7 @@
     </div>
   </div>
 
-  <div class="row mt-2 deckbuilder">
-    <div class="col col-1">
-    </div>
-
+  <div class="row mt-2 deckbuilder justify-content-center">
     {{ card_column(d.card_set) }}
   </div>
 
@@ -147,6 +115,8 @@
 
 {% block scripts %}
   <script>
+   autocard_init('card-list-item')
+
    $(document).ready(function() {
      $( ".sortable" ).sortable({
        connectWith: '.card-list',
