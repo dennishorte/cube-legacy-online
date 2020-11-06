@@ -15,6 +15,9 @@ class CardSet(object):
     def cmc_gte(self, cmc):
         return CardSet([x for x in self.cards if x.cube_card.cmc() >= cmc])
 
+    def cmc_lte(self, cmc):
+        return CardSet([x for x in self.cards if x.cube_card.cmc() <= cmc])
+
     def creatures(self):
         return CardSet([x for x in self.cards if x.cube_card.is_creature()])
 
