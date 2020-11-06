@@ -6,10 +6,10 @@
 
       {# Cards under this header #}
       {% if cmc == 7 %}
-        {% set cards = cards.cmc_gte(7).cards %}
+        {% set cards = cards.cmc_gte(7) %}
         {% set cmc_string = '7+' %}
       {% else %}
-        {% set cards = cards.cmc(cmc).cards %}
+        {% set cards = cards.cmc(cmc) %}
         {% set cmc_string = cmc|string %}
       {% endif %}
 
@@ -21,6 +21,7 @@
           <ul class="card-list sortable list-unstyled">
             {% for pack_card in cards %}
               {% set card = pack_card.cube_card %}
+
               <li
                 class="card-list-item"
                 data-pack-card-id="{{ pack_card.id }}"
@@ -42,11 +43,11 @@
 {% macro deckbuilder(card_set) %}
   <h5 class="mb-0 mt-2">Main Deck</h5>
   {{ deckbuilder_row('maindeckCreatures', card_set.maindeck().creatures()) }}
-  {{ deckbuilder_row('maindeckOther', card_set.maindeck().other()) }}
+  {{ deckbuilder_row('maindeckOther', card_set.maindeck().non_creature()) }}
 
   <h5 class="mb-0 mt-2">Sideboard</h5>
   {{ deckbuilder_row('sideboardCreatures', card_set.sideboard().creatures()) }}
-  {{ deckbuilder_row('sideboardOther', card_set.sideboard().other()) }}
+  {{ deckbuilder_row('sideboardOther', card_set.sideboard().non_creature()) }}
 {% endmacro %}
 
 
@@ -115,17 +116,13 @@
 {% block scripts %}
   <script>
    function update_counts() {
-     let maindeckCount = $('.maindeck .card-list-item').length
-     let sideboardCount = $('.sideboard .card-list-item').length
-
-     $('#maindeckCount').text(maindeckCount)
-     $('#sideboardCount').text(sideboardCount)
-
-     let creatures = $('.maindeck li.creature').length
-     let other = $('.maindeck li.other').length
+     let creatures = $('#maindeckCreatures li').length
+     let other = $('#maindeckOther li').length
      let land = $('.maindeck li.land-card').length
 
-     $('#countMaindeck').text(maindeckCount)
+     let total = creatures + other + land
+
+     $('#countMaindeck').text(total)
      $('#countCreatures').text(creatures)
      $('#countOther').text(other)
      $('#countLands').text(land)

@@ -5,33 +5,58 @@ from app.models.user import *
 
 
 class CardSet(object):
-    def __init__(self, cards):
+    def __init__(self, cards, filters=[]):
         self.cards = cards
         self.cards.sort(key=lambda x: x.cube_card.name())
 
+        self.filters = filters
+
+    def __iter__(self):
+        filtered = []
+        for card in self.cards:
+            if all([f(card) for f in self.filters]):
+                filtered.append(card)
+
+        return iter(filtered)
+
     def cmc(self, cmc):
-        return CardSet([x for x in self.cards if x.cube_card.cmc() == cmc])
+        new_filter = lambda x: x.cube_card.cmc() == cmc
+        return self.with_filter(new_filter)
 
     def cmc_gte(self, cmc):
-        return CardSet([x for x in self.cards if x.cube_card.cmc() >= cmc])
+        new_filter = lambda x: x.cube_card.cmc() >= cmc
+        return self.with_filter(new_filter)
 
     def cmc_lte(self, cmc):
-        return CardSet([x for x in self.cards if x.cube_card.cmc() <= cmc])
+        new_filter = lambda x: x.cube_card.cmc() <= cmc
+        return self.with_filter(new_filter)
 
     def creatures(self):
-        return CardSet([x for x in self.cards if x.cube_card.is_creature()])
+        new_filter = lambda x: x.cube_card.is_creature()
+        return self.with_filter(new_filter)
 
     def land(self):
-        return CardSet([x for x in self.cards if x.cube_card.is_land()])
+        new_filter = lambda x: x.cube_card.is_land()
+        return self.with_filter(new_filter)
+
+    def non_creature(self):
+        new_filter = lambda x: not x.cube_card.is_creature()
+        return self.with_filter(new_filter)
 
     def other(self):
-        return CardSet([x for x in self.cards if not x.cube_card.is_land() and not x.cube_card.is_creature()])
+        new_filter = lambda x: not x.cube_card.is_land() and not x.cube_card.is_creature()
+        return self.with_filter(new_filter)
 
     def maindeck(self):
-        return CardSet([x for x in self.cards if not x.sideboard])
+        new_filter = lambda x: not x.sideboard
+        return self.with_filter(new_filter)
 
     def sideboard(self):
-        return CardSet([x for x in self.cards if x.sideboard])
+        new_filter = lambda x: x.sideboard
+        return self.with_filter(new_filter)
+
+    def with_filter(self, f):
+        return CardSet(self.cards, self.filters + [f])
 
 
 class DeckBuilder(object):
