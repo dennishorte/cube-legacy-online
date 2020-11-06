@@ -22,8 +22,12 @@
             {% for pack_card in cards %}
               {% set card = pack_card.cube_card %}
 
+              {% if card.is_land() %}
+                {% set card_class = 'card-type-land' %}
+              {% endif %}
+              
               <li
-                class="card-list-item"
+                class="card-list-item {{ card_class }}"
                 data-pack-card-id="{{ pack_card.id }}"
                 data-front="{{ card.image_front() }}"
                 {% if card.image_back() %}
@@ -69,16 +73,17 @@
           <span id="countMaindeck"></span>
         </li>
         <li>
-          Lands:
-          <span id="countLands"</span>
-        </li>
-        <li>
           Creatures:
           <span id="countCreatures"</span>
         </li>
         <li>
           Others:
+
           <span id="countOther"</span>
+        </li>
+        <li>
+          Lands:
+          <span id="countLands"</span>
         </li>
       </ul>
 
@@ -117,8 +122,8 @@
   <script>
    function update_counts() {
      let creatures = $('#maindeckCreatures li').length
-     let other = $('#maindeckOther li').length
-     let land = $('.maindeck li.land-card').length
+     let land = $('#maindeckOther li.card-type-land').length
+     let other = $('#maindeckOther li').length - land
 
      let total = creatures + other + land
 
