@@ -3,6 +3,7 @@ from datetime import datetime
 
 from app import db
 from app.models.cube import *
+from app.models.deck import *
 from app.models.user import *
 
 
@@ -27,6 +28,7 @@ class Draft(db.Model):
     pack_cards = db.relationship('PackCard', backref='draft')
     match_results = db.relationship('MatchResult', backref='draft')
     messages = db.relationship('Message', backref='draft')
+    decks = db.relationship('Deck', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)

@@ -30,6 +30,8 @@ class User(UserMixin, db.Model):
     achievements_created = db.relationship('Achievement', backref='created_by', foreign_keys='Achievement.created_by_id')
     achievements_unlocked = db.relationship('Achievement', backref='unlocked_by', foreign_keys='Achievement.unlocked_by_id')
 
+    decks = db.relationship('Deck', backref='user')
+
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
