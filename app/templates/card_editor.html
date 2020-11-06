@@ -270,10 +270,12 @@
     <div class="col framed ml-2">
       <h4>Comments</h4>
       <hr>
-      {% for version in card.versions() %}
-        <p class="mb-0 ml-2 text-secondary text-s">{{ version.timestamp.date() }}</p>
-        <p>{{ version.comment }}</p>
-      {% endfor %}
+      {% if card %}
+        {% for version in card.versions() %}
+          <p class="mb-0 ml-2 text-secondary text-s">{{ version.timestamp.date() }}</p>
+          <p>{{ version.comment }}</p>
+        {% endfor %}
+      {% endif %}
     </div>
     <!-- END: Comments from previous versions -->
     
