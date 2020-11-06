@@ -1,61 +1,115 @@
 {% extends 'base.html' %}
 
-{% macro card_column(header, card_set) %}
+{% macro card_column(card_set) %}
 
-  <div class="col col-3">
-    <div class="text-center">
-      <h5>{{ header }}</h5>
-    </div>
 
-    <div class="framed">
-      <div class="card-list-divider">
-        <p>land</p>
+  <div class="col">
+
+    <!-- Header Row -->
+    <div class="row">
+      <div class="col col-3">
+        <h5>Main Deck</h5>
       </div>
 
-      <ul class="list-unstyled card-list sortable">
-        {% for card in card_set.land().cards %}
-          <li class="card-list-item">{{ card.cube_card.name() }}</li>
-        {% endfor %}
-      </ul>
+      <div class="col col-3">
+        <h5>Sideboard</h5>
+      </div>
     </div>
-    
-    {% for i in range(8) %}
-      {% set cards = card_set.cmc(i) %}
-      {% set creatures = cards.creatures().cards %}
-      {% set other = cards.other().cards %}
+    <!-- END: Header Row -->
 
-      {% if i == 7 %}
-        {% set cmc_string = '7+' %}
-      {% else %}
-        {% set cmc_string = i %}
-      {% endif %}
-
-      <div class="framed">
+    <!-- Land Row -->
+    <div class="row">
+      <div class="col col-3 framed">
         <div class="card-list-divider">
-          <p>creatures {{ cmc_string }}</p>
+          <p>land</p>
+        </div>
+
+        <ul class="list-unstyled card-list sortable">
+          {% for card in card_set.maindeck().land().cards %}
+            <li class="card-list-item">{{ card.cube_card.name() }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="col col-3 framed">
+        <div class="card-list-divider">
+          <p>land</p>
         </div>
         
 
         <ul class="list-unstyled card-list sortable">
-          {% for card in creatures %}
+          {% for card in card_set.sideboard().land().cards %}
             <li class="card-list-item">{{ card.cube_card.name() }}</li>
           {% endfor %}
         </ul>
+      </div>
+    </div>
+    <!-- END: Land Row -->
 
-        <div class="card-list-divider">
-          <p>other {{ cmc_string }}</p>
+    {% for cmc in range(8) %}
+
+      {# Cards under this header #}
+      {% if header == 7 %}
+        {% set cards = card_set.cmc_gte(7) %}
+        {% set cmc_string = '7+' %}
+      {% else %}
+        {% set cards = card_set.cmc(cmc) %}
+        {% set cmc_string = cmc %}
+      {% endif %}
+
+      {# Maindeck/Sideboard breakdown #}
+      {% set maindeck = cards.maindeck() %}
+      {% set sideboard = cards.sideboard() %}
+
+      <div class="row">
+        <div class="col col-3 framed">
+          <div class="card-list-divider">
+            <p>creatures {{ cmc_string }}</p>
+          </div>
+          
+          <ul class="list-unstyled card-list sortable">
+            {% for card in maindeck.creatures().cards %}
+              <li class="card-list-item">{{ card.cube_card.name() }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class="card-list-divider">
+            <p>other {{ cmc_string }}</p>
+          </div>
+
+          <ul class="list-unstyled card-list sortable">
+            {% for card in maindeck.other().cards %}
+              <li class="card-list-item">{{ card.cube_card.name() }}</li>
+            {% endfor %}
+          </ul>
         </div>
 
-        <ul class="list-unstyled card-list sortable">
-          {% for card in other %}
-            <li class="card-list-item">{{ card.cube_card.name() }}</li>
-          {% endfor %}
-        </ul>
+        <div class="col col-3 framed">
+          <div class="card-list-divider">
+            <p>creatures {{ cmc_string }}</p>
+          </div>
+          
 
+          <ul class="list-unstyled card-list sortable">
+            {% for card in sideboard.creatures().cards %}
+              <li class="card-list-item">{{ card.cube_card.name() }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class="card-list-divider">
+            <p>other {{ cmc_string }}</p>
+          </div>
+
+          <ul class="list-unstyled card-list sortable">
+            {% for card in sideboard.other().cards %}
+              <li class="card-list-item">{{ card.cube_card.name() }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
+
     {% endfor %}
   </div>
-
 {% endmacro %}
 
 
@@ -70,8 +124,7 @@
     <div class="col col-1">
     </div>
 
-    {{ card_column('Main Deck', d.card_set.maindeck()) }}
-    {{ card_column('Sideboard', d.card_set.sideboard()) }}
+    {{ card_column(d.card_set) }}
   </div>
 
 
