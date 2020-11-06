@@ -42,7 +42,7 @@ class Deck(db.Model):
         for card in cards:
             if isinstance(card, CubeCard):
                 cube_cards.append(card)
-            elif hasattr(card, cube_card):
+            elif hasattr(card, 'cube_card'):
                 cube_cards.append(card.cube_card)
             else:
                 raise ValueError(f"Unknown card type: {card}")
