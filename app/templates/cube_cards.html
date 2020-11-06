@@ -230,6 +230,7 @@
        let modal = $('#addCardsModal')
        let body = modal.find('.modal-body')
        let footer = modal.find('.modal-footer')
+       let data = $('#addCardsForm').serialize()
 
        // Prevent clicking on the submit button more than once.
        body.find('button').hide()
@@ -239,17 +240,23 @@
 
        // Show the loading message
        $('#addCardsWaitMessage').removeClass('d-none')
-       
+
        $.ajax({
          type: "POST",
          url: "{{ url_for('cube_add_cards', cube_id=cube.id) }}",
-         data: $('#addCardsForm').serialize(), // serializes the form's elements.
+         data: data, // serializes the form's elements.
          beforeSend: function(request) {
            request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
-         },         
+         },
          success: function (data) {
            footer.removeClass('d-none')
-           $('#addCardsSuccess').removeClass('d-none')
+
+           if (data == 'success') {
+             $('#addCardsSuccess').removeClass('d-none')
+           }
+           else {
+             $('#addCardsFailure').removeClass('d-none')
+           }
          },
          error: function(data) {
            footer.removeClass('d-none')

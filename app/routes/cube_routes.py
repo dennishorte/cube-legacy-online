@@ -85,6 +85,11 @@ def cube_add_cards(cube_id):
         return 'success'
 
     else:
+        for fieldName, errorMessages in form.errors.items():
+            print('+++++' + fieldName)
+            for err in errorMessages:
+                print('...'+err)
+
         return 'failed'
 
 
