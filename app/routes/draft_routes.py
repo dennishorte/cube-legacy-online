@@ -21,6 +21,7 @@ from app.models.draft import *
 from app.models.user import *
 from app.util import cockatrice
 from app.util.card_util import empty_card_json
+from app.util.deck_builder import DeckBuilder
 from app.util.draft_debugger import DraftDebugger
 from app.util.draft_wrapper import DraftWrapper
 from app.util.string import normalize_newlines
@@ -38,6 +39,15 @@ def draft(draft_id):
 def draft_debug(draft_id):
     draft_debugger = DraftDebugger(draft_id)
     return render_template('draft_debug.html', d=draft_debugger)
+
+
+@app.route("/draft/<draft_id>/deck_builder")
+@login_required
+def draft_deck_builder(draft_id):
+    return render_template(
+        'deck_builder.html',
+        d=DeckBuilder(draft_id, current_user.id),
+    )
 
 
 @app.route("/draft/<draft_id>/force/<user_id>")

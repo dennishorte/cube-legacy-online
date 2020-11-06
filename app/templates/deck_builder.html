@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% macro card_column(header, card_set) %}
+
+  <div class="col col-3">
+    <div class="text-center">
+      <h5>{{ header }}</h5>
+    </div>
+
+    <div class="framed">
+      <div class="card-list-divider">
+        <p>land</p>
+      </div>
+
+      <ul class="list-unstyled card-list sortable">
+        {% for card in card_set.land().cards %}
+          <li class="card-list-item">{{ card.cube_card.name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    
+    {% for i in range(8) %}
+      {% set cards = card_set.cmc(i) %}
+      {% set creatures = cards.creatures().cards %}
+      {% set other = cards.other().cards %}
+
+      {% if i == 7 %}
+        {% set cmc_string = '7+' %}
+      {% else %}
+        {% set cmc_string = i %}
+      {% endif %}
+
+      <div class="framed">
+        <div class="card-list-divider">
+          <p>creatures {{ cmc_string }}</p>
+        </div>
+        
+
+        <ul class="list-unstyled card-list sortable">
+          {% for card in creatures %}
+            <li class="card-list-item">{{ card.cube_card.name() }}</li>
+          {% endfor %}
+        </ul>
+
+        <div class="card-list-divider">
+          <p>other {{ cmc_string }}</p>
+        </div>
+
+        <ul class="list-unstyled card-list sortable">
+          {% for card in other %}
+            <li class="card-list-item">{{ card.cube_card.name() }}</li>
+          {% endfor %}
+        </ul>
+
+      </div>
+    {% endfor %}
+  </div>
+
+{% endmacro %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col framed">
+      <h5>{{ d.draft.name }}</h5>
+    </div>
+  </div>
+
+  <div class="row mt-2 deckbuilder">
+    <div class="col col-1">
+    </div>
+
+    {{ card_column('Main Deck', d.card_set.maindeck()) }}
+    {{ card_column('Sideboard', d.card_set.sideboard()) }}
+  </div>
+
+
+  <!-- Card Image Popup -->
+  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
+    <div class="autocard-background">
+      <div class="row no-gutters">
+        <div class="position-relative">
+          <img id="autocardImageFront" alt="">
+        </div>
+        <div class="position-relative">
+          <img id="autocardImageBack" alt="" class="d-none">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Card Image Popup -->
+
+{% endblock content %}
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     $( ".sortable" ).sortable({
+       connectWith: '.card-list',
+       placeholder: 'sortable-highlight',
+       start: function(e, ui){
+         ui.placeholder.height(ui.item.height());
+       }
+     });
+     $( ".sortable" ).disableSelection();     
+   })
+  </script>
+{% endblock scripts %}

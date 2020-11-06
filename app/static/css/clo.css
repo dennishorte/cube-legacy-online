@@ -113,6 +113,15 @@
   border-color: var(--secondary);
 }
 
+.sortable-highlight {
+  border: 1px solid blue;
+  background-color: lightblue;
+}
+
+.card-list.sortable {
+  min-height: .5rem;
+}
+
 .card-list-item {
   overflow: hidden;
   white-space: nowrap;
@@ -146,6 +155,11 @@
   justify-content: center;
 }
 
+.card-list-divider p {
+  font-size: .6rem;
+  margin: 0;
+}
+
 .bar {
   height: 1px;
   width: 100%;
@@ -154,6 +168,15 @@
   margin: 0 2px;
   padding: 0;
   flex-grow: 1;
+}
+
+.short-bar {
+  height: 1px;
+  width: 20%;
+  background-color: gray;
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0;
 }
 
 .tiny-dot {
@@ -176,4 +199,20 @@
   margin: 0 2px;
   padding: 0;
   flex-shrink: 0;
+}
+
+.deckbuilder table {
+  width: 100%;
+}
+
+.deckbuilder th {
+  text-align: center;
+}
+
+.deckbuilder td {
+  width: 20%;
+}
+
+body {
+  margin-bottom: 500px;
 }
