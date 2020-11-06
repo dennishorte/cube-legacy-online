@@ -99,24 +99,37 @@
 
   <div class="row mt-2 deckbuilder justify-content-center">
     <div class="col col-2 framed">
-      <h5>Main Deck</h5>
-      <p>
-        Total:
-        <span id="countMaindeck"></span>
-      </p>
-      <p>
-        Lands:
-        <span id="countLands"</span>
-      </p>
-      <p>
-        Creatures:
-        <span id="countCreatures"</span>
-      </p>
-      <p>
-        Others:
-        <span id="countOther"</span>
-      </p>
+      <h5>Deck Info</h5>
+      <ul class="list-unstyled">
+        <li>
+          Total:
+          <span id="countMaindeck"></span>
+        </li>
+        <li>
+          Lands:
+          <span id="countLands"</span>
+        </li>
+        <li>
+          Creatures:
+          <span id="countCreatures"</span>
+        </li>
+        <li>
+          Others:
+          <span id="countOther"</span>
+        </li>
+      </ul>
+
+      <h5>Deck Actions</h5>
+      <ul class="list-unstyled">
+        <li>
+          <a href="#" id="saveLink">
+            save
+          </a>
+        </li>
+      </ul>
+      
     </div>
+    
     {{ card_column(d.card_set) }}
   </div>
 
@@ -158,9 +171,12 @@
    }
 
    $(document).ready(function() {
+
+     // Initialization
      update_counts()
      autocard_init('card-list-item')
 
+     // Make the cards movable.
      $( ".sortable" ).sortable({
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
@@ -169,7 +185,35 @@
        },
        stop: update_counts
      });
-     $( ".sortable" ).disableSelection();     
+     $( ".sortable" ).disableSelection();
+
+     // Save the deck
+     $("#saveLink").click(function() {
+       let maindeck = $('.maindeck .card-list-item').map(function(){
+         return $(this).text().trim()
+       }).get()
+       let sideboard = $('.sideboard .card-list-item').map(function(){
+         return $(this).text().trim()
+       }).get()
+
+       let data = {
+         maindeck: maindeck,
+         sideboard: sideboard
+       }
+
+       $.ajax({
+         type: 'POST',
+         url: "{{ url_for('draft_deck_save', draft_id=d.draft.id) }}",
+         data: data,
+         success: function() {
+           let msg_template = $('#messageTemplate').clone()
+           msg_template.removeAttr('id')
+           msg_template.removeClass('d-none')
+           msg_template.find('p').text('Deck Saved')
+           $('#flashMessages').append(msg_template)
+         }
+       })
+     })
    })
   </script>
 {% endblock scripts %}

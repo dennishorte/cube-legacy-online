@@ -50,6 +50,12 @@ def draft_deck_builder(draft_id):
     )
 
 
+@app.route("/draft/<draft_id>/deck_save", methods=["POST"])
+@login_required
+def draft_deck_save(draft_id):
+    return 'hello'
+
+
 @app.route("/draft/<draft_id>/force/<user_id>")
 @login_required
 def draft_force(draft_id, user_id):
