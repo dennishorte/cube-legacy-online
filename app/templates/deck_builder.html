@@ -19,16 +19,14 @@
             <p class="deckbuilder-col-header">{{ cmc_string }}</p>
           </div>
           <ul class="card-list sortable list-unstyled">
-            {% for pack_card in cards %}
-              {% set card = pack_card.cube_card %}
-
+            {% for card in cards %}
               {% if card.is_land() %}
                 {% set card_class = 'card-type-land' %}
               {% endif %}
               
               <li
                 class="card-list-item {{ card_class }}"
-                data-pack-card-id="{{ pack_card.id }}"
+                data-card-id="{{ card.id }}"
                 data-front="{{ card.image_front() }}"
                 {% if card.image_back() %}
                   data-back="{{ card.image_back() }}"
@@ -105,21 +103,6 @@
   </div>
 
 
-  <!-- Card Image Popup -->
-  <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
-    <div class="autocard-background">
-      <div class="row no-gutters">
-        <div class="position-relative">
-          <img id="autocardImageFront" alt="">
-        </div>
-        <div class="position-relative">
-          <img id="autocardImageBack" alt="" class="d-none">
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- END: Card Image Popup -->
-
 {% endblock content %}
 
 {% block scripts %}
@@ -158,10 +141,10 @@
      // Save the deck
      $("#saveLink").click(function() {
        let maindeck = $('#maindeck .card-list-item').map(function(){
-         return $(this).data('pack-card-id')
+         return $(this).data('card-id')
        }).get()
        let sideboard = $('#sideboard .card-list-item').map(function(){
-         return $(this).data('pack-card-id')
+         return $(this).data('card-id')
        }).get()
 
        let data = {

@@ -1,5 +1,6 @@
 from app import db
 
+from app.models.deck import *
 from app.models.draft import *
 from app.models.user import *
 
@@ -7,7 +8,7 @@ from app.models.user import *
 class CardSet(object):
     def __init__(self, cards, filters=[]):
         self.cards = cards
-        self.cards.sort(key=lambda x: x.cube_card.name())
+        self.cards.sort(key=lambda x: x.name())
 
         self.filters = filters
 
@@ -20,31 +21,31 @@ class CardSet(object):
         return iter(filtered)
 
     def cmc(self, cmc):
-        new_filter = lambda x: x.cube_card.cmc() == cmc
+        new_filter = lambda x: x.cmc() == cmc
         return self.with_filter(new_filter)
 
     def cmc_gte(self, cmc):
-        new_filter = lambda x: x.cube_card.cmc() >= cmc
+        new_filter = lambda x: x.cmc() >= cmc
         return self.with_filter(new_filter)
 
     def cmc_lte(self, cmc):
-        new_filter = lambda x: x.cube_card.cmc() <= cmc
+        new_filter = lambda x: x.cmc() <= cmc
         return self.with_filter(new_filter)
 
     def creatures(self):
-        new_filter = lambda x: x.cube_card.is_creature()
+        new_filter = lambda x: x.is_creature()
         return self.with_filter(new_filter)
 
     def land(self):
-        new_filter = lambda x: x.cube_card.is_land()
+        new_filter = lambda x: x.is_land()
         return self.with_filter(new_filter)
 
     def non_creature(self):
-        new_filter = lambda x: not x.cube_card.is_creature()
+        new_filter = lambda x: not x.is_creature()
         return self.with_filter(new_filter)
 
     def other(self):
-        new_filter = lambda x: not x.cube_card.is_land() and not x.cube_card.is_creature()
+        new_filter = lambda x: not x.is_land() and not x.is_creature()
         return self.with_filter(new_filter)
 
     def maindeck(self):
@@ -69,20 +70,43 @@ class DeckBuilder(object):
             Seat.user_id == self.user.id,
         ).first()
 
-        self.pack_cards = self.seat.picks
-        self.cards = [x.cube_card for x in self.pack_cards]
+        self.deck = self._load_deck()
 
-        self.card_set = CardSet(self.pack_cards)
+        self.card_set = CardSet([])
+        for card in self.deck.maindeck:
+            card.sideboard = False
+            self.card_set.cards.append(card)
 
-    def save_deck(self, data: dict):
-        if not self.deck:
-            self.deck = DeckListV2()
-            self.deck.draft_id = self.draft.id
-            self.deck.user_id = self.user.id
+        for card in self.deck.sideboard:
+            card.sideboard = True
+            self.card_set.cards.append(card)
 
-        self.deck.name = data['name']
-        self.deck.maindeck_ids = data['maindeck_ids']
-        self.deck.sideboard_ids = data['sideboard_ids']
+    def _load_deck(self):
+        existing_deck = Deck.query.filter(
+            Deck.draft_id == self.draft.id,
+            Deck.user_id == self.user.id,
+        ).first()
 
-        db.session.add(self.deck)
+        if existing_deck:
+            return existing_deck
+
+        deck = Deck()
+        deck.draft_id = self.draft.id
+        deck.user_id = self.user.id
+        deck.name = f"{self.user.name}'s {self.draft.name} Deck"
+
+        maindeck = []
+        sideboard = []
+        for card in self.seat.picks:
+            if card.sideboard:
+                sideboard.append(card.cube_card)
+            else:
+                maindeck.append(card.cube_card)
+        
+        deck.set_maindeck(maindeck)
+        deck.set_sideboard(sideboard)
+
+        db.session.add(deck)
         db.session.commit()
+
+        return deck

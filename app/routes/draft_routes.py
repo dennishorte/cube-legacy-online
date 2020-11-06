@@ -54,21 +54,17 @@ def draft_deck_builder(draft_id):
 @login_required
 def draft_deck_save(draft_id):
     data = request.json
+    d = DeckBuilder(draft_id, current_user.id)
 
-    maindeck = PackCard.query.filter(PackCard.id.in_(data['maindeck']))
-    for card in maindeck:
-        if card.sideboard:
-            card.sideboard = False
-            db.session.add(card)
+    maindeck = CubeCard.query.filter(CubeCard.id.in_(data['maindeck'])).all()
+    d.deck.set_maindeck(maindeck)
 
-    sideboard = PackCard.query.filter(PackCard.id.in_(data['sideboard']))
-    for card in sideboard:
-        if not card.sideboard:
-            card.sideboard = True
-            db.session.add(card)
+    sideboard = CubeCard.query.filter(CubeCard.id.in_(data['sideboard'])).all()
+    d.deck.set_sideboard(sideboard)
 
+    db.session.add(d.deck)
     db.session.commit()
-
+    
     return 'success'
             
 
