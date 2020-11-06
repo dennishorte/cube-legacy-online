@@ -73,11 +73,11 @@ class DeckBuilder(object):
         self.deck = self._load_deck()
 
         self.card_set = CardSet([])
-        for card in self.deck.maindeck:
+        for card in self.deck.maindeck():
             card.sideboard = False
             self.card_set.cards.append(card)
 
-        for card in self.deck.sideboard:
+        for card in self.deck.sideboard():
             card.sideboard = True
             self.card_set.cards.append(card)
 

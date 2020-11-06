@@ -1,4 +1,3 @@
-import functools
 from datetime import datetime
 
 from app import db
@@ -21,12 +20,10 @@ class Deck(db.Model):
     # Format is "5 Mountain,3 Island"
     basic_lands = db.Column(db.Text)
 
-    @functools.cached_property
     def maindeck(self):
         ids = self.maindeck_ids.split(',')
         return CubeCard.query.filter(CubeCard.id.in_(ids))
 
-    @functools.cached_property
     def sideboard(self):
         ids = self.sideboard_ids.split(',')
         return CubeCard.query.filter(CubeCard.id.in_(ids))
