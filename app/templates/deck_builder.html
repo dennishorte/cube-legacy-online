@@ -10,6 +10,7 @@
       {% set card = pack_card.cube_card %}
       <li
         class="card-list-item {{ class }}"
+        data-pack-card-id="{{ pack_card.id }}"
         data-front="{{ card.image_front() }}"
         {% if card.image_back() %}
           data-back="{{ card.image_back() }}"
@@ -190,10 +191,10 @@
      // Save the deck
      $("#saveLink").click(function() {
        let maindeck = $('.maindeck .card-list-item').map(function(){
-         return $(this).text().trim()
+         return $(this).data('pack-card-id')
        }).get()
        let sideboard = $('.sideboard .card-list-item').map(function(){
-         return $(this).text().trim()
+         return $(this).data('pack-card-id')
        }).get()
 
        let data = {
@@ -204,12 +205,22 @@
        $.ajax({
          type: 'POST',
          url: "{{ url_for('draft_deck_save', draft_id=d.draft.id) }}",
-         data: data,
+         data: JSON.stringify(data),
+         contentType: "application/json; charset=utf-8",
          success: function() {
            let msg_template = $('#messageTemplate').clone()
            msg_template.removeAttr('id')
            msg_template.removeClass('d-none')
            msg_template.find('p').text('Deck Saved')
+           $('#flashMessages').append(msg_template)
+         },
+         error: function(error_message) {
+           let msg_template = $('#messageTemplate').clone()
+           msg_template.removeAttr('id')
+           msg_template.removeClass('d-none')
+           msg_template.removeClass('alert-success')
+           msg_template.addCass('alert-danger')
+           msg_template.find('p').text('Error: ' + error_message)
            $('#flashMessages').append(msg_template)
          }
        })

@@ -53,8 +53,24 @@ def draft_deck_builder(draft_id):
 @app.route("/draft/<draft_id>/deck_save", methods=["POST"])
 @login_required
 def draft_deck_save(draft_id):
-    return 'hello'
+    data = request.json
 
+    maindeck = PackCard.query.filter(PackCard.id.in_(data['maindeck']))
+    for card in maindeck:
+        if card.sideboard:
+            card.sideboard = False
+            db.session.add(card)
+
+    sideboard = PackCard.query.filter(PackCard.id.in_(data['sideboard']))
+    for card in sideboard:
+        if not card.sideboard:
+            card.sideboard = True
+            db.session.add(card)
+
+    db.session.commit()
+
+    return 'success'
+            
 
 @app.route("/draft/<draft_id>/force/<user_id>")
 @login_required
