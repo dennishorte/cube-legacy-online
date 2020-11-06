@@ -45,13 +45,17 @@
 {% endmacro %}
 
 {% macro deckbuilder(card_set) %}
-  <h5 class="mb-0 mt-2">Main Deck</h5>
-  {{ deckbuilder_row('maindeckCreatures', card_set.maindeck().creatures()) }}
-  {{ deckbuilder_row('maindeckOther', card_set.maindeck().non_creature()) }}
+  <div id="maindeck">
+    <h5 class="mb-0 mt-2">Main Deck</h5>
+    {{ deckbuilder_row('maindeckCreatures', card_set.maindeck().creatures()) }}
+    {{ deckbuilder_row('maindeckOther', card_set.maindeck().non_creature()) }}
+  </div>
 
-  <h5 class="mb-0 mt-2">Sideboard</h5>
-  {{ deckbuilder_row('sideboardCreatures', card_set.sideboard().creatures()) }}
-  {{ deckbuilder_row('sideboardOther', card_set.sideboard().non_creature()) }}
+  <div id="sideboard">
+    <h5 class="mb-0 mt-2">Sideboard</h5>
+    {{ deckbuilder_row('sideboardCreatures', card_set.sideboard().creatures()) }}
+    {{ deckbuilder_row('sideboardOther', card_set.sideboard().non_creature()) }}
+  </div>
 {% endmacro %}
 
 
@@ -140,22 +144,23 @@
      autocard_init('card-list-item')
 
      // Make the cards movable.
-     $( ".sortable" ).sortable({
+     $(".sortable").sortable({
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
        start: function(e, ui){
-         ui.placeholder.height(ui.item.height());
+         ui.placeholder.height(ui.item.height())
        },
        stop: update_counts
-     });
-     $( ".sortable" ).disableSelection();
+     })
+     $( ".sortable" ).disableSelection()
+
 
      // Save the deck
      $("#saveLink").click(function() {
-       let maindeck = $('.maindeck .card-list-item').map(function(){
+       let maindeck = $('#maindeck .card-list-item').map(function(){
          return $(this).data('pack-card-id')
        }).get()
-       let sideboard = $('.sideboard .card-list-item').map(function(){
+       let sideboard = $('#sideboard .card-list-item').map(function(){
          return $(this).data('pack-card-id')
        }).get()
 
