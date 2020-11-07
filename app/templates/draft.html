@@ -338,7 +338,35 @@
        basics: basics
      }
 
-   }   
+   }
+
+   function swap_maindeck_sideboard() {
+     let li = $(this)
+     let row = li.closest('#maindeck,#sideboard')
+     let section = li.closest('.creature-row,.other-row')
+     let col_header = li.parent().siblings('div').first().find('.deckbuilder-col-header').text()
+
+     var new_row;
+     if (row.attr('id') == 'maindeck') {
+       new_row = row.siblings('#sideboard')
+     }
+     else {
+       new_row = row.siblings('#maindeck')
+     }
+
+     var new_section;
+     if (section.hasClass('creature-row')) {
+       new_section = new_row.find('.creature-row')
+     }
+     else {
+       new_section = new_row.find('.other-row')
+     }
+
+     let new_col = new_section.find('p:contains('+col_header+')').parent().siblings('ul').first()
+
+     li.detach()
+     li.appendTo(new_col)
+   }
 
    $(document).ready(function() {
 
@@ -356,6 +384,9 @@
        stop: update_counts
      })
      $( ".sortable" ).disableSelection()
+
+     // Use double-click to swap between maindeck and sideboard
+     $('.card-list-item').dblclick(swap_maindeck_sideboard)
 
      // Basic Land Selectors
      $('.basic-adjust').click(basic_land_adjust)

@@ -1,5 +1,5 @@
-{% macro deckbuilder_row(id, cards) %}
-  <div class="row deckbuilder-row" id="{{ id }}">
+{% macro deckbuilder_row(id, class, cards) %}
+  <div class="row deckbuilder-row {{ class }}-row" id="{{ id }}">
     {% for cmc in range(8) %}
 
       {# Cards under this header #}
@@ -105,14 +105,14 @@
   
   <div id="maindeck">
     <h5 class="mb-0 mt-2">Main Deck</h5>
-    {{ deckbuilder_row('maindeckCreatures', d.card_set.maindeck().creatures()) }}
-    {{ deckbuilder_row('maindeckOther', d.card_set.maindeck().non_creature()) }}
+    {{ deckbuilder_row('maindeckCreatures', 'creature', d.card_set.maindeck().creatures()) }}
+    {{ deckbuilder_row('maindeckOther', 'other', d.card_set.maindeck().non_creature()) }}
   </div>
 
   <div id="sideboard">
     <h5 class="mb-0 mt-2">Sideboard</h5>
-    {{ deckbuilder_row('sideboardCreatures', d.card_set.sideboard().creatures()) }}
-    {{ deckbuilder_row('sideboardOther', d.card_set.sideboard().non_creature()) }}
+    {{ deckbuilder_row('sideboardCreatures', 'creature', d.card_set.sideboard().creatures()) }}
+    {{ deckbuilder_row('sideboardOther', 'other', d.card_set.sideboard().non_creature()) }}
   </div>
 {% endmacro %}
 
