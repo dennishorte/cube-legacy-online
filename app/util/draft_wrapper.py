@@ -6,6 +6,7 @@ from app.config import Config
 from app.forms import ResultForm
 from app.models.draft import *
 from app.util import slack
+from app.util.deck_builder import DeckBuilder
 from app.util.enum import DraftFaceUp
 
 
@@ -24,6 +25,9 @@ class DraftWrapper(object):
             DeckList.draft_id == self.draft.id,
             DeckList.user_id == self.user.id,
         ).first()
+
+    def deck_builder(self):
+        return DeckBuilder(self.draft.id, self.user.id)
 
     def face_up_cards(self):
         cards = PackCard.query.filter(

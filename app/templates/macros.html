@@ -41,6 +41,68 @@
 {% endmacro %}
 
 {% macro deckbuilder(d) %}
+  <div class="row" id="deckBuilderInfo">
+    <div class="col col-4 framed">
+      <h4>Deck Builder</h4>
+      <p>{{ d.deck.name }}</p>
+
+
+      <p class="text-secondary ml-2 mb-0 border-bottom">Deck Actions</p>
+      <ul class="list-unstyled">
+        <li>
+          <a href="#" id="saveLink">
+            save
+          </a>
+        </li>
+      </ul>      
+    </div>
+
+    <!-- Card Counts -->
+    <div class="col col-2 framed">
+      <h5>Card Counts</h5>
+      <ul class="list-unstyled">
+        <li>
+          Total:
+          <span id="countMaindeck"></span>
+        </li>
+        <li>
+          Creatures:
+          <span id="countCreatures"</span>
+        </li>
+        <li>
+          Others:
+
+          <span id="countOther"</span>
+        </li>
+        <li>
+          Lands:
+          <span id="countLands"</span>
+        </li>
+      </ul>      
+    </div>
+    <!-- END: Card Counts -->
+
+
+    <!-- Basic Lands -->
+
+    <div class="col col-2 framed">
+      <h5>Basic Lands</h5>
+
+      {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
+        <div class="basic-selector">
+          <i class="far fa-plus-square basic-adjust basic-add"></i>
+          <i class="far fa-minus-square basic-adjust basic-remove"></i>
+          <span class="basic-type">{{ basic }}</span>
+          ...
+          <span class="basic-count">{{ d.basics(basic) }}</span>
+        </div>
+      {% endfor %}
+      
+    </div>
+    <!-- END: Basic Lands -->
+    
+  </div>
+  
   <div id="maindeck">
     <h5 class="mb-0 mt-2">Main Deck</h5>
     {{ deckbuilder_row('maindeckCreatures', d.card_set.maindeck().creatures()) }}
