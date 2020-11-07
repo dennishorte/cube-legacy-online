@@ -62,6 +62,9 @@ def draft_deck_save(draft_id):
     sideboard = CubeCard.query.filter(CubeCard.id.in_(data['sideboard'])).all()
     d.deck.set_sideboard(sideboard)
 
+    basics = ','.join([x for x in data['basics'] if x[0] != '0'])
+    d.deck.basic_lands = basics
+
     db.session.add(d.deck)
     db.session.commit()
     

@@ -81,6 +81,16 @@ class DeckBuilder(object):
             card.sideboard = True
             self.card_set.cards.append(card)
 
+    def basics(self, name):
+        if not self.deck.basic_lands:
+            return '0'
+        
+        for elem in self.deck.basic_lands.split(','):
+            tokens = elem.split()
+            if len(tokens) == 2 and tokens[1] == name:
+                return tokens[0]
+        return '0'
+
     def _load_deck(self):
         existing_deck = Deck.query.filter(
             Deck.draft_id == self.draft.id,

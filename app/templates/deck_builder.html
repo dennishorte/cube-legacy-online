@@ -109,7 +109,7 @@
           <i class="far fa-minus-square basic-adjust basic-remove"></i>
           <span class="basic-type">{{ basic }}</span>
           ...
-          <span class="basic-count">0</span>
+          <span class="basic-count">{{ d.basics(basic) }}</span>
         </div>
       {% endfor %}
       
@@ -153,6 +153,30 @@
      update_counts()
    }
 
+   function build_deck_data() {
+     let maindeck = $('#maindeck .card-list-item').map(function() {
+       return $(this).data('card-id')
+     }).get()
+     
+     let sideboard = $('#sideboard .card-list-item').map(function() {
+       return $(this).data('card-id')
+     }).get()
+
+     let basics = $('.basic-selector').map(function() {
+       let sel = $(this)
+       let land = sel.find('.basic-type').text()
+       let count = sel.find('.basic-count').text()
+       return count + ' ' + land
+     }).get()
+
+     return {
+       maindeck: maindeck,
+       sideboard: sideboard,
+       basics: basics
+     }
+
+   }
+
    $(document).ready(function() {
 
      // Initialization
@@ -176,22 +200,20 @@
 
      // Save the deck
      $("#saveLink").click(function() {
-       let maindeck = $('#maindeck .card-list-item').map(function(){
-         return $(this).data('card-id')
-       }).get()
-       let sideboard = $('#sideboard .card-list-item').map(function(){
-         return $(this).data('card-id')
-       }).get()
+       let csrftoken = $('meta[name=csrf-token]').attr('content')
 
-       let data = {
-         maindeck: maindeck,
-         sideboard: sideboard
-       }
-
+       $.ajaxSetup({
+         beforeSend: function(xhr, settings) {
+           if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+             xhr.setRequestHeader("X-CSRFToken", csrftoken)
+           }
+         }
+       })       
+       
        $.ajax({
          type: 'POST',
          url: "{{ url_for('draft_deck_save', draft_id=d.draft.id) }}",
-         data: JSON.stringify(data),
+         data: JSON.stringify(build_deck_data()),
          contentType: "application/json; charset=utf-8",
          success: function() {
            let msg_template = $('#messageTemplate').clone()
@@ -205,8 +227,9 @@
            msg_template.removeAttr('id')
            msg_template.removeClass('d-none')
            msg_template.removeClass('alert-success')
-           msg_template.addCass('alert-danger')
+           msg_template.addClass('alert-danger')
            msg_template.find('p').text('Error: ' + error_message)
+           console.log(error_message)
            $('#flashMessages').append(msg_template)
          }
        })

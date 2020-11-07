@@ -14,11 +14,11 @@ class Deck(db.Model):
     name = db.Column(db.String(64))
 
     # Format is comma-separated CubeCard ids.
-    maindeck_ids = db.Column(db.Text)
-    sideboard_ids = db.Column(db.Text)
+    maindeck_ids = db.Column(db.Text, default='')
+    sideboard_ids = db.Column(db.Text, default='')
 
     # Format is "5 Mountain,3 Island"
-    basic_lands = db.Column(db.Text)
+    basic_lands = db.Column(db.Text, default='')
 
     def maindeck(self):
         ids = self.maindeck_ids.split(',')
