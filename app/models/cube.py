@@ -89,6 +89,16 @@ class Cube(db.Model):
         cards.sort(key=lambda x: x.name())
         return cards
 
+    def cards_added(self):
+        cards = CubeCard.query.filter(
+            CubeCard.cube_id == self.id,
+            CubeCard.version == 1,
+            CubeCard.removed_by_id == None,
+        ).order_by(
+            CubeCard.timestamp.desc()
+        ).limit(20)
+        return cards
+
     def cards_removed(self):
         cards = CubeCard.query.filter(
             CubeCard.cube_id == self.id,
