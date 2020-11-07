@@ -98,8 +98,28 @@ class DeckBuilder(object):
         ).first()
 
         if existing_deck:
-            return existing_deck
+            return self._add_latest_picks(existing_deck)
 
+        else:
+            return self._new_deck()
+
+    def _add_latest_picks(self, deck):
+        deck_cards = deck.maindeck() + deck.sideboard()
+        if len(deck_cards) == len(self.seat.picks):
+            return deck
+
+        else:
+            for card in self.seat.picks:
+                if card.cube_card not in deck_cards:
+                    deck.add_card(card.cube_card)
+                    print(f"Adding {card.cube_card.name()}")
+
+            db.session.add(deck)
+            db.session.commit()
+
+            return deck
+
+    def _new_deck(self):
         deck = Deck()
         deck.draft_id = self.draft.id
         deck.user_id = self.user.id

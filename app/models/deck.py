@@ -20,13 +20,16 @@ class Deck(db.Model):
     # Format is "5 Mountain,3 Island"
     basic_lands = db.Column(db.Text, default='')
 
+    def add_card(self, card):
+        self.maindeck_ids += ',' + str(card.id)
+
     def maindeck(self):
         ids = self.maindeck_ids.split(',')
-        return CubeCard.query.filter(CubeCard.id.in_(ids))
+        return CubeCard.query.filter(CubeCard.id.in_(ids)).all()
 
     def sideboard(self):
         ids = self.sideboard_ids.split(',')
-        return CubeCard.query.filter(CubeCard.id.in_(ids))
+        return CubeCard.query.filter(CubeCard.id.in_(ids)).all()
 
     def set_maindeck(self, cards: list):
         self.maindeck_ids = self._card_list_to_comma_separated(cards)
