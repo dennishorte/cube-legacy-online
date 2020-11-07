@@ -1,70 +1,16 @@
 {% extends 'base.html' %}
 
-{% macro deckbuilder_row(id, cards) %}
-  <div class="row deckbuilder-row" id="{{ id }}">
-    {% for cmc in range(8) %}
-
-      {# Cards under this header #}
-      {% if cmc == 7 %}
-        {% set cards = cards.cmc_gte(7) %}
-        {% set cmc_string = '7+' %}
-      {% else %}
-        {% set cards = cards.cmc(cmc) %}
-        {% set cmc_string = cmc|string %}
-      {% endif %}
-
-      <div class="col deckbuilder-col">
-        <div class="m-0 border bg-light rounded">
-          <div class="text-center">
-            <p class="deckbuilder-col-header">{{ cmc_string }}</p>
-          </div>
-          <ul class="card-list sortable list-unstyled">
-            {% for card in cards %}
-              {% if card.is_land() %}
-                {% set card_class = 'card-type-land' %}
-              {% endif %}
-              
-              <li
-                class="card-list-item {{ card_class }}"
-                data-card-id="{{ card.id }}"
-                data-front="{{ card.image_front() }}"
-                {% if card.image_back() %}
-                  data-back="{{ card.image_back() }}"
-                {% endif %}
-              >
-                {{ card.name() }}
-              </li>            
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% endmacro %}
-
-{% macro deckbuilder(card_set) %}
-  <div id="maindeck">
-    <h5 class="mb-0 mt-2">Main Deck</h5>
-    {{ deckbuilder_row('maindeckCreatures', card_set.maindeck().creatures()) }}
-    {{ deckbuilder_row('maindeckOther', card_set.maindeck().non_creature()) }}
-  </div>
-
-  <div id="sideboard">
-    <h5 class="mb-0 mt-2">Sideboard</h5>
-    {{ deckbuilder_row('sideboardCreatures', card_set.sideboard().creatures()) }}
-    {{ deckbuilder_row('sideboardOther', card_set.sideboard().non_creature()) }}
-  </div>
-{% endmacro %}
-
+{% from 'macros.html' import deckbuilder %}
 
 {% block content %}
   <div class="row">
     <div class="col framed">
-      <h5>{{ d.draft.name }}</h5>
+      <h5>{{ d.deck.name }}</h5>
+      <a href="{{ url_for('draft', draft_id=d.draft.id) }}">back to draft</a>
     </div>
   </div>
 
-  {{ deckbuilder(d.card_set) }}
+  {{ deckbuilder(d) }}
   
   <div class="row mt-2 deckbuilder justify-content-center">
     <div class="col col-2 framed">
