@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+  <div class="row">
+
+    <div class="col">
+      <h5>Admin Cubes</h5>
+      <ul class="list-unstyled">
+        {% for cube in cubes %}
+          <li>
+            <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">
+              {{ cube.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

@@ -40,7 +40,7 @@ def index():
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
     achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
-    cubes = Cube.query.all()
+    cubes = Cube.query.filter(Cube.admin != True).all()
 
     return render_template(
         'index.html',
@@ -78,6 +78,15 @@ def achievement_star(ach_id):
         cube_id = star.achievement.cube_id
 
     return redirect(url_for('cube_achievements', cube_id=cube_id))
+
+
+@app.route("/admin")
+@login_required
+def admin():
+    return render_template(
+        'admin.html',
+        cubes=Cube.query.filter(Cube.admin == True).all(),
+    )
 
 
 @app.route("/make_pack", methods=["POST"])
