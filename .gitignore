@@ -8,3 +8,5 @@ app/app.db
 test.py
 app/static/cockatrice
 *~
+node_modules
+app/static/js/clo.js
