@@ -477,6 +477,13 @@ class Achievement(db.Model):
     def set_json(self, data):
         self.unlock_json = json.dumps(data)
 
+    def starred_by_user(self, user):
+        for star in self.starred:
+            if star.user_id == user.id:
+                return True
+
+        return False
+
     def unlock_lines(self):
         return [x.strip() for x in self.unlock.split('\n') if x.strip()]
 
@@ -491,6 +498,9 @@ class AchievementStar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'))
+
+    def __repr__(self):
+        return f"AchievementStar({self.ach_id},{self.user_id})"
 
 
 class Faction(db.Model):

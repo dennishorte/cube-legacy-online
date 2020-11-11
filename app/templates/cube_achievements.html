@@ -28,17 +28,30 @@
   
   <!-- First Row -->
   <div class="row">
-    
-    <!-- Available Achievements -->
-    <div class="col framed">
-      <a name="availableAchievements"></a>
-      <h4>Available Achievements</h4>
 
-      {% for achievement in cube.achievements_avaiable() %}
-        {% if not achievement.linked_cards %}
-          {{ show_achievement(achievement, current_user) }}
-        {% endif %}
-      {% endfor %}
+    <!-- Available Achievements -->
+    <div class="col m-0 p-0">
+      <div class="framed" style="background-color: #FFFFE0">
+        <a name="starredAchievements"></a>
+        <h4>StarredAchievements</h4>
+
+        {% for achievement in cube.achievements_avaiable() %}
+          {% if achievement.starred_by_user(current_user) %}
+            {{ show_achievement(achievement, current_user) }}
+          {% endif %}
+        {% endfor %}
+      </div>
+      
+      <div class="framed">
+        <a name="availableAchievements"></a>
+        <h4>Available Achievements</h4>
+
+        {% for achievement in cube.achievements_avaiable() %}
+          {% if not achievement.starred_by_user(current_user) and not achievement.linked_cards %}
+            {{ show_achievement(achievement, current_user) }}
+          {% endif %}
+        {% endfor %}
+      </div>
     </div>
     <!-- END: Available Achievements -->
 
@@ -101,7 +114,7 @@
       </p>
 
       {% for achievement in cube.achievements_avaiable() %}
-        {% if achievement.linked_cards %}
+        {% if not achievement.starred_by_user(current_user) and achievement.linked_cards %}
           {{ show_achievement(achievement, current_user) }}
         {% endif %}
       {% endfor %}
