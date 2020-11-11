@@ -1,0 +1,125 @@
+{% macro deck_builder_row(class, cards) %}
+  <div class="row deckbuilder-row {{ class }}-row">
+    {% for cmc in range(8) %}
+
+      {# Cards under this header #}
+      {% if cmc == 7 %}
+        {% set cards = cards.cmc_gte(7) %}
+        {% set cmc_string = '7+' %}
+      {% else %}
+        {% set cards = cards.cmc(cmc) %}
+        {% set cmc_string = cmc|string %}
+      {% endif %}
+
+      <div class="col deckbuilder-col">
+        <div class="m-0 border bg-light rounded">
+          <div class="text-center">
+            <p class="deckbuilder-col-header">{{ cmc_string }}</p>
+          </div>
+          <ul class="card-list sortable list-unstyled">
+            {% for card in cards %}
+              {% if card.is_land() %}
+                {% set card_class = 'card-type-land' %}
+              {% endif %}
+
+              <li
+                class="card-list-item {{ card_class }}"
+                data-card-id="{{ card.id }}"
+                data-front="{{ card.image_front() }}"
+                {% if card.image_back() %}
+                  data-back="{{ card.image_back() }}"
+                {% endif %}
+              >
+                {{ card.name() }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro deck_builder(d) %}
+  <div class="mt-2 pb-2 rounded border" style="background-color: #f5f5ff">
+    <div
+      style="display:none"
+      data-save-url="{{ url_for('draft_deck_save', draft_id=d.draft.id) }}"
+      id="saveMeta">
+    </div>
+
+    <div class="row" id="deckbuilderInfo">
+      <div class="col col-4 framed">
+        <h4>Deck Builder</h4>
+        <p>{{ d.deck.name }}</p>
+
+
+        <p class="text-secondary ml-2 mb-0 border-bottom">Deck Actions</p>
+        <ul class="list-unstyled">
+          <li>
+            <a href="#" id="saveLink">
+              save
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Card Counts -->
+      <div class="col col-2 framed">
+        <h5>Card Counts</h5>
+        <ul class="list-unstyled">
+          <li>
+            Total:
+            <span id="countMaindeck"></span>
+          </li>
+          <li>
+            Creatures:
+            <span id="countCreatures"</span>
+          </li>
+          <li>
+            Others:
+
+            <span id="countOther"</span>
+          </li>
+          <li>
+            Lands:
+            <span id="countLands"</span>
+          </li>
+        </ul>
+      </div>
+      <!-- END: Card Counts -->
+
+
+      <!-- Basic Lands -->
+
+      <div class="col col-2 framed">
+        <h5>Basic Lands</h5>
+
+        {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
+          <div class="basic-selector">
+            <i class="far fa-plus-square basic-adjust basic-add"></i>
+            <i class="far fa-minus-square basic-adjust basic-remove"></i>
+            <span class="basic-type">{{ basic }}</span>
+            ...
+            <span class="basic-count">{{ d.basics(basic) }}</span>
+          </div>
+        {% endfor %}
+
+      </div>
+      <!-- END: Basic Lands -->
+
+    </div>
+
+    <div id="maindeck">
+      <h5 class="mb-0 mt-2">Main Deck</h5>
+      {{ deck_builder_row('creature', d.card_set.maindeck().creatures()) }}
+      {{ deck_builder_row('other', d.card_set.maindeck().non_creature()) }}
+    </div>
+
+    <div id="sideboard">
+      <h5 class="mb-0 mt-2">Sideboard</h5>
+      {{ deck_builder_row('creature', d.card_set.sideboard().creatures()) }}
+      {{ deck_builder_row('other', d.card_set.sideboard().non_creature()) }}
+    </div>
+  </div>
+{% endmacro %}
