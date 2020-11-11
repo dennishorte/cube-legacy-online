@@ -30,6 +30,8 @@ class User(UserMixin, db.Model):
     achievements_created = db.relationship('Achievement', backref='created_by', foreign_keys='Achievement.created_by_id')
     achievements_unlocked = db.relationship('Achievement', backref='unlocked_by', foreign_keys='Achievement.unlocked_by_id')
 
+    achievements_starred = db.relationship('AchievementStar', backref='user')
+
     decks = db.relationship('Deck', backref='user')
 
     def __repr__(self):
@@ -40,6 +42,9 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def has_starred(self, achievement):
+        return any([x.id == achievement.id for x in self.achievements_starred])
 
     def should_send_notification(self):
         return (

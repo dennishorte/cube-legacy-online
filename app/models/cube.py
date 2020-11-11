@@ -445,6 +445,7 @@ class Achievement(db.Model):
 
     # Relationships
     linked_cards = db.relationship('AchievementLink', backref='achievement')
+    starred = db.relationship('AchievementStar', backref='achievement')
 
     def available(self):
         return self.unlocked_by_id is None
@@ -483,6 +484,12 @@ class Achievement(db.Model):
 class AchievementLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     card_id = db.Column(db.Integer, db.ForeignKey('cube_card.id'))
+    ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'))
+
+
+class AchievementStar(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'))
 
 
