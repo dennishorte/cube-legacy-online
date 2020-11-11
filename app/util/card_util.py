@@ -193,6 +193,9 @@ def cmc_from_string(cost_string):
         elif mana_symbol.startswith('2/'):
             cost += 2
 
+        elif mana_symbol in 'XYZ':
+            pass
+
         else:
             cost += 1
 
