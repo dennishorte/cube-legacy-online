@@ -134,7 +134,7 @@
       {{ achievement.full_name() }}
 
       <a href="{{ url_for('achievement_star', ach_id=achievement.id) }}">
-        {% if current_user.has_starred(achievement) %}
+        {% if achievement.starred_by_user(current_user) %}
           <i class="fas fa-star text-warning"></i>
         {% else %}
           <i class="far fa-star text-secondary"></i>
