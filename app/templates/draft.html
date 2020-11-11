@@ -81,7 +81,7 @@
           <td>{{ seat.user.name }}</td>
         {% endfor %}
       </tr>
-      
+
       {% for seat1 in d.seats %}
         <tr>
           <td>{{ seat1.user.name }}</td>
@@ -130,13 +130,6 @@
         Rebuild File
       </a>
 
-      <p class="text-secondary border-bottom mb-1 mt-3">Starred Achievements</p>
-      {% for star in current_user.achievements_starred %}
-        {% set ach = star.achievement %}
-        {% if ach.cube_id == d.draft.cube_id %}
-          {{ show_achievement(ach, current_user) }}
-        {% endif %}
-      {% endfor %}
     </div>
     <!-- END: Draft Info -->
 
@@ -244,7 +237,36 @@
 
   <hr>
 
-  {{ show_picked_card_names(d.seat) }}
+  <div class="row">
+    <div class="col framed">
+      <h4>Starred Achievements</h4>
+      {% for star in current_user.achievements_starred %}
+        {% set ach = star.achievement %}
+        {% if ach.cube_id == d.draft.cube_id %}
+          {{ show_achievement(ach, current_user) }}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="col framed">
+      <h4>Legacy Card Names</h4>
+      <ul class="list-unstyled">
+        {% for card in d.seat.picks %}
+          <li>{{ card.cube_card.cockatrice_name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col framed">
+      <h4>Standard Card Names</h4>
+      <ul class="list-unstyled">
+        {% for card in d.seat.picks %}
+          <li>{{ card.cube_card.name() }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
   <!-- END: Picked Cards -->
 
 
@@ -256,7 +278,7 @@
           <h5 class="modal-title">How do you want to draft this card?</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        
+
         <div class="modal-body">
           <h6 id="cardName"></h6>
           <div class=" d-flex justify-content-between">
@@ -267,7 +289,7 @@
       </div>
     </div>
   </div>
-  <!-- END: Draft Faceup Optional Modal -->  
+  <!-- END: Draft Faceup Optional Modal -->
 {% endblock content %}
 
 
@@ -286,7 +308,7 @@
        modal.find('#cardName').text(card_name)
        modal.find('#pickFaceUp').attr('href', url + 'true')
        modal.find('#pickFaceDown').attr('href', url + 'false')
-     }) 
+     })
    })
   </script>
 
@@ -315,7 +337,7 @@
    function basic_land_adjust() {
      let button = $(this)
      let parent = button.parent('.basic-selector')
-     
+
      let diff = button.hasClass('basic-add') ? 1 : -1
      let count_span = parent.find('.basic-count')
      let count = Math.max(0, parseInt(count_span.text()) + diff)
@@ -329,7 +351,7 @@
      let maindeck = $('#maindeck .card-list-item').map(function() {
        return $(this).data('card-id')
      }).get()
-     
+
      let sideboard = $('#sideboard .card-list-item').map(function() {
        return $(this).data('card-id')
      }).get()
@@ -411,8 +433,8 @@
              xhr.setRequestHeader("X-CSRFToken", csrftoken)
            }
          }
-       })       
-       
+       })
+
        $.ajax({
          type: 'POST',
          url: "{{ url_for('draft_deck_save', draft_id=d.draft.id) }}",
