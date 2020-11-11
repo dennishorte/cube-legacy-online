@@ -29,14 +29,14 @@ from app.util.string import normalize_newlines
 def index():
     active_seats = [x for x in current_user.draft_seats if not x.draft.complete and not x.draft.killed]
     active_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
-    
+
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
     complete_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
 
     achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
     achievements_unfinished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
-    
+
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
     achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
@@ -151,7 +151,7 @@ def card_create(cube_id):
     card.latest_id = card.id
     db.session.add(card)
     db.session.commit()
-    
+
     flash('Card Created')
     return redirect(url_for('card_editor', card_id=card.id))
 
@@ -195,7 +195,7 @@ def card_editor(card_id):
         form_fields = form.faces[face_index]
         for field_name, field in form_fields.items():
             field.data = card_faces[face_index].get(field_name, '')
-    
+
     # Generic Pieces
     form.layout.data = card.get_json().get('layout', '')
     form.update_as.choices = User.all_names()
@@ -236,7 +236,7 @@ def card_editor(card_id):
 @login_required
 def card_remove(card_id):
     form = RemoveCardForm()
-    
+
     card = CubeCard.query.get(card_id)
     card.removed_by_id = current_user.id
     card.removed_by_comment = form.comment.data
@@ -284,7 +284,7 @@ def card_update(card_id):
 
         if return_to_draft_id:
             return redirect(url_for('draft', draft_id=return_to_draft_id))
-        
+
         flash('Card Updated')
     else:
         flash('No changes detected')
@@ -339,7 +339,7 @@ def _card_update_copy_form_data_into_card_json(card_json, form):
     card_json['type_line'] = ' // '.join([x['type_line'] for x in card_faces])
     card_json['oracle_text'] = '\n-----\n'.join([x['oracle_text'] for x in card_faces])
 
-    
+
 @app.route("/card/<card_id>/json", methods=['POST'])
 @login_required
 def card_json(card_id):

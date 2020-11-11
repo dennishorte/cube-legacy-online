@@ -14,7 +14,7 @@ def create_draft(
         scar_rounds: str,
 ):
     cube = Cube.query.filter(Cube.name == cube_name).first()
-    
+
     draft = Draft(
         name=name,
         cube_id=cube.id,
@@ -38,7 +38,7 @@ def create_draft(
     for i, cube_cards_for_pack in enumerate(_make_packs(cube, pack_size, num_packs, len(users))):
         pack_number = i % num_packs
         seat_number = i // num_packs
-        
+
         pack = Pack(
             draft=draft,
             seat_number=seat_number,
@@ -53,7 +53,7 @@ def create_draft(
                 pack=pack,
             )
             db.session.add(card)
-        
+
     db.session.commit()
 
 
@@ -63,7 +63,7 @@ def _make_packs(cube, pack_size, num_packs, num_players):
         CubeCard.latest == True,
         CubeCard.removed_by_timestamp == None,
     ).all()
-    
+
     total_cards = pack_size * num_packs * num_players
     total_packs = num_packs * num_players
 

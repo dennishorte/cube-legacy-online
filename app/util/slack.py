@@ -21,9 +21,9 @@ def send_new_draft_notifications(draft):
     for user in [x.user for x in draft.seats]:
         domain_host = urlparse(request.base_url).hostname
         message = f"A new draft, {draft.name}, has started. <{domain_host}|Come check it out>."
-        
+
         _send_slack_message(user, message)
-        
+
 
 def send_your_pick_notification(user, draft):
     if Config.FLASK_ENV != 'production':
@@ -65,7 +65,7 @@ def _send_slack_message(user, message):
         # Don't crash the server because Slack notifications aren't working.
         print(f"Crashed when trying to send Slack message. user({user.name}). msg({message})")
         return False
-    
+
 
 
 def test_direct_message(user):
@@ -77,13 +77,13 @@ def test_direct_message(user):
             channel=dm_channel,
             text="Hello, world!",
         )
-        
+
     except SlackApiError as e:
         # You will get a SlackApiError if "ok" is False
         assert e.response["ok"] is False
         assert e.response["error"]  # str like 'invalid_auth', 'channel_not_found'
-        print(f"Got an error: {e.response['error']}")        
-    
+        print(f"Got an error: {e.response['error']}")
+
 
 def test_chat_message():
     # Docs: https://api.slack.com/methods/chat.postMessage
@@ -96,4 +96,4 @@ def test_chat_message():
         # You will get a SlackApiError if "ok" is False
         assert e.response["ok"] is False
         assert e.response["error"]  # str like 'invalid_auth', 'channel_not_found'
-        print(f"Got an error: {e.response['error']}")        
+        print(f"Got an error: {e.response['error']}")

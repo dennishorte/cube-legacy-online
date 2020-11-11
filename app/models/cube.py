@@ -35,10 +35,10 @@ class BaseCard(db.Model):
 
     def get_json(self):
         return json.loads(self.json)
-    
+
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
-    
+
 
 class Cube(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -173,8 +173,8 @@ class CubeCard(db.Model):
 
     def card_diff(self, face=None):
         # Deprecated. Use differ().
-        return card_util.CardDiffer(self.original, self, face)                    
-        
+        return card_util.CardDiffer(self.original, self, face)
+
     def card_faces(self):
         return self.get_json()['card_faces']
 
@@ -191,7 +191,7 @@ class CubeCard(db.Model):
         may_pattern = r'[Mm]ay draft.*?face up'
         if re.search(may_pattern, rules):
             return DraftFaceUp.optional
-        
+
         pattern = r'[Dd]raft.*?face up'
         if re.search(pattern, rules):
             return DraftFaceUp.true
@@ -335,7 +335,7 @@ class CubeCard(db.Model):
 
     def layout(self):
         return self.get_json()['layout']
-        
+
     def name(self):
         return self.get_json().get('name', 'NO_NAME')
 
@@ -412,7 +412,7 @@ class Scar(db.Model):
         ).all()
         random.shuffle(scars)
         return scars[:count]
-    
+
     def unlock(self, commit=True):
         self.locked_by_id = None
         self.locked_pack_id = None
@@ -460,7 +460,7 @@ class Achievement(db.Model):
         ).order_by(
             Achievement.version.desc()
         ).first()
-        
+
         ach = Achievement()
         ach.name = self.name
         ach.conditions = self.conditions
@@ -509,7 +509,7 @@ class AchievementStar(db.Model):
 class Faction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
     name = db.Column(db.String(128))
     desc = db.Column(db.Text)  # Description

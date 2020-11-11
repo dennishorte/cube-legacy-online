@@ -67,7 +67,7 @@ class CardConsts(object):
 
         'BGRUW': '5-Color',
     }
-        
+
 
 class CardDiffer(object):
     def __init__(self, old, new, face=None):
@@ -153,7 +153,7 @@ class CardDiffer(object):
             return f". {display_name}: {self.new_face.get(field)}"
         else:
             return None
- 
+
 
 def empty_card_json():
     return {
@@ -183,13 +183,13 @@ def color_sort_key(color_ch):
 
 def cmc_from_string(cost_string):
     cost = 0
-    
+
     cost_string = cost_string.upper()
     pattern = r"{(.*?)}"
     for mana_symbol in re.findall(pattern, cost_string):
         if mana_symbol.isnumeric():
             cost += int(mana_symbol)
-            
+
         elif mana_symbol.startswith('2/'):
             cost += 2
 

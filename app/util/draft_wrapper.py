@@ -13,7 +13,7 @@ from app.util.enum import DraftFaceUp
 class DraftWrapper(object):
     def __init__(self, draft_id, user):
         self.draft = Draft.query.get(draft_id)
-        
+
         self.seats = self.draft.seats
         self.seats.sort(key=lambda x: x.order)
 
@@ -64,7 +64,7 @@ class DraftWrapper(object):
     def passing_to_seat(self):
         if self.pack is None:
             return None
-        
+
         if self.pack.pack_number % 2 == 0:
             next_seat = (self.seat.order + 1) % self.draft.num_seats
         else:
@@ -77,7 +77,7 @@ class DraftWrapper(object):
 
         if not self.pack:
             raise ValueError(f"No pack to pick from right now.")
-        
+
         if not pack_card.pack_id == self.pack.id:
             raise ValueError(f"{card_id}: {card.cube_card.name()} is not part of pack {self.pack.id}. It's in pack {card.pack_id}.")
 
@@ -92,12 +92,12 @@ class DraftWrapper(object):
             message.draft_id = self.draft.id
             message.text = f"{self.user.name} drafted {pack_card.cube_card.name()} face up."
             db.session.add(message)
-        
+
         pack_card.picked_by_id = self.seat.id
         pack_card.pick_number = self.pack.num_picked
         pack_card.picked_at = datetime.utcnow()
         db.session.add(pack_card)
-        
+
         self.pack.num_picked += 1
         db.session.add(self.pack)
 
@@ -117,7 +117,7 @@ class DraftWrapper(object):
             MatchResult.user_id == self.user.id,
             MatchResult.opponent_id == seat.user.id,
         ).first()
-        
+
         form = ResultForm()
         form.user_id.data = seat.user.id
 

@@ -21,7 +21,7 @@ class Draft(db.Model):
 
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
-    
+
     # Relationships
     seats = db.relationship('Seat', backref='draft')
     packs = db.relationship('Pack', backref='draft')
@@ -112,7 +112,7 @@ class Seat(db.Model):
 
         if commit:
             db.session.commit()
-        
+
 
 class Pack(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -146,7 +146,7 @@ class Pack(db.Model):
         else:
             return 'right'
 
-    @functools.cached_property        
+    @functools.cached_property
     def is_scarring_round(self):
         return (
             self.num_picked == 0  # first pick of round
@@ -201,16 +201,16 @@ class Pack(db.Model):
 
         choices.sort(key=lambda x: x.id)
 
-        return choices        
+        return choices
 
     def seat_ordering(self):
         pack_size = self.draft.pack_size
         num_seats = self.draft.num_seats
-        
+
         seat_range = range(pack_size)
         if self.direction() == 'right':
             seat_range = [0 - x for x in seat_range]
-        
+
         return [(x + self.seat_number) % num_seats for x in seat_range]
 
     def unpicked_cards(self):
@@ -229,7 +229,7 @@ class PackCard(db.Model):
     # When a card is drafted face up, this is true. It can be swapped to false if the
     # conditions of the card are met.
     faceup = db.Column(db.Boolean, default=False)
-    
+
     # During a draft, players can mark cards for their sideboard
     sideboard = db.Column(db.Boolean, default=False)
 
@@ -261,7 +261,7 @@ class MatchResult(db.Model):
 
         if not result:
             result = MatchResult()
-        
+
         result.user_id=self.opponent_id
         result.opponent_id=self.user_id
         result.draft_id=self.draft_id
@@ -279,7 +279,7 @@ class DeckList(db.Model):
     draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
     name = db.Column(db.String(128))
     decklist = db.Column(db.Text)
-    
+
     def mainboard(self):
         return self._split_decklist_on_empty_line()[0]
 

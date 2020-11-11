@@ -32,7 +32,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_0_power = StringField('Power')
     face_0_toughness = StringField('Toughness')
     face_0_loyalty = StringField('Loyalty')
-    
+
     face_1_name = StringField('Name')
     face_1_mana_cost = StringField('Mana Cost')
     face_1_image_url = TextAreaField('Image Url')
@@ -44,7 +44,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_1_loyalty = StringField('Loyalty')
 
     comment = TextAreaField('Comment')
-    
+
     layout = SelectField('Layout', choices=Layout.choices(), validators=[DataRequired()])
     update_as = SelectField('Update As')
     submit = SubmitField('Update')
@@ -76,10 +76,10 @@ class EditMultiFaceCardForm(FlaskForm):
                 'power': self.face_1_power,
                 'toughness': self.face_1_toughness,
                 'loyalty': self.face_1_loyalty,
-            },            
+            },
         ]
-    
-    
+
+
 class FinalizeAchievementForm(FlaskForm):
     story = TextAreaField('Tell the Story of This Achievement', validators=[DataRequired()])
     submit = SubmitField("I've done all the things")
@@ -146,7 +146,7 @@ class NewDraftForm(FlaskForm):
     def factory():
         from app.models.cube import Cube
         from app.models.user import User
-        
+
         cubes = [x.name for x in Cube.query.order_by('name')]
         users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
 
@@ -210,7 +210,7 @@ class NewAchievementForm(FlaskForm):
     def fill_from_json_list(self, json_list):
         if not self.unlocks:
             self.group_fields()
-            
+
         assert len(json_list) <= len(self.unlocks), "Too many values to load."
 
         for i in range(len(self.unlocks)):

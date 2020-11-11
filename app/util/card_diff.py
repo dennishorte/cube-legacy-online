@@ -11,7 +11,7 @@ class BaseDiffer(object):
     def changed_fields(self):
         if self.no_changes:
             return {}
-        
+
         changes = {}
 
         for field in self.old:
@@ -23,7 +23,7 @@ class BaseDiffer(object):
     def is_changed(self, field):
         if self.no_changes:
             return False
-        
+
         for line in self._ndiff(field):
             if not line.startswith('  '):
                 return True
@@ -43,7 +43,7 @@ class FaceDiffer(BaseDiffer):
         """Only flavor text is changed."""
         changes = self.changed_fields()
         return len(changes) == 1 and 'flavor_text' in changes
-    
+
     def is_minor(self):
         if self.is_significant() or self.is_flavor():
             return False
@@ -60,11 +60,11 @@ class FaceDiffer(BaseDiffer):
            or self.is_changed('power') \
            or self.is_changed('toughness') \
            or self.is_changed('loyalty'):
-        
+
             return True
-        
+
         return False
-    
+
 
 class CardDiffer(object):
     def __init__(self, old_card, new_card):

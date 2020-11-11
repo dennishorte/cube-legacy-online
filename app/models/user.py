@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     cards_added = db.relationship('CubeCard', backref='added_by', foreign_keys='CubeCard.added_by_id')
     cards_edited = db.relationship('CubeCard', backref='edited_by', foreign_keys='CubeCard.edited_by_id')
     cards_removed = db.relationship('CubeCard', backref='removed_by', foreign_keys='CubeCard.removed_by_id')
-    
+
     scars_created = db.relationship('Scar', backref='created_by', foreign_keys='Scar.created_by_id')
     scars_added = db.relationship('Scar', backref='applied_by', foreign_keys='Scar.applied_by_id')
     scars_removed = db.relationship('Scar', backref='removed_by', foreign_keys='Scar.removed_by_id')

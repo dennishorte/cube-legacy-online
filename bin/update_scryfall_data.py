@@ -43,7 +43,7 @@ def update_one(scryfall_json, card_name, fix_names=False):
                 card.name=scryfall_name
             card.image_url=card_img
             db.session.add(card)
-        
+
 
     scryfall_data = ScryfallData.query.filter(ScryfallData.name == scryfall_name).first()
 
@@ -75,7 +75,7 @@ def get_all_card_names():
 
     for card_name in all_card_names:
         print('...duplicate: {}'.format(card_name))
-    
+
     return sorted(unique_card_names)
 
 
@@ -94,14 +94,14 @@ def get_card_names_missing_image_urls():
 
     for card_name in all_card_names:
         print('...duplicate: {}'.format(card_name))
-    
+
     return sorted(unique_card_names)
 
 
 def fetch_each_and_update(card_names, fix_names=False):
     print('Fetch each and update')
     print('...expected time to completion = {} seconds'.format(.1 * len(card_names)))
-    
+
     for card_name in card_names:
         existing = ScryfallData.query.filter(ScryfallData.name == card_name).first()
         if existing:

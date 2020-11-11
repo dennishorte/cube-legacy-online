@@ -21,7 +21,7 @@ def fetch_many_from_scryfall(card_names: list):
     results = {}
 
     print("Fetching {} cards from Scryfall".format(len(card_names)))
-    
+
     for i, name in enumerate(card_names):
         print("...{} of {}: {}".format(i, len(card_names), name))
         results[name] = fetch_one_from_scryfall(name)
@@ -40,7 +40,7 @@ def convert_to_clo_standard_json(card_json):
     _convert_ensure_all_root_keys(card_json)
     _convert_ensure_all_face_keys(card_json)
     _convert_build_combined_oracle_text(card_json)
-    
+
 
 def _convert_to_face_array(card_json):
     # If the card has no card_faces, make one out of the singleton face.
@@ -62,7 +62,7 @@ def _convert_to_face_array(card_json):
 
 def _convert_image_storage(card_json):
     all_parts = [card_json] + card_json.get('card_faces', [])
-    
+
     for face in all_parts:
         if 'image_uris' in face:
             face['image_url'] = face['image_uris']['normal']
@@ -74,26 +74,26 @@ def _convert_remove_unwanted_root_keys(card_json):
         if key not in CardConsts.ROOT_KEYS:
             del card_json[key]
 
-            
+
 def _convert_remove_unwanted_face_keys(card_json):
     for face in card_json['card_faces']:
         for key in list(face.keys()):
             if key not in CardConsts.FACE_KEYS:
                 del face[key]
 
-                
+
 def _convert_ensure_all_root_keys(card_json):
     for key in CardConsts.ROOT_KEYS:
         if key not in card_json:
             card_json[key] = ''
-        
+
 
 def _convert_ensure_all_face_keys(card_json):
     for face in card_json['card_faces']:
         for key in CardConsts.FACE_KEYS:
             if key not in face:
                 face[key] = ''
-        
+
 
 def _convert_build_combined_oracle_text(card_json):
     each_oracle_text = []

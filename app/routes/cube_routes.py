@@ -54,7 +54,7 @@ def cube_achievements(cube_id):
     form.update_as.data = current_user.name
     form.cube_id.data = cube_id
     form.group_fields()
-        
+
     cube = Cube.query.get(cube_id)
     return render_template('cube_achievements.html', cube=cube, form=form)
 
@@ -71,17 +71,17 @@ def cube_add_cards(cube_id):
             added_by = User.query.filter(User.name == 'starter').first()
         else:
             added_by = current_user
-        
+
         result = add_cards_to_cube(cube_id, card_names, added_by)
 
         flash('Added {} cards ({} unique)'.format(
             result['num_added'],
             result['num_unique_added'],
         ))
-        
+
         for card_name in result['failed_to_fetch']:
             flash('Failed to fetch Scryfall data for: {}'.format(card_name))
-            
+
         return 'success'
 
     else:
@@ -124,7 +124,7 @@ def cube_data(cube_id):
 def cube_factions(cube_id):
     cube = Cube.query.get(cube_id)
     form = NewFactionForm()
-    
+
     return render_template(
         'cube_factions.html',
         cube=cube,
@@ -148,7 +148,7 @@ def cube_new_faction(cube_id):
 
         db.session.add(faction)
         db.session.commit()
-        
+
         flash('New faction created!')
 
     else:
@@ -161,7 +161,7 @@ def cube_new_faction(cube_id):
 @login_required
 def cube_link_achievement(cube_id):
     form = LinkAchievemetAndCardForm.factory(cube_id)
-    
+
     card = CubeCard.query.get(form.card.data)
     ach = Achievement.query.get(form.achievement.data)
     assert card.cube_id == ach.cube_id
@@ -231,7 +231,7 @@ def cube_scars_add(cube_id):
         scar = Scar.query.get(form.update_id.data)
     else:
         scar = Scar(cube_id=cube_id)
-        
+
     if form.update_as.data:
         user = User.query.filter(User.name == form.update_as.data).first()
     else:
@@ -242,7 +242,7 @@ def cube_scars_add(cube_id):
     scar.created_by = user
     db.session.add(scar)
     db.session.commit()
-    
+
     return redirect(url_for('cube_scars', cube_id=cube_id))
 
 
@@ -250,20 +250,20 @@ def cube_scars_add(cube_id):
 @login_required
 def cube_scars_use(cube_id):
     cube = Cube.query.get(cube_id)
-    
+
     form = UseScarForm()
     form.card_name.choices = [x.name() for x in cube.cards()]
 
     if not form.validate_on_submit():
         flash('Scar use failed')
-        return redirect(url_for('cube_scars', cube_id=cube_id))        
+        return redirect(url_for('cube_scars', cube_id=cube_id))
 
     card = cube.get_card_by_name(form.card_name.data)
     scar = Scar.query.get(form.scar_id.data)
 
     if not card:
         flash(f'Invalid card name: {form.card_name.data}')
-        return redirect(url_for('cube_scars', cube_id=cube_id))        
+        return redirect(url_for('cube_scars', cube_id=cube_id))
 
     if not scar:
         flash(f'Invalid scar id: {form.card_id.data}')
@@ -275,6 +275,6 @@ def cube_scars_use(cube_id):
 
     db.session.add(scar)
     db.session.commit()
-            
+
     flash(f'Scar applied to {card.name()}')
     return redirect(url_for('cube_scars', cube_id=cube_id))

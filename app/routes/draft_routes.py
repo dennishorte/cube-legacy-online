@@ -67,9 +67,9 @@ def draft_deck_save(draft_id):
 
     db.session.add(d.deck)
     db.session.commit()
-    
+
     return 'success'
-            
+
 
 @app.route("/draft/<draft_id>/force/<user_id>")
 @login_required
@@ -81,7 +81,7 @@ def draft_force(draft_id, user_id):
     if dw.pack:
         dw.seat.unlock_scars()
         dw.pick_card(dw.pack.unpicked_cards()[0].id)
-        
+
     return redirect("/draft/{}".format(draft_id))
 
 
@@ -131,11 +131,11 @@ def draft_pick(draft_id, card_id):
     face_up = request.args.get('face_up', None)
     if face_up:
         face_up = DraftFaceUp[face_up]
-    
+
     dw = DraftWrapper(draft_id, current_user)
     dw.pick_card(card_id, face_up)
     return redirect("/draft/{}".format(draft_id))
-    
+
 
 @app.route("/draft/<draft_id>/results", methods=["POST"])
 @login_required
@@ -153,7 +153,7 @@ def draft_result(draft_id):
 
         if not result:
             result = MatchResult()
-            
+
         result.user_id=current_user.id
         result.opponent_id=form.user_id.data
         result.draft_id=draft_id
@@ -164,12 +164,12 @@ def draft_result(draft_id):
         db.session.add(result)
         db.session.add(result.get_or_create_inverse())
         db.session.commit()
-    
+
     else:
         flash("Error submitting form")
 
     return redirect(url_for('draft', draft_id=draft_id))
-    
+
 
 @app.route("/draft/swap_sideboard/<card_id>")
 @login_required
@@ -195,7 +195,7 @@ def draft_save_decklist(draft_id):
         )
         db.session.add(decklist)
         db.session.commit()
-    
+
     else:
         flash('Error saving decklist')
 

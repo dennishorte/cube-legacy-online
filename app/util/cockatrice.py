@@ -60,7 +60,7 @@ def contraption_extractor(cards_xml_filename):
 
 
     return tostring(tree, xml_declaration=True, encoding='UTF-8').decode('utf-8')
-    
+
 
 def _filter_non_contraptions(cards):
     count = 1
@@ -107,7 +107,7 @@ def export_to_cockatrice(cube):
     _add_cards_xml(cards_root, cube)
 
     return tostring(root, pretty_print=True).decode('utf-8')
-    
+
 
 def _add_sets_xml(
         root,
@@ -131,13 +131,13 @@ def _add_sets_xml(
     releasedate = SubElement(set_elem, 'releasedate')
 
     date_str = str(datetime.date.today())
-    
+
     name.text = set_name
     longname.text = set_longname
     settype.text = set_settype
     releasedate.text = date_str
-    
-    
+
+
 def _add_cards_xml(root, cube):
     for card in cube.cards():
         _add_one_card_xmls(card, root)
@@ -168,7 +168,7 @@ def _add_one_card_xmls(card, root):
             face_index,
             scarred=is_scarred,
         )
-        
+
         set = SubElement(card_elem, 'set')
         set.text = 'clo'
         set.set('picurl', _image_url(card_data, face_index))
@@ -181,7 +181,7 @@ def _add_one_card_xmls(card, root):
 
         # Props
         props = SubElement(card_elem, 'prop')
-        
+
         props_cmc = SubElement(props, 'cmc')
         props_cmc.text = str(card_data['cmc'])
 
@@ -198,7 +198,7 @@ def _add_one_card_xmls(card, root):
         if mana_cost:  # Most double faced cards have no mana cost on the back.
             props_manacost = SubElement(props, 'manacost')
             props_manacost.text = mana_cost
-            
+
         card_face = card_data['card_faces'][face_index]
         if card_face.get('loyalty'):
             props_loyalty = SubElement(props, 'loyalty')
@@ -239,7 +239,7 @@ def _card_maintype(card):
             return typ.title()
 
     return 'UNKNOWN'
-    
+
 
 def _image_url(card_data, face_index):
     layout = card_data['layout']
@@ -247,7 +247,7 @@ def _image_url(card_data, face_index):
     if Layout.simple_faced_layout(layout) \
        or Layout.split_faced_layout(layout) \
        or Layout.double_sided_layout(layout):
-        
+
         return card_data['card_faces'][face_index]['image_url']
 
     else:
@@ -285,7 +285,7 @@ def _oracle_text(card, card_data, face_index):
         rules_text += '\n\n'.join(achievement_lines)
 
     return rules_text
-    
+
 
 def _clean_mana_cost(mana_cost):
     tokens = mana_cost.split('}')
@@ -302,7 +302,7 @@ def _clean_mana_cost(mana_cost):
 
 def _table_row(card_data, face_index):
     types = card_data['card_faces'][face_index]['type_line'].lower().split()
-    
+
     if 'land' in types:
         return '0'
     elif 'instant' in types or 'sorcery' in types:

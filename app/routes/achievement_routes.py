@@ -106,7 +106,7 @@ def achievement_submit():
     form = NewAchievementForm()
     form.update_as.choices = User.all_names()
     form.group_fields()
-    
+
     if not form.validate_on_submit():
         flash('Error submitting achievement')
         if form.update_id.data:
@@ -130,8 +130,8 @@ def achievement_submit():
     ach.created_by=User.query.filter(User.name == form.update_as.data).first()
 
     db.session.add(ach)
-    db.session.commit()        
-        
+    db.session.commit()
+
     flash('Achievement Created')
-    
+
     return redirect(url_for('cube_achievements', cube_id=ach.cube_id))

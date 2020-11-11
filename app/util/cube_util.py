@@ -7,7 +7,7 @@ def add_cards_to_cube(cube_id, card_names, added_by):
     _ensure_cube(cube_id)
     scryfall_data = scryfall.fetch_many_from_scryfall(card_names)
     failed_to_fetch = []
-    
+
     for name, datum in list(scryfall_data.items()):
         if datum is None or datum['object'] == 'error':
             failed_to_fetch.append(name)
@@ -61,7 +61,7 @@ def _ensure_cube(cube_id):
 
 def _create_base_cards_from_scryfall_data(data: dict):
     true_names = [x['name'] for x in data.values()]
-    
+
     existing_cards = BaseCard.query.filter(BaseCard.name.in_(true_names))
     existing_names = set([x.name for x in existing_cards])
 

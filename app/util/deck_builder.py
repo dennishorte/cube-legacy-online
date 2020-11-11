@@ -64,7 +64,7 @@ class DeckBuilder(object):
     def __init__(self, draft_id, user_id):
         self.draft = Draft.query.get(draft_id)
         self.user = User.query.get(user_id)
-            
+
         self.seat = Seat.query.filter(
             Seat.draft_id == self.draft.id,
             Seat.user_id == self.user.id,
@@ -84,7 +84,7 @@ class DeckBuilder(object):
     def basics(self, name):
         if not self.deck.basic_lands:
             return '0'
-        
+
         for elem in self.deck.basic_lands.split(','):
             tokens = elem.split()
             if len(tokens) == 2 and tokens[1] == name:
@@ -132,7 +132,7 @@ class DeckBuilder(object):
                 sideboard.append(card.cube_card)
             else:
                 maindeck.append(card.cube_card)
-        
+
         deck.set_maindeck(maindeck)
         deck.set_sideboard(sideboard)
 

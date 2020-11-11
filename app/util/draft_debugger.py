@@ -6,7 +6,7 @@ class DraftDebugger(object):
     def from_pack(pack_id):
         pack = Pack.query.get(pack_id)
         return DraftDebugger(pack.draft_id, pack_id)
-    
+
     def __init__(self, draft_id, pack_id=None):
         self.draft = Draft.query.get(draft_id)
 

@@ -52,7 +52,7 @@ class CardTable(object):
 
     def _init_columns(self):
         divided_cards = self._divide_cards_by_column()
-        
+
         for header in self.HEADERS:
             column = CardColumn(header, header.lower())
 
@@ -61,7 +61,7 @@ class CardTable(object):
                 column.sections = self._divide_gold_by_guild(divided_cards[header])
             else:
                 column.sections = self._divide_cards_by_type(divided_cards[header])
-                
+
             for section in column.sections:
                 section.sort_cards_by_cmc()
             self.columns.append(column)
@@ -85,7 +85,7 @@ class CardTable(object):
             section.header = CardConsts.MULTICOLOR_MAP[section.header]
 
         return sections
-            
+
 
     def _divide_cards_by_type(self, cards):
         types = {x: [] for x in CardConsts.CARD_TYPES}
@@ -101,12 +101,12 @@ class CardTable(object):
         sections = []
         for type, cards in types.items():
             sections.append(CardColumnSection(type.title(), cards))
-            
+
         return sections
 
     def _divide_cards_by_column(self):
         columns = {x: [] for x in self.HEADERS}
-        
+
         for card in self.cube.cards():
             if card.color_identity() == 'W':
                 columns['White'].append(card)

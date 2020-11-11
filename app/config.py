@@ -15,7 +15,7 @@ else:
         port=os.environ["DB_HOST"].split(':')[1],
         db_name=os.environ["DB_NAME"],
     )
-    
+
 class Config(object):
     COCKATRICE_FOLDER = 'static/cockatrice'
     FLASK_ENV = os.environ.get('FLASK_ENV')

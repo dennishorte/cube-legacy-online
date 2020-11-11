@@ -19,7 +19,7 @@ def ensure_starter_user():
     user.name = 'starter'
     db.session.add(user)
     db.session.commit()
-    
+
 
 def ensure_basic_lands():
     cube = Cube.query.filter(Cube.name == 'basic lands').first()

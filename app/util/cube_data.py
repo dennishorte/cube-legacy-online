@@ -18,7 +18,7 @@ class CubeData(object):
         for key in types:
             types[key] = list(set(types[key]))
             types[key].sort(key=lambda x: x.name())
-                        
+
         types_list = list(types.items())
         types_list.sort()
 
