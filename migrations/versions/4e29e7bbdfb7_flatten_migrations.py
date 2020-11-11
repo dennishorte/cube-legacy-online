@@ -1,8 +1,8 @@
-"""empty message
+"""Flatten migrations
 
-Revision ID: cbe4d53bbf84
+Revision ID: 4e29e7bbdfb7
 Revises: 
-Create Date: 2020-10-18 11:32:42.335575
+Create Date: 2020-11-10 17:45:45.037317
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'cbe4d53bbf84'
+revision = '4e29e7bbdfb7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -53,14 +53,16 @@ def upgrade():
     sa.Column('cube_id', sa.Integer(), nullable=True),
     sa.Column('name', sa.Text(), nullable=True),
     sa.Column('conditions', sa.Text(), nullable=True),
-    sa.Column('unlock', sa.Text(), nullable=True),
     sa.Column('multiunlock', sa.Boolean(), nullable=True),
     sa.Column('version', sa.Integer(), nullable=True),
+    sa.Column('unlock_json', sa.Text(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.Column('created_timestamp', sa.DateTime(), nullable=True),
     sa.Column('unlocked_by_id', sa.Integer(), nullable=True),
     sa.Column('unlocked_timestamp', sa.DateTime(), nullable=True),
     sa.Column('finalized_timestamp', sa.DateTime(), nullable=True),
+    sa.Column('story', sa.Text(), nullable=True),
+    sa.Column('unlock', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['created_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
     sa.ForeignKeyConstraint(['unlocked_by_id'], ['user.id'], ),
@@ -73,12 +75,15 @@ def upgrade():
     sa.Column('latest', sa.Boolean(), nullable=True),
     sa.Column('json', sa.Text(), nullable=True),
     sa.Column('comment', sa.Text(), nullable=True),
+    sa.Column('is_original', sa.Boolean(), nullable=True),
     sa.Column('latest_id', sa.Integer(), nullable=True),
-    sa.Column('cube_id', sa.Integer(), nullable=True),
     sa.Column('base_id', sa.Integer(), nullable=True),
+    sa.Column('cube_id', sa.Integer(), nullable=True),
     sa.Column('added_by_id', sa.Integer(), nullable=True),
     sa.Column('edited_by_id', sa.Integer(), nullable=True),
     sa.Column('removed_by_id', sa.Integer(), nullable=True),
+    sa.Column('removed_by_comment', sa.Text(), nullable=True),
+    sa.Column('removed_by_timestamp', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['added_by_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['base_id'], ['base_card.id'], ),
     sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
@@ -91,6 +96,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
     sa.Column('name', sa.String(length=64), nullable=True),
+    sa.Column('killed', sa.Boolean(), nullable=True),
     sa.Column('pack_size', sa.Integer(), nullable=True),
     sa.Column('num_packs', sa.Integer(), nullable=True),
     sa.Column('num_seats', sa.Integer(), nullable=True),
@@ -100,6 +106,50 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_draft_timestamp'), 'draft', ['timestamp'], unique=False)
+    op.create_table('faction',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('cube_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('desc', sa.Text(), nullable=True),
+    sa.Column('memb', sa.Text(), nullable=True),
+    sa.Column('note', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['cube_id'], ['cube.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('achievement_link',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('card_id', sa.Integer(), nullable=True),
+    sa.Column('ach_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['ach_id'], ['achievement.id'], ),
+    sa.ForeignKeyConstraint(['card_id'], ['cube_card.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('deck',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('draft_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.String(length=64), nullable=True),
+    sa.Column('maindeck_ids', sa.Text(), nullable=True),
+    sa.Column('sideboard_ids', sa.Text(), nullable=True),
+    sa.Column('basic_lands', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['draft_id'], ['draft.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_deck_timestamp'), 'deck', ['timestamp'], unique=False)
+    op.create_table('deck_list',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('draft_id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('decklist', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['draft_id'], ['draft.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('match_result',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
@@ -114,6 +164,14 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_match_result_opponent_id'), 'match_result', ['opponent_id'], unique=False)
+    op.create_table('message',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('draft_id', sa.Integer(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('text', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['draft_id'], ['draft.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('pack',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('draft_id', sa.Integer(), nullable=True),
@@ -162,6 +220,8 @@ def upgrade():
     sa.Column('picked_by_id', sa.Integer(), nullable=True),
     sa.Column('pick_number', sa.Integer(), nullable=True),
     sa.Column('picked_at', sa.DateTime(), nullable=True),
+    sa.Column('faceup', sa.Boolean(), nullable=True),
+    sa.Column('sideboard', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['card_id'], ['cube_card.id'], ),
     sa.ForeignKeyConstraint(['draft_id'], ['draft.id'], ),
     sa.ForeignKeyConstraint(['pack_id'], ['pack.id'], ),
@@ -177,8 +237,14 @@ def downgrade():
     op.drop_table('seat')
     op.drop_table('scar')
     op.drop_table('pack')
+    op.drop_table('message')
     op.drop_index(op.f('ix_match_result_opponent_id'), table_name='match_result')
     op.drop_table('match_result')
+    op.drop_table('deck_list')
+    op.drop_index(op.f('ix_deck_timestamp'), table_name='deck')
+    op.drop_table('deck')
+    op.drop_table('achievement_link')
+    op.drop_table('faction')
     op.drop_index(op.f('ix_draft_timestamp'), table_name='draft')
     op.drop_table('draft')
     op.drop_index(op.f('ix_cube_card_timestamp'), table_name='cube_card')
