@@ -24,6 +24,7 @@ from app.routes import achievement_routes
 from app.routes import cube_routes
 from app.routes import custom_routes
 from app.routes import draft_routes
+from app.routes import game_routes
 from app.routes import other_routes
 
 # Load custom filters
@@ -32,6 +33,7 @@ from app.filters import *
 # Load all models for flask migrate
 from app.models.cube import *
 from app.models.draft import *
+from app.models.game_models import *
 from app.models.user import *
 
 # Ensure initial objects are created
