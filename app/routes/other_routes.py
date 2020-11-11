@@ -55,6 +55,31 @@ def index():
     )
 
 
+@app.route("/achievement/<ach_id>/star")
+@login_required
+def achievement_star(ach_id):
+    star = AchievementStar.query.filter(
+        AchievementStar.user_id == current_user.id,
+        AchievementStar.ach_id == ach_id,
+    ).first()
+
+    if star:
+        cube_id = star.achievement.cube_id
+        db.session.delete(star)
+        db.session.commit()
+
+    else:
+        star = AchievementStar(
+            user_id=current_user.id,
+            ach_id=ach_id,
+        )
+        db.session.add(star)
+        db.session.commit()
+        cube_id = star.achievement.cube_id
+
+    return redirect(url_for('cube_achievements', cube_id=cube_id))
+
+
 @app.route("/make_pack", methods=["POST"])
 @login_required
 def make_pack():
