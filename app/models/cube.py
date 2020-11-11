@@ -47,6 +47,9 @@ class Cube(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     style = db.Column(db.Enum(CubeStyle))
 
+    # If True, this cube is for administrative purposes (eg. basic lands)
+    admin = db.Column(db.Boolean, default=False)
+
     # Foreign Keys
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

@@ -33,3 +33,9 @@ from app.filters import *
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
+
+# Ensure initial objects are created
+# These need to be commented out if the db isn't set up for them yet.
+# from app.util import setup
+# setup.ensure_starter_user()
+# setup.ensure_basic_lands()
