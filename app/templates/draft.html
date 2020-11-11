@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% from "macros.html" import deckbuilder %}
+{% from "macros.html" import show_achievement %}
 {% from "macros.html" import show_draft_card_list %}
 {% from "macros.html" import show_picked_card_names %}
 
@@ -128,6 +129,14 @@
       <a href="{{ url_for('cockatrice_download', draft_id=d.draft.id, force_rebuild='true') }}">
         Rebuild File
       </a>
+
+      <p class="text-secondary border-bottom mb-1 mt-3">Starred Achievements</p>
+      {% for star in current_user.achievements_starred %}
+        {% set ach = star.achievement %}
+        {% if ach.cube_id == d.draft.cube_id %}
+          {{ show_achievement(ach, current_user) }}
+        {% endif %}
+      {% endfor %}
     </div>
     <!-- END: Draft Info -->
 
