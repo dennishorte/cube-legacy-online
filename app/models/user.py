@@ -43,9 +43,6 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def has_starred(self, achievement):
-        return any([x.id == achievement.id for x in self.achievements_starred])
-
     def should_send_notification(self):
         return (
             not self.last_notif_timestamp
