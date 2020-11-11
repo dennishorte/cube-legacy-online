@@ -22,6 +22,29 @@ class AddCardsForm(FlaskForm):
     submit = SubmitField('Add Cards')
 
 
+class GameDeckReadyForm(FlaskForm):
+    maindeck_ids = HiddenField('maindeck')
+    sideboard_ids = HiddenField('sideboard')
+    basics_list = HiddenField('basics')
+    submit = SubmitField('Ready!')
+
+
+class DeckSelectorForm(FlaskForm):
+    deck = SelectField('Deck')
+    submit = SubmitField('Load Deck')
+
+    @staticmethod
+    def factory(user_id):
+        from app.models.deck import Deck
+        decks = Deck.query.filter(Deck.user_id == user_id).order_by(Deck.name).all()
+        decks = [('none', '')] + [(str(x.id), x.name) for x in decks]
+
+        form = DeckSelectorForm()
+        form.deck.choices = decks
+
+        return form
+
+
 class EditMultiFaceCardForm(FlaskForm):
     face_0_name = StringField('Name')
     face_0_mana_cost = StringField('Mana Cost')
@@ -120,6 +143,22 @@ class LinkAchievemetAndCardForm(FlaskForm):
         return form
 
 
+class LoadDraftDeckForm(FlaskForm):
+    draft = SelectField('Draft')
+    submit = SubmitField('Load Cards')
+
+    @staticmethod
+    def factory(user_id):
+        from app.models.user import User
+        user = User.query.get(user_id)
+        drafts = [(x.id, x.draft.name) for x in user.draft_seats]
+
+        form = LoadDraftDeckForm()
+        form.draft.choices = drafts
+
+        return form
+
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -154,6 +193,20 @@ class NewDraftForm(FlaskForm):
         form.cube.choices = cubes
         form.players.choices = users
 
+        return form
+
+
+class NewGameForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    players = SelectMultipleField('Players', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+    @staticmethod
+    def factory():
+        from app.models.user import User
+        user_names = [(str(x.id), x.name) for x in User.query.order_by('name') if x.name != 'starter']
+        form = NewGameForm()
+        form.players.choices = user_names
         return form
 
 

@@ -10,11 +10,13 @@
       <a href="#newDraftModal" data-toggle="modal">new draft</a>
       /
       <a href="#newCubeModal" data-toggle="modal">new cube</a>
+      /
+      <a href="#newGameModal" data-toggle="modal">new game</a>
     </div>
   </div>
-  
+
   <div class="row mb-5" >
-    
+
     <!-- User drafts and achievements -->
     <div id="drafts" class="col col-md-6">
       <h3>Drafts</h3>
@@ -75,10 +77,27 @@
     <!-- Right side column -->
     <div class="col col-md-6">
 
-      <!-- Cube List -->
+      <!-- Game List -->
       <div>
+        <h3>Games</h3>
+        <div class="framed">
+          <ul class="list-unstyled ml-4 mt-3">
+          {% for game in games %}
+            <li>
+              <a href="{{ url_for('game', game_id=game.id) }}">
+                {{ game.state.name }}
+              </a>
+            </li>
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- END: Game List -->
+
+      <!-- Cube List -->
+      <div class="mt-2">
         <h3>Cubes</h3>
-        <div id="activeCubes" class="border p-2 bg-light">
+        <div id="activeCubes" class="framed">
           <ul class="list-unstyled ml-4 mt-3">
             {% for cube in cubes|sort(attribute='name') %}
               <li>
@@ -126,7 +145,7 @@
         </div>
       </div>
       <!-- END: Tools -->
-      
+
     </div>
     <!-- END: Right side column -->
 
@@ -140,7 +159,7 @@
           <h5 class="modal-title">New Cube</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        
+
         <div class="modal-body">
           <form action="{{ url_for('cubes_new') }}" method="post" novalidate>
             {{ new_cube_form.hidden_tag() }}
@@ -169,7 +188,7 @@
           <h5 class="modal-title">New Draft</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        
+
         <div class="modal-body">
 
           <form action="{{ url_for('draft_new') }}" method="post" novalidate>
@@ -201,12 +220,44 @@
             <div class="form-group">
               {{ new_draft_form.submit() }}
             </div>
-          </form>          
+          </form>
 
         </div>
       </div>
     </div>
   </div>
   <!-- END: New Draft Modal -->
+
+  <!-- New Game Modal -->
+  <div class="modal fade" id="newGameModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Gane</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+          <form action="/game/new" method="post" novalidate>
+            {{ game_form.hidden_tag() }}
+            <div class="form-group">
+              {{ game_form.name.label }}
+              {{ game_form.name(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ game_form.players.label }}
+              {{ game_form.players(class='form-control', size=6) }}
+            </div>
+            <div class="form-group">
+              {{ game_form.submit() }}
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: New Game Modal -->
 
 {% endblock %}

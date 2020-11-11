@@ -18,6 +18,7 @@ from app import app
 from app.forms import *
 from app.models.cube import *
 from app.models.draft import *
+from app.models.game_models import *
 from app.models.user import *
 from app.util import cockatrice
 from app.util.card_util import empty_card_json
@@ -41,6 +42,7 @@ def index():
     achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
     cubes = Cube.query.filter(Cube.admin != True).all()
+    games = [x for x in Game.query.order_by(Game.timestamp.desc()).all() if x.state.player_by_id(current_user.id)]
 
     return render_template(
         'index.html',
@@ -50,8 +52,10 @@ def index():
         achievements_finished=achievements_finished,
         new_draft_form=NewDraftForm.factory(),
         new_cube_form=NewCubeForm(),
+        game_form=NewGameForm.factory(),
         pack_maker_form=PackMakerForm.factory(15),
         cubes=cubes,
+        games=games,
     )
 
 

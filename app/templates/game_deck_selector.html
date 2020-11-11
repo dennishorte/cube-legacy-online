@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% from 'macros/deck_builder.html' import deck_builder %}
+
+
+{% block content %}
+  {% set player = g.player_by_id(current_user.id) %}
+
+  <div class="row">
+
+    <!-- Game Info -->
+    <div class="col framed">
+      <h4>{{ g.name }}</h4>
+
+      <p class="text-secondary border-bottom mb-0">Players</p>
+      <ul class="list-unstyled">
+        {% for player in g.players %}
+          <li>
+            {{ player.name}}
+
+            {% if player.ready_to_start %}
+              <span class="badge badge-success" style="font-size: .5rem">ready</span>
+            {% else %}
+              <span class="badge badge-warning" style="font-size: .5rem">waiting</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if db %}
+        <div class="text-right">
+          <form
+            id="readyForm"
+            action="{{ url_for('game_ready', game_id=game_id) }}"
+            method="post"
+            novalidate>
+
+            {{ rform.hidden_tag() }}
+            {{ rform.submit(class="btn btn-success") }}
+          </form>
+        </div>
+      {% endif %}
+    </div>
+    <!-- END: Game Info -->
+
+
+    <!-- Deck Selector -->
+    <div class="col framed">
+      <form action="{{ url_for('game_select_deck', game_id=game_id) }}" method="post" novalidate>
+        {{ dsform.hidden_tag() }}
+        <div class="form-group">
+          {{ dsform.deck.label }}
+          {{ dsform.deck(class='form-control') }}
+        </div>
+        <div class="text-right">
+          {{ dsform.submit(class="btn btn-info") }}
+        </div>
+      </form>
+    </div>
+    <!-- END: Deck Selector -->
+
+  </div>
+
+  {################}
+  {# Deck Builder #}
+  {% if db %}
+    {{ deck_builder(db) }}
+  {% endif %}
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+  <script src="/static/js/deck_builder.js?version={{ version }}"></script>
+  <script>
+   $(document).ready(function() {
+     autocard_init('card-list-item')
+
+     // When hitting ready, fill the hidden fields with the deck data before submitting.
+     $('#readyForm').submit(function(event) {
+       let data = build_deck_data()
+       console.log(data)
+       $('#maindeck_ids').val(data.maindeck.join(','))
+       $('#sideboard_ids').val(data.sideboard.join(','))
+       $('#basics_list').val(data.basics.join(','))
+     })
+   })
+  </script>
+
+{% endblock scripts %}
