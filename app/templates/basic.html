@@ -5,8 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    {% if config.FLASK_ENV == 'development' %}
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.dev.ico') }}">
+    {% else %}
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% endif %}
+
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -27,7 +32,7 @@
   <body>
     {% block body_start %}
     {% endblock %}
-    
+
     <!-- Card Image Popup -->
     <div class="d-none" id="autocardPopup" style="z-index: 500; right: 514px; bottom: 7px;">
       <div class="autocard-background">
@@ -43,7 +48,7 @@
     </div>
     <!-- END: Card Image Popup -->
 
-    
+
     <script
       src="https://code.jquery.com/jquery-3.5.1.min.js"
       integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
