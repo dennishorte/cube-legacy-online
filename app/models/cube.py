@@ -64,10 +64,14 @@ class Cube(db.Model):
         return '<Cube {}>'.format(self.name)
 
     def achievements_avaiable(self):
-        return [x for x in self.achievements if x.available()]
+        achs = [x for x in self.achievements if x.available()]
+        achs.sort(key=lambda x: x.created_timestamp, reverse=True)
+        return achs
 
     def achievements_completed(self):
-        return [x for x in self.achievements if not x.available()]
+        achs = [x for x in self.achievements if not x.available()]
+        achs.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
+        return achs
 
     def age(self):
         age = datetime.utcnow() - self.timestamp

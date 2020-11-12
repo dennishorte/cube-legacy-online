@@ -25,7 +25,7 @@
 
 {% block content %}
   {{ super() }}
-  
+
   <!-- First Row -->
   <div class="row">
 
@@ -41,7 +41,7 @@
           {% endif %}
         {% endfor %}
       </div>
-      
+
       <div class="framed">
         <a name="availableAchievements"></a>
         <h4>Available Achievements</h4>
@@ -59,8 +59,8 @@
     <div class="col framed">
       <a name="claimedAchievements"></a>
       <h4>Claimed Achievements</h4>
-      
-      {% for achievement in cube.achievements_completed()|sort(attribute='unlocked_timestamp', reverse=True) %}
+
+      {% for achievement in cube.achievements_completed() %}
         <div class="d-flex">
 
           <!-- Achievement Name -->
@@ -120,7 +120,7 @@
       {% endfor %}
     </div>
     <!-- END: Linked Achievements -->
-    
+
     <!-- New achievement form -->
     <div class="col framed">
       <a name="newAchievement"></a>
