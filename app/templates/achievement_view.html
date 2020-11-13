@@ -5,7 +5,7 @@
 {% block content %}
 
   <div class="row d-flex justify-content-center">
-    <div class="col text-center col-md-6">
+    <div class="framed col text-center col-md-6">
       <h2>Achievement Unlocked</h2>
       <hr>
       <p class="text-primary">{{ achievement.name }}</p>
@@ -38,7 +38,36 @@
         {% endfor %}
       </div>
       <!-- END: Achievement text -->
-      
+
+      <hr>
+
+      <!-- Link to Draft -->
+      <div>
+
+        <div id="linkedDraftInfo">
+          {% if link %}
+            <p class="text-info">Unlocked During</p>
+            <strong>{{ link.draft.name }}</strong>
+          {% endif %}
+        </div>
+
+        <div id="draftLinkForm" class="{% if link %}d-none{% endif %}">
+          <p class="text-info">Link to Draft</p>
+          <form
+            action="{{ url_for('achievement_link_to_draft', achievement_id=achievement.id) }}"
+            method="POST"
+            novalidate>
+            {{ dform.hidden_tag() }}
+            <div class="form-group">
+              {{ dform.draft.label }}
+              {{ dform.draft(class='form-control') }}
+            </div>
+            {{ dform.submit(class='btn btn-info') }}
+          </form>
+        </div>
+      </div>
+      <!-- END: Link to Draft -->
+
       <hr>
 
       <div>
@@ -83,7 +112,7 @@
 
     </div>
   </div>
-  
+
 {% endblock content %}
 
 {% block scripts %}

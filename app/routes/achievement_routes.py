@@ -8,6 +8,7 @@ from flask_login import login_required
 from app import app
 from app.forms import FinalizeAchievementForm
 from app.forms import NewAchievementForm
+from app.forms import SelectDraftForm
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
@@ -86,17 +87,49 @@ def achievement_finalize(achievement_id):
     return redirect(url_for('achievement_view', achievement_id=achievement.id))
 
 
+@app.route("/achievement/<achievement_id>/link_to_draft", methods=["POST"])
+@login_required
+def achievement_link_to_draft(achievement_id):
+    form = SelectDraftForm.factory()
+
+    if form.validate_on_submit():
+        if int(form.draft.data) != 0:
+
+            link = AchievementDraftLink.query.filter(
+                AchievementDraftLink.draft_id == form.draft.data,
+                AchievementDraftLink.ach_id == achievement_id,
+            ).first()
+
+            if not link:
+                link = AchievementDraftLink()
+                link.draft_id = form.draft.data
+                link.ach_id = achievement_id
+                db.session.add(link)
+                db.session.commit()
+
+    else:
+        flash("Form validation failure")
+
+    return redirect(url_for('achievement_view', achievement_id=achievement_id))
+
+
 @app.route("/achievement/<achievement_id>/view")
 @login_required
 def achievement_view(achievement_id):
     """Step 3 in claiming an achievement"""
     achievement = Achievement.query.get(achievement_id)
+    draft_form = SelectDraftForm.factory()
     form = FinalizeAchievementForm()
+    link = AchievementDraftLink.query.filter(
+        AchievementDraftLink.ach_id == achievement_id,
+    ).first()
 
     return render_template(
         'achievement_view.html',
         achievement=achievement,
         form=form,
+        dform=draft_form,
+        link=link
     )
 
 

@@ -29,6 +29,7 @@ class Draft(db.Model):
     match_results = db.relationship('MatchResult', backref='draft')
     messages = db.relationship('Message', backref='draft')
     decks = db.relationship('Deck', backref='draft')
+    achs = db.relationship('AchievementDraftLink', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
@@ -302,3 +303,9 @@ class Message(db.Model):
     draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     text = db.Column(db.Text)
+
+
+class AchievementDraftLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
+    ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)

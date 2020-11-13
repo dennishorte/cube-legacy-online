@@ -343,6 +343,18 @@ class SaveDeckListForm(FlaskForm):
     submit = SubmitField('Save')
 
 
+class SelectDraftForm(FlaskForm):
+    draft = SelectField('Draft')
+    submit = SubmitField('Select')
+
+    def factory():
+        from app.models.draft import Draft
+        drafts = Draft.query.order_by(Draft.timestamp.desc()).all()
+        form = SelectDraftForm()
+        form.draft.choices = [(0, '')] + [(x.id, x.name) for x in drafts]
+        return form
+
+
 class UseScarForm(FlaskForm):
     scar_id = IntegerField('Scar ID')
     card_name = SelectField('Card Name')
