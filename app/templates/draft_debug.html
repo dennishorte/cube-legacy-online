@@ -13,6 +13,7 @@
           <td>seat</td>
           <td>name</td>
           <td>user_id</td>
+          <td></td>
         </thead>
         <tbody>
           {% for p in d.seats %}
@@ -20,6 +21,11 @@
               <td>{{ p.order }}</td>
               <td>{{ p.user.name }}</td>
               <td>{{ p.user.id }}</td>
+              <td>
+                <a href="{{ url_for('draft_undo', draft_id=d.draft.id, user_id=p.user.id) }}" class="text-warning">
+                  undo last pick
+                </a>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -30,7 +36,7 @@
         <a class="btn btn-danger" href="{{ url_for('draft_kill', draft_id=d.draft.id) }}">kill</a>
     </div>
   </div>  <!-- Players -->
-  
+
   {% for p in d.seats %}
     <h4 class="mt-2">Packs for {{ p.user.name }} in seat {{ p.order }}</h4>
     <div class="row">

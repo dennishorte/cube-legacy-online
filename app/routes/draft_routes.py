@@ -202,6 +202,32 @@ def draft_save_decklist(draft_id):
     return redirect(url_for('draft', draft_id=draft_id))
 
 
+@app.route("/draft/<draft_id>/undo/<user_id>")
+@login_required
+def draft_undo(draft_id, user_id):
+    user = User.query.get(user_id)
+    dw = DraftWrapper(draft_id, user)
+
+    last_pick = PackCard.query \
+        .filter(PackCard.picked_by_id == dw.seat.id) \
+        .order_by(PackCard.picked_at.desc()) \
+        .first()
+
+    next_player_has_picked = last_pick.pack.num_picked > last_pick.pick_number + 1
+
+    if not next_player_has_picked:
+        last_pick.picked_by_id = None
+        last_pick.pick_number = -1
+        last_pick.picked_at = None
+        db.session.add(last_pick)
+        db.session.commit()
+
+    else:
+        flash("Next player has already picked. Can't undo.")
+
+    return redirect(url_for('draft', draft_id=draft_id))
+
+
 @app.route("/pack/<pack_id>/debug")
 @login_required
 def pack_debug(pack_id):
