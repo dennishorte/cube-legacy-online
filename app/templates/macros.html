@@ -15,13 +15,15 @@
     <div class="mr-auto mt-1 text-primary">
       {{ achievement.full_name() }}
 
-      <a href="{{ url_for('achievement_star', ach_id=achievement.id) }}">
-        {% if achievement.starred_by_user(current_user) %}
-          <i class="fas fa-star text-warning"></i>
-        {% else %}
-          <i class="far fa-star text-secondary"></i>
-        {% endif %}
-      </a>
+      {% if not achievement.unlocked_by_id %}
+        <a href="{{ url_for('achievement_star', ach_id=achievement.id) }}">
+          {% if achievement.starred_by_user(current_user) %}
+            <i class="fas fa-star text-warning"></i>
+          {% else %}
+            <i class="far fa-star text-secondary"></i>
+          {% endif %}
+        </a>
+      {% endif %}
 
       {% if achievement.multiunlock %}
         <span class="badge badge-pill badge-warning">multi</span>
@@ -41,11 +43,13 @@
     {% endif %}
 
     <!-- Claim Button -->
+    {% if not achievement.unlocked_by_id %}
     <div>
       <a href="{{ url_for('achievement_claim_confirmation', achievement_id=achievement.id) }}">
         <button class="btn btn-success">unlock</button>
       </a>
     </div>
+    {% endif %}
   </div>
 
   <!-- Achievement Conditions -->

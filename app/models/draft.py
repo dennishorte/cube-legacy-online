@@ -29,7 +29,7 @@ class Draft(db.Model):
     match_results = db.relationship('MatchResult', backref='draft')
     messages = db.relationship('Message', backref='draft')
     decks = db.relationship('Deck', backref='draft')
-    achs = db.relationship('AchievementDraftLink', backref='draft')
+    ach_links = db.relationship('AchievementDraftLink', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
@@ -44,6 +44,25 @@ class Draft(db.Model):
 
     def scar_rounds(self):
         return [int(x) for x in self.scar_rounds_str.split(',') if x.strip()]
+
+    def match_record(self, user_id):
+        wins = 0
+        losses = 0
+        draws = 0
+
+        for result in self.match_results:
+            if result.user_id == user_id:
+                if result.wins > result.losses:
+                    wins += 1
+                elif result.wins < result.losses:
+                    losses += 1
+                else:
+                    draws += 1
+
+        return f"{wins}-{losses}-{draws}"
+
+    def achs(self, user_id):
+        return [x for x in self.ach_links if x.ach.unlocked_by_id == user_id]
 
 
 class Seat(db.Model):

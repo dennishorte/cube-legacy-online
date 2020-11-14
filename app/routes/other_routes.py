@@ -43,6 +43,7 @@ def index():
 
     cubes = Cube.query.filter(Cube.admin != True).all()
     games = [x for x in Game.query.order_by(Game.timestamp.desc()).all() if x.state.player_by_id(current_user.id)]
+    users = User.query.filter(User.name != 'starter').order_by(User.name).all()
 
     return render_template(
         'index.html',
@@ -56,6 +57,7 @@ def index():
         pack_maker_form=PackMakerForm.factory(15),
         cubes=cubes,
         games=games,
+        users=users,
     )
 
 
@@ -352,3 +354,24 @@ def card_json(card_id):
         return 'Unknown Card'
     else:
         return card.get_json()
+
+
+@app.route("/user/<user_id>")
+@login_required
+def user_profile(user_id):
+    user = User.query.get(user_id)
+    seats = Seat.query.filter(
+        Seat.user_id == user_id,
+    )
+    drafts = [x.draft for x in seats]
+
+    for draft in drafts:
+        for link in draft.achs(user_id):
+            print(link)
+            print(link.ach.name)
+
+    return render_template(
+        'user.html',
+        drafts=drafts,
+        user=user,
+    )

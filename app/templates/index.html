@@ -15,87 +15,54 @@
     </div>
   </div>
 
-  <div class="row mb-5" >
-
-    <!-- User drafts and achievements -->
-    <div id="drafts" class="col col-md-6">
-      <h3>Drafts</h3>
-      <div id="active" class="border bg-light p-2">
-        <p>Active Drafts</p>
-        <ul class="list-unstyled ml-4">
-          {% for p in active %}
-            <li>
-              <a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a>
-              {% if p.waiting_pack() %}
-                <span class="badge badge-pill badge-success">*</span>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div id="complete" class="border bg-light p-2 mt-2">
-        <p>Completed Drafts</p>
-        <ul class="list-unstyled ml-4">
-          {% for p in complete %}
-            <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-
-      <!-- List of Achievements -->
-      <h3 class="mt-4">My Achievements</h3>
-      <div id="claimedAchievements" class="border bg-light p-2">
-        <p>Claimed Achievements</p>
-        <ul class="list-unstyled ml-4">
-          {% for achievement in achievements_unfinished %}
-            <li>
-              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
-                {{ achievement.name }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-
-      <div id="completedAchievements" class="border bg-light p-2 mt-2">
-        <p>Finalized Achievements</p>
-        <ul class="list-unstyled ml-4">
-          {% for achievement in achievements_finished %}
-            <li>
-              <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
-                {{ achievement.name }}
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <!-- END: List of Achievements -->
-
-    </div>
-    <!-- END: User drafts and achievements -->
-
-    <!-- Right side column -->
-    <div class="col col-md-6">
-
-      <!-- Game List -->
+  <div class="row" >
+    <div class="col">
       <div>
-        <h3>Games</h3>
-        <div class="framed">
-          <ul class="list-unstyled ml-4 mt-3">
-          {% for game in games %}
-            <li>
-              <a href="{{ url_for('game', game_id=game.id) }}">
-                {{ game.state.name }}
-              </a>
-            </li>
-          {% endfor %}
+        <h3>Drafts</h3>
+        <div id="active" class="framed">
+          <p>Active Drafts</p>
+          <ul class="list-unstyled ml-4">
+            {% for p in active %}
+              <li>
+                <a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a>
+                {% if p.waiting_pack() %}
+                  <span class="badge badge-pill badge-success">*</span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div id="complete" class="framed">
+          <p>Completed Drafts</p>
+          <ul class="list-unstyled ml-4">
+            {% for p in complete %}
+              <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+            {% endfor %}
           </ul>
         </div>
       </div>
-      <!-- END: Game List -->
 
-      <!-- Cube List -->
       <div class="mt-2">
+        <h3>Games</h3>
+        <div class="framed">
+          <ul class="list-unstyled ml-4 mt-3">
+            {% for game in games %}
+              <li>
+                <a href="{{ url_for('game', game_id=game.id) }}">
+                  {{ game.state.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col">
+      <!-- Cube List -->
+      <div>
         <h3>Cubes</h3>
         <div id="activeCubes" class="framed">
           <ul class="list-unstyled ml-4 mt-3">
@@ -109,10 +76,63 @@
       </div>
       <!-- END: Cube List -->
 
+      <!-- Users List -->
+      <div class="mt-2">
+        <h3>Users</h3>
+        <div class="framed">
+          <ul class="list-unstyled mb-0 ml-4">
+            {% for user in users %}
+              <li>
+                <a href="{{ url_for('user_profile', user_id=user.id) }}">
+                  {{ user.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- END: Users List -->
+
+    </div>
+
+    <div class="col">
+
+      <!-- List of Achievements -->
+      <div>
+        <h3>My Achievements</h3>
+        <div id="claimedAchievements" class="framed">
+          <p>Claimed Achievements</p>
+          <ul class="list-unstyled ml-4">
+            {% for achievement in achievements_unfinished %}
+              <li>
+                <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
+                  {{ achievement.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div id="completedAchievements" class="framed">
+          <p>Finalized Achievements</p>
+          <ul class="list-unstyled ml-4">
+            {% for achievement in achievements_finished %}
+              <li>
+                <a href="{{ url_for('achievement_view', achievement_id=achievement.id) }}">
+                  {{ achievement.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- END: List of Achievements -->
+
+
       <!-- Tools -->
       <div class="mt-2">
         <h3>Tools</h3>
-        <div class="border p-2 bg-light">
+        <div class="framed">
           <h5>Pack Generator</h5>
           <form action="{{ url_for('make_pack') }}" method="post" novalidate>
             {{ pack_maker_form.hidden_tag() }}
@@ -147,9 +167,8 @@
       <!-- END: Tools -->
 
     </div>
-    <!-- END: Right side column -->
-
   </div>
+
 
   <!-- New Cube Modal -->
   <div class="modal fade" id="newCubeModal" tabindex="-1" role="dialog">

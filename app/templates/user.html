@@ -1,0 +1,40 @@
+{% from 'macros.html' import show_achievement %}
+
+
+{% extends "base.html" %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col framed">
+      <h1>{{ user.name }}</h1>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col framed">
+      <h5>Drafts</h5>
+
+      {% for draft in drafts %}
+        <div class="framed">
+          <h6>~{{ draft.name }}~</h6>
+          <p>Results: {{ draft.match_record(user.id) }}</p>
+          {% if draft.achs(user.id) %}
+            <p class="text-secondary border-bottom mb-0">Achievements</p>
+            {% for link in draft.achs(user.id) %}
+              {{ show_achievement(link.ach, None) }}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="col">
+    </div>
+
+    <div class="col">
+    </div>
+
+  </div>
+{% endblock content %}

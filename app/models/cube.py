@@ -452,6 +452,7 @@ class Achievement(db.Model):
 
     # Relationships
     linked_cards = db.relationship('AchievementLink', backref='achievement')
+    linked_drafts = db.relationship('AchievementDraftLink', backref='ach')
     starred = db.relationship('AchievementStar', backref='achievement')
 
     def available(self):
@@ -485,6 +486,9 @@ class Achievement(db.Model):
         self.unlock_json = json.dumps(data)
 
     def starred_by_user(self, user):
+        if not user:
+            return False
+
         for star in self.starred:
             if star.user_id == user.id:
                 return True
