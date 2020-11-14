@@ -279,7 +279,7 @@ def _oracle_text(card, card_data, face_index):
     achievement_lines = []
     if card.linked_achievements():
         achievement_lines.append("\n\n***")
-        for ach in card.linked_achievements:
+        for ach in card.linked_achievements():
             achievement_lines.append(ach.conditions)
 
         rules_text += '\n\n'.join(achievement_lines)
