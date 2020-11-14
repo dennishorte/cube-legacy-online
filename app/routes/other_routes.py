@@ -363,7 +363,7 @@ def user_profile(user_id):
     seats = Seat.query.filter(
         Seat.user_id == user_id,
     )
-    drafts = [x.draft for x in seats]
+    drafts = [x.draft for x in seats if not x.draft.killed]
     drafts.sort(key=lambda x: x.timestamp, reverse=True)
 
     for draft in drafts:
