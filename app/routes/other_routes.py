@@ -364,6 +364,7 @@ def user_profile(user_id):
         Seat.user_id == user_id,
     )
     drafts = [x.draft for x in seats]
+    drafts.sort(key=lambda x: x.timestamp, reverse=True)
 
     for draft in drafts:
         for link in draft.achs(user_id):
