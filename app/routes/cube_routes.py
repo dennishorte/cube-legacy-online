@@ -132,6 +132,28 @@ def cube_factions(cube_id):
     )
 
 
+@app.route("/cube/<cube_id>/interns")
+@login_required
+def cube_interns(cube_id):
+    cube = Cube.query.get(cube_id)
+
+    card = CubeCard.query.filter(CubeCard.cube_id == cube.id)
+    interns = [x for x in card if 'intern of' in x.oracle_text().lower()]
+
+    live_interns = [x for x in interns if not x.removed_by_id]
+    dead_interns = [x for x in interns if x.removed_by_id]
+
+    live_interns.sort(key=lambda x: x.timestamp, reverse=True)
+    dead_interns.sort(key=lambda x: x.removed_by_timestamp, reverse=True)
+
+    return render_template(
+        'cube_interns.html',
+        cube=cube,
+        live_interns=live_interns,
+        dead_interns=dead_interns,
+    )
+
+
 @app.route("/cube/<cube_id>/factions/new", methods=["POST"])
 @login_required
 def cube_new_faction(cube_id):

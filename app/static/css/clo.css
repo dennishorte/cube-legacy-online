@@ -65,6 +65,21 @@
   margin-left: .5rem!important;
 }
 
+.framed-inner {
+  background-color: var(--light);
+  border: 1px solid #dee2e6!important;
+  border-color: var(--secondary);
+  border-radius: .25rem;
+  padding: .5rem!important;
+  margin-top: .5rem;
+}
+
+.inner-frames {
+  padding-left: .5rem!important;
+  padding-right: 0;
+  margin-right: 0;
+}
+
 .card-frame {
   margin: .25rem!important;
   max-width: 220px;

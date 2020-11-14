@@ -1,0 +1,83 @@
+{% extends "cube_base.html" %}
+
+
+{% block cube_section %}
+  Interns
+{% endblock %}
+
+
+{% block content %}
+  {{ super() }}
+
+  <div class="row">
+    <div class="col inner-frames">
+
+      <div class="framed-inner">
+        <h4>Active Interns</h4>
+        <ul class="list-unstyled">
+          {% for card in live_interns %}
+            <li>
+              <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                 {{ card.name() }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="framed-inner">
+        <h4>Dead Interns</h4>
+        {% for card in dead_interns %}
+          <li>
+            <a href="{{ url_for('card_editor', card_id=card.id) }}">
+               {{ card.name() }}
+            </a>
+          </li>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <div class="col framed">
+      <h4>The Rules</h4>
+
+      <h5>Creating an Intern</h5>
+      <p>You may create an intern when you don't already have an intern and you play the same creature in two games in the same match. Perform the following steps.</p>
+      <ul>
+        <li>Rename the intern</li>
+        <li>Give it a scar: <em>Intern of &lt;your name%gt;, XP: 0</em></li>
+        <li>Add one of five random scars to it.</li>
+      </ul>
+
+      <h5>Intern XP</h5>
+      <p>Interns earn XP for doing useful things. At the end of each match/draft, update the intern's XP.</p>
+      <p>For each 5 XP, add another one of five random scars to the intern.</p>
+      <p>Some things an intern might get XP for include:</p>
+      <ul>
+        <li>Being cast by their mentor</li>
+        <li>Dealing lethal damage to something or destroying something</li>
+        <li>Damaging an opponent</li>
+        <li>Killing an opponent</li>
+        <li>Surviving being the target of an opponent's spell or ability</li>
+        <li>Generates a food token, assembles a contraption, or brings you a cup of coffee</li>
+        <li>Anything else you and your opponent agree is worthy</li>
+      </ul>
+
+      <h5>Intern Death</h5>
+      <p>Interns leave you if they ever leave the battlefield while controlled by their Mentor and do not return to the battlefield before the end of the match. The Mentor removes the departed Intern from the cube and then does the highest one from among the following based on how much XP was earned at the time it died:</p>
+      <ul>
+        <li><strong>0-4:</strong> Nothing. They leave before making any mark and are quickly forgotten. Don’t worry, there will be plenty of other schmucks eager to be your Intern.</li>
+        <li><strong>5-9:</strong> Add flavor text to the card that caused them to leave. The Intern is forgotten, but every now and then someone remembers one of their mistakes.</li>
+        <li><strong>10-14:</strong> Add an artifact to the cube, name it after the Intern, and give it the “Tribal Artifact — Intern” type. The Intern is largely forgotten except for a few chotskies left behind in their cubicle.</li>
+        <li><strong>15-19:</strong> Add an instant, sorcery, or enchantment to the cube, name it after the Intern, and give it the “Tribal <TYPE> -- Intern” type.  The Intern made a minor mark on the organization through unusual heroics on one well-regarded project. Other ambitious interns study the project to help their own careers.</TYPE>
+          <li><strong>20-24:</strong> Create a saga card in the colors of the Intern that captures its story, give it the “Tribal Enchantment -- Intern Saga” type, add it to the cube. Make it a solid card, but not bonkers! The Intern got close to the top of the ladder, but got complacent and failed. Their story is a widely known cautionary tale within the company.</li>
+          <li><strong>25-29:</strong> Create a saga card in the colors of the Intern that captures its story, give it the “Tribal Enchantment -- Intern Saga” type, and add it to the cube. Make it powerful! Go bonkers! The Intern rose to the very highest levels of corporate ladder and their story is known to everyone in the company. Several of their accomplishments are taught as part of case studies in business schools throughout the world.</li>
+          <li><strong>30+:</strong> Create a planeswalker card in the colors of the Intern that captures the essence of its story and add it the cube. Make it powerful. The Interns story is so well known no one even bothers to tell it anymore. They broke capitalism and earned the ultimate golden parachute -- ascension to near god-like status -- and then promptly left the company to start a space exploration startup on some other plane.</li>
+      </ul>
+
+      <h5>Intern Retirement</h5>
+      <p>At any time in between drafts, the Mentor may voluntarily retire their Intern. If they do, remove "Intern of &lt;your name&gt;" and give it "Retired Intern of &lt;Your name&gt;". It can no longer gain XP or die. You may never claim this creature again as your Intern, but other players can. If they do it follows the rules except it loses half its XP (rounded up) when it becomes an Intern again.</p>
+    </div>
+  </div>
+
+{% endblock content %}
