@@ -523,3 +523,13 @@ class Faction(db.Model):
     desc = db.Column(db.Text)  # Description
     memb = db.Column(db.Text)  # Membership criteria
     note = db.Column(db.Text)  # Notes
+
+    def age(self):
+        age = datetime.utcnow() - self.created_at
+        years = age.days // 365
+        days = age.days % 365
+
+        if years > 0:
+            return f"{years} years {days} days"
+        else:
+            return f"{days} days"

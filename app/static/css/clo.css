@@ -16,31 +16,31 @@
 }
 
 .blue {
-  background-color: var(--card-blue);    
+  background-color: var(--card-blue);
 }
 
 .black {
-  background-color: var(--card-black);    
+  background-color: var(--card-black);
 }
 
 .red {
-  background-color: var(--card-red);    
+  background-color: var(--card-red);
 }
 
 .green {
-  background-color: var(--card-green);    
+  background-color: var(--card-green);
 }
 
 .gold {
-  background-color: var(--card-gold);    
+  background-color: var(--card-gold);
 }
 
 .colorless {
-  background-color: var(--card-colorless);    
+  background-color: var(--card-colorless);
 }
 
 .land {
-  background-color: var(--card-land);    
+  background-color: var(--card-land);
 }
 
 .text-s {
@@ -217,6 +217,37 @@
   margin: 0 2px;
   padding: 0;
   flex-shrink: 0;
+}
+
+.faction {
+  max-width: 32%;
+}
+
+.faction p {
+  margin: 0;
+  padding: 0;
+}
+
+.faction-header {
+  margin-top: .5rem!important;
+  border-bottom: 1px solid var(--gray);
+  color: var(--gray);
+}
+
+.faction-name {
+  font-weight: bold;
+}
+
+.faction-desc {
+  font-size: .8rem;
+  font-style: italic;
+  color: var(--cyan);
+}
+
+.faction-age {
+  font-size: .8rem;
+  color: var(--gray);
+  margin-left: 4px!important;
 }
 
 body {
