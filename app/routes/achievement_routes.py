@@ -96,16 +96,16 @@ def achievement_link_to_draft(achievement_id):
         if int(form.draft.data) != 0:
 
             link = AchievementDraftLink.query.filter(
-                AchievementDraftLink.draft_id == form.draft.data,
                 AchievementDraftLink.ach_id == achievement_id,
             ).first()
 
             if not link:
                 link = AchievementDraftLink()
-                link.draft_id = form.draft.data
-                link.ach_id = achievement_id
-                db.session.add(link)
-                db.session.commit()
+
+            link.draft_id = form.draft.data
+            link.ach_id = achievement_id
+            db.session.add(link)
+            db.session.commit()
 
     else:
         flash("Form validation failure")

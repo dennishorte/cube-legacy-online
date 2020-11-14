@@ -51,6 +51,10 @@
           {% endif %}
         </div>
 
+        {% if link %}
+          <button type="button" class="btn btn-info" onclick="$('#draftLinkForm').removeClass('d-none')">Change Link</button>
+        {% endif %}
+
         <div id="draftLinkForm" class="{% if link %}d-none{% endif %}">
           <p class="text-info">Link to Draft</p>
           <form
