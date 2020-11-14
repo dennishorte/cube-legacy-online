@@ -8,6 +8,11 @@ class BaseDiffer(object):
         self.new = new_json
         self.no_changes = self.old == self.new
 
+    def __getitem__(self, field):
+        diff = self._ndiff(field)
+        diff = [x for x in diff if not x.startswith('  ') and not x.startswith('? ')]
+        return diff
+
     def changed_fields(self):
         if self.no_changes:
             return {}
@@ -74,6 +79,10 @@ class CardDiffer(object):
 
         self._init_face_diffs()
 
+    def face(self, index):
+        if index < len(self.face_differs):
+            return self.face_differs[index]
+
     def is_changed(self, field):
         return any([x.is_changed(field) for x in self.face_differs])
 
@@ -95,9 +104,6 @@ class CardDiffer(object):
         for i in range(10):
             old_face = self._get_face(self.old_card, i)
             new_face = self._get_face(self.new_card, i)
-
-            if old_face is None and new_face is None:
-                return
             self.face_differs.append(FaceDiffer(old_face, new_face))
 
     def _get_face(self, card, face_index):

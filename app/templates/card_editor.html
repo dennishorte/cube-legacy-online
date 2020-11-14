@@ -1,4 +1,8 @@
+{% extends "base.html" %}
+
+
 {% from 'macros.html' import show_achievement %}
+
 
 {% macro render_field_diff(diff, field_name) %}
   {% if diff %}
@@ -17,6 +21,7 @@
   {% endif %}
 {% endmacro %}
 
+
 {% macro render_image_popup(field_name) %}
   {% if field_name == 'image_url' %}
     <a
@@ -28,6 +33,7 @@
   {% endif %}
 {% endmacro %}
 
+
 {% macro render_form_group(fields, diff, field_name) %}
   <div class="form-group">
     {{ fields[field_name].label }}
@@ -37,6 +43,7 @@
   </div>
 {% endmacro %}
 
+
 {% macro render_form_group_col(fields, diff, field_name) %}
   <div class="col form-group">
     {{ fields[field_name].label }}
@@ -44,6 +51,7 @@
     {{ render_field_diff(diff, field_name) }}
   </div>
 {% endmacro %}
+
 
 {% macro face_form(fields, diff, face_name) %}
   <div class="col m-1 rounded border bg-light">
@@ -63,12 +71,11 @@
   </div>
 {% endmacro %}
 
-<!-- START PAGE -->
-{% extends "base.html" %}
 
 {% block title %}
   {{ title }}
 {% endblock title %}
+
 
 {% block content %}
 
@@ -110,7 +117,7 @@
                 <div class="col">
                 </div>
                 <div class="col">
-                  
+
                   <h5 class="text-center">This card was removed from the cube.</h5>
                   <em>
                     {% for line in card.removed_by_comment.split('\n') %}
@@ -156,13 +163,13 @@
           </div>
           <!-- END: Scar -->
         {% endif %}
-        
+
 
         <!-- Edit forms for each face -->
         <div class="row mt-1">
           {% if card %}
-            {{ face_form(form.faces[0], card.card_diff(face=0), 'front') }}
-            {{ face_form(form.faces[1], card.card_diff(face=1), 'back') }}
+            {{ face_form(form.faces[0], card.differ().face(0), 'front') }}
+            {{ face_form(form.faces[1], card.differ().face(1), 'back') }}
           {% else %}
             {{ face_form(form.faces[0], None, 'front') }}
             {{ face_form(form.faces[1], None, 'back') }}
@@ -175,7 +182,7 @@
             {{ form.comment.label }}
             {{ form.comment(class='form-control', rows='5') }}
           </div>
-          
+
           <div class="col bg-light m-1 rounded border p-2" id="submitArea">
             {{ form.hidden_tag() }}
             <div class="form-group">
@@ -192,10 +199,10 @@
             </div>
           </div>
         </div>
-        
+
       </form>
     </div>
-    
+
   </div>
   <!-- END: edit form -->
 
@@ -216,7 +223,7 @@
           data-toggle="collapse"
           data-target="#achievementLink">
           Link to Achievement
-        </button>          
+        </button>
       </div>
 
       <div class="col bg-light border p-2">
@@ -251,7 +258,7 @@
       </div>
     </div>
   {% endif %}
-  
+
   <hr>
 
   <div id="linkedAchievements" class="row">
@@ -278,7 +285,7 @@
       {% endif %}
     </div>
     <!-- END: Comments from previous versions -->
-    
+
   </div>
 
   <!-- Image Preview Modal -->
@@ -289,9 +296,9 @@
           <h5 class="modal-title">Image Preview</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             &times;
-          </button>          
+          </button>
         </div>
-        
+
         <div class="modal-body d-flex justify-content-between">
           <div id="frontImagePreview">
             <img
@@ -307,11 +314,11 @@
               alt="back">
           </div>
         </div>
-        
+
       </div>
     </div>
   </div>
-  <!-- END: Image Preview Modal -->  
+  <!-- END: Image Preview Modal -->
 {% endblock content %}
 
 {% block scripts %}
@@ -327,19 +334,19 @@
      $('#frontImagePreview img').attr('src', front_image_url)
      $('#backImagePreview img').attr('src', back_image_url)
    }
-   
+
    $(document).ready(function() {
      // Hide the card_id in achievement link, since that is fixed in this template.
      $('#achLinkCard').hide()
-     
+
      // Set the size of the remove card text area
      $('#reallyRemove').on('show.bs.collapse', function (event) {
        $(this).find('textarea').attr('rows', '3')
      })
-     
+
      // Expand the textareas to display all of their content.
      $('textarea').each(function(index, element) {
-       element.style.height = element.scrollHeight+3+'px'; 
+       element.style.height = element.scrollHeight+3+'px';
      })
 
      {% if read_only == 'true' %}
@@ -349,11 +356,11 @@
 
      $('#submitButton').removeClass('btn-primary')
      {% endif %}
-     
+
      $('#layout').change(function() {
        var layout = $(this).val()
        var back_face = $('#backFace')
-       
+
        if (layout == 'normal' || layout == 'split' || layout == 'leveler' || layout == 'saga') {
        back_face.hide()
        }
