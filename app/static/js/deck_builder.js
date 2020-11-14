@@ -79,6 +79,7 @@ function swap_maindeck_sideboard() {
 
   li.detach()
   li.appendTo(new_col)
+  update_counts()
 }
 
 $(document).ready(function() {
