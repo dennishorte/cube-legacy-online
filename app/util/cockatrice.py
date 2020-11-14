@@ -277,10 +277,10 @@ def _oracle_text(card, card_data, face_index):
         raise NotImplementedError(f"Don't have a Cockatrice pattern for text of: {layout}")
 
     achievement_lines = []
-    if card.linked_achs:
+    if card.linked_achievements():
         achievement_lines.append("\n\n***")
-        for link in card.linked_achs:
-            achievement_lines.append(link.achievement.conditions)
+        for ach in card.linked_achievements:
+            achievement_lines.append(ach.conditions)
 
         rules_text += '\n\n'.join(achievement_lines)
 

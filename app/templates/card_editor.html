@@ -270,8 +270,8 @@
     <div class="col framed">
       <h4>Linked Achievements</h4>
       <hr>
-      {% for link in card.linked_achs %}
-        {{ show_achievement(link.achievement, current_user) }}
+      {% for ach in card.linked_achievements() %}
+        {{ show_achievement(ach, current_user) }}
       {% endfor %}
     </div>
     <!-- END: Linked Achievements -->

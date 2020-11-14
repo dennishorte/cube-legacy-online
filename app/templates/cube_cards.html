@@ -68,7 +68,7 @@
                   data-back="{{ card.image_back() }}"
                 {% endif %}
               >
-                {% if card.linked_achs %}
+                {% if card.linked_achievements() %}
                   <i class="fab fa-font-awesome-flag"></i>
                 {% endif %}
                 {% if card.differ().is_significant() %}
