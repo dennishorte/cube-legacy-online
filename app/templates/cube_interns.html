@@ -27,13 +27,15 @@
 
       <div class="framed-inner">
         <h4>Dead Interns</h4>
-        {% for card in dead_interns %}
-          <li>
-            <a href="{{ url_for('card_editor', card_id=card.id) }}">
-               {{ card.name() }}
-            </a>
-          </li>
-        {% endfor %}
+        <ul class="list-unstyled">
+          {% for card in dead_interns %}
+            <li>
+              <a href="{{ url_for('card_editor', card_id=card.id) }}">
+                {{ card.name() }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
 
     </div>
