@@ -1,5 +1,9 @@
 {% from 'macros.html' import show_achievement_form %}
 
+{% block title_suffix %}
+  Edit Achievement
+{% endblock %}
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -9,7 +13,7 @@
       <h4>Edit Achievement</h4>
 
       {{ show_achievement_form(form) }}
-      
+
     </div>
   </div>
   <!-- END: Achievement edit form -->

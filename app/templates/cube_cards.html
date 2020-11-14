@@ -1,5 +1,11 @@
 {% extends "cube_base.html" %}
 
+
+{% block cube_section %}
+  Cards
+{% endblock %}
+
+
 {% block more_nav %}
   <li>
     <a href="#addCardsModal" data-toggle="modal">
@@ -33,10 +39,10 @@
         <div class="table-column-header">
           {{ col.header }} ({{ col.num_cards() }})
         </div>
-        
+
         {% for section in col.sections %}
           <div class="table-section {{ col.color_class }}">
-            
+
             <div class="table-section-header">
               {{ section.header }} ({{ section.num_cards() }})
             </div>
@@ -75,10 +81,10 @@
                 </a>
               </p>
             {% endfor %}
-            
+
           </div>
         {% endfor %}
-        
+
       </div>
     {% endfor %}
 
@@ -87,7 +93,7 @@
 
 
   <div class="row">
-    
+
     <!-- Removed Cards -->
     <div class="col framed">
       <div>
@@ -115,7 +121,7 @@
       </div>
     </div>
     <!-- END: Removed cards -->
-    
+
     <!-- Added Cards -->
     <div class="col framed">
       <div>
@@ -144,7 +150,7 @@
     </div>
     <!-- END: Added cards -->
 
-    
+
     <!-- Recent edits -->
     <div class="col framed">
       <div>
@@ -172,10 +178,10 @@
       </div>
     </div>
     <!-- END: Recent edits -->
-    
+
   </div>
 
-  
+
   <!-- Renamed Cards Finder -->
   <div class="row">
     <div class="col framed">
@@ -205,9 +211,9 @@
           <h5 class="modal-title">Add Cards</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span>&times;</span>
-          </button>          
+          </button>
         </div>
-        
+
         <div class="modal-body">
 
           <form action="" method="post" id="addCardsForm" novalidate>
@@ -232,7 +238,7 @@
             <p>A message will be displayed here when the loading has completed.</p>
           </div>
         </div>
-        
+
         <div class="modal-footer d-none">
           <div id="addCardsSuccess" class="text-success d-none">
             Cards added successfully!
@@ -241,7 +247,7 @@
           <div id="addCardsFailure" class="text-warning d-none">
             There was an error while loading the cards. Reload the page to see if they were actually added.
           </div>
-          
+
           <a
             id="#reloadPage"
             href="{{ url_for('cube_cards', cube_id=cube.id) }}"
@@ -249,11 +255,11 @@
             Reload Page
           </a>
         </div>
-        
+
       </div>
     </div>
   </div>
-  <!-- END: New Cube Modal -->  
+  <!-- END: New Cube Modal -->
 
 {% endblock content %}
 
@@ -261,7 +267,7 @@
   <script>
    $(document).ready(function() {
      autocard_init('card-list-item')
-     
+
      $('#addCardsButton').click(function () {
        let modal = $('#addCardsModal')
        let body = modal.find('.modal-body')

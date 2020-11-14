@@ -1,5 +1,9 @@
 {% extends "cube_base.html" %}
 
+{% block title_suffix %}
+  {{ cube.name }} - Data
+{% endblock %}
+
 {% block content %}
   {{ super() }}
 
@@ -15,7 +19,7 @@
     </div>
     <!-- END: Creature Type Breakdown -->
 
-    
+
     <!-- Creatures Display -->
     <div class="col framed">
       {% for type, cards in d.creature_types() %}
@@ -34,7 +38,7 @@
       {% endfor %}
     </div>
     <!-- END: Creatures Display -->
-    
+
   </div>
-  
+
 {% endblock content %}

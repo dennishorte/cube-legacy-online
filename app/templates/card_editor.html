@@ -72,6 +72,10 @@
 {% endmacro %}
 
 
+{% block title_suffix %}
+  Edit - {{ card.name() }}
+{% endblock %}
+
 {% block title %}
   {{ title }}
 {% endblock title %}

@@ -4,6 +4,12 @@
 {% extends "base.html" %}
 
 
+{% block title_suffix %}
+  User - {{ user.name }}
+{% endblock %}
+
+
+
 {% block content %}
   <div class="row">
     <div class="col framed">

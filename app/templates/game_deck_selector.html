@@ -3,6 +3,11 @@
 {% from 'macros/deck_builder.html' import deck_builder %}
 
 
+{% block title_suffix %}
+  {{ g.name }} - Deck Selector
+{% endblock %}
+
+
 {% block content %}
   {% set player = g.player_by_id(current_user.id) %}
 

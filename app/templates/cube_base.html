@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title_suffix %}
+  {% block cube_section %}{% endblock %} - {{ cube.name }}
+{% endblock %}
+
 {% block title %}
   Cube Details: {{ cube.name }}
 {% endblock title %}
@@ -48,12 +52,12 @@
       </ul>
 
       <hr>
-      
+
       <ul class="list-unstyled mb-0">
         {% block more_nav %}
         {% endblock %}
       </ul>
-      
+
 
     </div>
     <!-- END: Cube Navigation -->
@@ -67,7 +71,7 @@
       </ul>
     </div>
     <!-- END: Cube Details -->
-    
+
   </div>
 
 {% endblock content %}

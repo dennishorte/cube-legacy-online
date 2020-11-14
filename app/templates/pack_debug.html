@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+
+{% block title_suffix %}
+  Pack Debugger
+{% endblock %}
+
+
 {% block title %}
   Debugger: {{ d.draft.name }} ({{d.draft.id}})
 {% endblock %}
@@ -26,7 +32,7 @@
       </table>
     </div>
   </div>  <!-- Players -->
-  
+
   <!-- Pack Info -->
   <div class="row">
     <div class="col bg-light border p-2">
@@ -46,7 +52,7 @@
 
     </div>
     <div class="col bg-light border p-2">
-        
+
       <p><strong>Picked cards</strong></p>
       {% for card in d.pack.picked_cards() %}
         <p class="text-primary m-0">
@@ -59,12 +65,12 @@
       {% endfor %}
 
       <hr>
-      
+
       <p><strong>Unpicked cards</strong></p>
       {% for card in d.pack.unpicked_cards() %}
         <p class="text-secondary m-0">{{ card.cube_card.name() }}</p>
       {% endfor %}
-      
+
     </div>
   </div>
   <!-- END: Pack Info -->
