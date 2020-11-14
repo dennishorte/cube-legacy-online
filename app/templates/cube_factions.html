@@ -1,3 +1,6 @@
+{% from 'macros.html' import show_achievement %}
+
+
 {% extends "cube_base.html" %}
 
 
@@ -17,70 +20,80 @@
   {{ super() }}
 
   <div class="row">
-    {% if not cube.factions %}
-      <div class="col">
+
+    <!-- Faction List -->
+    <div class="col inner-frames">
+      {% if not cube.factions %}
         <p class="info">There are no factions in this cube, yet.</p>
-      </div>
-    {% endif %}
+      {% endif %}
 
-      <!-- Faction List -->
-    {% for faction in cube.factions %}
-      <div class="col col-md-4 framed faction">
-        <p class="faction-name">{{ faction.name }}</p>
-        <p class="faction-desc">{{ faction.desc }}</p>
-        <p class="faction-age">founded: {{ faction.age() }} ago</p>
+      {% for faction in cube.factions %}
+        <div class="framed-inner faction">
+          <p class="faction-name">{{ faction.name }}</p>
+          <p class="faction-desc">{{ faction.desc }}</p>
+          <p class="faction-age">founded: {{ faction.age() }} ago</p>
 
-        <p class="faction-header">membership criteria</p>
-        <p class="faction-memb">{{ faction.memb }}</p>
+          <p class="faction-header">membership criteria</p>
+          <p class="faction-memb">{{ faction.memb }}</p>
 
-        <p class="faction-header">notes</p>
-        <p class="faction-note">{{ faction.note }}</p>
-      </div>
-    {% endfor %}
+          <p class="faction-header">notes</p>
+          <p class="faction-note">{{ faction.note }}</p>
+        </div>
+      {% endfor %}
+    </div>
     <!-- END: Faction List -->
 
-    <!-- New Cube Modal -->
-    <div class="modal fade" id="newFactionModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">New Faction</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
 
-          <div class="modal-body">
-            <form
-              action="{{ url_for('cube_new_faction', cube_id=cube.id) }}"
-              method="post"
-              novalidate>
+    <!-- Faction Achievements -->
+    <div class="col framed">
+      {% for ach in achievements %}
+        {{ show_achievement(ach, current_player) }}
+      {% endfor %}
+    </div>
+    <!-- END: Faction Achievements -->
 
-              {{ form.hidden_tag() }}
-              <div class="form-group">
-                {{ form.name.label }}
-                {{ form.name(class='form-control') }}
-              </div>
-              <div class="form-group">
-                {{ form.desc.label }}
-                {{ form.desc(class='form-control') }}
-              </div>
-              <div class="form-group">
-                {{ form.memb.label }}
-                {{ form.memb(class='form-control') }}
-              </div>
-              <div class="form-group">
-                {{ form.note.label }}
-                {{ form.note(class='form-control') }}
-              </div>
-              <p>{{ form.submit(class="btn btn-primary") }}</p>
-            </form>
+  </div>
 
-          </div>
+
+  <!-- New Faction Modal -->
+  <div class="modal fade" id="newFactionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New Faction</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form
+            action="{{ url_for('cube_new_faction', cube_id=cube.id) }}"
+            method="post"
+            novalidate>
+
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {{ form.name.label }}
+              {{ form.name(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.desc.label }}
+              {{ form.desc(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.memb.label }}
+              {{ form.memb(class='form-control') }}
+            </div>
+            <div class="form-group">
+              {{ form.note.label }}
+              {{ form.note(class='form-control') }}
+            </div>
+            <p>{{ form.submit(class="btn btn-primary") }}</p>
+          </form>
+
         </div>
       </div>
     </div>
-    <!-- END: New Cube Modal -->
-
   </div>
 {% endblock content %}

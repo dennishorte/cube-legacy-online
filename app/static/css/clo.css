@@ -234,10 +234,6 @@
   flex-shrink: 0;
 }
 
-.faction {
-  max-width: 32%;
-}
-
 .faction p {
   margin: 0;
   padding: 0;

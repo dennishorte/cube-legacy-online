@@ -125,10 +125,13 @@ def cube_factions(cube_id):
     cube = Cube.query.get(cube_id)
     form = NewFactionForm()
 
+    achievements = [x for x in cube.achievements_avaiable() if 'faction' in x.conditions.lower()]
+
     return render_template(
         'cube_factions.html',
         cube=cube,
         form=form,
+        achievements=achievements,
     )
 
 
