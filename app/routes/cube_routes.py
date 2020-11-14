@@ -137,7 +137,10 @@ def cube_factions(cube_id):
 def cube_interns(cube_id):
     cube = Cube.query.get(cube_id)
 
-    card = CubeCard.query.filter(CubeCard.cube_id == cube.id)
+    card = CubeCard.query.filter(
+        CubeCard.cube_id == cube.id,
+        CubeCard.latest_id == CubeCard.id,
+    )
     interns = [x for x in card if 'intern of' in x.oracle_text().lower()]
 
     live_interns = [x for x in interns if not x.removed_by_id]
