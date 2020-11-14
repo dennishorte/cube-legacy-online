@@ -30,6 +30,18 @@
                   data-back="{{ card.image_back() }}"
                 {% endif %}
               >
+                {# Linked Achievements Icon #}
+                {% if card.linked_achs %}
+                  <i class="fab fa-font-awesome-flag"></i>
+                {% endif %}
+
+                {# Scars Icon #}
+                {% if card.differ().is_significant() %}
+                  <i class="fas fa-bolt"></i>
+                {% elif card.differ().is_minor() %}
+                  <i class="fas fa-bolt text-muted"></i>
+                {% endif %}
+
                 {{ card.name() }}
               </li>
             {% endfor %}
