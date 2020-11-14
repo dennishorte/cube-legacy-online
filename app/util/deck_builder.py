@@ -91,6 +91,34 @@ class DeckBuilder(object):
                 return tokens[0]
         return '0'
 
+    def deck_list(self, legacy_names=False):
+        """
+        Return a decklist formatted to be used by Cockatrice and other systems.
+        """
+        cards = []
+
+        for card in self.deck.maindeck():
+            if legacy_names:
+                cards.append(card.cockatrice_name())
+            else:
+                cards.append(card.name())
+
+        for basic in self.deck.basic_lands.split(','):
+            if legacy_names:
+                cards.append(basic + "'")
+            else:
+                cards.append(basic)
+
+        cards.append('\u00a0')  # Non-breaking space
+
+        for card in self.deck.sideboard():
+            if legacy_names:
+                cards.append(card.cockatrice_name())
+            else:
+                cards.append(card.name())
+
+        return cards
+
     def _load_deck(self):
         existing_deck = Deck.query.filter(
             Deck.draft_id == self.draft.id,
