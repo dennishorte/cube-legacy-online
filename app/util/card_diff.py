@@ -35,6 +35,9 @@ class BaseDiffer(object):
 
         return False
 
+    def plus(self, field):
+        return [x for x in self._ndiff(field) if x.startswith('+ ')]
+
     @functools.lru_cache
     def _ndiff(self, field):
         return list(difflib.ndiff(
@@ -69,6 +72,31 @@ class FaceDiffer(BaseDiffer):
             return True
 
         return False
+
+    def summary(self):
+        summary = []
+
+        def field_plus(field):
+            return [f"+ {field}: {x[2:]}" for x in self.plus(field)]
+
+        def pt():
+            power = self.plus('power')
+            tough = self.plus('toughness')
+
+            if power or tough:
+                return [f"+ pt: {self.new['power']} / {self.new['toughness']}"]
+            else:
+                return []
+
+        summary += field_plus('name')
+        summary += field_plus('mana_cost')
+        summary += field_plus('type_line')
+        summary += field_plus('flavor_text')
+        summary += self['oracle_text']
+        summary += field_plus('loyalty')
+        summary += pt()
+
+        return summary
 
 
 class CardDiffer(object):

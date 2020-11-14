@@ -127,7 +127,7 @@
   {% set card = card|cube_cardify %}
   <ul class="list-unstyled mt-0">
     {% for face in [0, 1] %}
-      {% for line in card.card_diff(face=face).summary() %}
+      {% for line in card.differ().face(face).summary() %}
         <li class="
                    {% if line.startswith('+ ') %}
                    text-success
