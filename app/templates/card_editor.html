@@ -73,7 +73,12 @@
 
 
 {% block title_suffix %}
-  Edit - {{ card.name() }}
+  Edit -
+  {% if card %}
+    {{ card.name() }}
+  {% else %}
+    New Card
+  {% endif %}
 {% endblock %}
 
 {% block title %}
@@ -270,9 +275,11 @@
     <div class="col framed">
       <h4>Linked Achievements</h4>
       <hr>
-      {% for ach in card.linked_achievements() %}
-        {{ show_achievement(ach, current_user) }}
-      {% endfor %}
+      {% if card %}
+        {% for ach in card.linked_achievements() %}
+          {{ show_achievement(ach, current_user) }}
+        {% endfor %}
+      {% endif %}
     </div>
     <!-- END: Linked Achievements -->
 
