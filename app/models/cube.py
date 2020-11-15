@@ -278,6 +278,7 @@ class CubeCard(db.Model):
                 latest=False,
                 latest_id=self.id,
                 json=self.json,
+                comment=self.comment,
 
                 cube_id=self.cube_id,
                 base_id=self.base_id,
