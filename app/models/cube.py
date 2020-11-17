@@ -18,6 +18,7 @@ from app.util.enum import Layout
 class CubeStyle(enum.Enum):
     standard = 1
     legacy = 2
+    set = 3
 
 
 class BaseCard(db.Model):

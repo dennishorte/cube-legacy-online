@@ -168,7 +168,7 @@ class LoginForm(FlaskForm):
 
 class NewCubeForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    style = RadioField('Style', validators=[DataRequired()], choices=['standard', 'legacy'])
+    style = RadioField('Style', validators=[DataRequired()], choices=['standard', 'legacy', 'set'])
     submit = SubmitField('Create')
 
 
