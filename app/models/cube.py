@@ -261,40 +261,46 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
-    def update(self, new_json, edited_by, comment, commit=True):
+    def update(self, new_json, edited_by, comment, commit=True, new_version=True):
         """
         Assuming any changes have been made in the JSON compared to this CubeCard,
         creates a copy of this cube card and adds it to the database as an old verison,
         and then updates this card with the new data. This preserves the card id for
         drafts, when cards will be edited during drafting.
+
+        if commit is true, commit to db immediately. Otherwise, just add to session.
+        if new_version is false, don't create a new version, and just update the json data.
+          - Typically used when updating the json schema.
         """
         if self.removed_by_id:
             raise ValueError("Can't edit a removed card.")
 
         if self.get_json() != new_json:
-            # Create a copy of this card as a non-latest version.
-            new_card = CubeCard(
-                timestamp=self.timestamp,
-                version=self.version,
-                latest=False,
-                latest_id=self.id,
-                json=self.json,
-                comment=self.comment,
 
-                cube_id=self.cube_id,
-                base_id=self.base_id,
-                added_by_id=self.added_by_id,
-                edited_by_id=self.edited_by_id,
-            )
+            if new_version:
+                # Create a copy of this card as a non-latest version.
+                new_card = CubeCard(
+                    timestamp=self.timestamp,
+                    version=self.version,
+                    latest=False,
+                    latest_id=self.id,
+                    json=self.json,
+                    comment=self.comment,
 
-            # Update this card with the new data.
-            self.version += 1
+                    cube_id=self.cube_id,
+                    base_id=self.base_id,
+                    added_by_id=self.added_by_id,
+                    edited_by_id=self.edited_by_id,
+                )
+                db.session.add(new_card)
+
+                # Update this card with the new data.
+                self.version += 1
+                self.edited_by_id = edited_by.id
+                self.comment = comment
+                self.timestamp = datetime.utcnow()
+
             self.json = json.dumps(new_json)
-            self.edited_by_id = edited_by.id
-            self.comment = comment
-            self.timestamp = datetime.utcnow()
-
-            db.session.add(new_card)
             db.session.add(self)
 
             if commit:

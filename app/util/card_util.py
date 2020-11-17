@@ -10,6 +10,7 @@ class CardConsts(object):
         'name',
         'object',
         'oracle_text',
+        'rarity',
         'type_line',
     )
 
@@ -67,6 +68,26 @@ class CardConsts(object):
 
         'BGRUW': '5-Color',
     }
+
+
+def _ensure_rarity(data):
+    if 'rarity' not in data:
+        data['rarity'] = 'common'
+
+
+def update_json_keys(card):
+    """
+    Utility for updating the card data when a new key is added.
+    """
+    data = card.get_json().copy()
+    _ensure_rarity(data)
+    return card.update(
+        new_json = data,
+        edited_by = None,
+        comment = None,
+        commit = False,
+        new_version = False,
+    )
 
 
 def empty_card_json():

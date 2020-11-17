@@ -8,7 +8,7 @@
 {% block content %}
   <div class="row">
 
-    <div class="col">
+    <div class="col framed">
       <h5>Admin Cubes</h5>
       <ul class="list-unstyled">
         {% for cube in cubes %}
@@ -20,5 +20,17 @@
         {% endfor %}
       </ul>
     </div>
+
+    <div class="col framed">
+      <h5>Actions</h5>
+      <ul class="list-unstyled">
+        <li>
+          <a href="{{ url_for('update_card_data') }}">
+            Update Card Data
+          </a>
+        </li>
+      </ul>
+    </div>
+
   </div>
 {% endblock %}

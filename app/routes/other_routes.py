@@ -22,6 +22,7 @@ from app.models.game_models import *
 from app.models.user import *
 from app.util import cockatrice
 from app.util.card_util import empty_card_json
+from app.util.card_util import update_json_keys
 from app.util.string import normalize_newlines
 
 
@@ -354,6 +355,24 @@ def card_json(card_id):
         return 'Unknown Card'
     else:
         return card.get_json()
+
+
+@app.route("/update_card_data")
+@login_required
+def update_card_data():
+    num_updated = 0
+
+    all_cards = CubeCard.query.all()
+    for card in all_cards:
+        changed = update_json_keys(card)
+        if changed:
+            num_updated += 1
+
+    db.session.commit()
+
+    flash(f"Updated {num_updated} of {len(all_cards)} cards")
+
+    return redirect(url_for('index'))
 
 
 @app.route("/user/<user_id>")
