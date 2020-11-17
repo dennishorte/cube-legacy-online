@@ -27,7 +27,7 @@
         <p class="info">There are no factions in this cube, yet.</p>
       {% endif %}
 
-      {% for faction in cube.factions %}
+      {% for faction in cube.factions|reverse %}
         <div data-id="{{ faction.id }}" class="framed-inner faction">
           <a class="btn btn-sm btn-outline-warning faction-edit-button" href="#">edit</a>
           <p class="faction-name">{{ faction.name }}</p>
