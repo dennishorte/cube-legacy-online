@@ -284,11 +284,12 @@ class NewAchievementForm(FlaskForm):
 
 
 class NewFactionForm(FlaskForm):
+    id = HiddenField('Faction ID')
     name = StringField('Faction Name')
     desc = TextAreaField('Description')
     memb = TextAreaField('Membership Criteria')
     note = TextAreaField('Notes')
-    submit = SubmitField('Create')
+    submit = SubmitField('Create/Update')
 
 
 class NewScarForm(FlaskForm):

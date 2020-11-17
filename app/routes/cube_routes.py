@@ -160,15 +160,21 @@ def cube_interns(cube_id):
     )
 
 
-@app.route("/cube/<cube_id>/factions/new", methods=["POST"])
+@app.route("/cube/<cube_id>/factions/edit", methods=["POST"])
 @login_required
-def cube_new_faction(cube_id):
+def cube_edit_faction(cube_id):
     cube = Cube.query.get(cube_id)
     form = NewFactionForm()
 
     if form.validate_on_submit():
-        faction = Faction()
-        faction.cube_id = cube_id
+        if form.id.data:
+            faction = Faction.query.get(form.id.data)
+            flash('Faction updated')
+        else:
+            faction = Faction()
+            faction.cube_id = cube_id
+            flash('New faction created!')
+
         faction.name = form.name.data.strip()
         faction.desc = form.desc.data.strip()
         faction.memb = form.memb.data.strip()
@@ -177,7 +183,6 @@ def cube_new_faction(cube_id):
         db.session.add(faction)
         db.session.commit()
 
-        flash('New faction created!')
 
     else:
         flash('Error creating new faction')

@@ -28,7 +28,8 @@
       {% endif %}
 
       {% for faction in cube.factions %}
-        <div class="framed-inner faction">
+        <div data-id="{{ faction.id }}" class="framed-inner faction">
+          <a class="btn btn-sm btn-outline-warning faction-edit-button" href="#">edit</a>
           <p class="faction-name">{{ faction.name }}</p>
           <p class="faction-desc">{{ faction.desc }}</p>
           <p class="faction-age">founded: {{ faction.age() }} ago</p>
@@ -68,26 +69,26 @@
 
         <div class="modal-body">
           <form
-            action="{{ url_for('cube_new_faction', cube_id=cube.id) }}"
+            action="{{ url_for('cube_edit_faction', cube_id=cube.id) }}"
             method="post"
             novalidate>
 
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.name.label }}
-              {{ form.name(class='form-control') }}
+              {{ form.name(class='form-control', id='form-name') }}
             </div>
             <div class="form-group">
               {{ form.desc.label }}
-              {{ form.desc(class='form-control') }}
+              {{ form.desc(class='form-control', id='form-desc') }}
             </div>
             <div class="form-group">
               {{ form.memb.label }}
-              {{ form.memb(class='form-control') }}
+              {{ form.memb(class='form-control', id='form-memb') }}
             </div>
             <div class="form-group">
               {{ form.note.label }}
-              {{ form.note(class='form-control') }}
+              {{ form.note(class='form-control', id='form-note') }}
             </div>
             <p>{{ form.submit(class="btn btn-primary") }}</p>
           </form>
@@ -97,3 +98,25 @@
     </div>
   </div>
 {% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+     $('.faction-edit-button').click(function (event) {
+       let div = $(event.target).closest('.faction')
+       let fields = ['name', 'desc', 'memb', 'note']
+
+       for (var i = 0; i < fields.length; i++) {
+         let value = div.find(`.faction-${fields[i]}`).text()
+         $(`#form-${fields[i]}`).val(value)
+       }
+
+       let id = div.data('id')
+       $('#newFactionModal #id').val(id)
+
+       $('#newFactionModal').modal()
+     })
+   })
+  </script>
+{% endblock scripts %}
