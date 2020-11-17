@@ -153,10 +153,10 @@ def draft_result(draft_id):
 
         if not result:
             result = MatchResult()
+            result.user_id=current_user.id
+            result.opponent_id=form.user_id.data
+            result.draft_id=draft_id
 
-        result.user_id=current_user.id
-        result.opponent_id=form.user_id.data
-        result.draft_id=draft_id
         result.wins=form.wins.data or 0
         result.losses=form.losses.data or 0
         result.draws=form.draws.data or 0

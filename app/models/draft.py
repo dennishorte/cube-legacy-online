@@ -275,16 +275,17 @@ class MatchResult(db.Model):
 
     def get_or_create_inverse(self):
         result = MatchResult.query.filter(
+            MatchResult.draft_id == self.draft_id,
             MatchResult.user_id == self.opponent_id,
             MatchResult.opponent_id == self.user_id,
         ).first()
 
         if not result:
             result = MatchResult()
+            result.user_id=self.opponent_id
+            result.opponent_id=self.user_id
+            result.draft_id=self.draft_id
 
-        result.user_id=self.opponent_id
-        result.opponent_id=self.user_id
-        result.draft_id=self.draft_id
         result.wins=self.losses
         result.losses=self.wins
         result.draws=self.draws
