@@ -9,4 +9,4 @@ test.py
 app/static/cockatrice
 *~
 node_modules
-app/static/js/clo.js
+app/static/js/game.js
