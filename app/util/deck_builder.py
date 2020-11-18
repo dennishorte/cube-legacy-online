@@ -136,16 +136,22 @@ class DeckBuilder(object):
         if len(deck_cards) == len(self.seat.picks):
             return deck
 
-        else:
-            for card in self.seat.picks:
-                if card.cube_card not in deck_cards:
-                    deck.add_card(card.cube_card)
-                    print(f"Adding {card.cube_card.name()}")
+        deck_counts = {}
+        picked_cards = [x.cube_card for x in self.seat.picks]
+        for card in picked_cards:
+            deck_counts.setdefault(card.id, []).append(card)
 
-            db.session.add(deck)
-            db.session.commit()
+        for card in deck_cards:
+            deck_counts[card.id].pop()
 
-            return deck
+        for card_list in deck_counts.values():
+            for card in card_list:
+                deck.add_card(card)
+
+        db.session.add(deck)
+        db.session.commit()
+
+        return deck
 
     def _new_deck(self):
         deck = Deck()

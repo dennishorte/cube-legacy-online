@@ -24,12 +24,16 @@ class Deck(db.Model):
         self.maindeck_ids += ',' + str(card.id)
 
     def maindeck(self):
-        ids = self.maindeck_ids.split(',')
-        return CubeCard.query.filter(CubeCard.id.in_(ids)).all()
+        ids = [int(x) for x in self.maindeck_ids.split(',') if x]
+        card_map = {x.id: x for x in CubeCard.query.filter(CubeCard.id.in_(ids)).all()}
+        print(ids)
+        print(card_map)
+        return [card_map[x] for x in ids]
 
     def sideboard(self):
-        ids = self.sideboard_ids.split(',')
-        return CubeCard.query.filter(CubeCard.id.in_(ids)).all()
+        ids = [int(x) for x in self.sideboard_ids.split(',') if x]
+        card_map = {x.id: x for x in CubeCard.query.filter(CubeCard.id.in_(ids)).all()}
+        return [card_map[x] for x in ids]
 
     def set_maindeck(self, cards: list):
         self.maindeck_ids = self._card_list_to_comma_separated(cards)
