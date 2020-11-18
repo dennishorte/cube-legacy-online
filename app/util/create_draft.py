@@ -13,6 +13,7 @@ def create_draft(
         user_names: list,
         scar_rounds: str,
         pack_maker = None,
+        picks_per_pack = 1,
 ):
     cube = Cube.query.filter(Cube.name == cube_name).first()
 
@@ -23,6 +24,7 @@ def create_draft(
         num_packs=num_packs,
         num_seats=len(user_names),
         scar_rounds_str=scar_rounds,
+        picked_per_pack=picked_per_pack,
     )
     db.session.add(draft)
 
@@ -72,9 +74,11 @@ def create_set_draft(
     if style == 'commander':
         pack_size = 20
         pack_maker = _make_commander_packs
+        picks_per_pack = 2
     else:
         pack_size = 15
         pack_maker = _make_set_packs
+        picks_per_pack = 1
 
     create_draft(
         name = name,
@@ -84,6 +88,7 @@ def create_set_draft(
         user_names = user_names,
         scar_rounds = '',
         pack_maker = pack_maker,
+        picks_per_pack = picks_per_pack,
     )
 
 
