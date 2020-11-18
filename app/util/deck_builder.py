@@ -103,7 +103,7 @@ class DeckBuilder(object):
             else:
                 cards.append(card.name())
 
-        for basic in self.deck.basic_lands.split(','):
+        for basic in [x.strip() for x in self.deck.basic_lands.split(',') if x.strip()]:
             if legacy_names:
                 cards.append(basic + "'")
             else:
