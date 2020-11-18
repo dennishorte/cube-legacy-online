@@ -16,6 +16,11 @@ from app.util.enum import Layout
 
 
 class CubeStyle(enum.Enum):
+    """
+    DEPRECATED
+
+    use cube.style_a, which is a string, instead
+    """
     standard = 1
     legacy = 2
     set = 3
@@ -47,6 +52,7 @@ class Cube(db.Model):
     active = db.Column(db.Boolean, index=True, default=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     style = db.Column(db.Enum(CubeStyle))
+    style_a = db.Column(db.String(16))
 
     # If True, this cube is for administrative purposes (eg. basic lands)
     admin = db.Column(db.Boolean, default=False)

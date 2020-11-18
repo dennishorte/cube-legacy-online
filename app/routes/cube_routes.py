@@ -38,7 +38,7 @@ def cubes_new():
 
         cube = Cube(
             name=form.name.data,
-            style=form.style.data,
+            style_a=form.style.data,
         )
         db.session.add(cube)
         db.session.commit()

@@ -28,7 +28,7 @@
           ({{ cube.achievements|length }})
         </li>
 
-        {% if cube.style.name == 'legacy' %}
+        {% if cube.style_a == 'legacy' %}
           <li>
             <a href="{{ url_for('cube_scars', cube_id=cube.id) }}">
               Scars
@@ -72,7 +72,7 @@
     <div class="col framed">
       <ul class="list-unstyled">
         <li>Name: {{ cube.name }}</li>
-        <li>Style: {{ cube.style.name }}</li>
+        <li>Style: {{ cube.style_a }}</li>
         <li>Age: {{ cube.age() }}
       </ul>
     </div>
