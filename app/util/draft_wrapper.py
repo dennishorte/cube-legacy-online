@@ -108,7 +108,7 @@ class DraftWrapper(object):
         db.session.commit()
 
         next_seat = self.passing_to_seat()
-        if next_seat and next_seat.waiting_packs():
+        if next_seat and next_seat.waiting_pack():
             slack.send_your_pick_notification(self.passing_to(), self.draft)
 
     def result_form_for(self, seat):

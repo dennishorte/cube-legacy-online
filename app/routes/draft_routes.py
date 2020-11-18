@@ -100,7 +100,26 @@ def draft_new():
             user_names=form.players.data,
             scar_rounds=form.scar_rounds.data,
         )
-        return redirect('/')
+        return redirect(url_for('index'))
+
+    else:
+        return "Unable to create new draft"
+
+
+@app.route('/draft/new_set', methods=['POST'])
+@login_required
+def draft_new_set():
+    form = NewSetDraftForm.factory()
+
+    if form.validate_on_submit():
+        from app.util.create_draft import create_set_draft
+        create_set_draft(
+            name=form.name.data,
+            cube_name=form.cube.data,
+            style=form.style.data,
+            user_names=form.players.data,
+        )
+        return redirect(url_for('index'))
 
     else:
         return "Unable to create new draft"

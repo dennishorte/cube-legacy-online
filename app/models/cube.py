@@ -267,6 +267,15 @@ class CubeCard(db.Model):
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
+    def soft_update(self, new_json):
+        return self.update(
+            new_json = new_json,
+            edited_by = None,
+            comment = None,
+            commit = False,
+            new_version = False,
+        )
+
     def update(self, new_json, edited_by, comment, commit=True, new_version=True):
         """
         Assuming any changes have been made in the JSON compared to this CubeCard,
@@ -364,6 +373,9 @@ class CubeCard(db.Model):
 
     def oracle_text(self):
         return self.get_json()['oracle_text']
+
+    def rarity(self):
+        return self.get_json()['rarity']
 
     def type_line(self):
         return self.get_json().get('type_line', 'NO_TYPE')

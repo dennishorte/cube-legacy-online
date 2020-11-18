@@ -214,36 +214,79 @@
 
         <div class="modal-body">
 
-          <form action="{{ url_for('draft_new') }}" method="post" novalidate>
-            {{ new_draft_form.hidden_tag() }}
-            <div class="form-group">
-              {{ new_draft_form.name.label }}
-              {{ new_draft_form.name(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.cube.label }}
-              {{ new_draft_form.cube(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.packsize.label }}
-              {{ new_draft_form.packsize(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.numpacks.label }}
-              {{ new_draft_form.numpacks(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.scar_rounds.label }}
-              {{ new_draft_form.scar_rounds(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.players.label }}
-              {{ new_draft_form.players(class='form-control', size=6) }}
-            </div>
-            <div class="form-group">
-              {{ new_draft_form.submit() }}
-            </div>
-          </form>
+          <ul class="nav nav-tabs justify-content-around">
+            <li class="active">
+              <a  href="#newCubeDraftTab" data-toggle="tab">Cube Draft</a>
+            </li>
+            <li>
+              <a  href="#newSetDraftTab" data-toggle="tab">Set Draft</a>
+            </li>
+          </ul>
+
+	  <div class="tab-content clearfix">
+	    <div class="tab-pane active" id="newCubeDraftTab">
+
+              <form action="{{ url_for('draft_new') }}" method="post" novalidate>
+                {{ new_draft_form.hidden_tag() }}
+                <div class="form-group">
+                  {{ new_draft_form.name.label }}
+                  {{ new_draft_form.name(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.cube.label }}
+                  {{ new_draft_form.cube(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.packsize.label }}
+                  {{ new_draft_form.packsize(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.numpacks.label }}
+                  {{ new_draft_form.numpacks(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.scar_rounds.label }}
+                  {{ new_draft_form.scar_rounds(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.players.label }}
+                  {{ new_draft_form.players(class='form-control', size=6) }}
+                </div>
+                <div class="form-group">
+                  {{ new_draft_form.submit() }}
+                </div>
+              </form>
+
+	    </div>
+
+	    <div class="tab-pane" id="newSetDraftTab">
+
+              <form action="{{ url_for('draft_new_set') }}" method="post" novalidate>
+                {{ new_set_draft_form.hidden_tag() }}
+                <div class="form-group">
+                  {{ new_set_draft_form.name.label }}
+                  {{ new_set_draft_form.name(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_set_draft_form.cube.label }}
+                  {{ new_set_draft_form.cube(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_set_draft_form.style.label }}
+                  {{ new_set_draft_form.style(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_set_draft_form.players.label }}
+                  {{ new_set_draft_form.players(class='form-control', size=6) }}
+                </div>
+                <div class="form-group">
+                  {{ new_set_draft_form.submit() }}
+                </div>
+              </form>
+
+	    </div>
+
+          </div>
 
         </div>
       </div>
@@ -261,8 +304,7 @@
         </div>
 
         <div class="modal-body">
-
-          <form action="/game/new" method="post" novalidate>
+          <form action="{{ url_for('game_new') }}" method="post" novalidate>
             {{ game_form.hidden_tag() }}
             <div class="form-group">
               {{ game_form.name.label }}
@@ -276,8 +318,8 @@
               {{ game_form.submit() }}
             </div>
           </form>
-
         </div>
+
       </div>
     </div>
   </div>

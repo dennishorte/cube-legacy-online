@@ -12,6 +12,7 @@ def create_draft(
         num_packs: int,
         user_names: list,
         scar_rounds: str,
+        pack_maker = None,
 ):
     cube = Cube.query.filter(Cube.name == cube_name).first()
 
@@ -35,7 +36,12 @@ def create_draft(
         )
         db.session.add(seat)
 
-    for i, cube_cards_for_pack in enumerate(_make_packs(cube, pack_size, num_packs, len(users))):
+    if not pack_maker:
+        pack_maker = _make_cube_packs
+
+    packs = pack_maker(cube, pack_size, num_packs, len(users))
+
+    for i, cube_cards_for_pack in enumerate(packs):
         pack_number = i % num_packs
         seat_number = i // num_packs
 
@@ -57,12 +63,32 @@ def create_draft(
     db.session.commit()
 
 
-def _make_packs(cube, pack_size, num_packs, num_players):
-    cards = CubeCard.query.filter(
-        CubeCard.cube_id == cube.id,
-        CubeCard.latest == True,
-        CubeCard.removed_by_timestamp == None,
-    ).all()
+def create_set_draft(
+        name: str,
+        cube_name: str,
+        style: str,
+        user_names: list,
+):
+    if style == 'commander':
+        pack_size = 20
+        pack_maker = _make_commander_packs
+    else:
+        pack_size = 15
+        pack_maker = _make_set_packs
+
+    create_draft(
+        name = name,
+        cube_name = cube_name,
+        pack_size = pack_size,
+        num_packs = 3,
+        user_names = user_names,
+        scar_rounds = '',
+        pack_maker = pack_maker,
+    )
+
+
+def _make_cube_packs(cube, pack_size, num_packs, num_players):
+    cards = cube.cards()
 
     total_cards = pack_size * num_packs * num_players
     total_packs = num_packs * num_players
@@ -72,7 +98,6 @@ def _make_packs(cube, pack_size, num_packs, num_players):
             len(cards), num_packs, pack_size, num_players))
 
     random.shuffle(cards)
-    cards = cards[:total_cards]
     packs = []
     for i in range(total_packs):
         start = i * pack_size
@@ -80,3 +105,77 @@ def _make_packs(cube, pack_size, num_packs, num_players):
         packs.append(cards[start:end])
 
     return packs  # List of list of Card ORMs
+
+
+def _make_commander_packs(cube, unused, num_packs, num_players):
+    card_breakdown = {
+        'all': cube.cards(),
+        'rare': [],  # mythics get shuffled in here
+        'uncommon': [],
+        'common': [],
+        'legendary': [],  # All the legendary creatures
+    }
+
+    distribution = [
+        ('rare', 1),
+        ('uncommon', 3),
+        ('legendary', 2),
+        ('common', 13),
+        ('all', 1),  # Foil
+    ]
+
+    for card in card_breakdown['all']:
+        if 'legendary creature' in card.type_line().lower():
+            card_breakdown['legendary'].append(card)
+        elif card.rarity() in ('rare', 'mythic'):
+            card_breakdown['rare'].append(card)
+        elif card.rarity() == 'uncommon':
+            card_breakdown['uncommon'].append(card)
+        elif card.rarity() == 'common':
+            card_breakdown['common'].append(card)
+        else:
+            raise ValueError(f"Unknown rarity '{card.rarity()}' on '{card.name()}'")
+
+    return _make_set_packs(card_breakdown, distribution, num_packs * num_players)
+
+
+def _make_standard_packs(cube, unused, num_packs, num_players):
+    card_breakdown = {
+        'all': cube.cards(),
+        'rare': [],  # mythics get shuffled in here
+        'uncommon': [],
+        'common': [],
+    }
+
+    distribution = [
+        ('rare', 1),
+        ('uncommon', 3),
+        ('common', 10),
+    ]
+
+    for card in card_breakdown['all']:
+        if card.rarity() in ('rare', 'mythic'):
+            card_breakdown['rare'].append(card)
+        elif card.rarity() == 'uncommon':
+            card_breakdown['uncommon'].append(card)
+        elif card.rarity() == 'common':
+            card_breakdown['common'].append(card)
+        else:
+            raise ValueError(f"Unknown rarity '{card.rarity()}' on '{card.name()}'")
+
+    return _make_set_packs(card_breakdown, distribution, num_packs * num_players)
+
+
+def _make_set_packs(card_breakdown, distribution, total_packs):
+    packs = []
+    for _ in range(total_packs):
+        for card_list in card_breakdown.values():
+            random.shuffle(card_list)
+
+        cards = []
+        for rarity, count in distribution:
+            cards += card_breakdown[rarity][:count]
+
+        packs.append(cards)
+
+    return packs

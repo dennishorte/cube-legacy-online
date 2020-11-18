@@ -12,7 +12,7 @@
       <thead class="thead-light">
         <th></th>
         <th></th>
-        <th colspan="{{ d.draft.num_packs }}">num picks made</th>
+        <th colspan="{{ d.draft.num_packs }}">num picks made / packs waiting</th>
         <th></th>
       </thead>
       <thead class="thead-light">
@@ -29,9 +29,23 @@
       {% for s in d.seats %}
         <tr>
           <td>{{ s.user.name }}</td>
-          <td>{{ s.waiting_packs()|length }}</td>
-          {% for pack in range(d.draft.num_packs) %}
-            <td>{{ s.num_picked_for_round(loop.index - 1) }}</td>
+          <td>
+            {% if s.waiting_pack() %}
+              <i class="fas fa-check"></i>
+            {% endif %}
+          </td>
+          {% for idx in range(d.draft.num_packs) %}
+            <td>
+              {{ s.num_picked_for_round(idx) }}
+              /
+              {% if s.num_picked_for_round(idx) == d.draft.pack_size %}
+                <span>
+              {% else %}
+                  <span class="text-warning">
+              {% endif %}
+                {{ s.waiting_packs()[idx]|length }}
+              </span>
+            </td>
           {% endfor %}
           <td>
             <a href="{{ url_for('draft_force', draft_id=d.draft.id, user_id=s.user_id) }}">force</a>

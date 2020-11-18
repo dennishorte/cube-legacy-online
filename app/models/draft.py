@@ -5,6 +5,7 @@ from app import db
 from app.models.cube import *
 from app.models.deck import *
 from app.models.user import *
+from app.util.seating import seat_picks_for_pack
 
 
 class Draft(db.Model):
@@ -18,6 +19,7 @@ class Draft(db.Model):
     num_packs = db.Column(db.Integer)
     num_seats = db.Column(db.Integer)
     scar_rounds_str = db.Column(db.String(64), default="")  # eg. "1,4"
+    picks_per_pack = db.Column(db.Integer, default=1)
 
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
@@ -79,32 +81,34 @@ class Seat(db.Model):
     def __repr__(self):
         return '<Seat {}>'.format(self.user.name)
 
+    def current_pack_number(self):
+        return len(self.picks) // self.draft.pack_size
+
     def waiting_packs(self):
         """
         Return all packs that this seat is blocking.
         """
-        # Collect all packs that it is my pick for and sort by pick order.
-        packs = self.draft.packs
-        up_for_me = [x for x in packs if x.next_seat and x.next_seat.id == self.id]
-        up_for_me.sort(key=lambda x: (x.pack_number * 100) + x.num_picked)
+        waiting = {}
+        for pack in self.draft.packs:
+            if pack.next_seat_order() == self.order:
+                waiting.setdefault(pack.pack_number, []).append(pack)
 
-        # Remove packs that I can't pick from right now.
-        can_pick_now = []
-        my_total_picks = len(self.picks)
-        for pack in up_for_me:
-            if pack.total_pick_number() == my_total_picks + 1:
-                can_pick_now.append(pack)
-                my_total_picks += 1
+        current_pack_number = self.current_pack_number()
 
-        return can_pick_now
+        for pack_number, pack_list in waiting.items():
+            pack_list.sort(key=lambda x: x.seat_ordering().index(self.order, x.num_picked))
+
+        return waiting
 
     def waiting_pack(self):
         """
         Return the next pack this player should draft, if any.
         """
         waiting = self.waiting_packs()
-        if waiting:
-            return waiting[0]
+        current_pack_number = self.current_pack_number()
+
+        if current_pack_number in waiting:
+            return waiting[current_pack_number][0]
         else:
             return None
 
@@ -224,14 +228,13 @@ class Pack(db.Model):
         return choices
 
     def seat_ordering(self):
-        pack_size = self.draft.pack_size
-        num_seats = self.draft.num_seats
-
-        seat_range = range(pack_size)
-        if self.direction() == 'right':
-            seat_range = [0 - x for x in seat_range]
-
-        return [(x + self.seat_number) % num_seats for x in seat_range]
+        return seat_picks_for_pack(
+            self.draft.pack_size,
+            self.draft.num_seats,
+            self.seat_number,
+            self.draft.picks_per_pack or 1,
+            True if self.direction() == 'right' else False,
+        )
 
     def unpicked_cards(self):
         return [x for x in self.cards if x.pick_number == -1]

@@ -190,6 +190,7 @@
           <div class="col bg-light m-1 rounded border p-2" id="commentArea">
             {{ form.comment.label }}
             {{ form.comment(class='form-control', rows='5') }}
+            <p class="text-secondary">Rarity: {{ card.get_json()['rarity'] }}</p>
           </div>
 
           <div class="col bg-light m-1 rounded border p-2" id="submitArea">

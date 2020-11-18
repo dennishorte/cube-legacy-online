@@ -9,17 +9,11 @@ from flask_login import current_user
 from flask_login import login_required
 
 from app import app
-from app.forms import AddCardsForm
-from app.forms import LinkAchievemetAndCardForm
-from app.forms import NewAchievementForm
-from app.forms import NewCubeForm
-from app.forms import NewFactionForm
-from app.forms import NewScarForm
-from app.forms import RandomScarsForm
-from app.forms import UseScarForm
+from app.forms import *
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
+from app.util import cube_util
 from app.util.card_table import CardTable
 from app.util.cube_data import CubeData
 from app.util.cube_util import add_cards_to_cube
@@ -96,13 +90,13 @@ def cube_add_cards(cube_id):
 @app.route("/cubes/<cube_id>/cards")
 @login_required
 def cube_cards(cube_id):
-    add_cards_form = AddCardsForm()
     cube = Cube.query.get(cube_id)
     return render_template(
         'cube_cards.html',
-        cube=cube,
-        t=CardTable(cube),
-        add_cards_form=add_cards_form,
+        cube = cube,
+        t = CardTable(cube),
+        add_cards_form = AddCardsForm(),
+        rare_form = CardRarityForm(),
     )
 
 
@@ -217,6 +211,28 @@ def cube_link_achievement(cube_id):
         flash(f"Linked {card.name()} to {ach.name}")
 
     return redirect(request.referrer)
+
+
+@app.route("/cubes/<cube_id>/rarity", methods=["POST"])
+@login_required
+def cube_rarity(cube_id):
+    form = CardRarityForm()
+
+    if form.validate_on_submit():
+        lines = [x.strip() for x in form.rarities.data.split('\n') if x.strip()]
+        tuples = [x.split('\t') for x in lines]
+        failed = card_util.update_card_rarities(cube_id, tuples)
+
+        if failed:
+            flash('Failed to set rarity for: ' + ', '.join(failed))
+
+        else:
+            flash('Updated rarity for all cards.')
+
+    else:
+        flash('Error validating form')
+
+    return redirect(url_for('cube_cards', cube_id=cube_id))
 
 
 @app.route("/cubes/<cube_id>/scars", methods=["GET", "POST"])

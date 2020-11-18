@@ -22,6 +22,11 @@ class AddCardsForm(FlaskForm):
     submit = SubmitField('Add Cards')
 
 
+class CardRarityForm(FlaskForm):
+    rarities = TextAreaField('Rarities to set (1 per line: <name>\t<rarity>)')
+    submit = SubmitField('Set Rarities')
+
+
 class GameDeckReadyForm(FlaskForm):
     maindeck_ids = HiddenField('maindeck')
     sideboard_ids = HiddenField('sideboard')
@@ -190,6 +195,28 @@ class NewDraftForm(FlaskForm):
         users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
 
         form = NewDraftForm()
+        form.cube.choices = cubes
+        form.players.choices = users
+
+        return form
+
+
+class NewSetDraftForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    cube = SelectField('Cube', validators=[DataRequired()])
+    style = SelectField('Style', validators=[DataRequired()], choices=['standard', 'commander'])
+    players = SelectMultipleField('Players', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+    @staticmethod
+    def factory():
+        from app.models.cube import Cube
+        from app.models.user import User
+
+        cubes = [x.name for x in Cube.query.order_by('name') if x.style_a == 'set']
+        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+
+        form = NewSetDraftForm()
         form.cube.choices = cubes
         form.players.choices = users
 
