@@ -3,6 +3,7 @@ import random
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
+from app.util import slack
 
 
 def create_draft(
@@ -63,6 +64,9 @@ def create_draft(
             db.session.add(card)
 
     db.session.commit()
+
+    if app.config['FLASK_ENV'] == 'production':
+        slack.send_new_draft_notifications(draft)
 
 
 def create_set_draft(
