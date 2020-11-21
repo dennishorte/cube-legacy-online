@@ -20,12 +20,6 @@ class GamePhase(object):
     end = 'end'
 
 
-class Visibility(object):
-    all = 'all'  # Visible to all
-    inherit = 'inherit'  # Use the visiblity of the zone it is in.
-    tableau = 'tableau'  # Visible only to the player who owns its tableau
-
-
 class GameCard(object):
     def __init__(self, json):
         self.data = json
@@ -43,35 +37,16 @@ class GameCard(object):
 
             'annotation': None,  # str
             'counters': {},
+            'owner': None,  # str, name of player
             'tapped': False,
-            'visibility': Visibility.inherit,
+            'token': False,
+            'visibility': [],
         }
 
         return GameCard(data)
 
-    def annotation(self, ann=None):
-        if ann:
-            self.data['annotation'] = ann
-        else:
-            return self.data['annotation']
-
-    def counter(self, name, value=None):
-        if value:
-            self.counters()[name] = int(value)
-        else:
-            return self.counters().get(name, 0)
-
-    def counters(self):
-        return self.data['counters']
-
     def id(self):
-        return self.data['card_id']
-
-    def tapped(self):
-        return self.data.get('tapped', False)
-
-    def visibility(self):
-        return self.data['visibility']
+        return self.data['id']
 
 
 class PlayerTableau(object):
@@ -84,12 +59,14 @@ class PlayerTableau(object):
             'name': player_name,
 
             'battlefield': [],
+            'land': [],
             'exile': [],
             'graveyard': [],
             'hand': [],
             'library': [],
             'sideboard': [],
             'stack': [],
+            'command': [],
 
             'counters': {
                 'life': 20,
@@ -98,65 +75,17 @@ class PlayerTableau(object):
 
         return PlayerTableau(data)
 
-    ############################################################
-    # Game Zones
-
-    @property
-    def battlefield(self):
-        return self.data['battefield']
-
-    @property
-    def exile(self):
-        return self.data['exile']
-
-    @property
-    def graveyard(self):
-        return self.data['graveyard']
-
-    @property
-    def hand(self):
-        return self.data['hand']
-
     @property
     def library(self):
         return self.data['library']
 
     @property
-    def stack(self):
-        return self.data['stack']
-
-    ############################################################
-    # Counter Data
+    def name(self):
+        return self.data['name']
 
     @property
-    def counters(self):
-        return self.data['counters']
-
-    @property
-    def energy(self):
-        return self.counters.get('energy', 0)
-
-    @property
-    def life(self):
-        return self.counters['life']
-
-    @property
-    def poison(self):
-        return self.counters.get('poison', 0)
-
-    ############################################################
-    # Setters
-
-    def load_deck(self, maindeck, sideboard):
-        if not isinstance(maindeck[0], GameCard):
-            raise ValueError("Decks should be lists of game_logic.GameCard objects.")
-
-        if len(self.library) > 0:
-            raise RuntimeError("User has a library. Loading a deck would overwrite it.")
-
-        random.shuffle(maindeck)
-        self.data['library'] = [x.data for x in maindeck]
-        self.data['sideboard'] = [x.data for x in sideboard]
+    def sideboard(self):
+        return self.data['sideboard']
 
 
 class GamePlayer(object):
@@ -205,9 +134,6 @@ class GamePlayer(object):
     def ready_to_start(self, ready: bool):
         self.data['ready_to_start'] = ready
 
-    def deck_builder(self):
-        raise NotImplementedError()
-
     def has_deck(self):
         return self.deck_id is not None
 
@@ -221,15 +147,56 @@ class GameState(object):
         self.data = json
 
     @staticmethod
-    def factory(name: str, player_ids: list):
+    def factory(game_id: int, name: str, player_ids: list):
         data = {
+            'id': game_id,
+            'history': [{
+                'message': 'Game Created',
+                'player': 'GM',
+            }],
+            'cards': {},  # id -> card.data
             'name': name,
             'next_id': 1,
             'players': [GamePlayer.factory(id).data for id in player_ids],
             'phase': GamePhase.deck_selection,
+
+            'turn': 0,  # Whose turn is it? (player_idx)
+            'priority': 0,  # Which player has priority? (player_idx)
         }
 
+        data['history'].append({
+            'message': f"{data['players'][0]['name']}'s turn",
+            'player': 'GM',
+        })
+
         return GameState(data)
+
+    def card(self, card_id):
+        return GameCard(self.data['cards'][card_id])
+
+    def make_card(self, cube_card_id):
+        card = GameCard.factory(self.next_id(), cube_card_id)
+        self.data['cards'][card.id()] = card.data
+        return card.id()
+
+    def load_deck(self, player_id, maindeck, sideboard):
+        if not isinstance(maindeck[0], int):
+            raise ValueError("Decks should be lists of GameCard.id int values.")
+
+        player = self.player_by_id(player_id)
+        tableau = player.tableau
+
+        if len(tableau.library) > 0:
+            raise RuntimeError("User has a library. Loading a deck would overwrite it.")
+
+        tableau.data['library'] = maindeck[:]
+        tableau.data['sideboard'] = sideboard[:]
+
+        random.shuffle(tableau.data['library'])
+
+        for card_id in (tableau.library + tableau.sideboard):
+            card = self.card(card_id)
+            card.data['owner'] = player.name
 
     @property
     def name(self):
@@ -244,8 +211,7 @@ class GameState(object):
     def phase(self):
         return self.data['phase']
 
-    @phase.setter
-    def phase(self, value):
+    def set_phase(self, value):
         self.data['phase'] = value
 
     def player_by_id(self, player_id):
