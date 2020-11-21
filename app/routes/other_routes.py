@@ -386,6 +386,8 @@ def user_profile(user_id):
     drafts = [x.draft for x in seats if not x.draft.killed]
     drafts.sort(key=lambda x: x.timestamp, reverse=True)
 
+    moniker_form = EditMonikersForm.factory(user)
+
     for draft in drafts:
         for link in draft.achs(user_id):
             print(link)
@@ -395,4 +397,18 @@ def user_profile(user_id):
         'user.html',
         drafts=drafts,
         user=user,
+        moniker_form=moniker_form,
     )
+
+
+@app.route("/user/<user_id>/set_monikers", methods=['POST'])
+@login_required
+def user_set_monikers(user_id):
+    form = EditMonikersForm()
+
+    if form.validate_on_submit():
+        monikers = [x.strip() for x in form.monikers.data.split('\n') if x.strip()]
+        user = User.query.get(user_id)
+        user.set_monikers(monikers)
+
+    return redirect(url_for('user_profile', user_id=user_id))

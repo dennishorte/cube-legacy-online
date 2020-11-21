@@ -50,6 +50,17 @@ class DeckSelectorForm(FlaskForm):
         return form
 
 
+class EditMonikersForm(FlaskForm):
+    monikers = TextAreaField('Monikers (1 per line)')
+    submit = SubmitField('Update')
+
+    @staticmethod
+    def factory(user):
+        form = EditMonikersForm()
+        form.monikers.data = '\n'.join(user.monikers)
+        return form
+
+
 class EditMultiFaceCardForm(FlaskForm):
     face_0_name = StringField('Name')
     face_0_mana_cost = StringField('Mana Cost')

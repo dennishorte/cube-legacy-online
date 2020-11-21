@@ -11,6 +11,10 @@
   --table-header: #f8f9fa;
 }
 
+body {
+  margin-bottom: 200px;
+}
+
 .white {
   background-color: var(--card-white);
 }
@@ -265,6 +269,7 @@
   float: right;
 }
 
-body {
-  margin-bottom: 200px;
+#edit-monikers {
+  float: right;
+  margin: .5rem;
 }

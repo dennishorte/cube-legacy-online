@@ -15,6 +15,8 @@ class User(UserMixin, db.Model):
     last_pick_timestamp = db.Column(db.DateTime)
     last_notif_timestamp = db.Column(db.DateTime)
 
+    monikers_tsv = db.Column(db.Text)
+
     cubes = db.relationship('Cube', backref='created_by')
     draft_seats = db.relationship('Seat', backref='user')
     match_results = db.relationship('MatchResult', backref='user')
@@ -36,6 +38,18 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
+
+    @property
+    def monikers(self):
+        if self.monikers_tsv:
+            return self.monikers_tsv.split('\t')
+        else:
+            return []
+
+    def set_monikers(self, monikers: list):
+        self.monikers_tsv = '\t'.join(monikers)
+        db.session.add(self)
+        db.session.commit()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

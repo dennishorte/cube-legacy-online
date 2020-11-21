@@ -13,7 +13,19 @@
 {% block content %}
   <div class="row">
     <div class="col framed">
+      <div id="edit-monikers">
+        <a href="#edit-monikers-modal" data-toggle="modal">edit monikers</a>
+      </div>
+
       <h1>{{ user.name }}</h1>
+      <div id="monikers">
+        {% if user.monikers %}
+          <p>
+            {{ ', '.join(user.monikers) }}
+          </p>
+        {% endif %}
+      </div>
+
     </div>
   </div>
 
@@ -43,4 +55,34 @@
     </div>
 
   </div>
+
+
+  <!-- Monikers Modal -->
+  <div class="modal fade" id="edit-monikers-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Monikers</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form
+            action="{{ url_for('user_set_monikers', user_id=current_user.id) }}"
+            method="post"
+            novalidate>
+
+            {{ moniker_form.hidden_tag() }}
+            <div class="form-group">
+              {{ moniker_form.monikers.label }}
+              {{ moniker_form.monikers(class="form-control", rows=10) }}
+            </div>
+            <p>{{ moniker_form.submit(class="btn btn-primary") }}</p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Monikers Modal -->
 {% endblock content %}
