@@ -2,6 +2,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 from flask import request
+from flask_login import current_user
 from slack import WebClient
 from slack.errors import SlackApiError
 
@@ -13,6 +14,18 @@ from app.models.user import *
 _client = WebClient(token=Config.SLACK_BOT_TOKEN)
 
 clo_channel = 'C01AV1RGJSK'
+
+
+def send_new_game_notifications(game):
+    for player in game.players:
+        if player.id == current_user.id:
+            continue
+
+        user = User.query.get(player.id)
+        domain_host = urlparse(request.base_url).hostname
+        message = f"You've been invited to a new game, '{game.name}'. <{domain_host}|Don't keep your opponent waiting!>."
+
+    _send_slack_message(user, message)
 
 
 def send_your_turn_in_game_notification(game):

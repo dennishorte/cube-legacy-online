@@ -72,6 +72,8 @@ def game_new():
         )
         game.update(game_state)
 
+        slack.send_new_game_notifications(game_state)
+
         return redirect(url_for('game', game_id=game.id))
 
     else:
