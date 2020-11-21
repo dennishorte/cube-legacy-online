@@ -16,6 +16,9 @@ class Game(db.Model):
         return GameState(json.loads(self.state_json))
 
     def update(self, game_state):
-        self.state_json = json.dumps(game_state.data)
+        if hasattr(game_state, 'data'):
+            game_state = game_state.data
+
+        self.state_json = json.dumps(game_state)
         db.session.add(self)
         db.session.commit()
