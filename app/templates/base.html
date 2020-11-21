@@ -1,17 +1,15 @@
 {% extends 'basic.html' %}
 
+{% from 'macros/header.html' import header with context %}
+
+
 {% block body_head %}
 {% endblock %}
 
 {% block body_start %}
   <div class="container">
-    <div class="row" id="header">
-      <div class="col text-right">
-        <a href="{{ url_for('index') }}">home</a> /
-        <a href="{{ url_for('admin') }}">admin</a> /
-        <a href="{{ url_for('logout') }}">logout</a>
-      </div>
-    </div>
+    {{ header() }}
+
     <div class="row" id="header">
       <div class="col">
         <h1>{% block title %}{% endblock %}</h1>
@@ -36,10 +34,10 @@
         <div class="col alert alert-success">
           <p class="mb-0"></p>
         </div>
-      </div>        
+      </div>
     </div>
     <!-- END: Flash Messages -->
-    
+
     {% block content %}{% endblock %}
   </div>
 {% endblock body_start %}

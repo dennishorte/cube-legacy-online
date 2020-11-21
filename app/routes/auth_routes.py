@@ -1,6 +1,7 @@
 from flask import flash
 from flask import redirect
 from flask import render_template
+from flask import request
 from flask import url_for
 from flask_login import current_user
 from flask_login import login_user
@@ -31,6 +32,22 @@ def login():
         return redirect(url_for('index'))
 
     return render_template('login.html', title='Sign In', form=form)
+
+
+
+@app.route('/login_as/<user_name>')
+@login_required
+def login_as(user_name):
+    if not app.config['FLASK_ENV'] == 'development':
+        return "Forbidden"
+
+    user = User.query.filter(User.name == user_name).first()
+
+    if user and user_name != current_user.name:
+        logout_user()
+        login_user(user)
+
+    return redirect(request.referrer)
 
 
 @app.route('/logout')

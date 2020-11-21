@@ -1,0 +1,23 @@
+{% macro header() %}
+  <div class="row" id="header">
+    <div class="col">
+      {% if config.FLASK_ENV == 'development' %}
+        /
+        {% for name in ['dennis', 'eliya', 'scottsh', 'micah', 'tom'] %}
+          {% if name == current_user.name %}
+            <strong class="text-warning">{{ name }}</strong>
+          {% else %}
+            <a href="{{ url_for('login_as', user_name=name) }}">{{ name }}</a>
+          {% endif %}
+          /
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <div class="col col-md-2 text-center">
+      <a href="{{ url_for('index') }}">home</a> /
+      <a href="{{ url_for('admin') }}">admin</a> /
+      <a href="{{ url_for('logout') }}">logout</a>
+    </div>
+  </div>
+{% endmacro %}
