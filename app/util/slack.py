@@ -7,11 +7,28 @@ from slack.errors import SlackApiError
 
 from app import db
 from app.config import Config
+from app.models.user import *
 
 
 _client = WebClient(token=Config.SLACK_BOT_TOKEN)
 
 clo_channel = 'C01AV1RGJSK'
+
+
+def send_your_turn_in_game_notification(game):
+    if len(game.players) == 1:
+        return
+
+    next_player = game.priority_player()
+
+    if Config.FLASK_ENV != 'production' and next_player.name != 'dennis':
+        return
+
+    user = User.query.get(next_player.id)
+    domain_host = urlparse(request.base_url).hostname
+    message = f"You have received priority in {game.name}. <{domain_host}|Don't keep your opponent waiting!>."
+
+    _send_slack_message(user, message)
 
 
 def send_new_draft_notifications(draft):

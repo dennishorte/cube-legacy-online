@@ -221,6 +221,10 @@ class GameState(object):
 
         return None
 
+    def priority_player(self):
+        player_idx = self.data['priority']
+        return self.players[player_idx]
+
     @property
     def players(self):
         return [GamePlayer(x) for x in self.data['players']]

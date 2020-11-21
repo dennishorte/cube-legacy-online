@@ -13,11 +13,11 @@ from app.forms import *
 from app.models.cube import *
 from app.models.deck import *
 from app.models.game_models import *
+from app.util import slack
 from app.util.deck_builder import DeckBuilder
 from app.util.game_logic import GameCard
 from app.util.game_logic import GamePhase
 from app.util.game_logic import GameState
-
 
 @app.route("/game/<game_id>")
 @login_required
@@ -134,6 +134,8 @@ def game_save():
     data = request.json
     game = Game.query.get(data['id'])
     game.update(data)
+
+    slack.send_your_turn_in_game_notification(game.state)
 
     return "saved"
 
