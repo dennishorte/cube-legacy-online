@@ -1,0 +1,210 @@
+:root {
+  --not-as-light: #eeeff0;
+}
+
+.framed {
+  background-color: var(--light);
+  border: 1px solid #dee2e6!important;
+  border-color: var(--secondary);
+  border-radius: .25rem;
+  padding: .5rem!important;
+  margin-top: .5rem!important;
+  margin-left: .25rem!important;
+  margin-right: .25rem!important;
+}
+
+#actions-zone {
+  background-color: var(--not-as-light);
+}
+
+.inner-frames {
+  padding: 0!important;
+  margin: 0!important;
+}
+
+.inner-frames .framed {
+  margin: .25rem!important;
+}
+
+.tableau {
+  padding: 0!important;
+  font-size: .8rem;
+}
+
+#game-phase p {
+  margin: 0;
+  padding: 0;
+  color: var(--gray);
+}
+
+.current-phase {
+  font-weight: bold;
+  color: black!important;
+}
+
+.message {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: .8rem;
+  padding: 0;
+  margin: 0;
+}
+
+.other-message {
+  color: var(--secondary);
+}
+
+.viewer-message {
+  color: var(--info);
+}
+
+.future-message {
+  font-style: italic;
+  font-weight: lighter;
+}
+
+.card-section-header {
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.tapped {
+  font-style: italic;
+  color: #a8a9aa;
+}
+
+.card-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  min-height: 10px;
+}
+
+.card-list-item, .card-section-info {
+  padding: 0;
+  margin: 0;
+}
+
+.card-list-item p {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* .card-annotation {
+   font-size: .6rem;
+   margin: -.25rem 0 0 .5rem
+   }
+ */
+.sortable-highlight {
+  border: 1px solid blue;
+  background-color: lightblue;
+}
+
+.card-list-count {
+  font-weight: normal;
+  color: var(--gray);
+}
+
+.face-down {
+  font-weight: lighter;
+}
+
+.card-zone, .player-info {
+  position: relative;
+}
+
+.zone-menu {
+  position: absolute;
+  padding: .5rem .25rem;
+  top: 0;
+  right: 0;
+}
+
+.zone-menu-inner {
+  position: relative;
+}
+
+.zone-menu-icon {
+  color: var(--secondary);
+  margin-top: .25rem;
+}
+
+.zone-menu-icon:hover, .zone-menu-icon:focus {
+  background-color: var(--info);
+}
+
+.popup-menu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+  z-index: 50;
+  padding: .5rem;
+}
+
+.popup-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popup-menu li:hover {
+  background-color: #d1d1d1;
+}
+
+#message-zone {
+  position: relative;
+}
+
+#messages {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: .25rem;
+  width: 100%;
+  height: 93%;
+  overflow-y: scroll;
+}
+
+#message-input-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.message-index {
+  color: #ccc;
+}
+
+.history-save-point {
+  border-bottom: 1px solid #ddd;
+}
+
+.player-turn {
+  background-color: var(--not-as-light);
+}
+
+.player-priority {
+  background-color: #fef;
+}
+
+#popup-viewer-zone {
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+  font-size: .8rem;
+  height: 400px;
+  left: 100px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0.5rem;
+  position: fixed;
+  top: 100px;
+  width: 150px;
+}

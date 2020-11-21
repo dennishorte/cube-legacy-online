@@ -28,7 +28,7 @@ def game(game_id):
         return render_template(
             'game.html',
             game_id=game_id,
-            g=game.state,
+            game_state=game.state,
         )
 
     else:
@@ -48,7 +48,7 @@ def game(game_id):
         return render_template(
             'game_deck_selector.html',
             game_id=game_id,
-            g=game.state,
+            game_state=game.state,
             dsform=dsform,
             rform=rform,
             db=deck_builder,
@@ -61,11 +61,15 @@ def game_new():
     form = NewGameForm.factory()
 
     if form.validate_on_submit():
+        game = Game()
+        db.session.add(game)
+        db.session.commit()
+
         game_state = GameState.factory(
+            game_id=game.id,
             name=form.name.data.strip(),
             player_ids=[int(x) for x in form.players.data],
         )
-        game = Game()
         game.update(game_state)
 
         return redirect(url_for('game', game_id=game.id))
@@ -96,13 +100,13 @@ def game_ready(game_id):
     for id in sideboard_ids:
         if not id:
             continue
-        sideboard_cards.append(GameCard.factory(state.next_id(), id))
+        sideboard_cards.append(state.make_card(id))
 
     maindeck_cards = []
     for id in maindeck_ids:
         if not id:
             continue
-        maindeck_cards.append(GameCard.factory(state.next_id(), id))
+        maindeck_cards.append(state.make_card(id))
 
     basics_cube = Cube.query.filter(Cube.name == 'basic lands').first()
     basic_cards = {x.name(): x for x in basics_cube.cards()}
@@ -111,16 +115,27 @@ def game_ready(game_id):
             continue
         count, name = basic.split()
         for i in range(int(count)):
-            maindeck_cards.append(GameCard.factory(state.next_id(), basic_cards[name].id))
+            maindeck_cards.append(state.make_card(basic_cards[name].id))
 
-    player.tableau.load_deck(maindeck_cards, sideboard_cards)
+
+    state.load_deck(player.id, maindeck_cards, sideboard_cards)
 
     if state.ready_to_start():
-        state.phase = GamePhase.untap
+        state.set_phase = GamePhase.untap
 
     game.update(state)
 
     return redirect(url_for('game', game_id=game_id))
+
+
+@app.route("/game/save", methods=['POST'])
+@login_required
+def game_save():
+    data = request.json
+    game = Game.query.get(data['id'])
+    game.update(data)
+
+    return "saved"
 
 
 @app.route("/game/<game_id>/select_deck", methods=["POST"])
@@ -139,3 +154,13 @@ def game_select_deck(game_id):
         flash('Error on form submission')
 
     return redirect(url_for('game', game_id=game_id))
+
+
+@app.route("/game_test")
+@login_required
+def game_test():
+    from app.util.test_state import test_state
+    return render_template(
+        'game.html',
+        test_state=test_state,
+    )

@@ -1,0 +1,203 @@
+{% extends 'basic.html' %}
+
+{% from 'macros/header.html' import header with context %}
+
+
+{% macro card_region(name, player_idx) %}
+  {% set id_prefix = "player-{}-{}".format(player_idx, name.lower()) %}
+  <div id="{{ id_prefix }}" class="framed card-zone">
+    <div class="zone-menu">
+      <div class="zone-menu-inner">
+        <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
+      </div>
+    </div>
+
+    <p class="card-section-header">
+      <span class="card-section-name">
+        {{ name }}
+      </span>
+      <span class="card-list-count">
+        (<span id="{{ id_prefix }}-count">0</span>)
+      </span>
+    </p>
+    <ul id="{{ id_prefix }}-cards" class="card-list sortable">
+    </ul>
+  </div>
+{% endmacro %}
+
+
+{% block head %}
+  <link
+    rel="stylesheet"
+    href="/static/css/game.css?version={{ version }}">
+{% endblock head %}
+
+
+{% block body_start %}
+  <div
+    style="display:none"
+    data-save-url="{{ url_for('game_save') }}"
+    id="save-game-meta">
+  </div>
+
+    <!-- Main Container -->
+  <div class="container-fluid game-root">
+
+    {{ header() }}
+
+    <div class="row">
+      <div id="game-phase" class="col col-1 inner-frames">
+        <div>
+          <ul id="drag-holder">
+          </ul>
+        </div>
+
+        <div id="actions-zone" class="framed">
+          <p class="border-bottom text-secondary text-xs">Actions</p>
+          <p id="undo">undo</p>
+          <p id="pass-priority">pass priority</p>
+          <p id="pass-turn">pass turn</p>
+        </div>
+
+        <div class="framed">
+          <p class="border-bottom text-secondary text-xs">Beginning</p>
+          <p id="phase-untap" class="phase">untap</p>
+          <p id="phase-upkeep" class="phase">upkeep</p>
+          <p id="phase-draw" class="phase">draw</p>
+        </div>
+
+        <div class="framed">
+          <p class="border-bottom text-secondary text-xs">Pre-Combat</p>
+          <p id="phase-main1 current-phase" class="phase">main 1</p>
+        </div>
+
+        <div class="framed">
+          <p class="border-bottom text-secondary text-xs">Combat</p>
+          <p id="phase-combat-begin" class="phase">begin</p>
+          <p id="phase-combat-attack" class="phase">attackers</p>
+          <p id="phase-combat-defend" class="phase">blockers</p>
+          <p id="phase-combat-damage" class="phase">damage</p>
+          <p id="phase-combat-end" class="phase">combat</p>
+        </div>
+
+        <div class="framed">
+          <p class="border-bottom text-secondary text-xs">Post-Combat</p>
+          <p id="phase-main2" class="phase">main 2</p>
+        </div>
+
+        <div class="framed">
+          <p class="border-bottom text-secondary text-xs">Ending</p>
+          <p id="phase-end" class="phase">end</p>
+        </div>
+      </div>
+
+      <div id="message-zone" class="col col-2 framed">
+        <div id="messages">
+        </div>
+
+        <div id="message-input-wrapper">
+          <input id="message-input" type="text" class="form-control form-control-sm" placeholder="send a message...">
+        </div>
+      </div>
+
+      {% for player_idx in range(2) %}
+        {% set id_prefix = "player-{}".format(player_idx) %}
+        <div id="{{ id_prefix }}-tableau" class="col tableau framed">
+          <div class="row inner-frames">
+
+            <div class="col col-3 inner-frames">
+
+              <div id="{{ id_prefix }}-info" class="framed player-info">
+                <div class="zone-menu">
+                  <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
+                </div>
+                <p class="card-section-header">
+                  <span id="{{ id_prefix }}-name">NO_NAME</span>
+                </p>
+                <p class="card-section-info">life:
+                  <span id="{{ id_prefix }}-life"></span>
+                  <span id="{{ id_prefix }}-life-buttons" class="life-buttons" style="float:right;">
+                    <i amount="-5" class="fas fa-dice-five text-danger"></i>
+                    <i amount="-1" class="fas fa-dice-one text-danger"></i>
+                    <i amount="+1" class="fas fa-dice-one text-success"></i>
+                    <i amount="+5" class="fas fa-dice-five text-success"></i>
+                  </span>
+                </p>
+              </div>
+
+              {{ card_region('Command', player_idx) }}
+              {{ card_region('Sideboard', player_idx) }}
+              {{ card_region('Graveyard', player_idx) }}
+              {{ card_region('Exile', player_idx) }}
+            </div>
+
+            <div class="col col-3 inner-frames">
+              {{ card_region('Library', player_idx) }}
+            </div>
+
+            <div class="col col-3 inner-frames">
+              {{ card_region('Hand', player_idx) }}
+              {{ card_region('Land', player_idx) }}
+            </div>
+
+            <div class="col col-3 inner-frames">
+              {{ card_region('Battlefield', player_idx) }}
+              {{ card_region('Stack', player_idx) }}
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+
+    </div>
+
+    <div id="popup-menus" class="d-none">
+      <div class="popup-menu-template popup-menu" data-zone="library">
+        <ul>
+          <li>draw</li>
+          <li>draw 7</li>
+          <li>---</li>
+          <li>shuffle</li>
+          <li>---</li>
+          <li>view</li>
+        </ul>
+      </div>
+    </div>
+
+
+  <!-- Popup-Viewer Viewer -->
+    <div id="popup-viewer-zone" class="framed">
+      <div class="zone-menu">
+        <div class="zone-menu-inner">
+          <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
+          <i id="popup-viewer-zone-close-button" class="fas fa-times zone-menu-icon"></i>
+        </div>
+      </div>
+
+      <p class="card-section-header">
+      </p>
+
+      <ul id="popup-viewer-cards" class="card-list sortable">
+      </ul>
+    </div>
+  </div>
+  <!-- END: Main Container -->
+
+
+
+
+{% endblock body_start %}
+
+
+{% block body_end %}
+
+  <script src="/static/js/jsonpath.js"></script>
+  <script src="/static/js/game.js?version={{ version }}"></script>
+  <script>
+   let initial_state = {{ game_state.data|tojson }}
+   $(document).ready(function() {
+     ui.init(initial_state, '{{ current_user.name }}')
+   })
+  </script>
+
+{% endblock body_end %}

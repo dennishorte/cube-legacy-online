@@ -4,22 +4,22 @@
 
 
 {% block title_suffix %}
-  {{ g.name }} - Deck Selector
+  {{ game_state.name }} - Deck Selector
 {% endblock %}
 
 
 {% block content %}
-  {% set player = g.player_by_id(current_user.id) %}
+  {% set player = game_state.player_by_id(current_user.id) %}
 
   <div class="row">
 
     <!-- Game Info -->
     <div class="col framed">
-      <h4>{{ g.name }}</h4>
+      <h4>{{ game_state.name }}</h4>
 
       <p class="text-secondary border-bottom mb-0">Players</p>
       <ul class="list-unstyled">
-        {% for player in g.players %}
+        {% for player in game_state.players %}
           <li>
             {{ player.name}}
 
