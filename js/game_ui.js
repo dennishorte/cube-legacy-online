@@ -1,7 +1,6 @@
 'use strict'
 
 let assert = require('assert')
-let jp = require('jsonpath')
 
 let GameState = require('./game_state.js')
 
