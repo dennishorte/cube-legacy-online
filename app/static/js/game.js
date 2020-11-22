@@ -935,12 +935,9 @@ let gameui = (function() {
 
     for (var i = 0; i < _state.history.length; i++) {
       let hist = _state.history[i]
-      let msg = $('<p></p>')
+      let msg = $('<li></li>')
         .text(hist.message)
         .addClass('message')
-
-      let msg_index = $(`<span class="message-index">${i}. </span>`)
-      msg.prepend(msg_index)
 
       if (hist.player == _state.viewer_name) {
         msg.addClass('viewer-message')
