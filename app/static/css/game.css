@@ -116,26 +116,6 @@
   background-color: var(--info);
 }
 
-.popup-menu {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-  z-index: 50;
-  padding: .5rem;
-}
-
-.popup-menu ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-.popup-menu li:hover {
-  background-color: #d1d1d1;
-}
-
 .history-save-point {
   border-bottom: 1px solid #ddd;
 }
@@ -148,22 +128,9 @@
   background-color: #fef;
 }
 
-#popup-viewer-zone {
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-  font-size: .8rem;
-  height: 400px;
-  left: 100px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  padding: 0.5rem;
-  position: fixed;
-  top: 100px;
-  width: 150px;
-}
-
 /********************************************************************************
   Message Zone
-********************************************************************************/
+ ********************************************************************************/
 
 #message-zone {
   position: relative;
@@ -216,6 +183,47 @@
   font-weight: lighter;
 }
 
-/********************************************************************************
 
+/********************************************************************************
+   Popup Menus
  ********************************************************************************/
+
+.popup-menu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+  z-index: 50;
+  padding: .5rem;
+  right: 0;
+}
+
+.popup-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.popup-menu li:hover {
+  background-color: #d1d1d1;
+}
+
+
+/********************************************************************************
+   Popup Viewer
+ ********************************************************************************/
+
+
+#popup-viewer-zone {
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+  font-size: .8rem;
+  height: 400px;
+  left: 100px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0.5rem;
+  position: fixed;
+  top: 100px;
+  width: 150px;
+}
