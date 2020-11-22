@@ -26,8 +26,6 @@ class Deck(db.Model):
     def maindeck(self):
         ids = [int(x) for x in self.maindeck_ids.split(',') if x]
         card_map = {x.id: x for x in CubeCard.query.filter(CubeCard.id.in_(ids)).all()}
-        print(ids)
-        print(card_map)
         return [card_map[x] for x in ids]
 
     def sideboard(self):
