@@ -309,9 +309,15 @@ let gameui = (function() {
     let target = $(event.target)
     let menu_item = target.text()
     let zone = target.closest('.card-zone')
+    let zone_name = _zone_from_id(zone.attr('id'))
     let player_idx = _player_idx_from_elem(zone)
 
-    if (menu_item == 'draw') {
+    if (menu_item == 'collapse/expand') {
+      _state.toggle_zone_collapse(player_idx, zone.attr('id'))
+      _redraw()
+    }
+
+    else if (menu_item == 'draw') {
       _state.draw(player_idx, 1)
       _redraw()
     }
@@ -407,6 +413,14 @@ let gameui = (function() {
 
     // Fill in number of cards
     count_elem.text(card_list.length)
+
+    let is_collapsed = _state.is_collapsed(_state.viewer_idx, zone_prefix)
+    if (is_collapsed) {
+      cards_elem.hide()
+    }
+    else {
+      cards_elem.show()
+    }
   }
 
   function _update_history() {
@@ -501,6 +515,10 @@ let gameui = (function() {
     let priority_player_idx = _state.priority_player_idx()
     $(`#player-${turn_player_idx}-tableau`).addClass('player-turn')
     $(_zone_prefix(priority_player_idx, 'info')).addClass('player-priority')
+  }
+
+  function _zone_from_id(elem_id) {
+    return elem_id.split('-')[2]
   }
 
   function _zone_prefix(player_idx, zone) {

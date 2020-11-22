@@ -63,6 +63,7 @@ class GameState {
     this.history = state_in.history
     this.history_index = state_in.history.length - 1
     this.viewer_name = viewer_name
+    this.viewer_idx = this.player_idx_by_name(viewer_name)
     this.history_save_point = this.history_index
   }
 
@@ -118,6 +119,12 @@ class GameState {
     return this._execute(diff)
   }
 
+  is_collapsed(player_idx, zone_id) {
+    zone_id = this._clean_id(zone_id)
+    let opt_name = `collapse_${zone_id}`
+    return this.view_options(player_idx)[opt_name]
+  }
+
   message(text) {
     let diff = {
       delta: [],
@@ -155,36 +162,6 @@ class GameState {
       delta: delta,
       message: `move card from ${orig_loc.name} to ${dest_loc.name}`,
       player: this.viewer_name,
-    }
-
-    return this._execute(diff)
-  }
-
-  shuffle(player_idx) {
-    let player = this.state.players[player_idx]
-    let library_copy = [...player.tableau.library]
-    let library_new = [...library_copy]
-    util.arrayShuffle(library_new)
-
-    let delta = [{
-      action: 'set_cards_in_zone',
-      player_idx: player_idx,
-      zone: 'library',
-      old_value: library_copy,
-      new_value: library_new,
-    }]
-
-    library_copy.forEach(card_id => {
-      let card = this.card(card_id)
-      if (card.visibility.length > 0) {
-        delta.push(this._visibility_diff(card, []))
-      }
-    })
-
-    let diff = {
-      delta: delta,
-      message: `${player.name} shuffles library`,
-      player: this.viewer_game,
     }
 
     return this._execute(diff)
@@ -249,6 +226,14 @@ class GameState {
     return this.state.players[player_idx]
   }
 
+  player_idx_by_name(player_name) {
+    for (var i = 0; i < this.state.players.length; i++) {
+      if (this.state.players[i].name == player_name) {
+        return i
+      }
+    }
+  }
+
   priority_player_idx() {
     return this.state.priority
   }
@@ -284,6 +269,50 @@ class GameState {
     }
   }
 
+  shuffle(player_idx) {
+    let player = this.state.players[player_idx]
+    let library_copy = [...player.tableau.library]
+    let library_new = [...library_copy]
+    util.arrayShuffle(library_new)
+
+    let delta = [{
+      action: 'set_cards_in_zone',
+      player_idx: player_idx,
+      zone: 'library',
+      old_value: library_copy,
+      new_value: library_new,
+    }]
+
+    library_copy.forEach(card_id => {
+      let card = this.card(card_id)
+      if (card.visibility.length > 0) {
+        delta.push(this._visibility_diff(card, []))
+      }
+    })
+
+    let diff = {
+      delta: delta,
+      message: `${player.name} shuffles library`,
+      player: this.viewer_game,
+    }
+
+    return this._execute(diff)
+  }
+
+  toggle_zone_collapse(player_idx, zone_id) {
+    zone_id = this._clean_id(zone_id)
+
+    let opt_name = `collapse_${zone_id}`
+
+
+    if (this.is_collapsed(player_idx, zone_id)) {
+      delete this.view_options(player_idx)[opt_name]
+    }
+    else {
+      this.view_options(player_idx)[opt_name] = true
+    }
+  }
+
   turn_player_idx() {
     return this.state.turn
   }
@@ -313,6 +342,15 @@ class GameState {
     this.history.splice(-1, 1)
   }
 
+  view_options(player_idx) {
+    let player = this.state.players[player_idx]
+    if (!player.hasOwnProperty('view_options')) {
+      player.view_options = {}
+    }
+
+    return player.view_options
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Private Functions
 
@@ -322,6 +360,15 @@ class GameState {
 
   _clear_visibility_diff(player_idx, zone, card) {
 
+  }
+
+  _clean_id(elem_id) {
+    if (elem_id.startsWith('#')) {
+      return elem_id.substr(1)
+    }
+    else {
+      return elem_id
+    }
   }
 
   _execute(diff) {

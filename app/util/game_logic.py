@@ -71,6 +71,8 @@ class PlayerTableau(object):
             'counters': {
                 'life': 20,
             },
+
+            'view_options': {},
         }
 
         return PlayerTableau(data)
