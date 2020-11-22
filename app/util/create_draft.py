@@ -1,5 +1,6 @@
 import random
 
+from app import app
 from app.models.cube import *
 from app.models.draft import *
 from app.models.user import *
@@ -25,7 +26,7 @@ def create_draft(
         num_packs=num_packs,
         num_seats=len(user_names),
         scar_rounds_str=scar_rounds,
-        picked_per_pack=picked_per_pack,
+        picks_per_pack=picks_per_pack,
     )
     db.session.add(draft)
 
