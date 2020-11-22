@@ -231,3 +231,8 @@ class GameState(object):
 
     def ready_to_start(self):
         return all([x.ready_to_start for x in self.players])
+
+    def seat_index_by_user_id(self, user_id):
+        for i, p in enumerate(self.players):
+            if int(p.id) == int(user_id):
+                return i

@@ -100,10 +100,17 @@
         </div>
       </div>
 
-      {% for player_idx in range(2) %}
+      {% set current_user_idx = game_state.seat_index_by_user_id(current_user.id) %}
+      {% for base_idx in range(current_user_idx, current_user_idx + 2, 1) %}
+        {% set player_idx = (base_idx) % game_state.players|length %}
         {% set id_prefix = "player-{}".format(player_idx) %}
+
         <div id="{{ id_prefix }}-tableau" class="col tableau framed">
-          <div class="row inner-frames">
+          <div class="row inner-frames
+                      {% if loop.index > 1 %}
+                      flex-row-reverse
+                      {% endif %}
+                      ">
 
             <div class="col col-3 inner-frames">
 
