@@ -169,7 +169,7 @@
   position: relative;
 }
 
-#messages-wrapper {
+#messages {
   position: absolute;
   top: 0;
   left: 0;
@@ -177,6 +177,10 @@
   width: 100%;
   height: 93%;
   overflow-y: scroll;
+  padding: 0;
+  marging: 0;
+  counter-reset: message-counter;
+  list-style: none;
 }
 
 #message-input-wrapper {
@@ -185,13 +189,6 @@
   bottom: 0;
   width: 100%;
   margin: 0;
-}
-
-#messages {
-  padding: 0;
-  marging: 0;
-  counter-reset: message-counter;
-  list-style: none;
 }
 
 .message {
