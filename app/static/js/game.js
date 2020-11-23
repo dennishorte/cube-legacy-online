@@ -670,8 +670,8 @@ let gameui = (function() {
   }
 
   let _card_closeup_state = {
-    active: true,
-    card_id: 1,
+    active: false,
+    card_id: undefined,
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -990,6 +990,122 @@ let gameui = (function() {
     })
   }
 
+  function _mana_symbols_from_string(mana) {
+    var grabbing = true
+    var curr = ''
+    let elements = []
+
+    for (var i = 0; i < mana.length; i++) {
+      let ch = mana.charAt(i)
+      if (ch == '{') {
+        grabbing = true
+      }
+      else if (ch == '}') {
+        elements.push(_mana_symbols_from_string_single(curr))
+        curr = ''
+      }
+      else {
+        curr += ch
+      }
+    }
+
+    return elements
+  }
+
+  function _mana_symbols_from_string_single(mana) {
+    let classes = ['ms', 'ms-cost', 'ms-shadow']
+
+    mana = mana.replace('/', '')
+    classes.push('ms-' + mana.toLowerCase())
+
+    let elem = $('<i></i>')
+    elem.addClass(classes.join(' '))
+
+    return elem
+  }
+
+  function _update_card_closeup() {
+    let closeup = $('#card-closeup')
+
+    if (!_card_closeup_state.active) {
+      closeup.hide()
+      return
+    }
+    else {
+      closeup.show()
+      assert.ok(
+        _card_closeup_state.card_id,
+        "card closeup should have source id when active"
+      )
+    }
+
+    let data = _state.card(_card_closeup_state.card_id).json
+    let front = data.card_faces[0]
+
+    // Elements to be updated
+    let name_elem = closeup.find('.card-name')
+    let mana_elem = closeup.find('.mana-cost')
+    let type_elem = closeup.find('.card-type')
+    let rules_elem = closeup.find('.description-wrapper')
+    let flavor_elem = closeup.find('.flavor-wrapper')
+    let image_elem = closeup.find('.frame-art')
+    let ptl_elem = closeup.find('.frame-pt-loyalty')
+
+    // Name, Mana, Type
+    name_elem.text(front.name)
+    type_elem.text(front.type_line)
+
+    // Mana
+    mana_elem.empty().append(_mana_symbols_from_string(front.mana_cost))
+
+    // Image
+    let art_crop = front.image_url.replace('normal', 'art_crop')
+    image_elem.attr('src', art_crop)
+
+    // Rules Text
+    rules_elem.empty()
+    let rules = front.oracle_text.split('\n')
+    for (var i = 0; i < rules.length; i++) {
+      let rule = rules[i].trim()
+      if (rule.length == 0)
+        continue
+
+      let rule_elem = $('<p></p>')
+      rule_elem.addClass('description')
+      rule_elem.text(rule)
+      rules_elem.append(rule_elem)
+    }
+
+
+    // Flavor text
+    flavor_elem.empty()
+    let flavor = front.flavor_text.split('\n')
+    for (var i = 0; i < flavor.length; i++) {
+      let flav = flavor[i].trim()
+      if (flav.length == 0)
+        continue
+
+      let flav_elem = $('<p></p>')
+      flav_elem.addClass('flavor-text')
+      flav_elem.text(flav)
+      flavor_elem.append(flav_elem)
+    }
+
+    // Power/Toughness or Loyalty
+    if (front.power) {
+      let pt = `${front.power}/${front.toughness}`
+      ptl_elem.text(pt)
+      ptl_elem.show()
+    }
+    else if (front.loyalty) {
+      ptl_elem.text(front.loyalty)
+      ptl_elem.show()
+    }
+    else {
+      ptl_elem.hide()
+    }
+  }
+
   function _update_card_zone(player_idx, zone) {
     assert.equal(typeof player_idx, 'number', `player_idx should be number, got ${player_idx}`)
     assert.equal(typeof zone, 'string', `zone should be string, got ${zone}`)
@@ -1074,24 +1190,6 @@ let gameui = (function() {
     let player = _state.player(player_idx)
     $(`#player-${player_idx}-name`).text(player.name)
     $(`#player-${player_idx}-life`).text(player.tableau.counters['life'])
-  }
-
-  function _update_card_closeup() {
-    let closeup = $('#card-closeup')
-
-    if (!_card_closeup_state.active) {
-      closeup.hide()
-      return
-    }
-    else {
-      closeup.show()
-      assert.ok(
-        _card_closeup_state.card_id,
-        "card closeup should have source id when active"
-      )
-    }
-
-    let data = _state.card(_card_closeup_state.card_id).json
   }
 
   function _update_popup_viewer() {

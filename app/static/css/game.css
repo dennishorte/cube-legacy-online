@@ -239,8 +239,8 @@
 
   font-size: .8rem;
 
-  height: 50px;
-  width: 300px;
+  height: 4rem;
+  width: 18rem;
 
   top: 50px;
   left: 600px;
@@ -265,11 +265,17 @@
 .card-frame {
   height: 100%;
   max-width: 100%;
-  background-color: #559955;
+  /* background-color: #559955; */
   padding-top: .25rem;
+  padding-bottom: .25rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .frame-header,
+.frame-pt-loyalty,
 .frame-type-line {
   font-weight: bold;
   height: 1.3rem;
@@ -281,16 +287,36 @@
 
   border-radius: .4rem/.8rem;
   border: .1rem solid;
+
+  width: 100%
+}
+
+.frame-pt-loyalty {
+  display: flex;
+  justify-content: center;
+  max-width: 2.15rem;
+  margin-top: -.5rem;
+  align-self: flex-end;
 }
 
 .frame-art {
-  max-width: 100%;
+  width: 14.9rem;
+  border-left: .1rem solid;
+  border-right: .1rem solid;
 }
 
 .frame-text-box {
   padding: .25rem;
   background: #cceecc;
   line-height: 1;
+  width: 14.9rem;
+  min-height: 8rem;
+  border: .1rem solid;
+  border-top: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .frame-text-box p {
@@ -300,4 +326,8 @@
 .flavor-text {
   font-style: italic;
   font-weight: 300;
+}
+
+.mana-cost i {
+  margin-top: -.25rem;
 }
