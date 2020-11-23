@@ -833,7 +833,7 @@ let gameui = (function() {
         new_menu.removeClass('popup-menu-template')
         new_menu.addClass(`popup-menu-${zone}`)
 
-        new_menu.find('li').click(_popup_menu_click_handler)
+        new_menu.find('ul').click(_popup_menu_click_handler)
 
         parent.append(new_menu)
 
