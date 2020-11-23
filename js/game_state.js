@@ -74,6 +74,31 @@ class GameState {
     return this.state.cards[card_id]
   }
 
+  card_flip_down_up(card_id) {
+    let card = this.card(card_id)
+
+    if (!card.hasOwnProperty('face_down')) {
+      card.face_down = false
+    }
+
+    let old_value = card.face_down;
+    let new_value = !old_value;
+
+    let diff = {
+      delta: [{
+        action: 'set_card_value',
+        card_id: card_id,
+        key: 'face_down',
+        old_value: card.face_down,
+        new_value: !card.face_down,
+      }],
+      message: 'Card flipped',
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   card_list(player_idx, zone_name) {
     return this.state.players[player_idx].tableau[zone_name]
   }

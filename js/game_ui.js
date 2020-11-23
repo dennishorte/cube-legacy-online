@@ -28,6 +28,10 @@ let gameui = (function() {
         card.addClass('tapped')
       }
 
+      if (data.face_down) {
+        card.addClass('face-down')
+      }
+
       return card
     },
 
@@ -257,6 +261,7 @@ let gameui = (function() {
   }
 
   function _init_popup_menus() {
+    // Populate all of the zone popup menus from the templates.
     $('.popup-menu-template').each(function() {
       let menu = $(this)
       let zone = menu.data('zone')
@@ -270,16 +275,19 @@ let gameui = (function() {
         new_menu.removeClass('popup-menu-template')
         new_menu.addClass(`popup-menu-${zone}`)
 
-        new_menu.find('ul').click(_popup_menu_click_handler)
-
         parent.append(new_menu)
-
-        parent.click(function () {
-          $(this).find('.popup-menu').show()
-        })
       }
     })
 
+    // Open all popup menus on click
+    $('.zone-menu-icon').click(function () {
+      $(this).siblings('.popup-menu').show()
+    })
+
+    // Handle clicks on popup menus
+    $('.popup-menu ul').click(_popup_menu_click_handler)
+
+    // Close all popup menus on click
     window.addEventListener('click', function(event) {
       if (!event.target.matches('.zone-menu-icon')) {
         $(".popup-menu").hide()
@@ -345,31 +353,43 @@ let gameui = (function() {
   function _popup_menu_click_handler(event) {
     let target = $(event.target)
     let menu_item = target.text()
-    let zone = target.closest('.card-zone')
-    let zone_name = _zone_from_id(zone.attr('id'))
-    let player_idx = _player_idx_from_elem(zone)
 
     if (menu_item == 'collapse/expand') {
+      let zone = target.closest('.card-zone')
+      let player_idx = _player_idx_from_elem(zone)
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
       _redraw()
     }
 
     else if (menu_item == 'draw') {
+      let zone = target.closest('.card-zone')
+      let player_idx = _player_idx_from_elem(zone)
       _state.draw(player_idx, 1)
       _redraw()
     }
 
     else if (menu_item == 'draw 7') {
+      let zone = target.closest('.card-zone')
+      let player_idx = _player_idx_from_elem(zone)
       _state.draw(player_idx, 7)
       _redraw()
     }
 
+    else if (menu_item == 'face-down/face-up') {
+      let card_id = $('#card-closeup').data('card-id')
+      _state.card_flip_down_up(card_id)
+      _redraw()
+    }
+
     else if (menu_item == 'shuffle') {
+      let zone = target.closest('.card-zone')
+      let player_idx = _player_idx_from_elem(zone)
       _state.shuffle(player_idx)
       _redraw()
     }
 
     else if (menu_item == 'view') {
+      let zone = target.closest('.card-zone')
       _popup_viewer_state.active = true
       _popup_viewer_state.source_id = zone.attr('id')
       _redraw()
@@ -476,7 +496,8 @@ let gameui = (function() {
       )
     }
 
-    let data = _state.card(_card_closeup_state.card_id).json
+    let card = _state.card(_card_closeup_state.card_id)
+    let data = card.json
     let front = data.card_faces[0]
 
     // Elements to be updated
@@ -487,6 +508,9 @@ let gameui = (function() {
     let flavor_elem = closeup.find('.flavor-wrapper')
     let image_elem = closeup.find('.frame-art')
     let ptl_elem = closeup.find('.frame-pt-loyalty')
+
+    // Hidden Data
+    closeup.attr('data-card-id', card.id)
 
     // Name, Mana, Type
     name_elem.text(front.name)

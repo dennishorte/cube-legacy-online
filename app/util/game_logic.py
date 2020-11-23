@@ -37,6 +37,7 @@ class GameCard(object):
 
             'annotation': None,  # str
             'counters': {},
+            'face_down': False,
             'owner': None,  # str, name of player
             'tapped': False,
             'token': False,

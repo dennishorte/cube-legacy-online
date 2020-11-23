@@ -184,7 +184,7 @@
       <div class="zone-menu">
         <div class="zone-menu-inner">
           <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
-          <i id="popup-viewer-zone-close-button" class="fas fa-times zone-menu-icon"></i>
+          <i id="popup-viewer-zone-close-button" class="fas fa-times zone-close-icon"></i>
         </div>
       </div>
 
@@ -199,11 +199,22 @@
 
 
   <!-- Card Closeup -->
-  <div id="card-closeup" class="framed">
+  <div
+    id="card-closeup"
+    data-card-id=""
+    class="framed">
+
     <div class="zone-menu">
       <div class="zone-menu-inner">
-        <i id="card-closeup--menu-button" class="fas fa-bars zone-menu-icon"></i>
-        <i id="card-closeup-close-button" class="fas fa-times zone-menu-icon"></i>
+        <i id="card-closeup-menu-button" class="fas fa-bars zone-menu-icon"></i>
+        <i id="card-closeup-close-button" class="fas fa-times zone-close-icon"></i>
+
+        <div class="popup-menu">
+          <ul>
+            <li>face-down/face-up</li>
+            <li>reveal</li>
+          </ul>
+        </div>
       </div>
     </div>
 
