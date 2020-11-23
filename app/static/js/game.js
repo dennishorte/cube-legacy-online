@@ -641,14 +641,7 @@ let gameui = (function() {
       }
     },
 
-    tap(elem) {
-      // elem.addClass('tapped')  // Will happen during redraw
-      let id = _card.id(elem)
-      _state.twiddle(id)
-    },
-
-    untap(elem) {
-      // elem.removeClass('tapped')  // Will happen during redraw
+    twiddle(elem) {
       let id = _card.id(elem)
       _state.twiddle(id)
     },
@@ -656,6 +649,12 @@ let gameui = (function() {
 
   ////////////////////////////////////////////////////////////////////////////////
   // State
+
+  let _click_state = {
+    delay: 200,
+    clicks: 0,
+    timer: undefined,
+  }
 
   let _card_drag_state = {
     orig: undefined,
@@ -670,8 +669,18 @@ let gameui = (function() {
     source_id: undefined,
   }
 
+  let _card_closeup_state = {
+    active: true,
+    card_id: 1,
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Functions
+
+  function _card_closeup(card) {
+    _card_closeup_state.active = true
+    _card_closeup_state.card_id = _card.id(card)
+  }
 
   function _find_by_path(root, path) {
     assert.ok(root instanceof jQuery, "root should be a jQuery obj")
@@ -702,6 +711,36 @@ let gameui = (function() {
     $('#pass-turn').click(function() {
       _state.pass_turn()
       _redraw()
+    })
+  }
+
+  function _init_card_click_handler() {
+    $('.card-list').click(function(event) {
+
+      let card = $(event.target).closest('.card-list-item')
+      _click_state.clicks += 1
+
+      if (_click_state.clicks == 1) {
+        _click_state.timer = setTimeout(function() {
+          _click_state.clicks = 0
+          _click_state.timer = undefined
+
+          _card_closeup(card)
+          _redraw()
+        }, _click_state.delay)
+      }
+
+      else {
+        clearTimeout(_click_state.timer)
+        _click_state.clicks = 0
+        _click_state.timer = undefined
+
+        _card.twiddle(card)
+        _redraw()
+      }
+
+    }).dblclick(function(event) {
+      event.preventDefault();
     })
   }
 
@@ -740,19 +779,6 @@ let gameui = (function() {
       }
     })
     $( ".sortable" ).disableSelection()
-  }
-
-  function _init_double_click_for_tap() {
-    $(".card-zone").dblclick(function(event) {
-      let card = $(event.target).closest('.card-list-item')
-      if (_card.is_tapped(card)) {
-        _card.untap(card)
-      }
-      else {
-        _card.tap(card)
-      }
-      _redraw()
-    })
   }
 
   function _init_history_navigation() {
@@ -824,7 +850,7 @@ let gameui = (function() {
     })
   }
 
-  function _init_popup_viewer() {
+  function _init_popup_views() {
     $('#popup-viewer-zone').draggable({
       handle: '.card-section-header',
     })
@@ -832,6 +858,17 @@ let gameui = (function() {
     $('#popup-viewer-zone-close-button').click(function () {
       _popup_viewer_state.active = false
       _popup_viewer_state.source_id = undefined
+      _redraw()
+    })
+
+
+    $('#card-closeup').draggable({
+      handle: '.card-section-header',
+    })
+
+    $('#card-closeup-close-button').click(function () {
+      _card_closeup_state.active = false
+      _card_closeup_state.source_id = undefined
       _redraw()
     })
   }
@@ -917,9 +954,10 @@ let gameui = (function() {
   function _redraw() {
     let root = $('.game-root')
 
-    _update_turn_and_priority()
+    _update_card_closeup()
     _update_phase()
     _update_popup_viewer()
+    _update_turn_and_priority()
 
     for (var i = 0; i < _state.num_players(); i++) {
       _update_card_zone(i, 'battlefield')
@@ -1038,6 +1076,24 @@ let gameui = (function() {
     $(`#player-${player_idx}-life`).text(player.tableau.counters['life'])
   }
 
+  function _update_card_closeup() {
+    let closeup = $('#card-closeup')
+
+    if (!_card_closeup_state.active) {
+      closeup.hide()
+      return
+    }
+    else {
+      closeup.show()
+      assert.ok(
+        _card_closeup_state.card_id,
+        "card closeup should have source id when active"
+      )
+    }
+
+    let data = _state.card(_card_closeup_state.card_id).json
+  }
+
   function _update_popup_viewer() {
     let popup = $('#popup-viewer-zone')
 
@@ -1096,11 +1152,11 @@ let gameui = (function() {
       _state = new GameState(game_state, viewing_player)
 
       // UI interactions
+      _init_card_click_handler()
       _init_card_dragging()
-      _init_double_click_for_tap()
       _init_life_buttons()
       _init_popup_menus()
-      _init_popup_viewer()
+      _init_popup_views()
 
       // Player activites
       _init_actions()
