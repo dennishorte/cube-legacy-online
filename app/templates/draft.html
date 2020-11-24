@@ -255,7 +255,7 @@
       <h4>Starred Achievements</h4>
       {% for star in current_user.achievements_starred %}
         {% set ach = star.achievement %}
-        {% if ach.cube_id == d.draft.cube_id %}
+        {% if ach.cube_id == d.draft.cube_id and not ach.unlocked_by_id %}
           {{ show_achievement(ach, current_user) }}
         {% endif %}
       {% endfor %}
