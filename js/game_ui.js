@@ -211,6 +211,33 @@ let gameui = (function() {
     })
   }
 
+  function _init_token_maker_interactions() {
+    $('#token-create').click(function() {
+      let name = $('#token-name').val()
+      let annotation = $('#token-annotation').val()
+
+      let player_idx = dialogs.data('token-maker').player_idx
+      let player = _state.player(player_idx)
+
+      let token = _state.card_factory()
+      token.annotation = annotation
+      token.owner = player.name
+      token.visibility = _state.state.players.map(p => p.name).sort()
+
+      let data = token.json
+      data.name = name
+      data.type_line = 'Token'
+
+      let front = data.card_faces[0]
+      front.image_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
+      front.name = name
+      front.type_line = 'Token'
+
+      _state.card_create(token)
+      _redraw()
+    })
+  }
+
   function _move_card(orig, oidx, dest, didx, card) {
     let source_index = card.data('source-index')
 
@@ -248,7 +275,6 @@ let gameui = (function() {
     let menu_item = target.text()
 
     if (menu_item == 'annotate') {
-      console.log('annotate')
       let card_id = $('#card-closeup').data('card-id')
     }
 
@@ -464,6 +490,7 @@ let gameui = (function() {
       _init_card_dragging()
       _init_life_buttons()
       _init_popup_menus()
+      _init_token_maker_interactions()
 
       // Player activites
       _init_actions()

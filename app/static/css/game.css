@@ -48,6 +48,14 @@
   padding: 0;
 }
 
+.card-annotation {
+  font-style: italic;
+  font-size: .7rem;
+  color: #456781!important;
+  margin-top: -.3rem!important;
+  margin-left: .2rem!important;
+}
+
 .tapped {
   font-style: italic;
   color: #a8a9aa;
@@ -223,7 +231,7 @@
   width: 18rem;
 
   top: 50px;
-  left: 600px;
+  left: 200px;
 
   padding: 0.5rem;
 }

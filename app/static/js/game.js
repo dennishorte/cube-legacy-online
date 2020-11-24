@@ -151,13 +151,16 @@ module.exports = (function() {
       dialog.hide()
 
       // Reset state
-      let state = _dialogs[dialog.attr('id')]
-      for (let prop in Object.getOwnPropertyNames(state)) {
+      let data = _dialogs[dialog.attr('id')]
+      for (let prop in data) {
+        if (!data.hasOwnProperty(prop))
+          continue
+
         if (prop == 'active') {
-          state[prop] = false
+          data[prop] = false
         }
         else {
-          state[prop] = undefined
+          data[prop] = undefined
         }
       }
     })
@@ -225,7 +228,6 @@ module.exports = (function() {
       rule_elem.text(rule)
       rules_elem.append(rule_elem)
     }
-
 
     // Flavor text
     flavor_elem.empty()
@@ -336,6 +338,10 @@ let card_zones = {
     visibility: 'all',
     taps: true,
   },
+  command: {
+    visibility: 'all',
+    taps: false,
+  },
   land: {
     visibility: 'all',
     taps: true,
@@ -400,6 +406,67 @@ class GameState {
 
   card(card_id) {
     return this.state.cards[card_id]
+  }
+
+  /*
+   * Use card_factory to generate the basic data, and fill in the required fields.
+   */
+  card_create(data) {
+    let delta = [{
+      action: 'create_card',
+      card_data: data,
+      zone: 'battlefield',
+    }]
+
+    let diff = {
+      delta: delta,
+      message: `${data.json.name} token created`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
+  card_factory() {
+    let card_stats = {
+      card_faces: [{
+        flavor_text: '',
+        image_url: '',
+        loyalty: '',
+        mana_cost: '',
+        name: '',
+        object: '',
+        oracle_text: '',
+        power: '',
+        toughness: '',
+        type_line: '',
+      }],
+      cmc: 0,
+      layout: '',
+      name: '',
+      object: 'token',
+      oracle_text: '',
+      rarity: '',
+      type_line: '',
+    }
+
+    let id = this.next_id()
+    let data = {
+      id: id,
+      cube_card_id: undefined,
+      cube_card_version: undefined,
+      json: card_stats,
+
+      annotation: undefined,  // string
+      counters: {},
+      face_down: false,
+      owner: undefined,  // name of player
+      tapped: false,
+      token: true,
+      visibility: [],
+    }
+
+    return data
   }
 
   card_flip_down_up(card_id) {
@@ -518,6 +585,14 @@ class GameState {
     }
 
     return this._execute(diff)
+  }
+
+  next_id() {
+    let id = this.state.next_id
+    assert.ok(!this.state.cards.hasOwnProperty(id), 'Card ID already exists')
+
+    this.state.next_id += 1
+    return id
   }
 
   num_players() {
@@ -795,7 +870,23 @@ class GameState {
       let change = diff.delta[i]
       let action = change.action
 
-      if (action == 'move_card') {
+      if (action == 'create_card') {
+        let data = change.card_data
+
+        assert.ok(!this.state.cards.hasOwnProperty(data.id), "Card has duplicate id")
+        assert.equal(typeof data.json.name, 'string', "Name is not valid")
+
+        this.state.cards[data.id] = data
+
+        let card_list = this._card_list_from_loc({
+          name: change.zone,
+          player_idx: this.player_idx_by_name(data.owner),
+        })
+
+        card_list.push(data.id)
+      }
+
+      else if (action == 'move_card') {
         let card_id = change.card_id
 
         // Ensure the card exists where it is supposed to be.
@@ -1126,6 +1217,33 @@ let gameui = (function() {
     })
   }
 
+  function _init_token_maker_interactions() {
+    $('#token-create').click(function() {
+      let name = $('#token-name').val()
+      let annotation = $('#token-annotation').val()
+
+      let player_idx = dialogs.data('token-maker').player_idx
+      let player = _state.player(player_idx)
+
+      let token = _state.card_factory()
+      token.annotation = annotation
+      token.owner = player.name
+      token.visibility = _state.state.players.map(p => p.name).sort()
+
+      let data = token.json
+      data.name = name
+      data.type_line = 'Token'
+
+      let front = data.card_faces[0]
+      front.image_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
+      front.name = name
+      front.type_line = 'Token'
+
+      _state.card_create(token)
+      _redraw()
+    })
+  }
+
   function _move_card(orig, oidx, dest, didx, card) {
     let source_index = card.data('source-index')
 
@@ -1163,7 +1281,6 @@ let gameui = (function() {
     let menu_item = target.text()
 
     if (menu_item == 'annotate') {
-      console.log('annotate')
       let card_id = $('#card-closeup').data('card-id')
     }
 
@@ -1379,6 +1496,7 @@ let gameui = (function() {
       _init_card_dragging()
       _init_life_buttons()
       _init_popup_menus()
+      _init_token_maker_interactions()
 
       // Player activites
       _init_actions()

@@ -49,13 +49,16 @@ module.exports = (function() {
       dialog.hide()
 
       // Reset state
-      let state = _dialogs[dialog.attr('id')]
-      for (let prop in Object.getOwnPropertyNames(state)) {
+      let data = _dialogs[dialog.attr('id')]
+      for (let prop in data) {
+        if (!data.hasOwnProperty(prop))
+          continue
+
         if (prop == 'active') {
-          state[prop] = false
+          data[prop] = false
         }
         else {
-          state[prop] = undefined
+          data[prop] = undefined
         }
       }
     })
@@ -123,7 +126,6 @@ module.exports = (function() {
       rule_elem.text(rule)
       rules_elem.append(rule_elem)
     }
-
 
     // Flavor text
     flavor_elem.empty()

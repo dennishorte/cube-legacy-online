@@ -8,6 +8,10 @@ let card_zones = {
     visibility: 'all',
     taps: true,
   },
+  command: {
+    visibility: 'all',
+    taps: false,
+  },
   land: {
     visibility: 'all',
     taps: true,
@@ -72,6 +76,67 @@ class GameState {
 
   card(card_id) {
     return this.state.cards[card_id]
+  }
+
+  /*
+   * Use card_factory to generate the basic data, and fill in the required fields.
+   */
+  card_create(data) {
+    let delta = [{
+      action: 'create_card',
+      card_data: data,
+      zone: 'battlefield',
+    }]
+
+    let diff = {
+      delta: delta,
+      message: `${data.json.name} token created`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
+  card_factory() {
+    let card_stats = {
+      card_faces: [{
+        flavor_text: '',
+        image_url: '',
+        loyalty: '',
+        mana_cost: '',
+        name: '',
+        object: '',
+        oracle_text: '',
+        power: '',
+        toughness: '',
+        type_line: '',
+      }],
+      cmc: 0,
+      layout: '',
+      name: '',
+      object: 'token',
+      oracle_text: '',
+      rarity: '',
+      type_line: '',
+    }
+
+    let id = this.next_id()
+    let data = {
+      id: id,
+      cube_card_id: undefined,
+      cube_card_version: undefined,
+      json: card_stats,
+
+      annotation: undefined,  // string
+      counters: {},
+      face_down: false,
+      owner: undefined,  // name of player
+      tapped: false,
+      token: true,
+      visibility: [],
+    }
+
+    return data
   }
 
   card_flip_down_up(card_id) {
@@ -190,6 +255,14 @@ class GameState {
     }
 
     return this._execute(diff)
+  }
+
+  next_id() {
+    let id = this.state.next_id
+    assert.ok(!this.state.cards.hasOwnProperty(id), 'Card ID already exists')
+
+    this.state.next_id += 1
+    return id
   }
 
   num_players() {
@@ -467,7 +540,23 @@ class GameState {
       let change = diff.delta[i]
       let action = change.action
 
-      if (action == 'move_card') {
+      if (action == 'create_card') {
+        let data = change.card_data
+
+        assert.ok(!this.state.cards.hasOwnProperty(data.id), "Card has duplicate id")
+        assert.equal(typeof data.json.name, 'string', "Name is not valid")
+
+        this.state.cards[data.id] = data
+
+        let card_list = this._card_list_from_loc({
+          name: change.zone,
+          player_idx: this.player_idx_by_name(data.owner),
+        })
+
+        card_list.push(data.id)
+      }
+
+      else if (action == 'move_card') {
         let card_id = change.card_id
 
         // Ensure the card exists where it is supposed to be.
