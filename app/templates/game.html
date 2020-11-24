@@ -40,7 +40,7 @@
     id="save-game-meta">
   </div>
 
-    <!-- Main Container -->
+  <!-- Main Container -->
   <div class="container-fluid game-root">
 
     {{ header() }}
@@ -114,9 +114,12 @@
 
             <div class="col col-3 inner-frames">
 
-              <div id="{{ id_prefix }}-info" class="framed player-info">
+              <!-- Player Info Zone -->
+              <div id="{{ id_prefix }}-info" class="framed player-info card-zone">
                 <div class="zone-menu">
-                  <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
+                  <div class="zone-menu-inner">
+                    <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
+                  </div>
                 </div>
                 <p class="card-section-header">
                   <span id="{{ id_prefix }}-name">NO_NAME</span>
@@ -131,6 +134,7 @@
                   </span>
                 </p>
               </div>
+              <!-- END: Player Info Zone -->
 
               {{ card_region('Command', player_idx) }}
               {{ card_region('Sideboard', player_idx) }}
@@ -182,28 +186,55 @@
         </ul>
       </div>
 
+      <div class="popup-menu-template popup-menu" data-zone="info">
+        <ul>
+          <li>roll a die</li>
+        </ul>
+      </div>
+
     </div>
+  </div>
+  <!-- END: Container -->
 
 
   <!-- Popup Viewer -->
-    <div id="popup-viewer-zone" class="framed dialog">
-      <div class="zone-menu">
-        <div class="zone-menu-inner">
-          <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
-          <i class="fas fa-times dialog-close"></i>
-        </div>
+  <div id="popup-viewer-zone" class="framed dialog">
+    <div class="zone-menu">
+      <div class="zone-menu-inner">
+        <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
+        <i class="fas fa-times dialog-close"></i>
       </div>
-
-      <div class="dialog-header">
-        <p class="card-section-header">
-        </p>
-      </div>
-
-      <ul id="popup-viewer-cards" class="card-list sortable">
-      </ul>
     </div>
+
+    <div class="dialog-header">
+      <p class="card-section-header">
+      </p>
+    </div>
+
+    <ul id="popup-viewer-cards" class="card-list sortable">
+    </ul>
   </div>
   <!-- END: Popup Viewer -->
+
+
+  <!-- Roll a Die Modal -->
+  <div id="die-roller" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="d-none" id="die-roller-player-idx"></div>
+
+          <div class="form-group">
+            <label for="die-faces">Faces</label>
+            <input id="die-faces" type="text" class="form-control">
+          </div>
+
+          <button id="die-roll" type="button" class="btn btn-primary">roll</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Roll a Die Modal -->
 
 
   <!-- Card Closeup -->

@@ -1144,6 +1144,28 @@ let gameui = (function() {
     $( ".sortable" ).disableSelection()
   }
 
+  function _init_die_modal() {
+    $('#die-roll').click(function() {
+      let player_idx = parseInt($('#die-roller-player-idx').text())
+      let player = _state.player(player_idx)
+
+      let faces = parseInt($('#die-faces').val())
+      let roll = Math.floor(Math.random() * faces) + 1
+      _state.message(`Rolled ${roll} on a d${faces} for ${player.name}`)
+
+      $('#die-roller').modal('hide')
+      _redraw()
+    })
+
+    $('#die-faces').keydown(function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        $('#die-roll').click()
+      }
+    })
+
+  }
+
   function _init_history_navigation() {
     $('#messages').click(function(e) {
       _state.set_history_index($(e.target).index())
@@ -1317,6 +1339,13 @@ let gameui = (function() {
       let card_id = $('#card-closeup').data('card-id')
       _state.card_flip_down_up(card_id)
       _redraw()
+    }
+
+    else if (menu_item == 'roll a die') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      $('#die-roller-player-idx').text(player_idx)
+      $('#die-roller').modal('show')
     }
 
     else if (menu_item == 'shuffle') {
@@ -1494,6 +1523,7 @@ let gameui = (function() {
       // UI interactions
       _init_card_click_handler()
       _init_card_dragging()
+      _init_die_modal()
       _init_life_buttons()
       _init_popup_menus()
       _init_token_maker_interactions()
