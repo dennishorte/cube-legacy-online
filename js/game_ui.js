@@ -3,90 +3,14 @@
 let assert = require('assert')
 
 let GameState = require('./game_state.js')
+let cardui = require('./card_ui.js')
+let dialogs = require('./dialogs.js')
+let util = require('./util.js')
 
 
 let gameui = (function() {
   var _state
 
-  let _card = {
-    factory(data) {
-      let card = $('<li></li>')
-      _card.set_name(card, data.json.card_faces[0].name)
-      card.attr('id', `card-${data.id}`)
-
-      // Styling and autocard popup
-      card.addClass('card-list-item')
-      card.attr('data-front', data.json.card_faces[0].image_url)
-      if (data.json.card_faces.length > 1) {
-        card.attr('data-back', data.json.card_faces[1].image_url)
-      }
-
-      _card.set_annotation(card, data.annotation)
-      _card.set_visibility(card, data)
-
-      if (data.tapped) {
-        card.addClass('tapped')
-      }
-
-      if (data.face_down) {
-        card.addClass('face-down')
-      }
-
-      return card
-    },
-
-    id(elem) {
-      return parseInt(elem.attr('id').split('-')[1])
-    },
-
-    is_tapped(elem) {
-      let id = _card.id(elem)
-      return _state.card(id).tapped
-    },
-
-    is_visible(data) {
-      return data.visibility.includes(_state.viewer_name)
-    },
-
-    set_annotation(elem, text) {
-      var ann = elem.find('.annotation')
-
-      if (ann.length == 0) {
-        ann = $('<p class="card-annotation"></p>')
-        elem.append(ann)
-      }
-
-      if (text) {
-        ann.text(text)
-        ann.removeClass('d-none')
-      }
-      else {
-        ann.addClass('d-none')
-      }
-    },
-
-    set_name(elem, name) {
-      var name_elem = elem.find('.card-name')
-
-      if (name_elem.length == 0) {
-        name_elem = $('<p class="card-name"></p>')
-        elem.prepend(name_elem)
-      }
-
-      name_elem.text(name)
-    },
-
-    set_visibility(elem, data) {
-      if (!_card.is_visible(data)) {
-        elem.addClass('face-down')
-      }
-    },
-
-    twiddle(elem) {
-      let id = _card.id(elem)
-      _state.twiddle(id)
-    },
-  }
 
   ////////////////////////////////////////////////////////////////////////////////
   // State
@@ -105,23 +29,13 @@ let gameui = (function() {
     card: undefined,
   }
 
-  let _popup_viewer_state = {
-    active: false,
-    source_id: undefined,
-  }
-
-  let _card_closeup_state = {
-    active: false,
-    card_id: undefined,
+  let _token_maker_state = {
+    active: true,
+    player_idx: undefined,
   }
 
   ////////////////////////////////////////////////////////////////////////////////
   // Functions
-
-  function _card_closeup(card) {
-    _card_closeup_state.active = true
-    _card_closeup_state.card_id = _card.id(card)
-  }
 
   function _find_by_path(root, path) {
     assert.ok(root instanceof jQuery, "root should be a jQuery obj")
@@ -166,7 +80,9 @@ let gameui = (function() {
           _click_state.clicks = 0
           _click_state.timer = undefined
 
-          _card_closeup(card)
+          dialogs.show('card-closeup', {
+            card_id: cardui.id(card),
+          })
           _redraw()
         }, _click_state.delay)
       }
@@ -176,7 +92,7 @@ let gameui = (function() {
         _click_state.clicks = 0
         _click_state.timer = undefined
 
-        _card.twiddle(card)
+        cardui.twiddle(card)
         _redraw()
       }
 
@@ -233,7 +149,7 @@ let gameui = (function() {
     $('.life-buttons').click(function(event) {
       let button = $(event.target)
       let amount = parseInt(button.attr('amount'))
-      let player_idx = _player_idx_from_elem(button.parent())
+      let player_idx = util.player_idx_from_elem(button.parent())
       _state.increment_life(player_idx, amount)
       _redraw()
     })
@@ -295,36 +211,13 @@ let gameui = (function() {
     })
   }
 
-  function _init_popup_views() {
-    $('#popup-viewer-zone').draggable({
-      handle: '.card-section-header',
-    })
-
-    $('#popup-viewer-zone-close-button').click(function () {
-      _popup_viewer_state.active = false
-      _popup_viewer_state.source_id = undefined
-      _redraw()
-    })
-
-
-    $('#card-closeup').draggable({
-      handle: '.card-section-header',
-    })
-
-    $('#card-closeup-close-button').click(function () {
-      _card_closeup_state.active = false
-      _card_closeup_state.source_id = undefined
-      _redraw()
-    })
-  }
-
   function _move_card(orig, oidx, dest, didx, card) {
     let source_index = card.data('source-index')
 
     // Update the game state to reflect the change.
     let orig_loc = _move_card_location_maker(orig, oidx, source_index)
     let dest_loc = _move_card_location_maker(dest, didx)
-    let card_id = _card.id(card)
+    let card_id = cardui.id(card)
 
     _state.move_card(orig_loc, dest_loc, card_id)
     _update_card_zone(orig_loc.player_idx, orig_loc.name)
@@ -335,7 +228,7 @@ let gameui = (function() {
   function _move_card_location_maker(elem, index, source_index) {
     var elem_id = elem.attr('id')
     if (elem_id == 'popup-viewer-cards') {
-      elem_id = _popup_viewer_state.source_id
+      elem_id = dialogs.data(elem_id)
 
       if (source_index) {
         index = source_index
@@ -354,23 +247,36 @@ let gameui = (function() {
     let target = $(event.target)
     let menu_item = target.text()
 
-    if (menu_item == 'collapse/expand') {
+    if (menu_item == 'annotate') {
+      console.log('annotate')
+      let card_id = $('#card-closeup').data('card-id')
+    }
+
+    else if (menu_item == 'collapse/expand') {
       let zone = target.closest('.card-zone')
-      let player_idx = _player_idx_from_elem(zone)
+      let player_idx = util.player_idx_from_elem(zone)
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
       _redraw()
     }
 
+    else if (menu_item == 'create token') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      dialogs.show('token-maker', {
+        player_idx: player_idx,
+      })
+    }
+
     else if (menu_item == 'draw') {
       let zone = target.closest('.card-zone')
-      let player_idx = _player_idx_from_elem(zone)
+      let player_idx = util.player_idx_from_elem(zone)
       _state.draw(player_idx, 1)
       _redraw()
     }
 
     else if (menu_item == 'draw 7') {
       let zone = target.closest('.card-zone')
-      let player_idx = _player_idx_from_elem(zone)
+      let player_idx = util.player_idx_from_elem(zone)
       _state.draw(player_idx, 7)
       _redraw()
     }
@@ -383,16 +289,16 @@ let gameui = (function() {
 
     else if (menu_item == 'shuffle') {
       let zone = target.closest('.card-zone')
-      let player_idx = _player_idx_from_elem(zone)
+      let player_idx = util.player_idx_from_elem(zone)
       _state.shuffle(player_idx)
       _redraw()
     }
 
     else if (menu_item == 'view') {
       let zone = target.closest('.card-zone')
-      _popup_viewer_state.active = true
-      _popup_viewer_state.source_id = zone.attr('id')
-      _redraw()
+      dialogs.show('popup-viewer-zone', {
+        source_id: zone.attr('id')
+      })
     }
 
     else {
@@ -400,20 +306,10 @@ let gameui = (function() {
     }
   }
 
-  function _player_idx_from_elem(elem) {
-    return _player_idx_from_id($(elem).attr('id'))
-  }
-
-  function _player_idx_from_id(id_string) {
-    return id_string.split('-')[1]
-  }
-
   function _redraw() {
     let root = $('.game-root')
 
-    _update_card_closeup()
     _update_phase()
-    _update_popup_viewer()
     _update_turn_and_priority()
 
     for (var i = 0; i < _state.num_players(); i++) {
@@ -429,6 +325,8 @@ let gameui = (function() {
       _update_player_info(i)
       _update_history()
     }
+
+    dialogs.redraw()
   }
 
   function _save() {
@@ -445,126 +343,6 @@ let gameui = (function() {
         alert('Error Saving Game')
       }
     })
-  }
-
-  function _mana_symbols_from_string(mana) {
-    var grabbing = true
-    var curr = ''
-    let elements = []
-
-    for (var i = 0; i < mana.length; i++) {
-      let ch = mana.charAt(i)
-      if (ch == '{') {
-        grabbing = true
-      }
-      else if (ch == '}') {
-        elements.push(_mana_symbols_from_string_single(curr))
-        curr = ''
-      }
-      else {
-        curr += ch
-      }
-    }
-
-    return elements
-  }
-
-  function _mana_symbols_from_string_single(mana) {
-    let classes = ['ms', 'ms-cost', 'ms-shadow']
-
-    mana = mana.replace('/', '')
-    classes.push('ms-' + mana.toLowerCase())
-
-    let elem = $('<i></i>')
-    elem.addClass(classes.join(' '))
-
-    return elem
-  }
-
-  function _update_card_closeup() {
-    let closeup = $('#card-closeup')
-
-    if (!_card_closeup_state.active) {
-      closeup.hide()
-      return
-    }
-    else {
-      closeup.show()
-      assert.ok(
-        _card_closeup_state.card_id,
-        "card closeup should have source id when active"
-      )
-    }
-
-    let card = _state.card(_card_closeup_state.card_id)
-    let data = card.json
-    let front = data.card_faces[0]
-
-    // Elements to be updated
-    let name_elem = closeup.find('.card-name')
-    let mana_elem = closeup.find('.mana-cost')
-    let type_elem = closeup.find('.card-type')
-    let rules_elem = closeup.find('.description-wrapper')
-    let flavor_elem = closeup.find('.flavor-wrapper')
-    let image_elem = closeup.find('.frame-art')
-    let ptl_elem = closeup.find('.frame-pt-loyalty')
-
-    // Hidden Data
-    closeup.attr('data-card-id', card.id)
-
-    // Name, Mana, Type
-    name_elem.text(front.name)
-    type_elem.text(front.type_line)
-
-    // Mana
-    mana_elem.empty().append(_mana_symbols_from_string(front.mana_cost))
-
-    // Image
-    let art_crop = front.image_url.replace('normal', 'art_crop')
-    image_elem.attr('src', art_crop)
-
-    // Rules Text
-    rules_elem.empty()
-    let rules = front.oracle_text.split('\n')
-    for (var i = 0; i < rules.length; i++) {
-      let rule = rules[i].trim()
-      if (rule.length == 0)
-        continue
-
-      let rule_elem = $('<p></p>')
-      rule_elem.addClass('description')
-      rule_elem.text(rule)
-      rules_elem.append(rule_elem)
-    }
-
-
-    // Flavor text
-    flavor_elem.empty()
-    let flavor = front.flavor_text.split('\n')
-    for (var i = 0; i < flavor.length; i++) {
-      let flav = flavor[i].trim()
-      if (flav.length == 0)
-        continue
-
-      let flav_elem = $('<p></p>')
-      flav_elem.addClass('flavor-text')
-      flav_elem.text(flav)
-      flavor_elem.append(flav_elem)
-    }
-
-    // Power/Toughness or Loyalty
-    if (front.power) {
-      let pt = `${front.power}/${front.toughness}`
-      ptl_elem.text(pt)
-      ptl_elem.show()
-    }
-    else if (front.loyalty) {
-      ptl_elem.text(front.loyalty)
-      ptl_elem.show()
-    }
-    else {
-      ptl_elem.hide()
-    }
   }
 
   function _update_card_zone(player_idx, zone) {
@@ -586,7 +364,7 @@ let gameui = (function() {
     for (var i = 0; i < card_list.length; i++) {
       let card_id = card_list[i]
       let card = _state.card(card_id)
-      cards_elem.append(_card.factory(card))
+      cards_elem.append(cardui.factory(card))
     }
 
     // Fill in number of cards
@@ -653,38 +431,6 @@ let gameui = (function() {
     $(`#player-${player_idx}-life`).text(player.tableau.counters['life'])
   }
 
-  function _update_popup_viewer() {
-    let popup = $('#popup-viewer-zone')
-
-    if (!_popup_viewer_state.active) {
-      popup.hide()
-      return
-    }
-    else {
-      popup.show()
-    }
-
-    assert.ok(_popup_viewer_state.source_id, "popup-viewer zone should have source id when active")
-
-    let player_idx = _player_idx_from_id(_popup_viewer_state.source_id)
-    let zone = $(`#${_popup_viewer_state.source_id}`)
-    let zone_name = zone.find('.card-section-name').text().trim()
-    let zone_id = zone_name.toLowerCase()
-
-    popup.find('.card-section-header').text(zone_name)
-
-    let card_list = $('#popup-viewer-cards')
-    card_list.empty()
-
-    let zone_card_ids = _state.player(player_idx).tableau[zone_id]
-    for (var i = 0; i < zone_card_ids.length; i++) {
-      let card_id = zone_card_ids[i]
-      let card = _card.factory(_state.card(card_id))
-      card.attr('data-source-index', i)
-      card_list.append(card)
-    }
-  }
-
   function _update_turn_and_priority() {
     $('.tableau').removeClass('player-turn')
     $('.player-info').removeClass('player-priority')
@@ -710,12 +456,14 @@ let gameui = (function() {
     init(game_state, viewing_player) {
       _state = new GameState(game_state, viewing_player)
 
+      cardui.init(_state)
+      dialogs.init(_state)
+
       // UI interactions
       _init_card_click_handler()
       _init_card_dragging()
       _init_life_buttons()
       _init_popup_menus()
-      _init_popup_views()
 
       // Player activites
       _init_actions()

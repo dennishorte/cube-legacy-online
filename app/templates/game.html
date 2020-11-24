@@ -176,20 +176,28 @@
         </ul>
       </div>
 
+      <div class="popup-menu-template popup-menu" data-zone="battlefield">
+        <ul>
+          <li>create token</li>
+        </ul>
+      </div>
+
     </div>
 
 
   <!-- Popup Viewer -->
-    <div id="popup-viewer-zone" class="framed">
+    <div id="popup-viewer-zone" class="framed dialog">
       <div class="zone-menu">
         <div class="zone-menu-inner">
           <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
-          <i id="popup-viewer-zone-close-button" class="fas fa-times zone-close-icon"></i>
+          <i class="fas fa-times dialog-close"></i>
         </div>
       </div>
 
-      <p class="card-section-header">
-      </p>
+      <div class="dialog-header">
+        <p class="card-section-header">
+        </p>
+      </div>
 
       <ul id="popup-viewer-cards" class="card-list sortable">
       </ul>
@@ -202,23 +210,23 @@
   <div
     id="card-closeup"
     data-card-id=""
-    class="framed">
+    class="framed dialog">
 
     <div class="zone-menu">
       <div class="zone-menu-inner">
         <i id="card-closeup-menu-button" class="fas fa-bars zone-menu-icon"></i>
-        <i id="card-closeup-close-button" class="fas fa-times zone-close-icon"></i>
+        <i class="fas fa-times dialog-close"></i>
 
         <div class="popup-menu">
           <ul>
+            <li>annotate</li>
             <li>face-down/face-up</li>
-            <li>reveal</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div id="card-closeup-info">
+    <div class="dialog-header">
       <p class="card-section-header">
         Card Closeup
       </p>
@@ -263,6 +271,57 @@
 
   </div>
   <!-- END: Card Closeup -->
+
+
+  <!-- Token Maker -->
+  <div id="token-maker" class="framed dialog">
+
+    <div class="zone-menu">
+      <div class="zone-menu-inner">
+        <i id="token-maker-menu-button" class="fas fa-bars zone-menu-icon"></i>
+        <i class="fas fa-times dialog-close"></i>
+
+        <!-- <div class="popup-menu">
+             <ul>
+             </ul>
+             </div>
+        -->
+      </div>
+    </div>
+
+    <div class="dialog-header">
+      <p class="card-section-header">
+        Token Maker
+      </p>
+    </div>
+
+    <form>
+      <div class="form-group">
+        <label for="token-name">Name</label>
+        <input id="token-name" type="text" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="token-annotation">annotation</label>
+        <input id="token-annotation" type="text" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="token-color">color</label>
+        <select multiple class="form-control" id="token-color">
+          <option>white</option>
+          <option>blue</option>
+          <option>black</option>
+          <option>red</option>
+          <option>green</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn btn-primary">create</button>
+
+    </form>
+  </div>
+  <!-- END: Token Maker -->
 
 
 
