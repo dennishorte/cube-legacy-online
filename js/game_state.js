@@ -377,20 +377,49 @@ class GameState {
   set_phase(phase) {
     assert.ok(this._is_valid_phase(phase), `Invalid game phase: ${phase}`)
 
-    if (this.phase() != phase) {
-      let diff = {
-        delta: [{
-          action: 'set_game_value',
-          key: 'phase',
-          old_value: this.phase(),
-          new_value: phase,
-        }],
-        message: `phase: ${phase}`,
-        player: this.viewer_name
+    if (this.phase() == phase)
+      return
+
+    var delta = [{
+      action: 'set_game_value',
+      key: 'phase',
+      old_value: this.phase(),
+      new_value: phase,
+    }]
+
+    var message = `phase: ${phase}`
+
+    // Untap all the player's cards
+    if (phase == 'untap') {
+      var count = 0
+
+      for (let zone in card_zones) {
+        if (!card_zones.hasOwnProperty(zone))
+          continue
+
+        let card_list = this.card_list(this.state.turn, zone)
+        for (var i = 0; i < card_list.length; i++) {
+          let card = this.card(card_list[i])
+          if (card.tapped) {
+            let untap_delta = this.twiddle(card.id, true)
+            delta = delta.concat(untap_delta)
+            count += 1
+          }
+        }
       }
 
-      return this._execute(diff)
+      if (count > 0) {
+        message += `, ${count} cards untapped`
+      }
     }
+
+    let diff = {
+      delta: delta,
+      message: message,
+      player: this.viewer_name
+    }
+
+    return this._execute(diff)
   }
 
   shuffle(player_idx) {
@@ -441,18 +470,23 @@ class GameState {
     return this.state.turn
   }
 
-  twiddle(card_id) {
+  twiddle(card_id, delta_only=false) {
     let card = this.card(card_id)
     let action = card.tapped ? 'untap': 'tap'
 
+    let delta = [{
+      action: 'set_card_value',
+      card_id: card_id,
+      key: 'tapped',
+      old_value: card.tapped,
+      new_value: !card.tapped,
+    }]
+
+    if (delta_only)
+      return delta
+
     let diff = {
-      delta: [{
-        action: 'set_card_value',
-        card_id: card_id,
-        key: 'tapped',
-        old_value: card.tapped,
-        new_value: !card.tapped,
-      }],
+      delta: delta,
       message: `${action}: ${card.json.name}`,
       player: this.viewer_name,
     }
