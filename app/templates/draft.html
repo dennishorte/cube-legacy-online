@@ -21,7 +21,11 @@
         {% for pack in range(d.draft.num_packs) %}
           <th>{{ loop.index }}</th>
         {% endfor %}
-        <th></th>
+
+        {% if config.FLASK_ENV == 'development' %}
+          <th></th>
+        {% endif %}
+
       </thead>
     </tr>
 
@@ -43,13 +47,17 @@
               {% else %}
                   <span class="text-warning">
               {% endif %}
-                {{ s.waiting_packs()[idx]|length }}
-              </span>
+              {{ s.waiting_packs()[idx]|length }}
+                  </span>
             </td>
           {% endfor %}
-          <td>
-            <a href="{{ url_for('draft_force', draft_id=d.draft.id, user_id=s.user_id) }}">force</a>
-          </td>
+
+          {% if config.FLASK_ENV == 'development' %}
+            <td>
+              <a href="{{ url_for('draft_force', draft_id=d.draft.id, user_id=s.user_id) }}">force</a>
+            </td>
+          {% endif %}
+
         </tr>
       {% endfor %}
     </tbody>
