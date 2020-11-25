@@ -598,6 +598,7 @@ class GameState {
      * }
      */
 
+    let card = this.card(card_id)
     let delta = []
 
     delta.push({
@@ -606,6 +607,11 @@ class GameState {
       orig_loc: orig_loc,
       dest_loc: dest_loc,
     })
+
+    if (card.tapped && !card_zones[dest_loc.name].taps) {
+      let tap_delta = this.twiddle(card_id, true)
+      delta = delta.concat(tap_delta)
+    }
 
     let vis_diff = this._visibility_diff_from_move(orig_loc, dest_loc, this.card(card_id))
     if (vis_diff) {
