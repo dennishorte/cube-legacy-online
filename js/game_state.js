@@ -645,6 +645,23 @@ class GameState {
         card.visibility = [...change.vis]
       }
 
+      else if (action == 'uncreate_card') {
+        let data = change.card_data
+        let id = data.id
+
+        let card_list = this._card_list_from_loc({
+          name: change.zone,
+          player_idx: this.player_idx_by_name(data.owner),
+        })
+
+        let index = card_list.indexOf(id)
+        assert.ok(index != -1, 'Could not find card to uncreate')
+
+        card_list.splice(index, 1)
+
+        delete this.state.cards[id]
+      }
+
       else {
         throw `Unknown action ${action}`
       }
@@ -672,6 +689,10 @@ class GameState {
         let tmp = change.old_value
         change.old_value = change.new_value
         change.new_value = tmp
+      }
+
+      else if (action == 'create_card') {
+        change.action = 'uncreate_card'
       }
 
       else if (action == 'move_card') {
