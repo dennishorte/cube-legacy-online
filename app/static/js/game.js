@@ -261,6 +261,9 @@ module.exports = (function() {
     else {
       ptl_elem.hide()
     }
+
+    // Set annotation
+    closeup.find('.card-closeup-annotation-input').val(card.annotation)
   }
 
   function _redraw_popup_viewer_zone() {
