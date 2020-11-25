@@ -35,7 +35,7 @@ class GameCard(object):
             'cube_card_version': int(card.version),
             'json': card.get_json(),
 
-            'annotation': None,  # str
+            'annotation': '',
             'counters': {},
             'face_down': False,
             'owner': None,  # str, name of player

@@ -148,6 +148,9 @@ module.exports = (function() {
   function _init_close_buttons() {
     $('.dialog-close').click(function() {
       let dialog = $(this).closest('.dialog')
+
+      dialog.trigger('clo.dialogs.closing')
+
       dialog.hide()
 
       // Reset state
@@ -163,6 +166,8 @@ module.exports = (function() {
           data[prop] = undefined
         }
       }
+
+      dialog.trigger('clo.dialogs.closed')
     })
   }
 
@@ -408,6 +413,32 @@ class GameState {
     return this.state.cards[card_id]
   }
 
+  card_annotation(card_id, annotation) {
+    let card = this.card(card_id)
+
+    if (!card.annotation) {
+      card.annotation = ''
+    }
+
+    if (annotation == card.annotation) {
+      return
+    }
+
+    let diff = {
+      delta: [{
+        action: 'set_card_value',
+        card_id: card_id,
+        key: 'annotation',
+        old_value: card.annotation,
+        new_value: annotation,
+      }],
+      message: `Annotation on ${card.json.name} set to '${annotation}'`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   /*
    * Use card_factory to generate the basic data, and fill in the required fields.
    */
@@ -457,7 +488,7 @@ class GameState {
       cube_card_version: undefined,
       json: card_stats,
 
-      annotation: undefined,  // string
+      annotation: '',
       counters: {},
       face_down: false,
       owner: undefined,  // name of player
@@ -1239,6 +1270,18 @@ let gameui = (function() {
     })
   }
 
+  function _init_card_closeup_interations() {
+    let closeup = $('#card-closeup')
+
+    closeup.on('clo.dialogs.closing', function() {
+      _state.card_annotation(
+        dialogs.data('card-closeup').card_id,
+        closeup.find('.card-closeup-annotation-input').val(),
+      )
+      _redraw()
+    })
+  }
+
   function _init_token_maker_interactions() {
     $('#token-create').click(function() {
       let name = $('#token-name').val()
@@ -1302,11 +1345,7 @@ let gameui = (function() {
     let target = $(event.target)
     let menu_item = target.text()
 
-    if (menu_item == 'annotate') {
-      let card_id = $('#card-closeup').data('card-id')
-    }
-
-    else if (menu_item == 'collapse/expand') {
+    if (menu_item == 'collapse/expand') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
@@ -1526,6 +1565,9 @@ let gameui = (function() {
       _init_die_modal()
       _init_life_buttons()
       _init_popup_menus()
+
+      // Dialog interactiions
+      _init_card_closeup_interations()
       _init_token_maker_interactions()
 
       // Player activites

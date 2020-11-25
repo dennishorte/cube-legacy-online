@@ -78,6 +78,32 @@ class GameState {
     return this.state.cards[card_id]
   }
 
+  card_annotation(card_id, annotation) {
+    let card = this.card(card_id)
+
+    if (!card.annotation) {
+      card.annotation = ''
+    }
+
+    if (annotation == card.annotation) {
+      return
+    }
+
+    let diff = {
+      delta: [{
+        action: 'set_card_value',
+        card_id: card_id,
+        key: 'annotation',
+        old_value: card.annotation,
+        new_value: annotation,
+      }],
+      message: `Annotation on ${card.json.name} set to '${annotation}'`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   /*
    * Use card_factory to generate the basic data, and fill in the required fields.
    */
@@ -127,7 +153,7 @@ class GameState {
       cube_card_version: undefined,
       json: card_stats,
 
-      annotation: undefined,  // string
+      annotation: '',
       counters: {},
       face_down: false,
       owner: undefined,  // name of player

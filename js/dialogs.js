@@ -46,6 +46,9 @@ module.exports = (function() {
   function _init_close_buttons() {
     $('.dialog-close').click(function() {
       let dialog = $(this).closest('.dialog')
+
+      dialog.trigger('clo.dialogs.closing')
+
       dialog.hide()
 
       // Reset state
@@ -61,6 +64,8 @@ module.exports = (function() {
           data[prop] = undefined
         }
       }
+
+      dialog.trigger('clo.dialogs.closed')
     })
   }
 

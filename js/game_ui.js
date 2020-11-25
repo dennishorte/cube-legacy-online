@@ -233,6 +233,18 @@ let gameui = (function() {
     })
   }
 
+  function _init_card_closeup_interations() {
+    let closeup = $('#card-closeup')
+
+    closeup.on('clo.dialogs.closing', function() {
+      _state.card_annotation(
+        dialogs.data('card-closeup').card_id,
+        closeup.find('.card-closeup-annotation-input').val(),
+      )
+      _redraw()
+    })
+  }
+
   function _init_token_maker_interactions() {
     $('#token-create').click(function() {
       let name = $('#token-name').val()
@@ -296,11 +308,7 @@ let gameui = (function() {
     let target = $(event.target)
     let menu_item = target.text()
 
-    if (menu_item == 'annotate') {
-      let card_id = $('#card-closeup').data('card-id')
-    }
-
-    else if (menu_item == 'collapse/expand') {
+    if (menu_item == 'collapse/expand') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
@@ -520,6 +528,9 @@ let gameui = (function() {
       _init_die_modal()
       _init_life_buttons()
       _init_popup_menus()
+
+      // Dialog interactiions
+      _init_card_closeup_interations()
       _init_token_maker_interactions()
 
       // Player activites
