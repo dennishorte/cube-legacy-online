@@ -1405,7 +1405,7 @@ let gameui = (function() {
 
     if (menu_item == 'collapse/expand') {
       let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      let player_idx = _state.viewer_idx
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
       _redraw()
     }
