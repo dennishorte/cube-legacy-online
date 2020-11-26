@@ -104,9 +104,6 @@ module.exports = (function() {
     let image_elem = closeup.find('.frame-art')
     let ptl_elem = closeup.find('.frame-pt-loyalty')
 
-    // Hidden Data
-    closeup.attr('data-card-id', card.id)
-
     // Name, Mana, Type
     name_elem.text(front.name)
     type_elem.text(front.type_line)

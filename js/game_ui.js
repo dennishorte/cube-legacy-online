@@ -338,7 +338,7 @@ let gameui = (function() {
     }
 
     else if (menu_item == 'face-down/face-up') {
-      let card_id = $('#card-closeup').data('card-id')
+      let card_id = dialogs.data('card-closeup').card_id
       _state.card_flip_down_up(card_id)
       _redraw()
     }

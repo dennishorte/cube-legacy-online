@@ -175,6 +175,14 @@ class GameState {
     let old_value = card.face_down;
     let new_value = !old_value;
 
+    var message;
+    if (new_value == true) {
+      message = 'PLAYER_NAME turns CARD_NAME face down'
+    }
+    else {
+      message = 'PLAYER_NAME flips CARD_NAME face up'
+    }
+
     let diff = {
       delta: [{
         action: 'set_card_value',
@@ -183,7 +191,7 @@ class GameState {
         old_value: card.face_down,
         new_value: !card.face_down,
       }],
-      message: 'Card flipped',
+      message: message,
       player: this.viewer_name,
     }
 
