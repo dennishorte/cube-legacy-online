@@ -11,18 +11,23 @@ module.exports = (function() {
 
   cardui.factory = function(data) {
     let card = $('<li></li>')
-    cardui.set_name(card, data.json.card_faces[0].name)
     card.attr('id', `card-${data.id}`)
 
     // Styling and autocard popup
     card.addClass('card-list-item')
-    card.attr('data-front', data.json.card_faces[0].image_url)
-    if (data.json.card_faces.length > 1) {
-      card.attr('data-back', data.json.card_faces[1].image_url)
-    }
-
+    /* card.attr('data-front', data.json.card_faces[0].image_url)
+     * if (data.json.card_faces.length > 1) {
+     *   card.attr('data-back', data.json.card_faces[1].image_url)
+     * }
+     */
     cardui.set_annotation(card, data.annotation)
     cardui.set_visibility(card, data)
+
+    var name = 'hidden'
+    if (cardui.is_visible(data)) {
+      name = data.json.card_faces[0].name
+    }
+    cardui.set_name(card, name)
 
     if (data.tapped) {
       card.addClass('tapped')
