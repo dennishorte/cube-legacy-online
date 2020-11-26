@@ -600,10 +600,6 @@ class GameState {
     return this.card_list(loc.player_idx, loc.name)
   }
 
-  _clear_visibility_diff(player_idx, zone, card) {
-
-  }
-
   _clean_id(elem_id) {
     if (elem_id.startsWith('#')) {
       return elem_id.substr(1)
