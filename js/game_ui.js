@@ -449,18 +449,22 @@ let gameui = (function() {
 
   function _style_message(message) {
     const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
-    const player_name_span = '<span class="message-player-name">PLAYER_NAME</span>'
 
     var msg = message
-    msg = msg.replace('CARD_NAME', card_name_span)
-    msg = msg.replace('PLAYER_NAME', player_name_span)
+    msg = msg.replace(/CARD_NAME/g, card_name_span)
+    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
+      return `<span class="message-player-name">${match}</span>`
+    })
 
     return msg
   }
 
   function _perform_message_substitutions(hist, message) {
     var msg = message
-    msg = msg.replace('PLAYER_NAME', hist.player)
+    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
+      let player_idx = parseInt(match.charAt(7))
+      return _state.player(player_idx).name
+    })
 
     if (msg.indexOf('CARD_NAME') >= 0) {
       let card = _state.card(hist.delta[0].card_id)
@@ -471,7 +475,7 @@ let gameui = (function() {
         card_name = card.json.name
       }
 
-      msg = msg.replace('CARD_NAME', card_name)
+      msg = msg.replace(/CARD_NAME/g, card_name)
     }
 
     return msg

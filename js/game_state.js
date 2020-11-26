@@ -176,11 +176,12 @@ class GameState {
     let new_value = !old_value;
 
     var message;
+    let player_key = `PLAYER_${this.viewer_idx}_NAME`
     if (new_value == true) {
-      message = 'PLAYER_NAME turns CARD_NAME face down'
+      message = `${player_key} turns CARD_NAME face down`
     }
     else {
-      message = 'PLAYER_NAME flips CARD_NAME face up'
+      message = `${player_key} flips CARD_NAME face up`
     }
 
     let diff = {
@@ -287,7 +288,7 @@ class GameState {
      * zone = {
      *   name: 'hand',
      *   zone_idx: 0,
-     *   player: 'name',
+     *   player_idx: 0,
      * }
      */
 
@@ -312,9 +313,40 @@ class GameState {
       delta.push(vis_diff)
     }
 
+    // Message
+    let viewer_key = `PLAYER_${this.viewer_idx}_NAME`
+    var message = `${viewer_key} moves CARD_NAME from ORIG_NAME to DEST_NAME`
+    var orig_name = orig_loc.name
+    var dest_name = dest_loc.name
+
+    if (orig_loc.name == 'library') {
+      if (
+        dest_loc.name == 'hand'
+        && dest_loc.player_idx == this.viewer_idx
+        && orig_loc.zone_idx == 0
+      ) {
+
+        message = `${viewer_key} draws CARD_NAME`
+      }
+    }
+
+    if (orig_loc.player_idx != this.viewer_idx) {
+      let player_key = `PLAYER_${orig_loc.player_idx}_NAME`
+      orig_name = `${player_key}'s ` + orig_name
+    }
+
+    if (dest_loc.player_idx != this.viewer_idx) {
+      let player_key = `PLAYER_${dest_loc.player_idx}_NAME`
+      dest_name = `${player_key}'s ` + dest_name
+    }
+
+    message = message.replace('ORIG_NAME', orig_name)
+    message = message.replace('DEST_NAME', dest_name)
+
+    // Diff
     let diff = {
       delta: delta,
-      message: `PLAYER_NAME moves CARD_NAME from ${orig_loc.name} to ${dest_loc.name}`,
+      message: message,
       player: this.viewer_name,
     }
 
