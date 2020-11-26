@@ -10,34 +10,30 @@ module.exports = (function() {
   }
 
   cardui.factory = function(data) {
-    let card = $('<li></li>')
-    card.attr('id', `card-${data.id}`)
+    let elem = $('<li></li>')
+    elem.attr('id', `card-${data.id}`)
 
     // Styling and autocard popup
-    card.addClass('card-list-item')
-    /* card.attr('data-front', data.json.card_faces[0].image_url)
-     * if (data.json.card_faces.length > 1) {
-     *   card.attr('data-back', data.json.card_faces[1].image_url)
-     * }
-     */
-    cardui.set_annotation(card, data.annotation)
-    cardui.set_visibility(card, data)
+    elem.addClass('card-list-item')
 
-    var name = 'hidden'
-    if (cardui.is_visible(data)) {
-      name = data.json.card_faces[0].name
-    }
-    cardui.set_name(card, name)
+    cardui.set_name(elem, data.json.name)
+    cardui.set_annotation(elem, data.annotation)
 
     if (data.tapped) {
-      card.addClass('tapped')
+      elem.addClass('tapped')
     }
 
     if (data.face_down) {
-      card.addClass('face-down')
+      if (data.owner != _state.viewer_name) {
+        cardui.set_name(elem, 'face down')
+      }
+
+      elem.addClass('face-down')
+      let icon = $('<i class="not-visible-icon fas fa-caret-square-down"></i>')
+      elem.find('.card-name').prepend(icon)
     }
 
-    return card
+    return elem
   }
 
 
@@ -87,9 +83,13 @@ module.exports = (function() {
   }
 
 
-  cardui.set_visibility = function(elem, data) {
-    if (!cardui.is_visible(data)) {
-      elem.addClass('face-down')
+  cardui.set_visibility = function(elem, is_visible) {
+    if (is_visible) {
+      elem.removeClass('not-visible')
+    }
+    else {
+      elem.addClass('not-visible')
+      cardui.set_name(elem, 'hidden')
     }
   }
 

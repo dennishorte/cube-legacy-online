@@ -190,6 +190,23 @@ class GameState {
     return this._execute(diff)
   }
 
+  card_is_visible(card_id, zone_id) {
+    let card = this.card(card_id)
+    let player_vis = card.visibility.indexOf(this.viewer_name) >= 0
+
+    // Being face down overrides the local zone visibility
+    if (card.face_down)
+      return player_vis
+
+    // A player can reveal a non-visible zone, such as the library.
+    var zone_vis = false
+    if (zone_id) {
+      zone_vis = this.is_revealed(this.viewer_idx, zone_id)
+    }
+
+    return player_vis || zone_vis
+  }
+
   card_list(player_idx, zone_name) {
     return this.state.players[player_idx].tableau[zone_name]
   }
@@ -238,6 +255,12 @@ class GameState {
   is_collapsed(player_idx, zone_id) {
     zone_id = this._clean_id(zone_id)
     let opt_name = `collapse_${zone_id}`
+    return this.view_options(player_idx)[opt_name]
+  }
+
+  is_revealed(player_idx, zone_id) {
+    zone_id = this._clean_id(zone_id)
+    let opt_name = `reveal_${zone_id}`
     return this.view_options(player_idx)[opt_name]
   }
 
@@ -466,6 +489,20 @@ class GameState {
 
 
     if (this.is_collapsed(player_idx, zone_id)) {
+      delete this.view_options(player_idx)[opt_name]
+    }
+    else {
+      this.view_options(player_idx)[opt_name] = true
+    }
+  }
+
+  toggle_zone_reveal(player_idx, zone_id) {
+    zone_id = this._clean_id(zone_id)
+
+    let opt_name = `reveal_${zone_id}`
+
+
+    if (this.is_revealed(player_idx, zone_id)) {
       delete this.view_options(player_idx)[opt_name]
     }
     else {

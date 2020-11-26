@@ -289,7 +289,7 @@ let gameui = (function() {
   function _move_card_location_maker(elem, index, source_index) {
     var elem_id = elem.attr('id')
     if (elem_id == 'popup-viewer-cards') {
-      elem_id = dialogs.data(elem_id)
+      elem_id = dialogs.data('popup-viewer-zone').source_id
 
       if (source_index) {
         index = source_index
@@ -359,6 +359,7 @@ let gameui = (function() {
 
     else if (menu_item == 'view') {
       let zone = target.closest('.card-zone')
+
       dialogs.show('popup-viewer-zone', {
         source_id: zone.attr('id')
       })
@@ -427,7 +428,11 @@ let gameui = (function() {
     for (var i = 0; i < card_list.length; i++) {
       let card_id = card_list[i]
       let card = _state.card(card_id)
-      cards_elem.append(cardui.factory(card))
+      let elem = cardui.factory(card)
+
+      cardui.set_visibility(elem, _state.card_is_visible(card_id, zone_prefix))
+
+      cards_elem.append(elem)
     }
 
     // Fill in number of cards

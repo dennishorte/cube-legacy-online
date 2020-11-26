@@ -96,8 +96,15 @@
   color: var(--gray);
 }
 
-.face-down {
+.face-down,
+.not-visible {
   font-weight: lighter;
+}
+
+.not-visible-icon {
+  margin-right: .2rem;
+  color: #3c3019;
+  background-color: #8b5625;
 }
 
 .card-zone, .player-info {
