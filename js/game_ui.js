@@ -435,10 +435,10 @@ let gameui = (function() {
 
     let is_collapsed = _state.is_collapsed(_state.viewer_idx, zone_prefix)
     if (is_collapsed) {
-      cards_elem.hide()
+      cards_elem.children().hide()
     }
     else {
-      cards_elem.show()
+      cards_elem.children().show()
     }
   }
 
