@@ -256,11 +256,12 @@ class GameState {
      * zone = {
      *   name: 'hand',
      *   zone_idx: 0,
-     *   player_idx: 0,
+     *   player: 'name',
      * }
      */
 
     let card = this.card(card_id)
+
     let delta = []
 
     delta.push({
@@ -282,7 +283,7 @@ class GameState {
 
     let diff = {
       delta: delta,
-      message: `move card from ${orig_loc.name} to ${dest_loc.name}`,
+      message: `PLAYER_NAME moves CARD_NAME from ${orig_loc.name} to ${dest_loc.name}`,
       player: this.viewer_name,
     }
 
@@ -705,12 +706,23 @@ class GameState {
       else {
         throw `Unknown action ${action}`
       }
+
     }
+
+    // Update the diff with visibility information of the cards (after the diff was applied).
+    // This ensures that when cards become visible, the message includes the card name.
+    for (var i = 0; i < diff.delta.length; i++) {
+      let change = diff.delta[i]
+      if (change.hasOwnProperty('card_id')) {
+        change.card_vis = [...this.card(change.card_id).visibility]
+      }
+    }
+
   }
 
   _unapply(diff) {
-    // Make a copy so that we don't alter the original diff.
-    let inverse = JSON.parse(JSON.stringify(diff));
+      // Make a copy so that we don't alter the original diff.
+      let inverse = JSON.parse(JSON.stringify(diff));
 
     // Reverse the order of the delta so they will be unapplied in reverse order of application.
     let delta = inverse.delta

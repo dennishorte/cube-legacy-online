@@ -442,6 +442,36 @@ let gameui = (function() {
     }
   }
 
+  function _style_message(message) {
+    const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
+    const player_name_span = '<span class="message-player-name">PLAYER_NAME</span>'
+
+    var msg = message
+    msg = msg.replace('CARD_NAME', card_name_span)
+    msg = msg.replace('PLAYER_NAME', player_name_span)
+
+    return msg
+  }
+
+  function _perform_message_substitutions(hist, message) {
+    var msg = message
+    msg = msg.replace('PLAYER_NAME', hist.player)
+
+    if (msg.indexOf('CARD_NAME') >= 0) {
+      let card = _state.card(hist.delta[0].card_id)
+      let visibility = hist.delta[0].card_vis || 'UNKNOWN'
+
+      var card_name = 'a card'
+      if (visibility != 'UNKNOWN' && visibility.indexOf(_state.viewer_name) >= 0) {
+        card_name = card.json.name
+      }
+
+      msg = msg.replace('CARD_NAME', card_name)
+    }
+
+    return msg
+  }
+
   function _update_history() {
     let elem = $('#messages')
     let prev_message_count = elem.children().length
@@ -450,8 +480,14 @@ let gameui = (function() {
 
     for (var i = 0; i < _state.history.length; i++) {
       let hist = _state.history[i]
+      let message = _perform_message_substitutions(
+        hist,
+        _style_message(hist.message)
+      )
+      let message_html = $(`<span>${message}</span>`)
+
       let msg = $('<li></li>')
-        .text(hist.message)
+        .append(message_html)
         .addClass('message')
 
       if (hist.player == _state.viewer_name) {

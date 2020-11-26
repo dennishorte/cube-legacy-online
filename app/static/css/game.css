@@ -173,6 +173,15 @@
   counter-increment: message-counter;
 }
 
+.message-player-name {
+  font-weight: 500;
+}
+
+.message-card-name {
+  color: #773333;
+  font-weight: bold;
+}
+
 .message::before {
   content: counter(message-counter) ". ";
   color: #ddd;
