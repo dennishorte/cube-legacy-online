@@ -112,7 +112,7 @@
                       {% endif %}
                       ">
 
-            <div class="col col-3 inner-frames">
+            <div class="col col-4 inner-frames">
 
               <!-- Player Info Zone -->
               <div id="{{ id_prefix }}-info" class="framed player-info card-zone">
@@ -136,21 +136,18 @@
               </div>
               <!-- END: Player Info Zone -->
 
-              {{ card_region('Command', player_idx) }}
-              {{ card_region('Sideboard', player_idx) }}
+              {{ card_region('Library', player_idx) }}
               {{ card_region('Graveyard', player_idx) }}
               {{ card_region('Exile', player_idx) }}
+              {{ card_region('Command', player_idx) }}
+              {{ card_region('Sideboard', player_idx) }}
             </div>
 
-            <div class="col col-3 inner-frames">
-              {{ card_region('Library', player_idx) }}
-            </div>
-
-            <div class="col col-3 inner-frames">
+            <div class="col col-4 inner-frames">
               {{ card_region('Hand', player_idx) }}
             </div>
 
-            <div class="col col-3 inner-frames">
+            <div class="col col-4 inner-frames">
               {{ card_region('Battlefield', player_idx) }}
               {{ card_region('Land', player_idx) }}
               {{ card_region('Stack', player_idx) }}

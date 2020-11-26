@@ -109,6 +109,7 @@ class GamePlayer(object):
             'name': user.name,
             'ready_to_start': False,
             'tableau': PlayerTableau.factory(user.name).data,
+            'view_options': {},
         }
 
         return GamePlayer(data)
@@ -144,6 +145,10 @@ class GamePlayer(object):
     def tableau(self):
         return PlayerTableau(self.data['tableau'])
 
+    @property
+    def view_options(self):
+        return self.data['view_options']
+
 
 class GameState(object):
     def __init__(self, json):
@@ -160,12 +165,24 @@ class GameState(object):
             'cards': {},  # id -> card.data
             'name': name,
             'next_id': 1,
-            'players': [GamePlayer.factory(id).data for id in player_ids],
+            'players': [],
             'phase': GamePhase.deck_selection,
 
             'turn': 0,  # Whose turn is it? (player_idx)
             'priority': 0,  # Which player has priority? (player_idx)
         }
+
+        players = []
+        view_option_defaults = {}
+        for i, id in enumerate(player_ids):
+            players.append(GamePlayer.factory(id))
+            view_option_defaults[f"collapse_player-{i}-library"] = True
+            view_option_defaults[f"collapse_player-{i}-sideboard"] = True
+
+        for player in players:
+            player.view_options.update(view_option_defaults)
+            data['players'].append(player.data)
+
 
         data['history'].append({
             'message': f"{data['players'][0]['name']}'s turn",
