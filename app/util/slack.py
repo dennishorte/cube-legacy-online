@@ -29,13 +29,10 @@ def send_new_game_notifications(game):
 
 
 def send_your_turn_in_game_notification(game):
-    if len(game.players) == 1:
+    if len(game.players) == 1 or Config.FLASK_ENV != 'production':
         return
 
     next_player = game.priority_player()
-
-    if Config.FLASK_ENV != 'production' and next_player.name != 'dennis':
-        return
 
     user = User.query.get(next_player.id)
     domain_host = urlparse(request.base_url).hostname
