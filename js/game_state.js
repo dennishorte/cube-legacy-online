@@ -308,7 +308,7 @@ class GameState {
     /* loc format:
      * zone = {
      *   name: 'hand',
-     *   zone_idx: 0,
+     *   zone_idx: 0,  // -1 supported to mean bottom
      *   player_idx: 0,
      * }
      */
@@ -757,7 +757,11 @@ class GameState {
 
         // Ensure the card exists where it is supposed to be.
         let orig_zone = this._card_list_from_loc(change.orig_loc)
-        let orig_idx = change.orig_loc.zone_idx
+        var orig_idx = change.orig_loc.zone_idx
+        if (orig_idx == -1) {
+          orig_idx = orig_zone.length - 1
+        }
+
         assert.equal(
           orig_zone[orig_idx], card_id,
           `Card ${card_id} not found at ${orig_idx} in ${change.orig_loc.name} ${orig_zone}`
@@ -768,7 +772,11 @@ class GameState {
 
         // Add the card to the new zone.
         let dest_zone = this._card_list_from_loc(change.dest_loc)
-        dest_zone.splice(change.dest_loc.zone_idx, 0, card_id)
+        var dest_idx = change.dest_loc.zone_idx
+        if (dest_idx == -1) {
+          dest_idx = dest_zone.length
+        }
+        dest_zone.splice(dest_idx, 0, card_id)
       }
 
       else if (action == 'set_game_value') {

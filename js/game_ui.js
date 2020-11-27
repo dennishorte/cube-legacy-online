@@ -131,7 +131,6 @@ let gameui = (function() {
       },
       stop: function(e, ui) {
         if (_card_drag_state.dest) {
-          console.log(_card_drag_state)
           _move_card(
             _card_drag_state.orig,
             _card_drag_state.oidx,
@@ -308,11 +307,10 @@ let gameui = (function() {
     let card_id = cardui.id(card)
 
     _state.move_card(orig_loc, dest_loc, card_id)
-    _update_card_zone(orig_loc.player_idx, orig_loc.name)
-    _update_card_zone(dest_loc.player_idx, dest_loc.name)
     _redraw()
   }
 
+  // Source index is used when the card is moved by the viewer, rather than from a regular zone.
   function _move_card_location_maker(elem, index, source_index) {
     var elem_id = elem.attr('id')
     if (elem_id == 'popup-viewer-cards') {
@@ -321,6 +319,11 @@ let gameui = (function() {
       if (source_index) {
         index = source_index
       }
+    }
+
+    if (elem_id.endsWith('-bottom')) {
+      elem_id = elem_id.substr(0, elem_id.length - '-bottom'.length)
+      index = '-1'
     }
 
     let tokens = elem_id.split('-')
@@ -538,6 +541,9 @@ let gameui = (function() {
         break
       }
     }
+
+    // Clear any cards that were dragged into the bottom of library
+    $(`${zone_prefix}-cards-bottom`).empty()
   }
 
   function _update_history() {
