@@ -131,6 +131,7 @@ let gameui = (function() {
       },
       stop: function(e, ui) {
         if (_card_drag_state.dest) {
+          console.log(_card_drag_state)
           _move_card(
             _card_drag_state.orig,
             _card_drag_state.oidx,
@@ -514,7 +515,7 @@ let gameui = (function() {
     let count_elem = $(`${zone_prefix}-count`)
     count_elem.text(card_list.length)
 
-    let top_elem = $(`${zone_prefix}-cards-top`).empty()
+    let top_elem = $(`${zone_prefix}-cards`).empty()
     for (var i = 0; i < card_list.length; i++) {
       let card = _state.card(card_list[i])
       if (_state.card_is_visible(card.id, zone_prefix)) {
