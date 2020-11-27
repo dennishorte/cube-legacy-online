@@ -29,7 +29,7 @@ def send_new_game_notifications(game):
 
 
 def send_your_turn_in_game_notification(game):
-    if len(game.players) == 1 or Config.FLASK_ENV != 'production':
+    if len(game.players) == 1:
         return
 
     next_player = game.priority_player()
@@ -42,9 +42,6 @@ def send_your_turn_in_game_notification(game):
 
 
 def send_new_draft_notifications(draft):
-    if Config.FLASK_ENV != 'production':
-        return
-
     for user in [x.user for x in draft.seats]:
         domain_host = urlparse(request.base_url).hostname
         message = f"A new draft, {draft.name}, has started. <{domain_host}|Come check it out>."
@@ -53,9 +50,6 @@ def send_new_draft_notifications(draft):
 
 
 def send_your_pick_notification(user, draft):
-    if Config.FLASK_ENV != 'production':
-        return
-
     if not user.should_send_notification():
         return
 
@@ -70,6 +64,9 @@ def send_your_pick_notification(user, draft):
 
 
 def _send_slack_message(user, message):
+    if Config.FLASK_ENV != 'production':
+        return
+
     try:
         open_response = _client.conversations_open(users=[user.slack_id])
         dm_channel = open_response['channel']['id']
