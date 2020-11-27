@@ -237,7 +237,18 @@ let gameui = (function() {
 
     // Open all popup menus on click
     $('.zone-menu-icon').click(function () {
-      $(this).siblings('.popup-menu').show()
+      let popup = $(this).siblings('.popup-menu').show()
+
+      // Adjust position if off the edge of the screen.
+      let popup_right = popup.offset().left + popup.outerWidth()
+      let viewportRight = $(window).width() + $(window).scrollLeft() // Scroll left considers horizontal scrollbar
+
+      if (popup_right < viewportRight) {
+        popup.css('left', 0)
+      }
+      else {
+        popup.css('right', 0)
+      }
     })
 
     // Handle clicks on popup menus
