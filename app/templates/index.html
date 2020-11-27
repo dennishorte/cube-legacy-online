@@ -30,7 +30,9 @@
               <li>
                 <a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a>
                 {% if p.waiting_pack() %}
-                  <span class="badge badge-pill badge-success">*</span>
+                  <span class="badge badge-pill badge-success">
+                    <i class="fas fa-asterisk"></i>
+                  </span>
                 {% endif %}
               </li>
             {% endfor %}
@@ -56,6 +58,13 @@
                 <a href="{{ url_for('game', game_id=game.id) }}">
                   {{ game.state.name }}
                 </a>
+
+                {% if game.is_my_turn(current_user) %}
+                  <span class="badge badge-pill badge-success">
+                    <i class="fas fa-asterisk"></i>
+                  </span>
+                {% endif %}
+
               </li>
             {% endfor %}
           </ul>

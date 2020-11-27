@@ -1,3 +1,4 @@
+from flask_login import current_user
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
@@ -43,6 +44,21 @@ class User(UserMixin, db.Model):
     def all_names():
         return [x.name for x in User.query.order_by(User.name)]
 
+    def active_draft_seats(self):
+        active_seats = [
+            x for x in self.draft_seats
+            if not x.draft.complete and not x.draft.killed
+        ]
+        active_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
+        return active_seats
+
+    def active_games(self):
+        from app.models.game_models import Game
+        return [
+            x for x in Game.query.order_by(Game.timestamp.desc()).all()
+            if x.state.player_by_id(current_user.id)
+        ]
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -67,6 +83,14 @@ class User(UserMixin, db.Model):
             or not self.last_pick_timestamp
             or self.last_notif_timestamp < self.last_pick_timestamp
         )
+
+    def waiting_drafts(self):
+        active = self.active_draft_seats()
+        return [x for x in active if x.waiting_pack()]
+
+    def waiting_games(self):
+        active = self.active_games()
+        return [x for x in active if x.state.priority_player().name == self.name]
 
 
 @login.user_loader

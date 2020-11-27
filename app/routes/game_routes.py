@@ -55,6 +55,16 @@ def game(game_id):
         )
 
 
+@app.route("/game/next")
+@login_required
+def game_next():
+    waiting_games = current_user.waiting_games()
+    if not waiting_games:
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('game', game_id=waiting_games[0].id))
+
+
 @app.route("/game/new", methods=['POST'])
 @login_required
 def game_new():

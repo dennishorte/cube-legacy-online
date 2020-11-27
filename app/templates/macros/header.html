@@ -15,6 +15,20 @@
     </div>
 
     <div class="col col-md-2 text-center">
+      {% if current_user.waiting_drafts() %}
+        <a href="{{ url_for('draft_next') }}" class="badge badge-warning">next draft</a>
+      {% endif %}
+
+      {% if current_user.waiting_drafts() and current_user.waiting_games() %}
+        /
+      {% endif %}
+
+      {% if current_user.waiting_games() %}
+        <a href="{{ url_for('game_next') }}" class="badge badge-warning">next game</a>
+      {% endif %}
+    </div>
+
+    <div class="col col-md-2 text-center">
       <a href="{{ url_for('index') }}">home</a> /
       <a href="{{ url_for('admin') }}">admin</a> /
       <a href="{{ url_for('logout') }}">logout</a>

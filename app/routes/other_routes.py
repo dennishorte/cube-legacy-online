@@ -29,9 +29,6 @@ from app.util.string import normalize_newlines
 @app.route("/", methods=['GET', 'POST'])
 @login_required
 def index():
-    active_seats = [x for x in current_user.draft_seats if not x.draft.complete and not x.draft.killed]
-    active_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
-
     complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
     complete_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
 
@@ -43,23 +40,22 @@ def index():
     achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
     cubes = Cube.query.filter(Cube.admin != True).all()
-    games = [x for x in Game.query.order_by(Game.timestamp.desc()).all() if x.state.player_by_id(current_user.id)]
     users = User.query.filter(User.name != 'starter').order_by(User.name).all()
 
     return render_template(
         'index.html',
-        active=active_seats,
-        complete=complete_seats,
-        achievements_unfinished=achievements_unfinished,
-        achievements_finished=achievements_finished,
-        new_draft_form=NewDraftForm.factory(),
-        new_set_draft_form=NewSetDraftForm.factory(),
-        new_cube_form=NewCubeForm(),
-        game_form=NewGameForm.factory(),
-        pack_maker_form=PackMakerForm.factory(15),
-        cubes=cubes,
-        games=games,
-        users=users,
+        active = current_user.active_draft_seats(),
+        complete = complete_seats,
+        achievements_unfinished = achievements_unfinished,
+        achievements_finished = achievements_finished,
+        new_draft_form = NewDraftForm.factory(),
+        new_set_draft_form = NewSetDraftForm.factory(),
+        new_cube_form = NewCubeForm(),
+        game_form = NewGameForm.factory(),
+        pack_maker_form = PackMakerForm.factory(15),
+        cubes = cubes,
+        games = current_user.active_games(),
+        users = users,
     )
 
 

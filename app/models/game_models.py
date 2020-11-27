@@ -13,6 +13,9 @@ class Game(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state_json = db.Column(MEDIUMTEXT)
 
+    def is_my_turn(self, user):
+        return self.state.priority_player().name == user.name
+
     @functools.cached_property
     def state(self):
         return GameState(json.loads(self.state_json))
