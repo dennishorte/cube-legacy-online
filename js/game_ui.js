@@ -175,7 +175,13 @@ let gameui = (function() {
 
   function _init_history_navigation() {
     $('#messages').click(function(e) {
-      _state.set_history_index($(e.target).index())
+      var target_msg = $(e.target)
+
+      if (target_msg.tagName != 'li') {
+        target_msg = target_msg.closest('li')
+      }
+
+      _state.set_history_index(target_msg.index())
       _redraw()
     })
   }

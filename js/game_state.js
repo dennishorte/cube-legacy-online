@@ -850,11 +850,11 @@ class GameState {
   }
 
   _unapply(diff) {
-      // Make a copy so that we don't alter the original diff.
-      let inverse = JSON.parse(JSON.stringify(diff));
+    // Make a copy so that we don't alter the original diff.
+    let inverse = JSON.parse(JSON.stringify(diff))
 
     // Reverse the order of the delta so they will be unapplied in reverse order of application.
-    let delta = inverse.delta
+    let delta = inverse.delta || []
     delta.reverse()
 
     // Invert each change in the delta

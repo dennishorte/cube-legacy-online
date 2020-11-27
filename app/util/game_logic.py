@@ -159,6 +159,7 @@ class GameState(object):
         data = {
             'id': game_id,
             'history': [{
+                'delta': [],
                 'message': 'Game Created',
                 'player': 'GM',
             }],
@@ -184,6 +185,7 @@ class GameState(object):
 
 
         data['history'].append({
+            'delta': [],
             'message': f"{data['players'][0]['name']}'s turn",
             'player': 'GM',
         })
