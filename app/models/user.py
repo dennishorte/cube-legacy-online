@@ -39,6 +39,13 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
+    @staticmethod
+    def all_names():
+        return [x.name for x in User.query.order_by(User.name)]
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     @property
     def monikers(self):
         if self.monikers_tsv:
@@ -54,19 +61,12 @@ class User(UserMixin, db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
     def should_send_notification(self):
         return (
             not self.last_notif_timestamp
             or not self.last_pick_timestamp
             or self.last_notif_timestamp < self.last_pick_timestamp
         )
-
-    @staticmethod
-    def all_names():
-        return [x.name for x in User.query.order_by(User.name)]
 
 
 @login.user_loader
