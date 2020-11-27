@@ -239,6 +239,16 @@ def draft_undo(draft_id, user_id):
         last_pick.pick_number = -1
         last_pick.picked_at = None
         db.session.add(last_pick)
+
+        # Remove this card from the player's deck.
+        deck = Deck.query.filter(
+            Deck.user_id == user_id,
+            Deck.draft_id == draft_id,
+        ).first()
+
+        deck.set_maindeck([x for x in deck.maindeck() if x.id != last_pick.cube_card.id])
+        db.session.add(deck)
+
         db.session.commit()
 
     else:
