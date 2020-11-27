@@ -2,15 +2,15 @@
   --not-as-light: #eeeff0;
 }
 
-.framed {
+.game-frame {
   background-color: var(--light);
   border: 1px solid #dee2e6!important;
   border-color: var(--secondary);
   border-radius: .25rem;
   padding: .5rem!important;
-  margin-top: .5rem!important;
-  margin-left: .25rem!important;
-  margin-right: .25rem!important;
+  margin-top: .25rem!important;
+  /* margin-left: .25rem!important;
+     margin-right: .25rem!important; */
 }
 
 #actions-zone {
@@ -22,8 +22,8 @@
   margin: 0!important;
 }
 
-.inner-frames .framed {
-  margin: .25rem!important;
+.inner-frames .game-frame {
+  /* margin: .25rem!important; */
 }
 
 .tableau {

@@ -5,7 +5,7 @@
 
 {% macro card_region(name, player_idx) %}
   {% set id_prefix = "player-{}-{}".format(player_idx, name.lower()) %}
-  <div id="{{ id_prefix }}" class="framed card-zone">
+  <div id="{{ id_prefix }}" class="game-frame card-zone">
     <div class="zone-menu">
       <div class="zone-menu-inner">
         <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
@@ -28,7 +28,7 @@
 
 {% macro library_region(player_idx) %}
   {% set id_prefix = "player-{}-library".format(player_idx) %}
-  <div id="{{ id_prefix }}" class="framed card-zone">
+  <div id="{{ id_prefix }}" class="game-frame card-zone">
     <div class="zone-menu">
       <div class="zone-menu-inner">
         <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
@@ -77,32 +77,27 @@
     {{ header() }}
 
     <div class="row">
-      <div id="game-phase" class="col col-1 inner-frames">
-        <div>
-          <ul id="drag-holder">
-          </ul>
-        </div>
-
-        <div id="actions-zone" class="framed">
+      <div id="game-phase" class="col-4 col-lg-1 inner-frames">
+        <div id="actions-zone" class="game-frame">
           <p class="border-bottom text-secondary text-xs">Actions</p>
           <p id="undo">undo</p>
           <p id="pass-priority">pass priority</p>
           <p id="pass-turn">pass turn</p>
         </div>
 
-        <div class="framed">
+        <div class="game-frame">
           <p class="border-bottom text-secondary text-xs">Beginning</p>
           <p id="phase-untap" class="phase">untap</p>
           <p id="phase-upkeep" class="phase">upkeep</p>
           <p id="phase-draw" class="phase">draw</p>
         </div>
 
-        <div class="framed">
+        <div class="game-frame">
           <p class="border-bottom text-secondary text-xs">Pre-Combat</p>
           <p id="phase-main1" class="phase">main 1</p>
         </div>
 
-        <div class="framed">
+        <div class="game-frame">
           <p class="border-bottom text-secondary text-xs">Combat</p>
           <p id="phase-combat-begin" class="phase">begin</p>
           <p id="phase-combat-attack" class="phase">attackers</p>
@@ -111,18 +106,18 @@
           <p id="phase-combat-end" class="phase">end</p>
         </div>
 
-        <div class="framed">
+        <div class="game-frame">
           <p class="border-bottom text-secondary text-xs">Post-Combat</p>
           <p id="phase-main2" class="phase">main 2</p>
         </div>
 
-        <div class="framed">
+        <div class="game-frame">
           <p class="border-bottom text-secondary text-xs">Ending</p>
           <p id="phase-end" class="phase">end</p>
         </div>
       </div>
 
-      <div id="message-zone" class="col col-2 framed">
+      <div id="message-zone" class="col-8 col-lg-2 game-frame">
         <ol id="messages">
         </ol>
 
@@ -131,22 +126,23 @@
         </div>
       </div>
 
+
       {% set current_user_idx = game_state.seat_index_by_user_id(current_user.id) %}
       {% for base_idx in range(current_user_idx, current_user_idx + 2, 1) %}
         {% set player_idx = (base_idx) % game_state.players|length %}
         {% set id_prefix = "player-{}".format(player_idx) %}
 
-        <div id="{{ id_prefix }}-tableau" class="col tableau framed">
+        <div id="{{ id_prefix }}-tableau" class="col-lg tableau game-frame">
           <div class="row inner-frames
                       {% if loop.index > 1 %}
                       flex-row-reverse
                       {% endif %}
                       ">
 
-            <div class="col col-4 inner-frames">
+            <div class="col-4 inner-frames">
 
               <!-- Player Info Zone -->
-              <div id="{{ id_prefix }}-info" class="framed player-info card-zone">
+              <div id="{{ id_prefix }}-info" class="game-frame player-info card-zone">
                 <div class="zone-menu">
                   <div class="zone-menu-inner">
                     <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
@@ -223,12 +219,17 @@
       </div>
 
     </div>
+
+    <div>
+      <ul id="drag-holder">
+      </ul>
+    </div>
   </div>
   <!-- END: Container -->
 
 
   <!-- Popup Viewer -->
-  <div id="popup-viewer-zone" class="framed dialog">
+  <div id="popup-viewer-zone" class="game-frame dialog">
     <div class="zone-menu">
       <div class="zone-menu-inner">
         <i id="popup-viewer-zone-menu-button" class="fas fa-bars zone-menu-icon"></i>
@@ -290,7 +291,7 @@
   <!-- Card Closeup -->
   <div
     id="card-closeup"
-    class="framed dialog">
+    class="game-frame dialog">
 
     <div class="zone-menu">
       <div class="zone-menu-inner">
@@ -349,7 +350,7 @@
     </div> <!-- container -->
 
 
-    <div class="framed card-closeup-annotation">
+    <div class="game-frame card-closeup-annotation">
       <input class="card-closeup-annotation-input form-control" type="text" placeholder="annotation">
     </div>
 
@@ -358,7 +359,7 @@
 
 
   <!-- Token Maker -->
-  <div id="token-maker" class="framed dialog">
+  <div id="token-maker" class="game-frame dialog">
 
     <div class="zone-menu">
       <div class="zone-menu-inner">
