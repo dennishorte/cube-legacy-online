@@ -83,6 +83,11 @@ module.exports = (function() {
   }
 
 
+  cardui.set_revealed = function(elem) {
+    elem.find('.card-name').prepend($('<i class="far fa-eye revealed-icon"></i>'))
+  }
+
+
   cardui.set_visibility = function(elem, is_visible) {
     if (is_visible) {
       elem.removeClass('not-visible')

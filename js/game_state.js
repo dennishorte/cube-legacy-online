@@ -29,11 +29,11 @@ let card_zones = {
     taps: false,
   },
   library: {
-    visiblity: 'none',
+    visibility: 'none',
     taps: false,
   },
   sideboard: {
-    visiblity: 'owner',
+    visibility: 'owner',
     taps: false,
   },
   stack: {
@@ -197,6 +197,27 @@ class GameState {
     }
 
     return this._execute(diff)
+  }
+
+  _zone_name_from_id(zone_id) {
+    return zone_id.replace(/^#?player-[0-9]-/, '')
+  }
+
+  // True if the current player has more visibility than other players
+  // AND the card is in a zone with zero visibility.
+  card_is_revealed(card_id, zone_id) {
+    let card = this.card(card_id)
+    let player_vis = card.visibility.indexOf(this.viewer_name) >= 0
+    let limited_vis = card.visibility.length < this.state.players.length
+
+    let zone_name = this._zone_name_from_id(zone_id)
+    let zone_vis = card_zones[zone_name].visibility
+
+    return (
+      limited_vis
+      && player_vis
+      && zone_vis == 'none'
+    )
   }
 
   card_is_visible(card_id, zone_id) {
@@ -430,6 +451,41 @@ class GameState {
 
   priority_player_idx() {
     return this.state.priority
+  }
+
+  reveal_top_of_library_to(player_idx, library_idx, count) {
+    let card_list = this.card_list(library_idx, 'library')
+    let player_name = this.player(player_idx).name
+
+    let delta = []
+
+    for (var i = 0; i < count; i++) {
+      let card = this.card(card_list[i])
+
+      if (card.visibility.indexOf(player_name) == -1) {
+        let new_visibility = card.visibility.concat([player_name])
+        delta.push(this._visibility_diff(card, new_visibility))
+      }
+    }
+
+    var message;
+    if (player_idx == library_idx) {
+      let player_key = `PLAYER_${player_idx}_NAME`
+      message = `${player_key} looks at the top ${count} cards of library`
+    }
+    else {
+      let player_key = `PLAYER_${player_idx}_NAME`
+      let library_key = `PLAYER_${library_idx}_NAME`
+      message = `${player_key} looks at the top ${count} cards of ${library_key}'s library`
+    }
+
+    let diff = {
+      delta: delta,
+      message: message,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
   }
 
   save_data() {

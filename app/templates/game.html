@@ -26,6 +26,38 @@
 {% endmacro %}
 
 
+{% macro library_region(player_idx) %}
+  {% set id_prefix = "player-{}-library".format(player_idx) %}
+  <div id="{{ id_prefix }}" class="framed card-zone">
+    <div class="zone-menu">
+      <div class="zone-menu-inner">
+        <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
+      </div>
+    </div>
+
+    <p class="card-section-header">
+      <span class="card-section-name">
+        Library
+      </span>
+      <span class="card-list-count">
+        (<span id="{{ id_prefix }}-count">0</span>)
+      </span>
+    </p>
+
+    <ul id="{{ id_prefix }}-cards-top" class="card-list sortable">
+    </ul>
+
+    <p class="library-divider border-top">top</p>
+    <p class="library-divider">middle</p>
+    <p class="library-divider border-bottom">bottom</p>
+
+    <ul id="{{ id_prefix }}-cards-bottom" class="card-list sortable">
+    </ul>
+
+  </div>
+{% endmacro %}
+
+
 {% block head %}
   <link
     rel="stylesheet"
@@ -136,7 +168,7 @@
               </div>
               <!-- END: Player Info Zone -->
 
-              {{ card_region('Library', player_idx) }}
+              {{ library_region(player_idx) }}
               {{ card_region('Graveyard', player_idx) }}
               {{ card_region('Exile', player_idx) }}
               {{ card_region('Command', player_idx) }}
@@ -169,6 +201,7 @@
           <li>---</li>
           <li>collapse/expand</li>
           <li>view</li>
+          <li>view top n</li>
         </ul>
       </div>
 
@@ -228,6 +261,26 @@
           </div>
 
           <button id="die-roll" type="button" class="btn btn-primary">roll</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Roll a Die Modal -->
+
+
+  <!-- View Top N of Library Modal -->
+  <div id="scry-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="d-none" id="scry-modal-player-idx"></div>
+
+          <div class="form-group">
+            <label for="num-cards">View How Many</label>
+            <input id="scry-count" type="text" class="form-control">
+          </div>
+
+          <button id="scry-submit" type="button" class="btn btn-primary">view</button>
         </div>
       </div>
     </div>

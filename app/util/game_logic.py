@@ -176,7 +176,6 @@ class GameState(object):
         view_option_defaults = {}
         for i, id in enumerate(player_ids):
             players.append(GamePlayer.factory(id))
-            view_option_defaults[f"collapse_player-{i}-library"] = True
             view_option_defaults[f"collapse_player-{i}-sideboard"] = True
 
         for player in players:

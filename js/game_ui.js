@@ -101,6 +101,18 @@ let gameui = (function() {
     })
   }
 
+  function _init_card_closeup_interations() {
+    let closeup = $('#card-closeup')
+
+    closeup.on('clo.dialogs.closing', function() {
+      _state.card_annotation(
+        dialogs.data('card-closeup').card_id,
+        closeup.find('.card-closeup-annotation-input').val(),
+      )
+      _redraw()
+    })
+  }
+
   function _init_card_dragging() {
     $(".sortable").sortable({
       connectWith: '.card-list',
@@ -233,16 +245,24 @@ let gameui = (function() {
     })
   }
 
-  function _init_card_closeup_interations() {
-    let closeup = $('#card-closeup')
+  function _init_scry_modal() {
+    $('#scry-submit').click(function() {
+      let player_idx = parseInt($('#scry-modal-player-idx').text())
+      let count = parseInt($('#scry-count').val())
 
-    closeup.on('clo.dialogs.closing', function() {
-      _state.card_annotation(
-        dialogs.data('card-closeup').card_id,
-        closeup.find('.card-closeup-annotation-input').val(),
-      )
+      _state.reveal_top_of_library_to(_state.viewer_idx, player_idx, count)
+
+      $('#scry-modal').modal('hide')
       _redraw()
     })
+
+    $('#scry-count').keydown(function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        $('#scry-submit').click()
+      }
+    })
+
   }
 
   function _init_token_maker_interactions() {
@@ -302,6 +322,40 @@ let gameui = (function() {
       zone_idx: parseInt(index),
       name: tokens[2],
     }
+  }
+
+  function _perform_message_styling(message) {
+    const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
+
+    var msg = message
+    msg = msg.replace(/CARD_NAME/g, card_name_span)
+    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
+      return `<span class="message-player-name">${match}</span>`
+    })
+
+    return msg
+  }
+
+  function _perform_message_substitutions(hist, message) {
+    var msg = message
+    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
+      let player_idx = parseInt(match.charAt(7))
+      return _state.player(player_idx).name
+    })
+
+    if (msg.indexOf('CARD_NAME') >= 0) {
+      let card = _state.card(hist.delta[0].card_id)
+      let visibility = hist.delta[0].card_vis || 'UNKNOWN'
+
+      var card_name = 'a card'
+      if (visibility != 'UNKNOWN' && visibility.indexOf(_state.viewer_name) >= 0) {
+        card_name = card.json.name
+      }
+
+      msg = msg.replace(/CARD_NAME/g, card_name)
+    }
+
+    return msg
   }
 
   function _popup_menu_click_handler(event) {
@@ -365,6 +419,13 @@ let gameui = (function() {
       })
     }
 
+    else if (menu_item == 'view top n') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      $('#scry-modal-player-idx').text(player_idx)
+      $('#scry-modal').modal('show')
+    }
+
     else {
       console.log(`Unknown menu item ${menu_item}`)
     }
@@ -382,12 +443,12 @@ let gameui = (function() {
       _update_card_zone(i, 'exile')
       _update_card_zone(i, 'graveyard')
       _update_card_zone(i, 'hand')
-      _update_card_zone(i, 'library')
       _update_card_zone(i, 'sideboard')
       _update_card_zone(i, 'command')
       _update_card_zone(i, 'stack')
       _update_player_info(i)
       _update_history()
+      _update_library(i)
     }
 
     dialogs.redraw()
@@ -426,11 +487,10 @@ let gameui = (function() {
 
     // Load up new card data.
     for (var i = 0; i < card_list.length; i++) {
-      let card_id = card_list[i]
-      let card = _state.card(card_id)
+      let card = _state.card(card_list[i])
       let elem = cardui.factory(card)
 
-      cardui.set_visibility(elem, _state.card_is_visible(card_id, zone_prefix))
+      cardui.set_visibility(elem, _state.card_is_visible(card.id, zone_prefix))
 
       cards_elem.append(elem)
     }
@@ -447,38 +507,30 @@ let gameui = (function() {
     }
   }
 
-  function _style_message(message) {
-    const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
+  function _update_library(player_idx) {
+    let card_list = _state.card_list(player_idx, 'library')
+    let zone_prefix = _zone_prefix(player_idx, 'library')
 
-    var msg = message
-    msg = msg.replace(/CARD_NAME/g, card_name_span)
-    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
-      return `<span class="message-player-name">${match}</span>`
-    })
+    let count_elem = $(`${zone_prefix}-count`)
+    count_elem.text(card_list.length)
 
-    return msg
-  }
+    let top_elem = $(`${zone_prefix}-cards-top`).empty()
+    for (var i = 0; i < card_list.length; i++) {
+      let card = _state.card(card_list[i])
+      if (_state.card_is_visible(card.id, zone_prefix)) {
+        let elem = cardui.factory(card)
+        cardui.set_visibility(elem, true)
 
-  function _perform_message_substitutions(hist, message) {
-    var msg = message
-    msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
-      let player_idx = parseInt(match.charAt(7))
-      return _state.player(player_idx).name
-    })
+        if (_state.card_is_revealed(card.id, zone_prefix)) {
+          cardui.set_revealed(elem)
+        }
 
-    if (msg.indexOf('CARD_NAME') >= 0) {
-      let card = _state.card(hist.delta[0].card_id)
-      let visibility = hist.delta[0].card_vis || 'UNKNOWN'
-
-      var card_name = 'a card'
-      if (visibility != 'UNKNOWN' && visibility.indexOf(_state.viewer_name) >= 0) {
-        card_name = card.json.name
+        top_elem.append(elem)
       }
-
-      msg = msg.replace(/CARD_NAME/g, card_name)
+      else {
+        break
+      }
     }
-
-    return msg
   }
 
   function _update_history() {
@@ -491,7 +543,7 @@ let gameui = (function() {
       let hist = _state.history[i]
       let message = _perform_message_substitutions(
         hist,
-        _style_message(hist.message)
+        _perform_message_styling(hist.message)
       )
       let message_html = $(`<span>${message}</span>`)
 
@@ -573,6 +625,7 @@ let gameui = (function() {
       _init_die_modal()
       _init_life_buttons()
       _init_popup_menus()
+      _init_scry_modal()
 
       // Dialog interactiions
       _init_card_closeup_interations()

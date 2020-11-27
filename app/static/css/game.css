@@ -81,11 +81,6 @@
   text-overflow: ellipsis;
 }
 
-/* .card-annotation {
-   font-size: .6rem;
-   margin: -.25rem 0 0 .5rem
-   }
- */
 .sortable-highlight {
   border: 1px solid blue;
   background-color: lightblue;
@@ -107,8 +102,21 @@
   background-color: #8b5625;
 }
 
-.card-zone, .player-info {
+.revealed-icon {
+  color: #bbb;
+  margin-right: .2rem;
+}
+
+.card-zone,
+.player-info {
   position: relative;
+}
+
+.library-divider {
+  font-size: .6rem;
+  color: var(--secondary);
+  padding: 0;
+  margin: 0;
 }
 
 .zone-menu {
@@ -181,7 +189,7 @@
 }
 
 .message-player-name {
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .message-card-name {
