@@ -200,6 +200,9 @@ class GameState(object):
     def is_finished(self):
         return self.data.get('finished', False)
 
+    def is_winner(self, user):
+        return self.winner() == user.name
+
     def make_card(self, cube_card_id):
         card = GameCard.factory(self.next_id(), cube_card_id)
         self.data['cards'][card.id()] = card.data
