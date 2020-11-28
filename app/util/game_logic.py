@@ -139,7 +139,7 @@ class GamePlayer(object):
         self.data['ready_to_start'] = ready
 
     def has_deck(self):
-        return self.deck_id is not None
+        return len(self.tableau.library) > 0
 
     @property
     def tableau(self):

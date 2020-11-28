@@ -14,7 +14,18 @@ class Game(db.Model):
     state_json = db.Column(MEDIUMTEXT)
 
     def is_my_turn(self, user):
-        return self.state.priority_player().name == user.name
+        from app.util.game_logic import GamePhase
+
+        if not self.state or not self.state.player_by_id(user.id):
+            return False
+
+        return (
+            self.state.phase == GamePhase.deck_selection
+            and not self.state.player_by_id(user.id).has_deck()
+        ) or (
+            self.state.phase != GamePhase.deck_selection \
+            and not self.state.priority_player().name == user.name
+        )
 
     @functools.cached_property
     def state(self):

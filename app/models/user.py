@@ -92,8 +92,7 @@ class User(UserMixin, db.Model):
         return [x for x in active if x.waiting_pack()]
 
     def waiting_games(self):
-        active = self.active_games()
-        return [x for x in active if x.state.priority_player().name == self.name]
+        return [x for x in self.active_games() if x.is_my_turn(current_user)]
 
 
 @login.user_loader
