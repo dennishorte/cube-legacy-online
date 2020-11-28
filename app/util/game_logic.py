@@ -139,7 +139,7 @@ class GamePlayer(object):
         self.data['ready_to_start'] = ready
 
     def has_deck(self):
-        return len(self.tableau.library) > 0
+        return bool(self.data.get('deck_id', False))
 
     @property
     def tableau(self):
