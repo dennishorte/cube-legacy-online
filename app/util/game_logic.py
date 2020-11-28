@@ -164,6 +164,7 @@ class GameState(object):
                 'player': 'GM',
             }],
             'cards': {},  # id -> card.data
+            'finished': False,
             'name': name,
             'next_id': 1,
             'players': [],
@@ -171,6 +172,7 @@ class GameState(object):
 
             'turn': 0,  # Whose turn is it? (player_idx)
             'priority': 0,  # Which player has priority? (player_idx)
+            'winner': '',
         }
 
         players = []
@@ -194,6 +196,9 @@ class GameState(object):
 
     def card(self, card_id):
         return GameCard(self.data['cards'][card_id])
+
+    def is_finished(self):
+        return self.data.get('finished', False)
 
     def make_card(self, cube_card_id):
         card = GameCard.factory(self.next_id(), cube_card_id)
@@ -257,3 +262,6 @@ class GameState(object):
         for i, p in enumerate(self.players):
             if int(p.id) == int(user_id):
                 return i
+
+    def winner(self):
+        return self.data.get('winner', '')

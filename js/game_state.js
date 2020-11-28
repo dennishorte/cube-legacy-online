@@ -199,10 +199,6 @@ class GameState {
     return this._execute(diff)
   }
 
-  _zone_name_from_id(zone_id) {
-    return zone_id.replace(/^#?player-[0-9]-/, '')
-  }
-
   // True if the current player has more visibility than other players
   // AND the card is in a zone with zero visibility.
   card_is_revealed(card_id, zone_id) {
@@ -239,6 +235,40 @@ class GameState {
 
   card_list(player_idx, zone_name) {
     return this.state.players[player_idx].tableau[zone_name]
+  }
+
+  concede(player_idx) {
+    if (!this.state.hasOwnProperty('finished')) {
+      this.state.finished = false
+      this.state.winner = ''
+    }
+
+    let winner_idx = (this.viewer_idx + 1) % 2
+    let winner_name = this.state.players[winner_idx].name
+    let winner_key = `PLAYER_${winner_idx}_NAME`
+
+    let player_key = `PLAYER_${this.viewer_idx}_NAME`
+
+    let diff = {
+      delta: [
+        {
+          action: 'set_game_value',
+          key: 'finished',
+          old_value: false,
+          new_value: true,
+        },
+        {
+          action: 'set_game_value',
+          key: 'winner',
+          old_value: '',
+          new_value: winner_name,
+        }
+      ],
+      message: `${player_key} concedes. ${winner_key} wins!`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
   }
 
   draw(player_idx, count) {
@@ -727,6 +757,10 @@ class GameState {
     }
   }
 
+  _zone_name_from_id(zone_id) {
+    return zone_id.replace(/^#?player-[0-9]-/, '')
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////
   // Apply and Unapply
@@ -750,6 +784,10 @@ class GameState {
         })
 
         card_list.push(data.id)
+      }
+
+      else if (action == 'concede') {
+        console.log('concede')
       }
 
       else if (action == 'move_card') {

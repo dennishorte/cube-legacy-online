@@ -390,6 +390,11 @@ let gameui = (function() {
       _redraw()
     }
 
+    else if (menu_item == 'concede') {
+      _state.concede(_state.viewer_idx)
+      _redraw()
+    }
+
     else if (menu_item == 'create token') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)

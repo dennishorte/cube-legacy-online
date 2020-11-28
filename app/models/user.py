@@ -53,6 +53,9 @@ class User(UserMixin, db.Model):
         return active_seats
 
     def active_games(self):
+        return [x for x in self.all_games() if not x.state.is_finished()]
+
+    def all_games(self):
         from app.models.game_models import Game
         return [
             x for x in Game.query.order_by(Game.timestamp.desc()).all()

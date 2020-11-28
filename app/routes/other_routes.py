@@ -54,7 +54,7 @@ def index():
         game_form = NewGameForm.factory(),
         pack_maker_form = PackMakerForm.factory(15),
         cubes = cubes,
-        games = current_user.active_games(),
+        games = current_user.all_games(),
         users = users,
     )
 
