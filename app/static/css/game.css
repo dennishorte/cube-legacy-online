@@ -287,6 +287,8 @@
    Card Closeup
  ********************************************************************************/
 
+
+
 #card-closeup {
   position: fixed;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
@@ -325,27 +327,41 @@
 }
 
 .card-container {
+  --bg-green: #338833;
+  --fg-green: #cceecc;
+  --bdr-green: #224422;
+
   position: relative;
+}
+
+.card-container div {
+  display: flex;
   margin: 0;
-  padding: .25rem .5rem;
+  padding: 0;
+}
+
+.card-border {
   background: #171314;
   border-radius: 1em;
+  justify-content: space-between;
   /* box-shadow: -8px 9px 16px -3px gray; */
 }
 
 .card-background {
+  margin: .5rem!important;
+
+  height: calc(100% - (2 * .5rem));
+  width: calc(100% - (2 * .5rem));
+
   border-radius: .4rem;
   background-color: #338833;
 }
 
 .card-frame {
   height: 100%;
+  width: 100%;
   max-width: 100%;
-  /* background-color: #559955; */
-  padding-top: .25rem;
-  padding-bottom: .25rem;
 
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -356,10 +372,9 @@
   font-weight: bold;
   height: 1.3rem;
   background: #cceecc;
-  display: flex;
   justify-content: space-between;
 
-  padding: 0 .25rem;
+  padding: 0 .15rem 0 .25rem!important;
 
   border-radius: .4rem/.8rem;
   border: .1rem solid;
@@ -368,7 +383,6 @@
 }
 
 .frame-pt-loyalty {
-  display: flex;
   justify-content: center;
   max-width: 2.15rem;
   margin-top: -.5rem;
@@ -377,6 +391,7 @@
 
 .frame-art {
   width: 14.9rem;
+  height: 10.7rem;
   border-left: .1rem solid;
   border-right: .1rem solid;
 }
@@ -390,20 +405,37 @@
   border: .1rem solid;
   border-top: 0;
 
-  display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.frame-text-box div {
+  flex-direction: column;
+  padding: .25rem;
 }
 
 .frame-text-box p {
   margin-bottom: .4rem;
 }
 
-.flavor-text {
+.frame-text-box i {
+  font-size: .6rem;
+}
+
+.frame-description {
+  font-weight: 500;
+}
+
+.frame-description em {
+  font-weight: 400;
+}
+
+.frame-flavor-text {
   font-style: italic;
   font-weight: 300;
 }
 
-.mana-cost i {
-  margin-top: -.25rem;
+.frame-flavor-text:first-of-type {
+  padding-top: 5px;
+  border-top: 1px solid #999;
 }

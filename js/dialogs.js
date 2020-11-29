@@ -11,8 +11,8 @@ module.exports = (function() {
 
   let _dialogs = {
     'card-closeup': {
-      active: false,
-      card_id: undefined,
+      active: true,
+      card_id: 6,
     },
 
     'token-maker': {
@@ -96,11 +96,11 @@ module.exports = (function() {
     let front = data.card_faces[0]
 
     // Elements to be updated
-    let name_elem = closeup.find('.card-name')
-    let mana_elem = closeup.find('.mana-cost')
-    let type_elem = closeup.find('.card-type')
-    let rules_elem = closeup.find('.description-wrapper')
-    let flavor_elem = closeup.find('.flavor-wrapper')
+    let name_elem = closeup.find('.frame-card-name')
+    let mana_elem = closeup.find('.frame-mana-cost')
+    let type_elem = closeup.find('.frame-card-type')
+    let rules_elem = closeup.find('.frame-description-wrapper')
+    let flavor_elem = closeup.find('.frame-flavor-wrapper')
     let image_elem = closeup.find('.frame-art')
     let ptl_elem = closeup.find('.frame-pt-loyalty')
 
@@ -120,12 +120,14 @@ module.exports = (function() {
     let rules = front.oracle_text.split('\n')
     for (var i = 0; i < rules.length; i++) {
       let rule = rules[i].trim()
+      let html_string = util.format_rules_text(rule)
+
       if (rule.length == 0)
         continue
 
       let rule_elem = $('<p></p>')
-      rule_elem.addClass('description')
-      rule_elem.text(rule)
+      rule_elem.addClass('frame-description')
+      rule_elem.html(html_string)
       rules_elem.append(rule_elem)
     }
 
@@ -138,7 +140,7 @@ module.exports = (function() {
         continue
 
       let flav_elem = $('<p></p>')
-      flav_elem.addClass('flavor-text')
+      flav_elem.addClass('frame-flavor-text')
       flav_elem.text(flav)
       flavor_elem.append(flav_elem)
     }

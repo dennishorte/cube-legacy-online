@@ -1,3 +1,5 @@
+let assert = require('assert')
+
 
 let util = {}
 
@@ -39,6 +41,120 @@ util.arrayShuffle = function(array) {
 }
 
 
+util.string_reverse = function(str) {
+  return str.split("").reverse().join("")
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+
+
+
+util.format_rules_text = function(text) {
+  /* let text = elem.text() */
+  var new_html = '<span>'
+
+  var last_commit = -1;
+  var open_curly = -1;
+  var open_paren = -1;
+
+  var i;
+  for (i = 0; i < text.length; i++) {
+    let ch = text.charAt(i)
+
+    if (ch == '{') {
+      assert.equal(open_curly, -1, "Format rules text: A")
+      open_curly = i
+
+      if (last_commit < i) {
+        new_html += text.substr(last_commit + 1, i - last_commit - 1)
+        last_commit = i - 1
+      }
+    }
+
+    else if (ch == '}') {
+      assert.ok(open_curly >= 0, "Format rules text: B")
+      let icon_string = util.icon_from_text(text.substr(open_curly, i - open_curly + 1))
+      new_html += icon_string
+      last_commit = i
+      open_curly = -1
+    }
+
+    else if (ch == '(') {
+      assert.equal(open_curly, -1, "Format rules text: C")
+      assert.equal(open_paren, -1, "Format rules text: D")
+
+      if (last_commit < i) {
+        new_html += text.substr(last_commit + 1, i - last_commit - 1)
+        last_commit = i - 1
+      }
+
+      new_html += '<em class="frame-reminder-text">'
+      open_paren = i
+    }
+
+    else if (ch == ')') {
+      assert.equal(open_curly, -1, "Format rules text: E")
+      assert.ok(open_paren > -1, "Format rules text: F")
+
+      new_html += text.substr(last_commit + 1, i - last_commit)
+      new_html += '</em>'
+
+      last_commit = i
+      open_paren = -1
+    }
+
+  }
+
+  assert.equal(open_curly, -1, "Format rules text: Y")
+  assert.equal(open_paren, -1, "Format rules text: Z")
+
+  if (last_commit != i) {
+    new_html += text.substr(last_commit + 1)
+  }
+
+  new_html += "</span>"
+
+  return new_html
+}
+
+
+util.icon_from_text = function(text) {
+  assert.equal(text.charAt(0), '{')
+  assert.equal(text.charAt(text.length-1), '}')
+
+  text = text.substr(1, text.length-2)
+
+  let classes = ['ms', 'ms-cost']
+
+  if (text == '1/2') {
+    classes.add('1-2')
+  }
+  else {
+    text = text.replace('/', '').toLowerCase().trim()
+
+    if (text == 't') {
+      classes.push('ms-tap')
+    }
+    else if (text == 'inf') {
+      classes.push('ms-infinity')
+    }
+    else {
+      if (['uw', 'wg', 'gr', 'rb', 'bu', 'w2', 'u2', 'b2', 'r2', 'g2'].indexOf(text) >= 0) {
+        text = util.string_reverse(text)
+      }
+
+      classes.push(`ms-${text}`)
+    }
+  }
+
+  let class_string = classes.join(' ')
+  return `<i class="${class_string}"></i>`
+}
+
+
 util.mana_symbols_from_string = function(mana) {
   var grabbing = true
   var curr = ''
@@ -60,6 +176,7 @@ util.mana_symbols_from_string = function(mana) {
 
   return elements
 }
+
 
 util.mana_symbols_from_string_single = function(mana) {
   let classes = ['ms', 'ms-cost', 'ms-shadow']
@@ -83,6 +200,5 @@ util.player_idx_from_elem = function(elem) {
 util.player_idx_from_elem_id = function(elem_id) {
   return elem_id.split('-')[1]
 }
-
 
 module.exports = util
