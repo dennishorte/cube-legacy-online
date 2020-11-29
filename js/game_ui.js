@@ -16,7 +16,7 @@ let gameui = (function() {
   // State
 
   let _click_state = {
-    delay: 200,
+    delay: 300,
     clicks: 0,
     timer: undefined,
   }
