@@ -71,6 +71,7 @@ let gameui = (function() {
 
   function _init_card_click_handler() {
     $('.card-list').click(function(event) {
+      event.preventDefault()
 
       let card = $(event.target).closest('.card-list-item')
       _click_state.clicks += 1
@@ -97,7 +98,7 @@ let gameui = (function() {
       }
 
     }).dblclick(function(event) {
-      event.preventDefault();
+      event.preventDefault()
     })
   }
 
