@@ -26,14 +26,14 @@
 {% endmacro %}
 
 
-{% macro closeup_dropper() %}
+{% macro card_dropper(dropper_class) %}
   <div class="game-frame">
     <p class="card-section-header">
       <span class="card-section-name">
-        Closeup Dropper
+        {{ dropper_class.title() }} Dropper
       </span>
     </p>
-    <ul class="closeup-dropper card-list sortable">
+    <ul class="{{ dropper_class }}-dropper card-dropper card-list sortable">
     </ul>
   </div>
 {% endmacro %}
@@ -185,7 +185,8 @@
 
             <div class="col col-4 inner-frames">
               {{ card_region('Hand', player_idx) }}
-              {{ closeup_dropper() }}
+              {{ card_dropper('closeup') }}
+              {{ card_dropper('twiddle') }}
             </div>
 
             <div class="col col-4 inner-frames">

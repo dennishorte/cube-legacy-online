@@ -140,6 +140,11 @@ let gameui = (function() {
           redraw = true
         }
 
+        else if (_card_drag_state.dest.hasClass('twiddle-dropper')) {
+          cardui.twiddle(_card_drag_state.card)
+          redraw = true
+        }
+
         else if (_card_drag_state.dest) {
           _move_card(
             _card_drag_state.orig,
@@ -512,7 +517,7 @@ let gameui = (function() {
   }
 
   function _update_card_droppers() {
-    $('.closeup-dropper').empty()
+    $('.card-dropper').empty()
   }
 
   function _update_card_zone(player_idx, zone) {
