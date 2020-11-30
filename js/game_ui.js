@@ -131,7 +131,16 @@ let gameui = (function() {
         _card_drag_state.didx = ui.item.index()
       },
       stop: function(e, ui) {
-        if (_card_drag_state.dest) {
+        var redraw = false;
+
+        if (_card_drag_state.dest.hasClass('closeup-dropper')) {
+          dialogs.show('card-closeup', {
+            card_id: cardui.id(_card_drag_state.card),
+          })
+          redraw = true
+        }
+
+        else if (_card_drag_state.dest) {
           _move_card(
             _card_drag_state.orig,
             _card_drag_state.oidx,
@@ -146,6 +155,10 @@ let gameui = (function() {
         _card_drag_state.oidx = undefined
         _card_drag_state.cidx = undefined
         _card_drag_state.dest = undefined
+
+        if (redraw) {
+          _redraw()
+        }
       }
     })
     $( ".sortable" ).disableSelection()
@@ -461,6 +474,7 @@ let gameui = (function() {
   function _redraw() {
     let root = $('.game-root')
 
+    _update_card_droppers()
     _update_phase()
     _update_turn_and_priority()
 
@@ -495,6 +509,10 @@ let gameui = (function() {
         alert('Error Saving Game')
       }
     })
+  }
+
+  function _update_card_droppers() {
+    $('.closeup-dropper').empty()
   }
 
   function _update_card_zone(player_idx, zone) {

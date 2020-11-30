@@ -26,6 +26,19 @@
 {% endmacro %}
 
 
+{% macro closeup_dropper() %}
+  <div class="game-frame">
+    <p class="card-section-header">
+      <span class="card-section-name">
+        Closeup Dropper
+      </span>
+    </p>
+    <ul class="closeup-dropper card-list sortable">
+    </ul>
+  </div>
+{% endmacro %}
+
+
 {% macro library_region(player_idx) %}
   {% set id_prefix = "player-{}-library".format(player_idx) %}
   <div id="{{ id_prefix }}" class="game-frame card-zone">
@@ -172,6 +185,7 @@
 
             <div class="col col-4 inner-frames">
               {{ card_region('Hand', player_idx) }}
+              {{ closeup_dropper() }}
             </div>
 
             <div class="col col-4 inner-frames">
