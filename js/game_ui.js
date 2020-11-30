@@ -519,6 +519,10 @@ let gameui = (function() {
 
       cardui.set_visibility(elem, _state.card_is_visible(card.id, zone_prefix))
 
+      if (zone == 'hand' && player_idx == _state.viewer_idx) {
+        cardui.show_mana_cost(elem)
+      }
+
       cards_elem.append(elem)
     }
 

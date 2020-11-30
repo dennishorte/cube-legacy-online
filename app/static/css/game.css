@@ -48,6 +48,11 @@
   padding: 0;
 }
 
+.card-mana-cost {
+  float: right;
+  font-size: .7rem;
+}
+
 .card-annotation {
   font-style: italic;
   font-size: .7rem;

@@ -1,3 +1,5 @@
+let util = require('./util.js')
+
 
 module.exports = (function() {
 
@@ -32,6 +34,12 @@ module.exports = (function() {
       let icon = $('<i class="not-visible-icon fas fa-caret-square-down"></i>')
       elem.find('.card-name').prepend(icon)
     }
+
+    // Mana cost (hidden by default)
+    let mana_cost = $('<div class="card-mana-cost"></div>')
+    mana_cost.addClass('d-none')
+    mana_cost.append(util.mana_symbols_from_string(data.json.card_faces[0].mana_cost))
+    elem.prepend(mana_cost)
 
     return elem
   }
@@ -96,6 +104,11 @@ module.exports = (function() {
       elem.addClass('not-visible')
       cardui.set_name(elem, 'hidden')
     }
+  }
+
+
+  cardui.show_mana_cost = function(elem) {
+    elem.find('.card-mana-cost').removeClass('d-none')
   }
 
 
