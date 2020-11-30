@@ -7,38 +7,47 @@ let card_zones = {
   battlefield: {
     visibility: 'all',
     taps: true,
+    tokens: true,
   },
   command: {
     visibility: 'all',
     taps: false,
+    tokens: false,
   },
   land: {
     visibility: 'all',
     taps: true,
+    tokens: true,
   },
   exile: {
     visibility: 'all',
     taps: false,
+    tokens: false,
   },
   graveyard: {
     visibility: 'all',
     taps: false,
+    tokens: false,
   },
   hand: {
     visibility: 'owner',
     taps: false,
+    tokens: false,
   },
   library: {
     visibility: 'none',
     taps: false,
+    tokens: false,
   },
   sideboard: {
     visibility: 'owner',
     taps: false,
+    tokens: false,
   },
   stack: {
     visibility: 'all',
     taps: false,
+    tokens: true,
   },
 }
 
@@ -393,6 +402,16 @@ class GameState {
 
     message = message.replace('ORIG_NAME', orig_name)
     message = message.replace('DEST_NAME', dest_name)
+
+    if (card.token && !card_zones[dest_loc.name].tokens) {
+      message += ". Token disappears"
+
+      delta.push({
+        action: 'annihilate_card',
+        card_id: card.id,
+        loc: dest_loc,
+      })
+    }
 
     // Diff
     let diff = {
@@ -770,7 +789,12 @@ class GameState {
       let change = diff.delta[i]
       let action = change.action
 
-      if (action == 'create_card') {
+      if (action == 'annihilate_card') {
+        let zone = this._card_list_from_loc(change.loc)
+        zone.splice(change.loc.zone_idx, 1)
+      }
+
+      else if (action == 'create_card') {
         let data = change.card_data
 
         assert.ok(!this.state.cards.hasOwnProperty(data.id), "Card has duplicate id")
@@ -861,6 +885,11 @@ class GameState {
         card.visibility = [...change.vis]
       }
 
+      else if (action == 'unannihilate_card') {
+        let zone = this._card_list_from_loc(change.loc)
+        zone.splice(change.loc.zone_idx, 0, change.card_id)
+      }
+
       else if (action == 'uncreate_card') {
         let data = change.card_data
         let id = data.id
@@ -920,6 +949,10 @@ class GameState {
 
       else if (action == 'create_card') {
         change.action = 'uncreate_card'
+      }
+
+      else if (action == 'annihilate_card') {
+        change.action = 'unannihilate_card'
       }
 
       else if (action == 'move_card') {
