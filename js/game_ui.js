@@ -258,7 +258,7 @@ let gameui = (function() {
     $('.zone-menu-inner').each(function(i, elem) {
       let jelem = $(elem)
       if (jelem.find('ul').length == 0) {
-        jelem.hide()
+        jelem.find('.zone-menu-icon').hide()
       }
     })
 
