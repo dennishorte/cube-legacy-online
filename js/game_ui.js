@@ -331,7 +331,7 @@ let gameui = (function() {
       front.name = name
       front.type_line = 'Token'
 
-      _state.card_create(token)
+      _state.card_create(token, dialogs.data('token-maker').zone)
       _redraw()
     })
   }
@@ -424,9 +424,11 @@ let gameui = (function() {
 
     else if (menu_item == 'create token') {
       let zone = target.closest('.card-zone')
+      let zone_name = _zone_from_id(zone.attr('id'))
       let player_idx = util.player_idx_from_elem(zone)
       dialogs.show('token-maker', {
         player_idx: player_idx,
+        zone: zone_name,
       })
     }
 

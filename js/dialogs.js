@@ -18,6 +18,7 @@ module.exports = (function() {
     'token-maker': {
       active: false,
       player_idx: undefined,
+      zone: undefined,
     },
 
     'popup-viewer-zone': {

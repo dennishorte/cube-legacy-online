@@ -121,11 +121,11 @@ class GameState {
   /*
    * Use card_factory to generate the basic data, and fill in the required fields.
    */
-  card_create(data) {
+  card_create(data, zone) {
     let delta = [{
       action: 'create_card',
       card_data: data,
-      zone: 'battlefield',
+      zone: zone,
     }]
 
     let diff = {
