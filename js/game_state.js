@@ -289,13 +289,15 @@ class GameState {
     return this._execute(diff)
   }
 
-  draw(player_idx, count) {
+  draw(player_idx, count, delta_only=false) {
     let player = this.state.players[player_idx]
     let library = player.tableau.library
     let hand = player.tableau.hand
 
+    var delta = []
+
     for (var i = 0; i < count; i++) {
-      let card_id = library[0]
+      let card_id = library[i]
       let orig_loc = {
         name: 'library',
         zone_idx: 0,
@@ -307,8 +309,20 @@ class GameState {
         player_idx: player_idx,
       }
 
-      this.move_card(orig_loc, dest_loc, card_id)
+      delta = delta.concat(this.move_card(orig_loc, dest_loc, card_id, true))
     }
+
+    if (delta_only) {
+      return delta
+    }
+
+    let diff = {
+      delta: delta,
+      message: `PLAYER_${player_idx}_NAME draws ${count} cards`,
+      player: player_idx,
+    }
+
+    return this._execute(diff)
   }
 
   increment_life(player_idx, amount) {
@@ -352,7 +366,7 @@ class GameState {
     this._execute(diff)
   }
 
-  move_card(orig_loc, dest_loc, card_id) {
+  move_card(orig_loc, dest_loc, card_id, delta_only=false) {
     /* loc format:
      * zone = {
      *   name: 'hand',
@@ -381,6 +395,9 @@ class GameState {
     if (vis_diff) {
       delta.push(vis_diff)
     }
+
+    if (delta_only)
+      return delta
 
     // Message
     let viewer_key = `PLAYER_${this.viewer_idx}_NAME`
