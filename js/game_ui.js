@@ -254,6 +254,14 @@ let gameui = (function() {
       }
     })
 
+    // Hide menu icons with no child elements
+    $('.zone-menu-inner').each(function(i, elem) {
+      let jelem = $(elem)
+      if (jelem.find('ul').length == 0) {
+        jelem.hide()
+      }
+    })
+
     // Open all popup menus on click
     $('.zone-menu-icon').click(function () {
       let popup = $(this).siblings('.popup-menu').show()
