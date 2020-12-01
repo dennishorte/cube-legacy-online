@@ -60,6 +60,7 @@ class PlayerTableau(object):
             'name': player_name,
 
             'battlefield': [],
+            'creatures': [],
             'land': [],
             'exile': [],
             'graveyard': [],

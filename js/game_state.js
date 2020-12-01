@@ -9,6 +9,11 @@ let card_zones = {
     taps: true,
     tokens: true,
   },
+  creatures: {
+    visibility: 'all',
+    taps: true,
+    tokens: true,
+  },
   command: {
     visibility: 'all',
     taps: false,
@@ -243,7 +248,11 @@ class GameState {
   }
 
   card_list(player_idx, zone_name) {
-    return this.state.players[player_idx].tableau[zone_name]
+    let tableau = this.state.players[player_idx].tableau
+    if (!tableau.hasOwnProperty(zone_name))
+      tableau[zone_name] = []
+
+    return tableau[zone_name]
   }
 
   concede(player_idx) {
