@@ -493,6 +493,7 @@ let gameui = (function() {
 
     for (var i = 0; i < _state.num_players(); i++) {
       _update_card_zone(i, 'battlefield')
+      _update_card_zone(i, 'creatures')
       _update_card_zone(i, 'land')
       _update_card_zone(i, 'exile')
       _update_card_zone(i, 'graveyard')
