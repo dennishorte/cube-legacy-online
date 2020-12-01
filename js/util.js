@@ -50,6 +50,17 @@ util.string_reverse = function(str) {
 //
 
 
+util.card_colors = function(data) {
+  let colors = []
+  let mana_cost = data.json.card_faces[0].mana_cost.toUpperCase()
+  for (let i in mana_cost) {
+    let ch = mana_cost.charAt(i)
+    if ('WUBRG'.indexOf(ch) > -1)
+      colors.push(ch)
+  }
+
+  return [...new Set(colors)]
+}
 
 
 util.format_rules_text = function(text) {

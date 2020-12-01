@@ -11,8 +11,8 @@ module.exports = (function() {
 
   let _dialogs = {
     'card-closeup': {
-      active: true,
-      card_id: 6,
+      active: false,
+      card_id: undefined,
     },
 
     'token-maker': {
@@ -96,6 +96,7 @@ module.exports = (function() {
     let front = data.card_faces[0]
 
     // Elements to be updated
+    let container = closeup.find('.card-container')
     let name_elem = closeup.find('.frame-card-name')
     let mana_elem = closeup.find('.frame-mana-cost')
     let type_elem = closeup.find('.frame-card-type')
@@ -158,6 +159,39 @@ module.exports = (function() {
     else {
       ptl_elem.hide()
     }
+
+    // Container classes
+    let container_classes = ['card-container']
+    if (card.json.card_faces[0].type_line.toLowerCase().indexOf('land') >= 0) {
+      container_classes.push('land-card')
+    }
+    else {
+      let colors = util.card_colors(card)
+
+      if (colors[0] == 'W')
+        container_classes.push('white-card')
+
+      else if (colors[0] == 'U')
+        container_classes.push('blue-card')
+
+      else if (colors[0] == 'B')
+        container_classes.push('black-card')
+
+      else if (colors[0] == 'R')
+        container_classes.push('red-card')
+
+      else if (colors[0] == 'G')
+        container_classes.push('green-card')
+
+      else if (colors.length > 1)
+        container_classes.push('gold-card')
+
+      else
+        container_classes.push('artifact-card')
+    }
+
+    container.removeClass()
+    container.addClass(container_classes)
 
     // Set annotation
     closeup.find('.card-closeup-annotation-input').val(card.annotation)
