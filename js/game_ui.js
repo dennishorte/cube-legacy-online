@@ -452,6 +452,13 @@ let gameui = (function() {
       _redraw()
     }
 
+    else if (menu_item == 'mulligan') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      _state.mulligan(player_idx)
+      _redraw()
+    }
+
     else if (menu_item == 'roll a die') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)

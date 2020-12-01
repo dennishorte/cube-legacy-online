@@ -209,7 +209,7 @@ util.player_idx_from_elem = function(elem) {
 
 
 util.player_idx_from_elem_id = function(elem_id) {
-  return elem_id.split('-')[1]
+  return parseInt(elem_id.split('-')[1])
 }
 
 module.exports = util

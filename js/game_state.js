@@ -449,6 +449,45 @@ class GameState {
     return this._execute(diff)
   }
 
+  mulligan(player_idx) {
+    let message_diff = {
+      delta: [],
+      message: `PLAYER_${player_idx}_NAME takes a mulligan`,
+      player: 'GM',
+    }
+    this._execute(message_diff)
+
+
+    let delta_a = []
+
+    // Put cards back on library
+    this.card_list(player_idx, 'hand').forEach(card_id => {
+      let orig = {
+        name: 'hand',
+        zone_idx: 0,
+        player_idx: player_idx,
+      }
+
+      let dest = {
+        name: 'library',
+        zone_idx: 0,
+        player_idx: player_idx,
+      }
+
+      delta_a = delta_a.concat(this.move_card(orig, dest, card_id, true))
+    })
+
+    let diff_a = {
+      delta: delta_a,
+      message: `PLAYER_${player_idx}_NAME returns all cards in hand`,
+      player_idx: player_idx,
+    }
+    this._execute(diff_a)
+
+    this.shuffle(player_idx)
+    this.draw(player_idx, 7)
+  }
+
   next_id() {
     let id = this.state.next_id
     assert.ok(!this.state.cards.hasOwnProperty(id), 'Card ID already exists')
@@ -623,7 +662,7 @@ class GameState {
     return this._execute(diff)
   }
 
-  shuffle(player_idx) {
+  shuffle(player_idx, delta_only=false) {
     let player = this.state.players[player_idx]
     let library_copy = [...player.tableau.library]
     let library_new = [...library_copy]
@@ -644,9 +683,12 @@ class GameState {
       }
     })
 
+    if (delta_only)
+      return delta
+
     let diff = {
       delta: delta,
-      message: `${player.name} shuffles library`,
+      message: `PLAYER_${player_idx}_NAME shuffles library`,
       player: this.viewer_game,
     }
 
