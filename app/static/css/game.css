@@ -326,6 +326,10 @@
   font-size: .8rem;
 }
 
+.closeup-card-wrapper {
+  display: flex;
+}
+
 .card-container {
   --bg-artifact: #9facc3;
   --fg-artifact: #dfe0f2;
@@ -368,6 +372,7 @@
   --txt-white: #fdfbf8;
 
   position: relative;
+  width: 17rem;
 }
 
 .artifact-card .card-background {

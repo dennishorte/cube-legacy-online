@@ -50,16 +50,16 @@ util.string_reverse = function(str) {
 //
 
 
-util.card_colors = function(data) {
+util.mana_cost_colors = function(mana_cost) {
+  mana_cost = mana_cost.toUpperCase()
   let colors = []
-  let mana_cost = data.json.card_faces[0].mana_cost.toUpperCase()
   for (let i in mana_cost) {
     let ch = mana_cost.charAt(i)
     if ('WUBRG'.indexOf(ch) > -1)
       colors.push(ch)
   }
 
-  return [...new Set(colors)]
+  return [...new Set(colors)].join('')
 }
 
 
