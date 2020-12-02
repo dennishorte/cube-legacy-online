@@ -62,7 +62,7 @@ module.exports = (function() {
 
 
   cardui.is_visible = function(data) {
-    return data.visibility.includes(_state.viewer_name)
+    return _state.card_is_visible(data.id)
   }
 
 

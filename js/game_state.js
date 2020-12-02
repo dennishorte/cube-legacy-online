@@ -829,6 +829,10 @@ class GameState {
 
     let names_to_add = []
 
+    if (card.face_down) {
+      return undefined
+    }
+
     if (dest_visibility == 'all') {
       names_to_add = this.state.players.map(player => player.name)
     }
