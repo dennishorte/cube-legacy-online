@@ -21,6 +21,11 @@ module.exports = (function() {
     cardui.set_name(elem, data.json.name)
     cardui.set_annotation(elem, data.annotation)
 
+    if (data.scarred) {
+      elem.prepend($('<i class="scar-symbol fas fa-bolt"></i>'))
+      elem.addClass('scarred')
+    }
+
     if (data.tapped) {
       elem.addClass('tapped')
     }

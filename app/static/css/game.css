@@ -61,6 +61,11 @@
   margin-left: .2rem!important;
 }
 
+.scar-symbol {
+  float: left;
+  margin-top: .25rem!important;
+}
+
 .tapped {
   font-style: italic;
   color: #a8a9aa;

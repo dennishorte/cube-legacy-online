@@ -39,6 +39,7 @@ class GameCard(object):
             'counters': {},
             'face_down': False,
             'owner': None,  # str, name of player
+            'scarred': card.is_scarred(),
             'tapped': False,
             'token': False,
             'visibility': [],
