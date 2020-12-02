@@ -106,6 +106,10 @@
   font-weight: lighter;
 }
 
+.not-visible .scar-symbol {
+  display: none;
+}
+
 .not-visible-icon {
   margin-right: .2rem;
   color: #3c3019;
