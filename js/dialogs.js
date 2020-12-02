@@ -167,21 +167,21 @@ module.exports = (function() {
       container_classes.push('land-card')
     }
     else {
-      let colors = util.card_colors(card)
+      let colors = util.card_colors(card).join('')
 
-      if (colors[0] == 'W')
+      if (colors == 'W')
         container_classes.push('white-card')
 
-      else if (colors[0] == 'U')
+      else if (colors == 'U')
         container_classes.push('blue-card')
 
-      else if (colors[0] == 'B')
+      else if (colors == 'B')
         container_classes.push('black-card')
 
-      else if (colors[0] == 'R')
+      else if (colors == 'R')
         container_classes.push('red-card')
 
-      else if (colors[0] == 'G')
+      else if (colors == 'G')
         container_classes.push('green-card')
 
       else if (colors.length > 1)
