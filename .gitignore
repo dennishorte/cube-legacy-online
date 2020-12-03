@@ -10,3 +10,4 @@ app/static/cockatrice
 *~
 node_modules
 app/static/js/game.js
+build_time

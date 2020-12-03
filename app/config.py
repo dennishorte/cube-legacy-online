@@ -16,7 +16,12 @@ db_uri = DB_URI_STRING.format(
     db_name=os.environ["DB_NAME"],
 )
 
+with open('build_time', 'r') as fin:
+    build_time = fin.read().strip()
+
+
 class Config(object):
+    BUILD_TIME = build_time
     COCKATRICE_FOLDER = 'static/cockatrice'
     FLASK_ENV = os.environ.get('FLASK_ENV')
     SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
