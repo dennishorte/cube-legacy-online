@@ -357,9 +357,11 @@ class GameState {
   }
 
   message(text) {
+    let player_key = `PLAYER_${this.viewer_idx}_NAME`
+
     let diff = {
       delta: [],
-      message: `${this.viewer_name}: "${text}"`,
+      message: `${player_key}: "${text}"`,
       player: this.viewer_name,
     }
 

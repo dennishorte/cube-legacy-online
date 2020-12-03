@@ -376,6 +376,9 @@ let gameui = (function() {
     const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
 
     var msg = message
+    if (msg.match(/^PLAYER_[0-9]_NAME: /)) {
+      msg = `<span class="message-player-typed">${msg}</span>`
+    }
     msg = msg.replace(/CARD_NAME/g, card_name_span)
     msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
       return `<span class="message-player-name">${match}</span>`

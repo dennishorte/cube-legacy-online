@@ -211,6 +211,10 @@
   font-weight: bold;
 }
 
+.message-player-typed {
+  color: #3b3;
+}
+
 .message::before {
   content: counter(message-counter) ". ";
   color: #ddd;
