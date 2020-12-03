@@ -1,3 +1,4 @@
+import pathlib
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -16,7 +17,9 @@ db_uri = DB_URI_STRING.format(
     db_name=os.environ["DB_NAME"],
 )
 
-with open('build_time', 'r') as fin:
+
+this_path = pathlib.Path(__file__).parent.absolute()
+with open(os.path.join(this_path, 'build_time'), 'r') as fin:
     build_time = fin.read().strip()
 
 
