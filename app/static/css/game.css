@@ -61,6 +61,10 @@
   margin-left: .2rem!important;
 }
 
+.card-zone i.ms {
+  padding-top: .1em;
+}
+
 .scar-symbol {
   float: left;
   margin-top: .25rem!important;
