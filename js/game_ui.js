@@ -592,9 +592,9 @@ let gameui = (function() {
     let top_elem = $(`${zone_prefix}-cards`).empty()
     for (var i = 0; i < card_list.length; i++) {
       let card = _state.card(card_list[i])
-      if (_state.card_is_visible(card.id, zone_prefix)) {
+      if (i == 0 || _state.card_is_visible(card.id, zone_prefix)) {
         let elem = cardui.factory(card)
-        cardui.set_visibility(elem, true)
+        cardui.set_visibility(elem, _state.card_is_visible(card.id, zone_prefix))
 
         if (_state.card_is_revealed(card.id, zone_prefix)) {
           cardui.set_revealed(elem)
@@ -602,6 +602,7 @@ let gameui = (function() {
 
         top_elem.append(elem)
       }
+
       else {
         break
       }
