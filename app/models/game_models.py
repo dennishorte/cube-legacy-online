@@ -23,7 +23,7 @@ class Game(db.Model):
             self.state.phase == GamePhase.deck_selection
             and not self.state.player_by_id(user.id).has_deck()
         ) or (
-            self.state.phase != GamePhase.deck_selection \
+            self.state.phase != GamePhase.deck_selection
             and self.state.priority_player().name == user.name
         )
 

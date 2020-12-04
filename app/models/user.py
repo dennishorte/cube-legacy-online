@@ -91,8 +91,15 @@ class User(UserMixin, db.Model):
         active = self.active_draft_seats()
         return [x for x in active if x.waiting_pack()]
 
-    def waiting_games(self):
-        return [x for x in self.active_games() if x.is_my_turn(current_user)]
+    def waiting_games(self, exclude_id=None):
+        if isinstance(exclude_id, str):
+            exclude_id = int(exclude_id)
+
+        return [
+            x for x in self.active_games()
+            if x.is_my_turn(current_user)
+            and x.id != exclude_id
+        ]
 
 
 @login.user_loader

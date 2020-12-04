@@ -19,11 +19,11 @@
         <a href="{{ url_for('draft_next') }}" class="badge badge-warning">next draft</a>
       {% endif %}
 
-      {% if current_user.waiting_drafts() and current_user.waiting_games() %}
+      {% if current_user.waiting_drafts() and current_user.waiting_games(exclude_id=game_id) %}
         /
       {% endif %}
 
-      {% if current_user.waiting_games() %}
+      {% if current_user.waiting_games(exclude_id=game_id) %}
         <a href="{{ url_for('game_next') }}" class="badge badge-warning">next game</a>
       {% endif %}
     </div>
