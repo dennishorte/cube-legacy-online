@@ -1,5 +1,6 @@
 {% extends 'basic.html' %}
 
+{% from 'macros/card_frame.html' import card_frame %}
 {% from 'macros/header.html' import header with context %}
 
 
@@ -71,6 +72,9 @@
 
 
 {% block head %}
+  <link
+    rel="stylesheet"
+    href="/static/css/card_frame.css?version={{ version }}">
   <link
     rel="stylesheet"
     href="/static/css/game.css?version={{ version }}">
@@ -337,86 +341,7 @@
       </p>
     </div>
 
-    <div class="closeup-card-wrapper">
-      <div class="card-container closeup-front">
-        <div class="card-border">
-          <div class="card-background">
-            <div class="card-frame">
-
-              <div class="frame-header frame-foreground">
-                <p class="frame-card-name"></p>
-
-                <div class="frame-mana-cost">
-                </div>
-              </div>
-
-              <img
-                class="frame-art"
-                alt="card art"
-                src="">
-
-              <div class="frame-type-line frame-foreground">
-                <p class="frame-card-type"></p>
-              </div>
-
-              <div class="frame-text-box">
-                <div class="frame-description-wrapper">
-                  <p class="frame-description"></p>
-                </div>
-
-                <div class="frame-flavor-wrapper">
-                  <p class="frame-flavor-text"></p>
-                </div>
-              </div>
-
-              <div class="frame-pt-loyalty frame-foreground">
-              </div>
-
-            </div> <!-- frame -->
-          </div> <!-- background -->
-        </div> <!-- border -->
-      </div> <!-- container -->
-
-      <div class="card-container closeup-back">
-        <div class="card-border">
-          <div class="card-background">
-            <div class="card-frame">
-
-              <div class="frame-header frame-foreground">
-                <p class="frame-card-name"></p>
-
-                <div class="frame-mana-cost">
-                </div>
-              </div>
-
-              <img
-                class="frame-art"
-                alt="card art"
-                src="">
-
-              <div class="frame-type-line frame-foreground">
-                <p class="frame-card-type"></p>
-              </div>
-
-              <div class="frame-text-box">
-                <div class="frame-description-wrapper">
-                  <p class="frame-description"></p>
-                </div>
-
-                <div class="frame-flavor-wrapper">
-                  <p class="frame-flavor-text"></p>
-                </div>
-              </div>
-
-              <div class="frame-pt-loyalty frame-foreground">
-              </div>
-
-            </div> <!-- frame -->
-          </div> <!-- background -->
-        </div> <!-- border -->
-      </div> <!-- container -->
-    </div>
-
+    {{ card_frame('') }}
 
     <div class="game-frame card-closeup-annotation">
       <input class="card-closeup-annotation-input form-control" type="text" placeholder="annotation">

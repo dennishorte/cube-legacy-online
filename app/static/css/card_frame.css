@@ -1,0 +1,304 @@
+.closeup-card-wrapper {
+  display: flex;
+}
+
+.card-container {
+  --bg-artifact: #9facc3;
+  --fg-artifact: #dfe0f2;
+  --bdr-artifact: #dbd9e8;
+  --txt-artifact: #d6d8e7;
+
+  --bg-blue: #73b2e0;
+  --fg-blue: #cfdfec;
+  --bdr-blue: #2a6186;
+  --txt-blue: #eaeef7;
+
+  --bg-black: #292d3a;
+  --fg-black: #c4bbc2;
+  --bdr-black: #2a292c;
+  --txt-black: #eae6ef;
+
+  --bg-green: #709d61;
+  --fg-green: #c8d5cd;
+  --bdr-green: #1c6a31;
+  --txt-green: #dae5de;
+
+  --bg-gold: #cebc70;
+  --fg-gold: #dbc582;
+  --bdr-gold: #ddd09c;
+  --txt-gold: #f6f3e2;
+
+  --bg-land: #847467;
+  --fg-land: #c2bebf;
+  --bdr-land: #897978;
+  --txt-land: #c8c7c5;
+
+  --bg-red: #ce563d;
+  --fg-red: #f4c0ac;
+  --bdr-red: #d22e22;
+  --txt-red: #fde4e3;
+
+  --bg-white: #d5cba6;
+  --fg-white: #f4f5f0;
+  --bdr-white: #f3f1e9;
+  --txt-white: #fdfbf8;
+
+  position: relative;
+  width: 17rem;
+}
+
+.artifact-card .card-background {
+  background-color: var(--bg-artifact);
+}
+.artifact-card .frame-foreground {
+  background-color: var(--fg-artifact);
+  border-color: var(--bdr-artifact);
+}
+.artifact-card .frame-art {
+  border-color: var(--bdr-artifact);
+}
+.artifact-card .frame-text-box {
+  border-color: var(--bdr-artifact);
+  background-color: var(--txt-artifact);
+}
+
+
+.black-card .card-background {
+  background-color: var(--bg-black);
+}
+.black-card .frame-foreground {
+  background-color: var(--fg-black);
+  border-color: var(--bdr-black);
+}
+.black-card .frame-art {
+  border-color: var(--bdr-black);
+}
+.black-card .frame-text-box {
+  border-color: var(--bdr-black);
+  background-color: var(--txt-black);
+}
+
+
+.blue-card .card-background {
+  background-color: var(--bg-blue);
+}
+.blue-card .frame-foreground {
+  background-color: var(--fg-blue);
+  border-color: var(--bdr-blue);
+}
+.blue-card .frame-art {
+  border-color: var(--bdr-blue);
+}
+.blue-card .frame-text-box {
+  border-color: var(--bdr-blue);
+  background-color: var(--txt-blue);
+}
+
+
+.green-card .card-background {
+  background-color: var(--bg-green);
+}
+.green-card .frame-foreground {
+  background-color: var(--fg-green);
+  border-color: var(--bdr-green);
+}
+.green-card .frame-art {
+  border-color: var(--bdr-green);
+}
+.green-card .frame-text-box {
+  border-color: var(--bdr-green);
+  background-color: var(--txt-green);
+}
+
+.gold-card .card-background {
+  background-color: var(--bg-gold);
+}
+.gold-card .frame-foreground {
+  background-color: var(--fg-gold);
+  border-color: var(--bdr-gold);
+}
+.gold-card .frame-art {
+  border-color: var(--bdr-gold);
+}
+.gold-card .frame-text-box {
+  border-color: var(--bdr-gold);
+  background-color: var(--txt-gold);
+}
+
+
+.land-card .card-background {
+  background-color: var(--bg-land);
+}
+.land-card .frame-foreground {
+  background-color: var(--fg-land);
+  border-color: var(--bdr-land);
+}
+.land-card .frame-art {
+  border-color: var(--bdr-land);
+}
+.land-card .frame-text-box {
+  border-color: var(--bdr-land);
+  background-color: var(--txt-land);
+}
+
+
+.red-card .card-background {
+  background-color: var(--bg-red);
+}
+.red-card .frame-foreground {
+  background-color: var(--fg-red);
+  border-color: var(--bdr-red);
+}
+.red-card .frame-art {
+  border-color: var(--bdr-red);
+}
+.red-card .frame-text-box {
+  border-color: var(--bdr-red);
+  background-color: var(--txt-red);
+}
+
+
+.white-card .card-background {
+  background-color: var(--bg-white);
+}
+.white-card .frame-foreground {
+  background-color: var(--fg-white);
+  border-color: var(--bdr-white);
+}
+.white-card .frame-art {
+  border-color: var(--bdr-white);
+}
+.white-card .frame-text-box {
+  border-color: var(--bdr-white);
+  background-color: var(--txt-white);
+}
+
+
+.card-container div {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.card-border {
+  background: #171314;
+  border-radius: 1em;
+  justify-content: space-between;
+  /* box-shadow: -8px 9px 16px -3px gray; */
+}
+
+.card-background {
+  margin: .5rem!important;
+
+  height: calc(100% - (2 * .5rem));
+  width: calc(100% - (2 * .5rem));
+
+  border-radius: .4rem;
+}
+
+.card-frame {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+
+  flex-direction: column;
+  align-items: center;
+}
+
+.frame-header,
+.frame-pt-loyalty,
+.frame-type-line {
+  font-weight: bold;
+  height: 1.6rem;
+  justify-content: space-between;
+
+  padding: 0 .15rem 0 .25rem!important;
+
+  border-radius: .4rem/.8rem;
+  border: .15rem solid;
+
+  width: 100%;
+
+  box-shadow:
+    inset 1px 1px black,
+    inset -1px -1px black,
+    inset .15rem -.15rem rgba(0, 0, 0, .5),
+    inset -.15rem .15rem rgba(255, 255, 255, .4),
+    -.1rem .1rem rgba(0, 0, 0, .9),
+    -.1rem .1rem rgba(0, 0, 0, .9);
+}
+
+.frame-mana-cost {
+  font-size: .75rem;
+  margin-top: .14rem!important;
+}
+
+.frame-card-name,
+.frame-card-type {
+  margin-top: .05rem!important;
+}
+
+.frame-pt-loyalty {
+  justify-content: center;
+  width: 3rem;
+  margin-top: -.5rem!important;
+  align-self: flex-end;
+}
+
+.frame-art {
+  width: 14.8rem;
+  height: 10.7rem;
+  border-left: .15rem solid;
+  border-right: .15rem solid;
+  box-shadow:
+    -.1em .1em .05em rgba(0, 0, 0, .9);
+}
+
+.frame-text-box {
+  padding: .25rem;
+  line-height: 1;
+  width: 14.8rem;
+  min-height: 8rem;
+  border: .15rem solid;
+  border-top: 0;
+
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-shadow:
+    inset .15em -.15em rgba(255, 255, 255, .7),
+    inset -.15em .15em rgba(0, 0, 0, .5),
+    -.1em .1em .05em rgba(0, 0, 0, .9);  // Outer, dark shadow
+}
+
+.frame-text-box div {
+  flex-direction: column;
+  padding: .25rem;
+}
+
+.frame-text-box p {
+  margin-bottom: .4rem;
+}
+
+.frame-text-box i {
+  font-size: .6rem;
+}
+
+.frame-description {
+  font-weight: 500;
+}
+
+.frame-description em {
+  font-weight: 400;
+}
+
+.frame-flavor-text {
+  font-style: italic;
+  font-weight: 300;
+}
+
+.frame-flavor-text:first-of-type {
+  padding-top: 5px;
+  border-top: 1px solid;
+  border-color: #999!important;
+}

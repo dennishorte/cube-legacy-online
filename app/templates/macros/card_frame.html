@@ -1,0 +1,52 @@
+{% macro card_face(face_name) %}
+
+      <div class="card-container closeup-{{ face_name }}">
+        <div class="card-border">
+          <div class="card-background">
+            <div class="card-frame">
+
+              <div class="frame-header frame-foreground">
+                <p class="frame-card-name"></p>
+
+                <div class="frame-mana-cost">
+                </div>
+              </div>
+
+              <img
+                class="frame-art"
+                alt="card art"
+                src="">
+
+              <div class="frame-type-line frame-foreground">
+                <p class="frame-card-type"></p>
+              </div>
+
+              <div class="frame-text-box">
+                <div class="frame-description-wrapper">
+                  <p class="frame-description"></p>
+                </div>
+
+                <div class="frame-flavor-wrapper">
+                  <p class="frame-flavor-text"></p>
+                </div>
+              </div>
+
+              <div class="frame-pt-loyalty frame-foreground">
+              </div>
+
+            </div> <!-- frame -->
+          </div> <!-- background -->
+        </div> <!-- border -->
+      </div> <!-- container -->
+
+{% endmacro %}
+
+
+{% macro card_frame(card_id) %}
+
+  <div class="closeup-card-wrapper" data-card-id="{{ card_id }}">
+    {{ card_face('front') }}
+    {{ card_face('back') }}
+  </div>
+
+{% endmacro %}
