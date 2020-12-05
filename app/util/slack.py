@@ -8,7 +8,7 @@ from slack.errors import SlackApiError
 
 from app import db
 from app.config import Config
-from app.models.user import *
+from app.models.user_models import *
 
 
 _client = WebClient(token=Config.SLACK_BOT_TOKEN)

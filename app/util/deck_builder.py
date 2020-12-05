@@ -1,8 +1,8 @@
 from app import db
 
-from app.models.deck import *
-from app.models.draft import *
-from app.models.user import *
+from app.models.deck_models import *
+from app.models.draft_models import *
+from app.models.user_models import *
 
 
 class CardSet(object):

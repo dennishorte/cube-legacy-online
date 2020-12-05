@@ -9,9 +9,9 @@ from app import app
 from app.forms import FinalizeAchievementForm
 from app.forms import NewAchievementForm
 from app.forms import SelectDraftForm
-from app.models.cube import *
-from app.models.draft import *
-from app.models.user import *
+from app.models.cube_models import *
+from app.models.draft_models import *
+from app.models.user_models import *
 
 
 @app.route("/achievement/<achievement_id>/claim_confirmation")

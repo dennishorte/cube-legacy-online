@@ -10,7 +10,7 @@ from flask_login import logout_user
 
 from app import app
 from app.forms import LoginForm
-from app.models.user import User
+from app.models.user_models import User
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app import db
-from app.models.cube import CubeCard
+from app.models.cube_models import CubeCard
 
 
 class Deck(db.Model):

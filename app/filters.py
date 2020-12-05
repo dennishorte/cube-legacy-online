@@ -1,5 +1,5 @@
 from app import app
-from app.models.draft import *
+from app.models.draft_models import *
 
 
 @app.template_filter()

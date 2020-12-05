@@ -31,10 +31,10 @@ from app.routes import other_routes
 from app.filters import *
 
 # Load all models for flask migrate
-from app.models.cube import *
-from app.models.draft import *
+from app.models.cube_models import *
+from app.models.draft_models import *
 from app.models.game_models import *
-from app.models.user import *
+from app.models.user_models import *
 
 # Ensure initial objects are created
 # These need to be commented out if the db isn't set up for them yet.

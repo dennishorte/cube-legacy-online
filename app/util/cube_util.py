@@ -1,5 +1,5 @@
 from app import db
-from app.models.cube import *
+from app.models.cube_models import *
 from app.util import scryfall
 
 

@@ -40,7 +40,7 @@ class DeckSelectorForm(FlaskForm):
 
     @staticmethod
     def factory(user_id):
-        from app.models.deck import Deck
+        from app.models.deck_models import Deck
         decks = Deck.query.filter(Deck.user_id == user_id).order_by(Deck.name).all()
         decks = [('none', '')] + [(str(x.id), x.name) for x in decks]
 
@@ -131,8 +131,8 @@ class LinkAchievemetAndCardForm(FlaskForm):
 
     @staticmethod
     def factory(cube_id, card=None, achievement=None):
-        from app.models.cube import Achievement
-        from app.models.cube import CubeCard
+        from app.models.cube_models import Achievement
+        from app.models.cube_models import CubeCard
 
         form = LinkAchievemetAndCardForm()
 
@@ -165,7 +165,7 @@ class LoadDraftDeckForm(FlaskForm):
 
     @staticmethod
     def factory(user_id):
-        from app.models.user import User
+        from app.models.user_models import User
         user = User.query.get(user_id)
         drafts = [(x.id, x.draft.name) for x in user.draft_seats]
 
@@ -199,8 +199,8 @@ class NewDraftForm(FlaskForm):
 
     @staticmethod
     def factory():
-        from app.models.cube import Cube
-        from app.models.user import User
+        from app.models.cube_models import Cube
+        from app.models.user_models import User
 
         cubes = [x.name for x in Cube.query.order_by('name')]
         users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
@@ -221,8 +221,8 @@ class NewSetDraftForm(FlaskForm):
 
     @staticmethod
     def factory():
-        from app.models.cube import Cube
-        from app.models.user import User
+        from app.models.cube_models import Cube
+        from app.models.user_models import User
 
         cubes = [x.name for x in Cube.query.order_by('name') if x.style_a == 'set']
         users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
@@ -241,7 +241,7 @@ class NewGameForm(FlaskForm):
 
     @staticmethod
     def factory():
-        from app.models.user import User
+        from app.models.user_models import User
         user_names = [(str(x.id), x.name) for x in User.query.order_by('name') if x.name != 'starter']
         form = NewGameForm()
         form.players.choices = user_names
@@ -346,7 +346,7 @@ class PackMakerForm(FlaskForm):
 
     @staticmethod
     def factory(count=None):
-        from app.models.cube import Cube
+        from app.models.cube_models import Cube
         form = PackMakerForm()
         form.cube_name.choices = [x.name for x in Cube.query.order_by('name')]
         if count:
@@ -387,7 +387,7 @@ class SelectDraftForm(FlaskForm):
     submit = SubmitField('Select')
 
     def factory():
-        from app.models.draft import Draft
+        from app.models.draft_models import Draft
         drafts = Draft.query.order_by(Draft.timestamp.desc()).all()
         form = SelectDraftForm()
         form.draft.choices = [(0, '')] + [(x.id, x.name) for x in drafts]

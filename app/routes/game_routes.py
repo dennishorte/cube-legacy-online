@@ -10,8 +10,8 @@ from flask_login import login_required
 
 from app import app
 from app.forms import *
-from app.models.cube import *
-from app.models.deck import *
+from app.models.cube_models import *
+from app.models.deck_models import *
 from app.models.game_models import *
 from app.util import slack
 from app.util.deck_builder import DeckBuilder

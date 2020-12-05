@@ -2,8 +2,8 @@
 Utility to ensure the basic lands are included in the database for games and set export.
 """
 from app import db
-from app.models.cube import *
-from app.models.user import *
+from app.models.cube_models import *
+from app.models.user_models import *
 from app.util.cube_util import add_cards_to_cube
 
 

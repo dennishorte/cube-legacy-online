@@ -1,4 +1,4 @@
-from app.models.draft import *
+from app.models.draft_models import *
 
 
 class DraftDebugger(object):

@@ -1,9 +1,9 @@
 import random
 
 from app import app
-from app.models.cube import *
-from app.models.draft import *
-from app.models.user import *
+from app.models.cube_models import *
+from app.models.draft_models import *
+from app.models.user_models import *
 from app.util import slack
 
 

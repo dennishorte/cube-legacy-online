@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 
 from app import db
-from app.models.user import *
+from app.models.user_models import *
 from app.util import card_util
 from app.util import cockatrice
 from app.util.card_diff import CardDiffer
@@ -423,7 +423,7 @@ class Scar(db.Model):
 
     @staticmethod
     def lock_random_scars(pack_id, user_id, count):
-        from app.models.draft import Pack
+        from app.models.draft_models import Pack
         pack = Pack.query.get(pack_id)
 
         scars = Scar.random_scars(pack.draft.cube_id, count)

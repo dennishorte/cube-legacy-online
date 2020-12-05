@@ -4,7 +4,7 @@ from datetime import datetime
 from app import db
 from app.config import Config
 from app.forms import ResultForm
-from app.models.draft import *
+from app.models.draft_models import *
 from app.util import slack
 from app.util.deck_builder import DeckBuilder
 from app.util.enum import DraftFaceUp

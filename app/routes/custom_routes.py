@@ -19,9 +19,9 @@ from app.forms import NewCubeForm
 from app.forms import NewScarForm
 from app.forms import RandomScarsForm
 from app.forms import UseScarForm
-from app.models.cube import *
-from app.models.draft import *
-from app.models.user import *
+from app.models.cube_models import *
+from app.models.draft_models import *
+from app.models.user_models import *
 from app.util.cube_util import add_cards_to_cube
 
 
