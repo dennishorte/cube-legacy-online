@@ -356,6 +356,23 @@ class GameState {
     return this.view_options(player_idx)[opt_name]
   }
 
+  library_zone_desc(player_idx, zone_idx) {
+    let card_list = this.card_list(player_idx, 'library')
+    if (zone_idx == 0) {
+      return "top of library"
+    }
+    else if (zone_idx == card_list.length) {
+      return "bottom of library"
+    }
+    else if (zone_idx < card_list.length / 2) {
+      return `${zone_idx} from top of library`
+    }
+    else {
+      let dist_from_bottom = card_list.length - zone_idx
+      return `${dist_from_bottom} from bottom of library`
+    }
+  }
+
   message(text) {
     let player_key = `PLAYER_${this.viewer_idx}_NAME`
 
@@ -416,6 +433,13 @@ class GameState {
 
         message = `${viewer_key} draws CARD_NAME`
       }
+      else {
+        orig_name = library_zone_desc(orig_loc.player_idx, orig_loc.zone_idx)
+      }
+    }
+
+    if (dest_loc.name == 'library') {
+      dest_name = this.library_zone_desc(dest_loc.player_idx, dest_loc.zone_idx)
     }
 
     if (orig_loc.player_idx != this.viewer_idx) {
