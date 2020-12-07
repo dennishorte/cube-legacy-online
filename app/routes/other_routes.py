@@ -372,6 +372,63 @@ def update_card_data():
     return redirect(url_for('index'))
 
 
+@app.route("/my_account")
+@login_required
+def my_account():
+    return render_template(
+        'my_account.html',
+        user=current_user,
+        pwform=ChangePasswordForm(),
+        udform=ChangeUserDetailsForm(),
+    )
+
+
+@app.route("/my_account/change_details", methods=["POST"])
+@login_required
+def my_account_change_details():
+    form = ChangeUserDetailsForm()
+
+    if form.validate_on_submit():
+        if form.slack_id.data.strip():
+            current_user.slack_id = form.slack_id.data.strip()
+            db.session.add(current_user)
+            db.session.commit()
+
+    else:
+        flash("Error in user details form")
+
+    return redirect(url_for('my_account'))
+
+
+@app.route("/my_account/change_password", methods=["POST"])
+@login_required
+def my_account_change_password():
+    form = ChangePasswordForm()
+
+    if form.validate_on_submit():
+        old_password = form.old_password.data.strip()
+        new_password = form.new_password.data.strip()
+
+        if current_user.check_password(old_password):
+            if new_password:
+                current_user.set_password(new_password)
+                db.session.add(current_user)
+                db.session.commit()
+                flash("Please login with your new password")
+                logout_user()
+
+            else:
+                flash("Invalid new password")
+
+        else:
+            flash("Old password is incorrect")
+
+    else:
+        flash("Error in password change form")
+
+    return redirect(url_for('my_account'))
+
+
 @app.route("/user/<user_id>")
 @login_required
 def user_profile(user_id):

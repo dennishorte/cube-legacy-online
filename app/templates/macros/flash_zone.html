@@ -1,0 +1,23 @@
+{% macro flash_zone(messages) %}
+
+  <!-- Flash Messages -->
+  <div id="flashMessages">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="row mt-2">
+          <div class="col alert alert-success">
+            <p class="mb-0">{{ message }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div id="messageTemplate" class="row mt-2 d-none">
+      <div class="col alert alert-success">
+        <p class="mb-0"></p>
+      </div>
+    </div>
+  </div>
+  <!-- END: Flash Messages -->
+
+{% endmacro %}

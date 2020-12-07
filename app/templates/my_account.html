@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block title_suffix %}
+  My Account
+{% endblock %}
+
+
+{% block title %}
+  My Account
+{% endblock %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-4 framed">
+      <h5>Change Password</h5>
+      <form action="{{ url_for('my_account_change_password') }}" method="post" novalidate>
+        {{ pwform.hidden_tag() }}
+        <div class="form-group">
+          {{ pwform.old_password.label }}
+          {{ pwform.old_password(class='form-control') }}
+        </div>
+        <div class="form-group">
+          {{ pwform.new_password.label }}
+          {{ pwform.new_password(class='form-control') }}
+        </div>
+        {{ pwform.submit(class='btn btn-primary') }}
+      </form>
+    </div>
+
+    <div class="col-4 framed">
+      <h5>Change User Details</h5>
+      <form action="{{ url_for('my_account_change_details') }}" method="post" novalidate>
+        {{ udform.hidden_tag() }}
+        <div class="form-group">
+          {{ udform.slack_id.label }} <em class="text-secondary">({{ user.slack_id }})</em>
+          {{ udform.slack_id(class='form-control') }}
+        </div>
+        {{ udform.submit(class='btn btn-primary') }}
+      </form>
+    </div>
+  </div>
+{% endblock content %}

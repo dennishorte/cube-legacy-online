@@ -1,5 +1,7 @@
 {% extends "basic.html" %}
 
+{% from 'macros/flash_zone.html' import flash_zone %}
+
 
 {% block title_suffix %}
   Login
@@ -9,6 +11,9 @@
 {% block body_start %}
   <div class="container">
     <h1>Sign In</h1>
+
+    {{ flash_zone(get_flashed_messages()) }}
+
     <form action="" method="post" novalidate>
       {{ form.hidden_tag() }}
       <p>

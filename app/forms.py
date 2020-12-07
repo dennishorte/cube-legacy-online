@@ -27,6 +27,17 @@ class CardRarityForm(FlaskForm):
     submit = SubmitField('Set Rarities')
 
 
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password')
+    new_password = PasswordField('New Password')
+    submit = SubmitField('Change')
+
+
+class ChangeUserDetailsForm(FlaskForm):
+    slack_id = StringField('Slack ID')
+    submit = SubmitField('Save')
+
+
 class GameDeckReadyForm(FlaskForm):
     maindeck_ids = HiddenField('maindeck')
     sideboard_ids = HiddenField('sideboard')
