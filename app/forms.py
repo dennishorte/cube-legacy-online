@@ -22,6 +22,12 @@ class AddCardsForm(FlaskForm):
     submit = SubmitField('Add Cards')
 
 
+class AddUserForm(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    submit = SubmitField('Create User')
+
+
 class CardRarityForm(FlaskForm):
     rarities = TextAreaField('Rarities to set (1 per line: <name>\t<rarity>)')
     submit = SubmitField('Set Rarities')

@@ -87,11 +87,38 @@ def achievement_star(ach_id):
 @app.route("/admin")
 @login_required
 def admin():
+    if not current_user.is_admin:
+        return "Not allowed"
+
     return render_template(
         'admin.html',
         cubes=Cube.query.filter(Cube.admin == True).all(),
+        addform=AddUserForm(),
     )
 
+
+@app.route("/admin/add_user", methods=["POST"])
+@login_required
+def admin_add_user():
+    if not current_user.is_admin:
+        return "Not allowed"
+
+    form = AddUserForm()
+    if form.validate_on_submit():
+        name = form.name.data.strip()
+        password = form.password.data.strip()
+
+        if name and len(password) > 10:
+            user = User()
+            user.name = name
+            user.set_password(password)
+
+            db.session.add(user)
+            db.session.commit()
+
+            flash("New user created")
+
+    return redirect(url_for('admin'))
 
 @app.route("/make_pack", methods=["POST"])
 @login_required
