@@ -13,6 +13,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     slack_id = db.Column(db.String(50))
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     last_pick_timestamp = db.Column(db.DateTime)
     last_notif_timestamp = db.Column(db.DateTime)
 
