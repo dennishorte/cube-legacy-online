@@ -26,7 +26,7 @@ class GameCard(object):
 
     @staticmethod
     def factory(unique_id, cube_card_id):
-        from app.models.cube import CubeCard
+        from app.models.cube_models import CubeCard
         card = CubeCard.query.get(cube_card_id)
 
         data = {
@@ -99,7 +99,7 @@ class GamePlayer(object):
 
     @staticmethod
     def factory(player_id: int):
-        from app.models.user import User
+        from app.models.user_models import User
         user = User.query.get(player_id)
 
         if not user:
