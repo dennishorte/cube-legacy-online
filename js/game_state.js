@@ -434,7 +434,7 @@ class GameState {
         message = `${viewer_key} draws CARD_NAME`
       }
       else {
-        orig_name = library_zone_desc(orig_loc.player_idx, orig_loc.zone_idx)
+        orig_name = this.library_zone_desc(orig_loc.player_idx, orig_loc.zone_idx)
       }
     }
 
