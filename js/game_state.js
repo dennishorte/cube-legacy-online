@@ -361,7 +361,7 @@ class GameState {
     if (zone_idx == 0) {
       return "top of library"
     }
-    else if (zone_idx == card_list.length) {
+    else if (zone_idx == -1 || zone_idx == card_list.length) {
       return "bottom of library"
     }
     else if (zone_idx < card_list.length / 2) {
