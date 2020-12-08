@@ -770,7 +770,7 @@ class GameState {
 
     let diff = {
       delta: delta,
-      message: `${action}: ${card.json.name}`,
+      message: `${action}: CARD_NAME`,
       player: this.viewer_name,
     }
 
