@@ -618,6 +618,8 @@ let gameui = (function() {
 
     elem.empty()
 
+    var phase_count = 0
+
     for (var i = 0; i < _state.history.length; i++) {
       let hist = _state.history[i]
       let message = _perform_message_substitutions(
@@ -632,13 +634,14 @@ let gameui = (function() {
 
       if (hist.message.endsWith("'s turn")) {
         msg.addClass('new-turn-message')
+        phase_count = 0
       }
-
-      if (hist.player == _state.viewer_name) {
-        msg.addClass('viewer-message')
+      else if (hist.message.startsWith('phase: ')) {
+        msg.addClass('phase-message')
+        phase_count += 1
       }
-      else if (hist.player != 'GM') {
-        msg.addClass('other-message')
+      else if (phase_count % 2 == 1) {
+        msg.addClass('odd-phase-message')
       }
 
       if (i > _state.history_index) {

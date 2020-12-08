@@ -224,12 +224,10 @@
   color: #ddd;
 }
 
-.other-message {
-  color: var(--secondary);
-}
-
-.viewer-message {
-  color: var(--info);
+.phase-message {
+  font-size: .95rem;
+  font-weight: bold;
+  background-color: #88b;
 }
 
 .new-turn-message {
