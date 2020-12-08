@@ -236,6 +236,10 @@
   background-color: var(--primary);
 }
 
+.pass-priority-message {
+  background-color: #eef;
+}
+
 .future-message {
   font-style: italic;
   font-weight: lighter;

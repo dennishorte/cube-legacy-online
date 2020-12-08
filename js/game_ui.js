@@ -636,6 +636,9 @@ let gameui = (function() {
         msg.addClass('new-turn-message')
         phase_count = 0
       }
+      else if (hist.message.endsWith("gets priority")) {
+        msg.addClass('pass-priority-message')
+      }
       else if (hist.message.startsWith('phase: ')) {
         msg.addClass('phase-message')
         phase_count += 1
