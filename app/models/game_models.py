@@ -29,6 +29,9 @@ class Game(db.Model):
 
     @functools.cached_property
     def state(self):
+        return self.state_no_cache()
+
+    def state_no_cache(self):
         return GameState(json.loads(self.state_json))
 
     def update(self, game_state):

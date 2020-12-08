@@ -159,7 +159,7 @@ def game_save():
     else:
         data['latest_version'] += 1
         game.update(data)
-        slack.send_your_turn_in_game_notification(game.state)
+        slack.send_your_turn_in_game_notification(game.state_no_cache())
         return "saved"
 
 
