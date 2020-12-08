@@ -34,13 +34,11 @@
     </div>
 
     <!-- Edit Button -->
-    {% if current_user and achievement.created_by_id == current_user.id %}
-      <div class="mr-1">
-        <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
-          <button class="btn btn-warning">edit</button>
-        </a>
-      </div>
-    {% endif %}
+    <div class="mr-1">
+      <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
+        <button class="btn btn-warning">edit</button>
+      </a>
+    </div>
 
     <!-- Claim Button -->
     {% if not achievement.unlocked_by_id %}
