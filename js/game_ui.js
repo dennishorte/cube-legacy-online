@@ -630,6 +630,10 @@ let gameui = (function() {
         .append(message_html)
         .addClass('message')
 
+      if (hist.message.endsWith("'s turn")) {
+        msg.addClass('new-turn-message')
+      }
+
       if (hist.player == _state.viewer_name) {
         msg.addClass('viewer-message')
       }

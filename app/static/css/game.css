@@ -232,6 +232,12 @@
   color: var(--info);
 }
 
+.new-turn-message {
+  font-weight: bold;
+  font-size: 1.1rem;
+  background-color: var(--primary);
+}
+
 .future-message {
   font-style: italic;
   font-weight: lighter;
