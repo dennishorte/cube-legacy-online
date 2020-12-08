@@ -17,7 +17,7 @@ let card_zones = {
   command: {
     visibility: 'all',
     taps: false,
-    tokens: false,
+    tokens: true,
   },
   land: {
     visibility: 'all',
@@ -37,7 +37,7 @@ let card_zones = {
   hand: {
     visibility: 'owner',
     taps: false,
-    tokens: false,
+    tokens: true,
   },
   library: {
     visibility: 'none',
