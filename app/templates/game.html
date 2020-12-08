@@ -277,6 +277,31 @@
   <!-- END: Popup Viewer -->
 
 
+  <!-- Error Modal -->
+  <div id="error-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header text-danger">
+          <h1 id="error-title">
+          </h1>
+        </div>
+
+        <div class="modal-body">
+          <p id="error-message">
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <a href="{{ url_for('game', game_id=game_id) }}" class="btn btn-primary">
+            reload
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Error Modal -->
+
+
   <!-- Roll a Die Modal -->
   <div id="die-roller" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">

@@ -527,9 +527,22 @@ let gameui = (function() {
       url: $('#save-game-meta').data('save-url'),
       data: JSON.stringify(_state.save_data()),
       contentType: "application/json; charset=utf-8",
-      success: function() {
-        _state.set_history_save_point()
-        _redraw()
+      success: function(response) {
+        if (response == 'saved') {
+          _state.set_history_save_point()
+          _state.state.latest_version += 1
+          _redraw()
+        }
+        else if (response == 'version conflict') {
+          $('#error-title').text('Unable to Save')
+          $('#error-message').text('Someone else has saved the game since you last downloaded the game data. Please reload the game in order to get the latest game data.')
+          $('#error-modal').modal('show')
+        }
+        else {
+          $('#error-title').text('Unable to Save')
+          $('#error-message').text('Unknown save error')
+          $('#error-modal').modal('show')
+        }
       },
       error: function(error_message) {
         alert('Error Saving Game')

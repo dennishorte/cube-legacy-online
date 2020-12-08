@@ -175,6 +175,8 @@ class GameState(object):
             'turn': 0,  # Whose turn is it? (player_idx)
             'priority': 0,  # Which player has priority? (player_idx)
             'winner': '',
+
+            'latest_version': 1, # Safety check to avoid data overwrites
         }
 
         players = []
@@ -209,6 +211,10 @@ class GameState(object):
         card = GameCard.factory(self.next_id(), cube_card_id)
         self.data['cards'][card.id()] = card.data
         return card.id()
+
+    @property
+    def latest_version(self):
+        return self.data.get('latest_version')
 
     def load_deck(self, player_id, maindeck, sideboard):
         if not isinstance(maindeck[0], int):

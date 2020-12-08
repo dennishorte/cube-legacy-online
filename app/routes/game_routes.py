@@ -145,11 +145,22 @@ def game_ready(game_id):
 def game_save():
     data = request.json
     game = Game.query.get(data['id'])
-    game.update(data)
 
-    slack.send_your_turn_in_game_notification(game.state)
+    # For backwards compatibility
+    if not game.state.latest_version:
+        data['latest_version'] = 1
+        game.state.data['latest_version'] = 1
 
-    return "saved"
+    # Prevent overwriting other updates due to race condition when both players submit save.
+    if data['latest_version'] != game.state.latest_version:
+        return "version conflict"
+
+    # Update the game
+    else:
+        data['latest_version'] += 1
+        game.update(data)
+        slack.send_your_turn_in_game_notification(game.state)
+        return "saved"
 
 
 @app.route("/game/<game_id>/select_deck", methods=["POST"])
