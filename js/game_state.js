@@ -111,7 +111,7 @@ class GameState {
         old_value: card.annotation,
         new_value: annotation,
       }],
-      message: `Annotation on ${card.json.name} set to '${annotation}'`,
+      message: `Annotation on CARD_NAME set to '${annotation}'`,
       player: this.viewer_name,
     }
 
