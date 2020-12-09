@@ -29,7 +29,8 @@
         <span class="badge badge-pill badge-warning">multi</span>
       {% endif %}
       <p class="text-secondary font-weight-light ml-3 mb-0" style="font-size:.8rem">
-        by: {{ achievement.created_by.name }}
+        by: {{ achievement.created_by.name }},
+        xp: {{ achievement.xp or 1 }}
       </p>
     </div>
 
@@ -109,6 +110,14 @@
             {{ form.multiunlock.label }}
           </div>
         </div>
+
+        <div class="col">
+          <div class="form-group">
+            {{ form.xp_value.label }}
+            {{ form.xp_value(class="form-control") }}
+          </div>
+        </div>
+
         <div class="col">
           <div class="form-group">
             {{ form.update_as.label }}

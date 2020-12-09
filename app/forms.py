@@ -289,6 +289,8 @@ class NewAchievementForm(FlaskForm):
     update_id = HiddenField('Update Id')  # Used when updating an existing achievement
 
     multiunlock = BooleanField('Is Multiunlock')
+    xp_value = IntegerField('XP Value')
+
     update_as = SelectField('Create As')
     submit = SubmitField('Create')
 

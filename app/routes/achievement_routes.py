@@ -61,6 +61,7 @@ def achievement_edit(achievement_id):
 
     form.name.data = ach.name
     form.conditions.data = ach.conditions
+    form.xp_value.data = ach.xp or 1
     form.multiunlock.data = ach.multiunlock
     form.update_as.data = ach.created_by.name
     form.submit.label.text = 'Update'
@@ -156,11 +157,12 @@ def achievement_submit():
     else:
         raise ValueError("Can't create achievement with update_id or cube_id.")
 
-    ach.name=form.name.data
-    ach.conditions=form.conditions.data
+    ach.name = form.name.data
+    ach.conditions = form.conditions.data
+    ach.xp = int(form.xp_value.data)
+    ach.multiunlock = form.multiunlock.data
+    ach.created_by = User.query.filter(User.name == form.update_as.data).first()
     ach.set_json(form.unlock_json())
-    ach.multiunlock=form.multiunlock.data
-    ach.created_by=User.query.filter(User.name == form.update_as.data).first()
 
     db.session.add(ach)
     db.session.commit()
