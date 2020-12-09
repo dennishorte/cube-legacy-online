@@ -461,6 +461,7 @@ class Achievement(db.Model):
     multiunlock = db.Column(db.Boolean)
     version = db.Column(db.Integer, default=1)
     unlock_json = db.Column(db.Text)
+    xp = db.Column(db.Integer, default=0)
 
     # Creation info
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
