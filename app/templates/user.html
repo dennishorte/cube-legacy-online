@@ -32,6 +32,18 @@
   <div class="row">
 
     <div class="col framed">
+      <h5>Stats</h5>
+      <ul class="list-unstyled">
+        <li>
+          XP:
+          <a id="stat-xp" class="stat-value" data-stat="xp" href="#stat-modal" data-toggle="modal">
+            {{ user.xp or 0 }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col framed">
       <h5>Drafts</h5>
 
       {% for draft in drafts %}
@@ -51,11 +63,31 @@
     <div class="col">
     </div>
 
-    <div class="col">
-    </div>
-
   </div>
 
+  <!-- Stat Modal -->
+  <div id="stat-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>
+            Update <span id="stat-update-name">XP</span>
+          </h3>
+        </div>
+
+        <div class="modal-body">
+          <input id="stat-update-value" type="text" class="form-control">
+        </div>
+
+        <div class="modal-footer">
+          <a id="stat-update-submit" class="btn btn-primary">
+            update
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Stat Modal -->
 
   <!-- Monikers Modal -->
   <div class="modal fade" id="edit-monikers-modal" tabindex="-1" role="dialog">
@@ -86,3 +118,63 @@
   </div>
   <!-- END: Monikers Modal -->
 {% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   function stat_error(data) {
+     $('#stat-modal')
+       .find('.modal-body')
+       .empty()
+       .addClass('text-danger')
+       .text('There was an error when trying to update this stat.')
+
+     $('#stat-modal')
+       .find('.modal-footer')
+       .empty()
+       .text(data)
+   }
+
+   $(document).ready(function() {
+     $('.stat-value').click(function(event) {
+       let stat = $(this)
+       let stat_name = stat.data('stat').trim()
+       let value = stat.text().trim()
+
+       $('#stat-update-name').text(stat_name)
+       $('#stat-update-value').val(value)
+     })
+
+     $('#stat-update-submit').click(function() {
+       let stat_name = $('#stat-update-name').text().trim()
+       let stat_value = $('#stat-update-value').val().trim()
+
+       let data = {
+         stat_name: stat_name,
+         stat_value: stat_value,
+       }
+
+       $.ajax({
+         type: "POST",
+         url: "{{ url_for('user_update_stat', user_id=current_user.id) }}",
+         data: JSON.stringify(data),
+         contentType: "application/json; charset=utf-8",
+         success: function (response) {
+           if (response == 'success') {
+             $('#stat-modal').modal('hide')
+             $(`#stat-${stat_name}`).text(stat_value)
+           }
+           else {
+             stat_error(response)
+           }
+         },
+         error: function(response) {
+           console.log(response)
+           stat_error(response)
+         }
+       }) // end: ajax
+     })
+
+   })
+  </script>
+{% endblock %}

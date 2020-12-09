@@ -493,3 +493,18 @@ def user_set_monikers(user_id):
         user.set_monikers(monikers)
 
     return redirect(url_for('user_profile', user_id=user_id))
+
+
+@app.route("/user/<user_id>/update_stat", methods=['POST'])
+@login_required
+def user_update_stat(user_id):
+    data = request.json
+
+    if data['stat_name'] == 'xp':
+        current_user.xp = int(data['stat_value'])
+        db.session.add(current_user)
+        db.session.commit()
+        return 'success'
+
+    else:
+        return 'unknown stat'

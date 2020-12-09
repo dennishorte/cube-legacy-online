@@ -325,7 +325,7 @@
        $.ajax({
          type: "POST",
          url: "{{ url_for('cube_add_cards', cube_id=cube.id) }}",
-         data: data, // serializes the form's elements.
+         data: data,
          beforeSend: function(request) {
            request.setRequestHeader("X-CSRFToken", "{{ add_cards_form.csrf_token._value() }}")
          },

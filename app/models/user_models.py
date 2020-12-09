@@ -20,6 +20,10 @@ class User(UserMixin, db.Model):
 
     monikers_tsv = db.Column(db.Text)
 
+    # Stats
+    xp = db.Column(db.Integer, default=0)
+
+    # Relationships
     cubes = db.relationship('Cube', backref='created_by')
     draft_seats = db.relationship('Seat', backref='user')
     match_results = db.relationship('MatchResult', backref='user')
