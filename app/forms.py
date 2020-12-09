@@ -19,6 +19,7 @@ from app.util.string import normalize_newlines
 class AddCardsForm(FlaskForm):
     cardnames = TextAreaField('Cards to be added (1 per line)')
     add_as_starter = BooleanField('Add as a starter card, not as yourself')
+    comment = TextAreaField('Why are you adding these cards')
     submit = SubmitField('Add Cards')
 
 

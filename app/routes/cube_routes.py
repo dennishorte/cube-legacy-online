@@ -66,7 +66,12 @@ def cube_add_cards(cube_id):
         else:
             added_by = current_user
 
-        result = add_cards_to_cube(cube_id, card_names, added_by)
+        result = add_cards_to_cube(
+            cube_id,
+            card_names,
+            added_by,
+            form.comment.data,
+        )
 
         flash('Added {} cards ({} unique)'.format(
             result['num_added'],

@@ -224,9 +224,15 @@
               {{ add_cards_form.cardnames.label }}
               {{ add_cards_form.cardnames(class='form-control') }}
             </div>
+
             <div class="form-group">
               {{ add_cards_form.add_as_starter() }}
               {{ add_cards_form.add_as_starter.label }}
+            </div>
+
+            <div class="form-group">
+              {{ add_cards_form.comment.label }}
+              {{ add_cards_form.comment(class="form-control") }}
             </div>
           </form>
           <button class="btn btn-primary" type="button" id="addCardsButton">Add Cards</button>

@@ -3,7 +3,9 @@ from app.models.cube_models import *
 from app.util import scryfall
 
 
-def add_cards_to_cube(cube_id, card_names, added_by):
+def add_cards_to_cube(cube_id, card_names, added_by, comment):
+    comment = comment.strip()
+
     _ensure_cube(cube_id)
     scryfall_data = scryfall.fetch_many_from_scryfall(card_names)
     failed_to_fetch = []
@@ -33,6 +35,8 @@ def add_cards_to_cube(cube_id, card_names, added_by):
             cube_id=cube_id,
             added_by=added_by,
         )
+        if comment:
+            cc.comment = comment
         new_cards.append(cc)
         db.session.add(cc)
 
