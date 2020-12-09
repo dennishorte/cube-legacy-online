@@ -55,6 +55,17 @@ def game(game_id):
         )
 
 
+@app.route("/game/<game_id>/delete")
+@login_required
+def game_delete(game_id):
+    Game.query.filter(Game.id == game_id).delete()
+    db.session.commit()
+
+    flash("Game deleted")
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/game/next")
 @login_required
 def game_next():

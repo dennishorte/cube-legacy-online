@@ -45,6 +45,12 @@
                   <li>{{ ', '.join(game.state.player_names()) }}</li>
                   <li>{{ game.age() }}</li>
                   <li>history: {{ game.state.data['history']|length }}</li>
+                  <li>---</li>
+                  <li>
+                    <a href="{{ url_for('game_delete', game_id=game.id) }}">
+                      delete game
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
