@@ -266,6 +266,9 @@ class GameState(object):
     def players(self):
         return [GamePlayer(x) for x in self.data['players']]
 
+    def player_names(self):
+        return [x.name for x in self.players]
+
     def ready_to_start(self):
         return all([x.ready_to_start for x in self.players])
 

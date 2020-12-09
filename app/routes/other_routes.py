@@ -93,6 +93,7 @@ def admin():
     return render_template(
         'admin.html',
         cubes=Cube.query.filter(Cube.admin == True).all(),
+        games=Game.active_games(),
         addform=AddUserForm(),
     )
 

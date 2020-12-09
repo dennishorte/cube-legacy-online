@@ -13,6 +13,21 @@ class Game(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state_json = db.Column(MEDIUMTEXT)
 
+    @staticmethod
+    def active_games():
+        all_games = Game.query.order_by(Game.timestamp.desc()).all()
+        return [x for x in all_games if not x.state.is_finished()]
+
+    def age(self):
+        age = datetime.utcnow() - self.timestamp
+        years = age.days // 365
+        days = age.days % 365
+
+        if years > 0:
+            return f"{years} years {days} days"
+        else:
+            return f"{days} days"
+
     def is_my_turn(self, user):
         from app.util.game_logic import GamePhase
 
