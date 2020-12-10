@@ -469,15 +469,11 @@ def user_profile(user_id):
 
     moniker_form = EditMonikersForm.factory(user)
 
-    for draft in drafts:
-        for link in draft.achs(user_id):
-            print(link)
-            print(link.ach.name)
-
     return render_template(
         'user.html',
-        drafts=drafts,
         user=user,
+        drafts=drafts,
+        games=user.all_games(),
         moniker_form=moniker_form,
     )
 

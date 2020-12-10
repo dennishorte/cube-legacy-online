@@ -1,4 +1,3 @@
-from flask_login import current_user
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
@@ -65,7 +64,7 @@ class User(UserMixin, db.Model):
         from app.models.game_models import Game
         return [
             x for x in Game.query.order_by(Game.timestamp.desc()).all()
-            if x.state.player_by_id(current_user.id)
+            if x.state.player_by_id(self.id)
         ]
 
     def check_password(self, password):
@@ -103,7 +102,7 @@ class User(UserMixin, db.Model):
 
         return [
             x for x in self.active_games()
-            if x.is_my_turn(current_user)
+            if x.is_my_turn(self)
             and x.id != exclude_id
         ]
 

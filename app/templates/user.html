@@ -60,7 +60,56 @@
       {% endfor %}
     </div>
 
-    <div class="col">
+    <div class="col framed">
+      <h5>Games</h5>
+
+      <div>
+        <p>Active Games</p>
+        <ul class="list-unstyled ml-4 mt-3">
+          {% for game in games %}
+            {% if not game.state.is_finished() %}
+              <li>
+                <a href="{{ url_for('game', game_id=game.id) }}">
+                  {{ game.state.name }}
+                </a>
+
+                {% if game.is_my_turn(user) %}
+                  <span class="badge badge-pill badge-warning">
+                    <i class="fas fa-asterisk"></i>
+                  </span>
+                {% endif %}
+
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div>
+        <p>Finished Games</p>
+        <ul class="list-unstyled ml-4 mt-3">
+          {% for game in games %}
+            {% if game.state.is_finished() %}
+              <li>
+                <a href="{{ url_for('game', game_id=game.id) }}">
+                  {{ game.state.name }}
+                </a>
+
+                {% if game.state.is_winner(user) %}
+                  <span class="badge badge-pill badge-success">
+                    <i class="fas fa-check"></i>
+                  </span>
+                {% else %}
+                  <span class="badge badge-pill badge-danger">
+                    <i class="fas fa-times"></i>
+                  </span>
+                {% endif %}
+
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
   </div>
@@ -100,7 +149,7 @@
 
         <div class="modal-body">
           <form
-            action="{{ url_for('user_set_monikers', user_id=current_user.id) }}"
+            action="{{ url_for('user_set_monikers', user_id=user.id) }}"
             method="post"
             novalidate>
 
@@ -156,7 +205,7 @@
 
        $.ajax({
          type: "POST",
-         url: "{{ url_for('user_update_stat', user_id=current_user.id) }}",
+         url: "{{ url_for('user_update_stat', user_id=user.id) }}",
          data: JSON.stringify(data),
          contentType: "application/json; charset=utf-8",
          success: function (response) {
