@@ -3,9 +3,6 @@ import random
 
 
 class GamePhase(object):
-    # Pre-game phases
-    deck_selection = 'deck_selection'
-
     # Phases during the game
     untap = 'untap'
     upkeep = 'upkeep'
@@ -170,7 +167,7 @@ class GameState(object):
             'name': name,
             'next_id': 1,
             'players': [],
-            'phase': GamePhase.deck_selection,
+            'phase': GamePhase.untap,
 
             'turn': 0,  # Whose turn is it? (player_idx)
             'priority': 0,  # Which player has priority? (player_idx)
@@ -189,10 +186,14 @@ class GameState(object):
             player.view_options.update(view_option_defaults)
             data['players'].append(player.data)
 
+        data['turn'] = random.randrange(len(players))
+        data['priority'] = data['turn']
+
+        first_player_name = data['players'][data['turn']]['name']
 
         data['history'].append({
             'delta': [],
-            'message': f"{data['players'][0]['name']}'s turn",
+            'message': f"{first_player_name} randomly chosen to go first",
             'player': 'GM',
         })
 

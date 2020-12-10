@@ -36,7 +36,7 @@ def game(game_id):
         rform = GameDeckReadyForm()
 
         player = game.state.player_by_id(current_user.id)
-        if player.has_deck() and game.state.phase == GamePhase.deck_selection:
+        if player.has_deck():
             deck = Deck.query.get(player.deck_id)
             deck_builder = DeckBuilder(
                 draft_id=deck.draft_id,

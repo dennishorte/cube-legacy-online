@@ -34,13 +34,11 @@ class Game(db.Model):
         if not self.state or not self.state.player_by_id(user.id):
             return False
 
-        return (
-            self.state.phase == GamePhase.deck_selection
-            and not self.state.player_by_id(user.id).has_deck()
-        ) or (
-            self.state.phase != GamePhase.deck_selection
-            and self.state.priority_player().name == user.name
-        )
+        if self.state.ready_to_start():
+            return self.state.priority_player().name == user.name
+
+        else:
+            return not self.state.player_by_id(user.id).has_deck()
 
     @functools.cached_property
     def state(self):
