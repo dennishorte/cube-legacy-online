@@ -720,24 +720,27 @@ let gameui = (function() {
 
       cardui.init(_state)
       dialogs.init(_state)
-
-      // UI interactions
-      _init_card_click_handler()
-      _init_card_dragging()
-      _init_die_modal()
-      _init_life_buttons()
-      _init_popup_menus()
-      _init_scry_modal()
-
-      // Dialog interactiions
       _init_card_closeup_interations()
-      _init_token_maker_interactions()
-
-      // Player activites
-      _init_actions()
-      _init_phase_changes()
       _init_history_navigation()
-      _init_message_box()
+
+      if (!_state.spectator) {
+
+        // UI interactions
+        _init_card_click_handler()
+        _init_card_dragging()
+        _init_die_modal()
+        _init_life_buttons()
+        _init_popup_menus()
+        _init_scry_modal()
+
+        // Dialogs
+        _init_token_maker_interactions()
+
+        // Player activites
+        _init_actions()
+        _init_phase_changes()
+        _init_message_box()
+      }
 
       _redraw()
     }

@@ -277,5 +277,7 @@ class GameState(object):
             if int(p.id) == int(user_id):
                 return i
 
+        return -1
+
     def winner(self):
         return self.data.get('winner', '')

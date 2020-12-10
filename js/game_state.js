@@ -82,6 +82,7 @@ class GameState {
     this.history_index = state_in.history.length - 1
     this.viewer_name = viewer_name
     this.viewer_idx = this.player_idx_by_name(viewer_name)
+    this.spectator = this.viewer_idx == -1
     this.history_save_point = this.history_index
   }
 
@@ -345,12 +346,18 @@ class GameState {
   }
 
   is_collapsed(player_idx, zone_id) {
+    if (this.spectator)
+      return zone_id == 'sideboard' ? true : false
+
     zone_id = this._clean_id(zone_id)
     let opt_name = `collapse_${zone_id}`
     return this.view_options(player_idx)[opt_name]
   }
 
   is_revealed(player_idx, zone_id) {
+    if (this.spectator)
+      return false
+
     zone_id = this._clean_id(zone_id)
     let opt_name = `reveal_${zone_id}`
     return this.view_options(player_idx)[opt_name]
@@ -587,6 +594,7 @@ class GameState {
         return i
       }
     }
+    return -1
   }
 
   priority_player_idx() {
