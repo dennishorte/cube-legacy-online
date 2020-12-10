@@ -233,7 +233,11 @@ class GameState {
 
   card_is_visible(card_id, zone_id) {
     let card = this.card(card_id)
-    let player_vis = card.visibility.indexOf(this.viewer_name) >= 0
+    var player_vis = card.visibility.indexOf(this.viewer_name) >= 0
+
+    if (this.spectator) {
+      player_vis = card.visibility.length == this.num_players()
+    }
 
     // Being face down overrides the local zone visibility
     if (card.face_down)
@@ -850,6 +854,8 @@ class GameState {
   }
 
   _visibility_diff(card, new_visibility) {
+    assert.ok(new_visibility.length <= this.num_players(), "Too much visibility.")
+
     return {
       action: 'set_visibility',
       card_id: card.id,
@@ -874,8 +880,10 @@ class GameState {
       names_to_add.push(this.state.players[dest_loc.player_idx].name)
     }
 
-    if (names_to_add.length > 0) {
-      return this._visibility_diff(card, card.visibility.concat(names_to_add))
+    let new_names_to_add = names_to_add.filter(name => card.visibility.indexOf(name) == -1)
+
+    if (new_names_to_add.length > 0) {
+      return this._visibility_diff(card, card.visibility.concat(new_names_to_add))
     }
     else {
       return undefined
