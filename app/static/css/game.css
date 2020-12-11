@@ -157,10 +157,6 @@
   background-color: var(--info);
 }
 
-.history-save-point {
-  border-bottom: 1px solid #ddd;
-}
-
 .player-turn {
   background-color: var(--not-as-light);
 }
@@ -243,7 +239,22 @@
 .future-message {
   font-style: italic;
   font-weight: lighter;
+  background-color: #aaa;
 }
+.future-message .message-card-name {
+  color: #944;
+  font-weight: normal;
+}
+.future-message .message-player-name {
+  color: #333;
+  font-weight: normal;
+}
+
+.history-save-point {
+  border-bottom: 1px solid #ddd;
+}
+
+
 
 
 /********************************************************************************
