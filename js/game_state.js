@@ -915,7 +915,9 @@ class GameState {
       else if (action == 'create_card') {
         let data = change.card_data
 
-        assert.ok(!this.state.cards.hasOwnProperty(data.id), "Card has duplicate id")
+        // Don't assert this anymore, since we don't delete cards when going back through
+        // time anymore.
+        //assert.ok(!this.state.cards.hasOwnProperty(data.id), "Card has duplicate id")
         assert.equal(typeof data.json.name, 'string', "Name is not valid")
 
         this.state.cards[data.id] = data
