@@ -236,7 +236,7 @@ class GameState {
     var player_vis = card.visibility.indexOf(this.viewer_name) >= 0
 
     if (this.spectator) {
-      player_vis = card.visibility.length == this.num_players()
+      player_vis = card.visibility.length >= this.num_players()
     }
 
     // Being face down overrides the local zone visibility

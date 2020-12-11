@@ -412,7 +412,17 @@ let gameui = (function() {
       let visibility = hist.delta[0].card_vis || 'UNKNOWN'
 
       var card_name = 'a card'
-      if (visibility != 'UNKNOWN' && visibility.indexOf(_state.viewer_name) >= 0) {
+      let spectator_can_see = (
+        visibility != 'UNKNOWN'
+        && _state.spectator
+        && visibility.length >= _state.num_players()
+      )
+      let player_can_see = (
+        visibility != 'UNKNOWN'
+        && visibility.indexOf(_state.viewer_name) >= 0
+      )
+
+      if (player_can_see || spectator_can_see) {
         card_name = card.json.name
       }
 
