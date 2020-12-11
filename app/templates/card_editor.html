@@ -54,7 +54,8 @@
 
 
 {% macro face_form(fields, diff, face_name) %}
-  <div class="col m-1 rounded border bg-light">
+  <div class="col col-md-6 inner-frames">
+    <div class="framed-inner">
     <h4 class="mt-2">{{ face_name }}</h4>
     {{ render_form_group(fields, diff, 'name') }}
     {{ render_form_group(fields, diff, 'mana_cost') }}
@@ -67,6 +68,7 @@
       {{ render_form_group_col(fields, diff, 'power') }}
       {{ render_form_group_col(fields, diff, 'toughness') }}
       {{ render_form_group_col(fields, diff, 'loyalty') }}
+    </div>
     </div>
   </div>
 {% endmacro %}
@@ -187,7 +189,7 @@
         <!-- END: Edit forms for each face -->
 
         <div class="row">
-          <div class="col bg-light m-1 rounded border p-2" id="commentArea">
+          <div class="col framed" id="commentArea">
             {{ form.comment.label }}
             {{ form.comment(class='form-control', rows='5') }}
 
@@ -196,7 +198,7 @@
             {% endif %}
           </div>
 
-          <div class="col bg-light m-1 rounded border p-2" id="submitArea">
+          <div class="col framed" id="submitArea">
             {{ form.hidden_tag() }}
             <div class="form-group">
               {{ form.layout.label }}
