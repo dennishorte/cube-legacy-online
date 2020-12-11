@@ -93,8 +93,10 @@ let gameui = (function() {
         _click_state.clicks = 0
         _click_state.timer = undefined
 
-        cardui.twiddle(card)
-        _redraw()
+        if (!_state.spectator) {
+          cardui.twiddle(card)
+          _redraw()
+        }
       }
 
     }).dblclick(function(event) {
@@ -720,13 +722,13 @@ let gameui = (function() {
 
       cardui.init(_state)
       dialogs.init(_state)
-      _init_card_closeup_interations()
+      _init_card_click_handler()
       _init_history_navigation()
 
       if (!_state.spectator) {
 
         // UI interactions
-        _init_card_click_handler()
+        _init_card_closeup_interations()
         _init_card_dragging()
         _init_die_modal()
         _init_life_buttons()
