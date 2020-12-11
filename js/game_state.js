@@ -1022,7 +1022,9 @@ class GameState {
 
         card_list.splice(index, 1)
 
-        delete this.state.cards[id]
+        // Can't actually delete the token because if a user is just browsing the history
+        // then that token needs to exist to write its name into entries in the history.
+        // delete this.state.cards[id]
       }
 
       else {
