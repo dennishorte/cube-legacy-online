@@ -649,6 +649,10 @@ class GameState {
   }
 
   set_history_index(index) {
+    if (index >= this.history.length || index < 1) {
+      return
+    }
+
     this._move_through_history(index)
   }
 

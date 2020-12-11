@@ -204,6 +204,17 @@ let gameui = (function() {
       _state.set_history_index(target_msg.index())
       _redraw()
     })
+
+    $(document).keyup(function(event) {
+      if (event.keyCode == 37) { // left arrow
+        _state.set_history_index(_state.history_index - 1)
+        _redraw()
+      }
+      else if (event.keyCode == 39) { // right arrow
+        _state.set_history_index(_state.history_index + 1)
+        _redraw()
+      }
+    })
   }
 
   function _init_life_buttons() {
