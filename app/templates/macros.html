@@ -185,14 +185,14 @@
         {{ show_card_diff(card) }}
 
         <!-- Linked Achievements -->
-        {% if card.cube_card.linked_achs %}
+        {% if card.cube_card.linked_achievements() %}
           <div class="ml-1 text-muted text-xs">
             Linked Achievements
           </div>
         {% endif %}
-        {% for link in card.cube_card.linked_achs %}
+        {% for ach in card.cube_card.linked_achievements() %}
           <div class="linked-achievement text-secondary border-top">
-            {{ link.achievement.conditions }}
+            {{ ach.conditions }}
           </div>
         {% endfor %}
 
@@ -229,14 +229,14 @@
         {{ show_card_diff(card) }}
 
         <!-- Linked Achievements -->
-        {% if card.linked_achs %}
+        {% if card.linked_achievements() %}
           <div class="ml-1 text-muted text-xs">
             Linked Achievements
           </div>
         {% endif %}
-        {% for link in card.linked_achs %}
+        {% for ach in card.linked_achievements() %}
           <div class="linked-achievement text-secondary border-top">
-            {{ link.achievement.conditions }}
+            {{ ach.conditions }}
           </div>
         {% endfor %}
 
