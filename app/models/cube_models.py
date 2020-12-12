@@ -70,7 +70,8 @@ class Cube(db.Model):
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
 
-    def achievements_avaiable(self):
+    @functools.lru_cache
+    def achievements_available(self):
         achs = [x for x in self.achievements if x.available()]
         achs.sort(key=lambda x: x.created_timestamp, reverse=True)
         return achs

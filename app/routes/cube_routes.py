@@ -92,6 +92,21 @@ def cube_add_cards(cube_id):
         return 'failed'
 
 
+@app.route("/cubes/<cube_id>/bump_xp")
+@login_required
+def cube_bump_xp(cube_id):
+    """Increase the XP for all unclaimed achievements by 1"""
+    cube = Cube.query.get(cube_id)
+
+    for ach in cube.achievements_available():
+        ach.xp = ach.xp + 1 if ach.xp is not None else 1
+        db.session.add(ach)
+
+    db.session.commit()
+
+    return redirect(url_for('cube_achievements', cube_id=cube.id))
+
+
 @app.route("/cubes/<cube_id>/cards")
 @login_required
 def cube_cards(cube_id):
@@ -124,7 +139,7 @@ def cube_factions(cube_id):
     cube = Cube.query.get(cube_id)
     form = NewFactionForm()
 
-    achievements = [x for x in cube.achievements_avaiable() if 'faction' in x.conditions.lower()]
+    achievements = [x for x in cube.achievements_available() if 'faction' in x.conditions.lower()]
 
     return render_template(
         'cube_factions.html',
