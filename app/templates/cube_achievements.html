@@ -68,9 +68,9 @@
     <!-- Claimed Achievements -->
     <div class="col framed">
       <a name="claimedAchievements"></a>
-      <h4>Claimed Achievements</h4>
+      <h4>Recently Claimed Achievements</h4>
 
-      {% for achievement in cube.achievements_completed() %}
+      {% for achievement in cube.achievements_completed()[:20] %}
         <div class="d-flex">
 
           <!-- Achievement Name -->
