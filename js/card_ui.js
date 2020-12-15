@@ -101,11 +101,11 @@ module.exports = (function() {
   }
 
 
-  cardui.set_visibility = function(elem, is_visible) {
+  cardui.set_visibility = function(elem, is_visible, is_face_down) {
     if (is_visible) {
       elem.removeClass('not-visible')
     }
-    else {
+    else if (!is_face_down) {
       elem.addClass('not-visible')
       cardui.set_name(elem, 'hidden')
     }
