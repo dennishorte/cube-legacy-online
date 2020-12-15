@@ -1,4 +1,4 @@
 browserify \
-    --entry js/game_ui.js \
-    --standalone ui \
-    --outfile app/static/js/game.js
+    --entry js/clo.js \
+    --standalone clo \
+    --outfile app/static/js/clo.js

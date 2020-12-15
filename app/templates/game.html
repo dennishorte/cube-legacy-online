@@ -424,11 +424,10 @@
 {% block body_end %}
 
   <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
-  <script src="/static/js/game.js?version={{ version }}"></script>
   <script>
    let initial_state = {{ game_state.data|tojson }}
    $(document).ready(function() {
-     ui.init(initial_state, '{{ current_user.name }}')
+     clo.game.init(initial_state, '{{ current_user.name }}')
    })
   </script>
 

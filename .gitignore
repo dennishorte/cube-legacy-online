@@ -9,5 +9,5 @@ test.py
 app/static/cockatrice
 *~
 node_modules
-app/static/js/game.js
+app/static/js/clo.js
 build_time
