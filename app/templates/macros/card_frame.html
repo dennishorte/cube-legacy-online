@@ -1,4 +1,4 @@
-{% macro card_face(face_name) %}
+{% macro empty_card_face(face_name) %}
 
       <div class="card-container closeup-{{ face_name }}">
         <div class="card-border">
@@ -42,11 +42,11 @@
 {% endmacro %}
 
 
-{% macro card_frame(card_id) %}
+{% macro empty_card_frame() %}
 
-  <div class="closeup-card-wrapper" data-card-id="{{ card_id }}">
-    {{ card_face('front') }}
-    {{ card_face('back') }}
+  <div class="closeup-card-wrapper">
+    {{ empty_card_face('front') }}
+    {{ empty_card_face('back') }}
   </div>
 
 {% endmacro %}

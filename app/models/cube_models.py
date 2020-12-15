@@ -183,6 +183,13 @@ class CubeCard(db.Model):
     def __repr__(self):
         return '<CubeCard {}>'.format(self.get_json()['name'])
 
+    def card_face(self, index):
+        faces = self.card_faces()
+        if len(faces) <= index:
+            return None
+        else:
+            return faces[index]
+
     def card_faces(self):
         return self.get_json()['card_faces']
 

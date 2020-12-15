@@ -1,6 +1,6 @@
 {% extends 'basic.html' %}
 
-{% from 'macros/card_frame.html' import card_frame %}
+{% from 'macros/card_frame.html' import empty_card_frame %}
 {% from 'macros/header.html' import header with context %}
 
 
@@ -366,7 +366,7 @@
       </p>
     </div>
 
-    {{ card_frame('') }}
+    {{ empty_card_frame() }}
 
     <div class="game-frame card-closeup-annotation">
       <input class="card-closeup-annotation-input form-control" type="text" placeholder="annotation">
