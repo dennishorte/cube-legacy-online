@@ -199,14 +199,30 @@ class GameState {
       message = `${player_key} flips CARD_NAME face up`
     }
 
+    let delta = [{
+      action: 'set_card_value',
+      card_id: card_id,
+      key: 'face_down',
+      old_value: card.face_down,
+      new_value: !card.face_down,
+    }]
+
+    // Turning the card face-up may affect its visibility.
+    if (card.face_down) {
+      let card_loc = this.card_find_loc(card.id)
+
+      // Temporarily set face up so that vis diff will calculate correctly.
+      card.face_down = false
+      let vis_diff = this._visibility_diff_from_move(card_loc, card)
+      card.face_down = true
+
+      if (vis_diff) {
+        delta.push(vis_diff)
+      }
+    }
+
     let diff = {
-      delta: [{
-        action: 'set_card_value',
-        card_id: card_id,
-        key: 'face_down',
-        old_value: card.face_down,
-        new_value: !card.face_down,
-      }],
+      delta: delta,
       message: message,
       player: this.viewer_name,
     }
@@ -260,7 +276,29 @@ class GameState {
     return tableau[zone_name]
   }
 
-  concede(player_idx) {
+  card_find_loc(card_id) {
+    for (var i = 0; i < this.state.players.length; i++) {
+      let player = this.state.players[i]
+      for (let zone in card_zones) {
+        if (!card_zones.hasOwnProperty(zone))
+          continue
+
+        let card_list = this.card_list(i, zone)
+        let zone_idx = card_list.indexOf(card_id)
+        if (zone_idx >= 0) {
+          return {
+            name: zone,
+            zone_idx: zone_idx,
+            player_idx: i,
+          }
+        }
+      }
+    }
+
+    return undefined
+  }
+
+    concede(player_idx) {
     if (!this.state.hasOwnProperty('finished')) {
       this.state.finished = false
       this.state.winner = ''
@@ -421,7 +459,7 @@ class GameState {
       delta = delta.concat(tap_delta)
     }
 
-    let vis_diff = this._visibility_diff_from_move(orig_loc, dest_loc, this.card(card_id))
+    let vis_diff = this._visibility_diff_from_move(dest_loc, this.card(card_id))
     if (vis_diff) {
       delta.push(vis_diff)
     }
@@ -868,7 +906,7 @@ class GameState {
     }
   }
 
-  _visibility_diff_from_move(orig_loc, dest_loc, card) {
+  _visibility_diff_from_move(dest_loc, card) {
     let dest_visibility = card_zones[dest_loc.name].visibility
 
     let names_to_add = []
