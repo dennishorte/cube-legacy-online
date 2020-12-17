@@ -223,7 +223,7 @@ def _card_name(card_data, face_index, scarred):
     elif Layout.split_faced_layout(layout):
         name = card_data['name']
     else:
-        raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for card name of: {layout}")
 
     if scarred:
         return f"{name}++"
@@ -263,7 +263,7 @@ def _mana_cost(card_data, face_index):
     elif Layout.double_sided_layout(layout):
         return _clean_mana_cost(card_data['card_faces'][face_index].get('mana_cost', ''))
     else:
-        raise NotImplementedError(f"Don't have a Cockatrice pattern for image_url of: {layout}")
+        raise NotImplementedError(f"Don't have a Cockatrice pattern for mana cost of: {layout}")
 
 
 def _oracle_text(card, card_data, face_index):

@@ -53,11 +53,18 @@ def _convert_to_face_array(card_json):
                 face_json[key] = card_json[key]
 
     # Special case for flip cards. Technically, the same image, so scryfall puts it in the root.
-    elif 'image_url' in card_json:
+    if 'image_url' in card_json:
         for face in card_json['card_faces']:
             face['image_url'] = card_json['image_url']
 
         del card_json['image_url']
+
+    # Same special case as above for flip cards.
+    if 'art_crop_url' in card_json:
+        for face in card_json['card_faces']:
+            face['art_crop_url'] = card_json['art_crop_url']
+
+        del card_json['art_crop_url']
 
 
 def _convert_image_storage(card_json):
@@ -66,6 +73,7 @@ def _convert_image_storage(card_json):
     for face in all_parts:
         if 'image_uris' in face:
             face['image_url'] = face['image_uris']['normal']
+            face['art_crop_url'] = face['image_uris']['art_crop']
             del face['image_uris']
 
 

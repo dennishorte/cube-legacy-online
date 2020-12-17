@@ -44,3 +44,16 @@ def ensure_basic_lands():
     # Import the basic lands
     basic_names = ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes']
     add_cards_to_cube(cube.id, basic_names, starter)
+
+
+def ensure_art_crop():
+    import json
+
+    for card in CubeCard.query.all():
+        card_json = json.loads(card.json)
+        for face in card_json['card_faces']:
+            face['art_crop_url'] = face['image_url'].replace('normal', 'art_crop')
+
+        card.update(card_json, None, None, commit=False, new_version=False)
+
+    db.session.commit()

@@ -41,3 +41,4 @@ from app.models.user_models import *
 # from app.util import setup
 # setup.ensure_starter_user()
 # setup.ensure_basic_lands()
+# setup.ensure_art_crop()

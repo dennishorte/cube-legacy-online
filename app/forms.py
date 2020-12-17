@@ -83,6 +83,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_0_name = StringField('Name')
     face_0_mana_cost = StringField('Mana Cost')
     face_0_image_url = TextAreaField('Image Url')
+    face_0_art_crop_url = TextAreaField('Art Crop Url')
     face_0_type_line = StringField('Type Line')
     face_0_oracle_text = TextAreaField('Rules Text')
     face_0_flavor_text = TextAreaField('Flavor Text')
@@ -93,6 +94,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_1_name = StringField('Name')
     face_1_mana_cost = StringField('Mana Cost')
     face_1_image_url = TextAreaField('Image Url')
+    face_1_art_crop_url = TextAreaField('Art Crop Url')
     face_1_type_line = StringField('Type Line')
     face_1_oracle_text = TextAreaField('Rules Text')
     face_1_flavor_text = TextAreaField('Flavor Text')
@@ -116,6 +118,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'name': self.face_0_name,
                 'mana_cost': self.face_0_mana_cost,
                 'image_url': self.face_0_image_url,
+                'art_crop_url': self.face_0_art_crop_url,
                 'type_line': self.face_0_type_line,
                 'oracle_text': self.face_0_oracle_text,
                 'flavor_text': self.face_0_flavor_text,
@@ -127,6 +130,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'name': self.face_1_name,
                 'mana_cost': self.face_1_mana_cost,
                 'image_url': self.face_1_image_url,
+                'art_crop_url': self.face_1_art_crop_url,
                 'type_line': self.face_1_type_line,
                 'oracle_text': self.face_1_oracle_text,
                 'flavor_text': self.face_1_flavor_text,

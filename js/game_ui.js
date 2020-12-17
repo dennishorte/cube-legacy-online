@@ -341,6 +341,7 @@ let gameui = (function() {
 
       let front = data.card_faces[0]
       front.image_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
+      front.art_crop_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
       front.name = name
       front.type_line = 'Token'
 

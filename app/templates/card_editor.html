@@ -23,10 +23,10 @@
 
 
 {% macro render_image_popup(field_name) %}
-  {% if field_name == 'image_url' %}
+  {% if field_name in ['image_url', 'art_crop_url'] %}
     <a
       data-toggle="modal"
-      onclick="update_preview_images()"
+      onclick="update_preview_images('{{ field_name }}')"
       href="#imagePreviewModal">
       show
     </a>
@@ -56,19 +56,20 @@
 {% macro face_form(fields, diff, face_name) %}
   <div class="col col-md-6 inner-frames">
     <div class="framed-inner">
-    <h4 class="mt-2">{{ face_name }}</h4>
-    {{ render_form_group(fields, diff, 'name') }}
-    {{ render_form_group(fields, diff, 'mana_cost') }}
-    {{ render_form_group(fields, diff, 'image_url') }}
-    {{ render_form_group(fields, diff, 'type_line') }}
-    {{ render_form_group(fields, diff, 'oracle_text') }}
-    {{ render_form_group(fields, diff, 'flavor_text') }}
+      <h4 class="mt-2">{{ face_name }}</h4>
+      {{ render_form_group(fields, diff, 'name') }}
+      {{ render_form_group(fields, diff, 'mana_cost') }}
+      {{ render_form_group(fields, diff, 'image_url') }}
+      {{ render_form_group(fields, diff, 'art_crop_url') }}
+      {{ render_form_group(fields, diff, 'type_line') }}
+      {{ render_form_group(fields, diff, 'oracle_text') }}
+      {{ render_form_group(fields, diff, 'flavor_text') }}
 
-    <div class="row">
-      {{ render_form_group_col(fields, diff, 'power') }}
-      {{ render_form_group_col(fields, diff, 'toughness') }}
-      {{ render_form_group_col(fields, diff, 'loyalty') }}
-    </div>
+      <div class="row">
+        {{ render_form_group_col(fields, diff, 'power') }}
+        {{ render_form_group_col(fields, diff, 'toughness') }}
+        {{ render_form_group_col(fields, diff, 'loyalty') }}
+      </div>
     </div>
   </div>
 {% endmacro %}
@@ -344,9 +345,9 @@
      $('.field-diff').toggle()
    }
 
-   function update_preview_images() {
-     let front_image_url = $('#face_0_image_url').val()
-     let back_image_url = $('#face_1_image_url').val()
+   function update_preview_images(key) {
+     let front_image_url = $(`#face_0_${key}`).val()
+     let back_image_url = $(`#face_1_${key}`).val()
 
      $('#frontImagePreview img').attr('src', front_image_url)
      $('#backImagePreview img').attr('src', back_image_url)

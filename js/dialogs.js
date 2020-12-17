@@ -95,7 +95,7 @@ module.exports = (function() {
     mana_elem.empty().append(util.mana_symbols_from_string(face_data.mana_cost))
 
     // Image
-    let art_crop = face_data.image_url.replace('normal', 'art_crop')
+    let art_crop = face_data.art_crop_url || face_data.image_url.replace('normal', 'art_crop')
     image_elem.attr('src', art_crop)
 
     // Rules Text

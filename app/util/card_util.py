@@ -31,6 +31,7 @@ class CardConsts(object):
     FACE_KEYS = (
         'flavor_text',
         'image_url',
+        'art_crop_url',
         'loyalty',
         'mana_cost',
         'name',
