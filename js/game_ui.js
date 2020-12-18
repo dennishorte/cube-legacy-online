@@ -206,6 +206,10 @@ let gameui = (function() {
     })
 
     $(document).keyup(function(event) {
+      let focus = $(document.activeElement).prop('tagName').toLowerCase()
+      if (focus == 'input' || focus == 'textarea')
+        return
+
       if (event.keyCode == 37) { // left arrow
         _state.set_history_index(_state.history_index - 1)
         _redraw()
