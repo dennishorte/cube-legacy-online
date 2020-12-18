@@ -1,5 +1,5 @@
 watchify \
-    --entry js/game_ui.js \
-    --standalone ui \
+    --entry js/clo.js \
+    --standalone clo \
     --verbose \
-    --outfile app/static/js/game.js
+    --outfile app/static/js/clo.js
