@@ -212,4 +212,133 @@ util.player_idx_from_elem_id = function(elem_id) {
   return parseInt(elem_id.split('-')[1])
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Card drawing functions
+
+util.draw_card_face = function(container, face_data) {
+  // Elements to be updated
+  let name_elem = container.find('.frame-card-name')
+  let mana_elem = container.find('.frame-mana-cost')
+  let type_elem = container.find('.frame-card-type')
+  let rules_elem = container.find('.frame-description-wrapper')
+  let flavor_elem = container.find('.frame-flavor-wrapper')
+  let image_elem = container.find('.frame-art')
+  let ptl_elem = container.find('.frame-pt-loyalty')
+
+  // Name, Mana, Type
+  name_elem.text(face_data.name)
+  type_elem.text(face_data.type_line)
+
+  // Mana
+  mana_elem.empty().append(util.mana_symbols_from_string(face_data.mana_cost))
+
+  // Image
+  let art_crop = face_data.art_crop_url || face_data.image_url.replace('normal', 'art_crop')
+  image_elem.attr('src', art_crop)
+
+  // Rules Text
+  rules_elem.empty()
+  let rules = face_data.oracle_text.split('\n')
+  for (var i = 0; i < rules.length; i++) {
+    let rule = rules[i].trim()
+    let html_string = util.format_rules_text(rule)
+
+    if (rule.length == 0)
+      continue
+
+    let rule_elem = $('<p></p>')
+    rule_elem.addClass('frame-description')
+    rule_elem.html(html_string)
+    rules_elem.append(rule_elem)
+  }
+
+  // Flavor text
+  flavor_elem.empty()
+  let flavor = face_data.flavor_text.split('\n')
+  for (var i = 0; i < flavor.length; i++) {
+    let flav = flavor[i].trim()
+    if (flav.length == 0)
+      continue
+
+    let flav_elem = $('<p></p>')
+    flav_elem.addClass('frame-flavor-text')
+    flav_elem.text(flav)
+    flavor_elem.append(flav_elem)
+  }
+
+  // Power/Toughness or Loyalty
+  if (face_data.power) {
+    let pt = `${face_data.power}/${face_data.toughness}`
+    ptl_elem.text(pt)
+    ptl_elem.show()
+  }
+  else if (face_data.loyalty) {
+    ptl_elem.text(face_data.loyalty)
+    ptl_elem.show()
+  }
+  else {
+    ptl_elem.hide()
+  }
+
+  // Container classes
+  container.removeClass([
+    'land-card',
+    'white-card',
+    'blue-card',
+    'black-card',
+    'red-card',
+    'green-card',
+    'gold-card',
+    'artifact-card',
+  ])
+
+  if (face_data.type_line.toLowerCase().indexOf('land') >= 0) {
+    container.addClass('land-card')
+  }
+  else {
+    let colors = util.mana_cost_colors(face_data.mana_cost)
+
+    if (colors == 'W')
+      container.addClass('white-card')
+
+    else if (colors == 'U')
+      container.addClass('blue-card')
+
+    else if (colors == 'B')
+      container.addClass('black-card')
+
+    else if (colors == 'R')
+      container.addClass('red-card')
+
+    else if (colors == 'G')
+      container.addClass('green-card')
+
+    else if (colors.length > 1)
+      container.addClass('gold-card')
+
+    else
+      container.addClass('artifact-card')
+  }
+}
+
+
+util.draw_card_frame = function(container, card_json) {
+  let front = container.find('.closeup-front')
+  let back = container.find('.closeup-back')
+
+  // Draw front
+  util.draw_card_face(front, card_json.card_faces[0])
+
+  // Draw back
+  if (card_json.card_faces.length > 1) {
+    _redraw_card(back, card_json.card_faces[1])
+    back.show()
+  }
+  else {
+    back.hide()
+  }
+}
+
+
 module.exports = util
