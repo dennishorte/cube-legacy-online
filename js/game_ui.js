@@ -221,6 +221,49 @@ let gameui = (function() {
     })
   }
 
+  function _init_library_move_modal() {
+    // Populate possible destinations
+    let library_move_dest_select = $('#library-move-dest')
+    for (var i = 0; i < _state.num_players(); i++) {
+      let player_name = _state.state.players[i].name
+
+      let zone_meta_info = _state.zone_meta_info()
+      for (let zone in zone_meta_info) {
+        if (!zone_meta_info.hasOwnProperty(zone))
+          continue
+
+        let zone_id = `player-${i}-${zone}`
+        let zone_name = `${player_name}'s ${zone}`
+        let opt_elem = $(`<option value="${zone_id}">${zone_name}</option>`)
+        library_move_dest_select.append(opt_elem)
+      }
+    }
+
+    $('#library-move-submit').click(function() {
+      let player_idx = parseInt($('#library-move-modal-player-idx').text())
+      let dest_zone = $('#library-move-dest').val()
+      let count = parseInt($('#library-move-count').val())
+      let face_down = $('#libary-move-face-down').is(':checked')
+
+      _state.move_top_of_library_to(
+        player_idx,
+        dest_zone,
+        count,
+        face_down
+      )
+
+      $('#library-move-modal').modal('hide')
+      _redraw()
+    })
+
+    $('#library-move-count').keydown(function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        $('#library-move-submit').click()
+      }
+    })
+  }
+
   function _init_life_buttons() {
     $('.life-buttons').click(function(event) {
       let button = $(event.target)
@@ -323,7 +366,6 @@ let gameui = (function() {
         $('#scry-submit').click()
       }
     })
-
   }
 
   function _init_token_maker_interactions() {
@@ -517,6 +559,13 @@ let gameui = (function() {
       let player_idx = util.player_idx_from_elem(zone)
       $('#scry-modal-player-idx').text(player_idx)
       $('#scry-modal').modal('show')
+    }
+
+    else if (menu_item == 'move top n') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      $('#library-move-modal-player-idx').text(player_idx)
+      $('#library-move-modal').modal('show')
     }
 
     else {
@@ -761,6 +810,7 @@ let gameui = (function() {
         _init_card_closeup_interations()
         _init_card_dragging()
         _init_die_modal()
+        _init_library_move_modal()
         _init_life_buttons()
         _init_popup_menus()
         _init_scry_modal()

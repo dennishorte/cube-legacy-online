@@ -847,6 +847,10 @@ class GameState {
     return player.view_options
   }
 
+  zone_meta_info() {
+    return card_zones
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Private Functions
 

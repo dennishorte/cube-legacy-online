@@ -218,6 +218,7 @@
           <li>collapse/expand</li>
           <li>view</li>
           <li>view top n</li>
+          <li>move top n</li>
         </ul>
       </div>
 
@@ -340,6 +341,37 @@
     </div>
   </div>
   <!-- END: Roll a Die Modal -->
+
+
+  <!-- Move Top N of Library Modal -->
+  <div id="library-move-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="d-none" id="library-move-modal-player-idx"></div>
+
+          <div class="form-group">
+            <label for="num-cards">Move to...</label>
+            <select id="library-move-dest" class="form-control">
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="num-cards">Move How Many</label>
+            <input id="library-move-count" type="text" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <input id="library-move-face-down" type="checkbox">
+            <label for="num-cards">Move Face Down</label>
+          </div>
+
+          <button id="library-move-submit" type="button" class="btn btn-primary">view</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Move Top N of Library Modal -->
 
 
   <!-- Card Closeup -->
