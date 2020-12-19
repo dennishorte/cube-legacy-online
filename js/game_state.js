@@ -181,7 +181,7 @@ class GameState {
     return data
   }
 
-  card_flip_down_up(card_id) {
+  card_flip_down_up(card_id, delta_only=false) {
     let card = this.card(card_id)
 
     if (!card.hasOwnProperty('face_down')) {
@@ -221,6 +221,9 @@ class GameState {
         delta.push(vis_diff)
       }
     }
+
+    if (delta_only)
+      return delta
 
     let diff = {
       delta: delta,
@@ -556,12 +559,80 @@ class GameState {
     let diff_a = {
       delta: delta_a,
       message: `PLAYER_${player_idx}_NAME returns all cards in hand`,
-      player_idx: player_idx,
+      player_idx: this.viewer_idx,
     }
     this._execute(diff_a)
 
     this.shuffle(player_idx)
     this.draw(player_idx, 7)
+  }
+
+  move_top_of_library_to(source_tableau_idx, dest_tableau_idx, dest_zone, count, face_down) {
+    if (count <= 0)
+      return
+
+    let library = this.card_list(source_tableau_idx, 'library')
+
+    var delta = []
+
+    for (var i = 0; i < count; i++) {
+      let card_id = library[0]
+      if (face_down) {
+        let card = this.card(card_id)
+        if (!card.face_down) {
+          let flip_delta = this.card_flip_down_up(card_id, true)
+          delta = delta.concat(flip_delta)
+
+          // Apply the flip diffs so that each successive diff is generated correctly.
+          let tmp_diff = {
+            delta: flip_delta,
+            msg: 'tmp',
+            player: 'GM',
+          }
+          this._execute(tmp_diff)
+        }
+      }
+
+      let orig_loc = {
+        name: 'library',
+        zone_idx: 0,
+        player_idx: source_tableau_idx,
+      }
+      let dest_loc = {
+        name: dest_zone,
+        zone_idx: 0,
+        player_idx: dest_tableau_idx,
+      }
+      let move_delta = this.move_card(orig_loc, dest_loc, card_id, true)
+      delta = delta.concat(move_delta)
+
+      // Apply the move diffs so that each successive diff is generated correctly.
+      let tmp_diff = {
+        delta: move_delta,
+        msg: 'tmp',
+        player: 'GM',
+      }
+      this._execute(tmp_diff)
+    }
+
+    // Undo all of the temporary diffs
+    while (this.history[this.history.length - 1].msg == 'tmp') {
+      this.undo()
+    }
+
+    let player_key = `PLAYER_${this.viewer_idx}_NAME`
+    let zone_key = `PLAYER_${dest_tableau_idx}_NAME's ${dest_zone}`
+    var message = `${player_key} moves ${count} cards from library to ${zone_key}`
+    if (face_down)
+      message += ', face down'
+
+    let diff = {
+      delta: delta,
+      message: message,
+      player_idx: this.viewer_idx,
+    }
+
+    return this._execute(diff)
   }
 
   next_id() {

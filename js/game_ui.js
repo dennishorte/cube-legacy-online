@@ -241,13 +241,17 @@ let gameui = (function() {
 
     $('#library-move-submit').click(function() {
       let player_idx = parseInt($('#library-move-modal-player-idx').text())
-      let dest_zone = $('#library-move-dest').val()
+      let dest_zone_id = $('#library-move-dest').val()
       let count = parseInt($('#library-move-count').val())
-      let face_down = $('#libary-move-face-down').is(':checked')
+      let face_down = $('#library-move-face-down').is(':checked')
+
+      console.log(face_down)
+      console.log($('#library-move-face-down'))
 
       _state.move_top_of_library_to(
         player_idx,
-        dest_zone,
+        util.player_idx_from_elem_id(dest_zone_id),
+        _zone_from_id(dest_zone_id),
         count,
         face_down
       )
