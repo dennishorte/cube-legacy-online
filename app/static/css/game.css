@@ -148,6 +148,15 @@
   position: relative;
 }
 
+.dialog .zone-menu-inner i {
+  font-size: 1.2rem;
+}
+
+.dialog-close {
+  margin-left: .2rem;
+  margin-right: .1rem;
+}
+
 .zone-menu-icon {
   color: var(--secondary);
   margin-top: .25rem;
@@ -338,6 +347,10 @@
   left: 50px;
 
   padding: 0.5rem;
+}
+
+#card-closeup .card-container {
+  margin-top: .5rem;
 }
 
 .card-closeup-annotation {
