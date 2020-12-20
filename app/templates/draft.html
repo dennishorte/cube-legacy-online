@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
+{% from "macros/card_list.html" import show_draft_card_list %}
 {% from "macros/deck_builder.html" import deck_builder %}
 {% from "macros.html" import show_achievement %}
-{% from "macros.html" import show_draft_card_list %}
 {% from "macros.html" import show_picked_card_names %}
 
 {% macro seating_chart(d) %}
@@ -319,7 +319,26 @@
 {% block scripts %}
   <script src="/static/js/deck_builder.js?version={{ version }}"></script>
   <script>
+   let card_data = {{ d.card_data()|tojson }};
+   console.log(Object.getOwnPropertyNames(card_data))
+
+   function fill_card_frames() {
+     $('.closeup-card-wrapper').each(function() {
+       let elem = $(this)
+       let card_id = elem.data('card-id')
+       let data = card_data[card_id]
+       if (!data) {
+         console.log(card_id)
+         return
+       }
+
+       clo.util.draw_card_frame(elem, data)
+     })
+   }
+
    $(document).ready(function() {
+     fill_card_frames()
+
      $('#draftFaceUpModal').on('show.bs.modal', function (event) {
        let button = $(event.relatedTarget) // Button that triggered the modal
        let card_name = button.data('card-name')

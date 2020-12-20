@@ -44,7 +44,7 @@
   --txt-white: #fdfbf8;
 
   position: relative;
-  width: 17rem;
+  width: 14em;
 }
 
 .artifact-card .card-background {
@@ -182,18 +182,18 @@
 
 .card-border {
   background: #171314;
-  border-radius: 1em;
+  border-radius: .6em;
   justify-content: space-between;
   /* box-shadow: -8px 9px 16px -3px gray; */
 }
 
 .card-background {
-  margin: .5rem!important;
+  margin: .5em!important;
 
-  height: calc(100% - (2 * .5rem));
-  width: calc(100% - (2 * .5rem));
+  height: calc(100% - (2 * .5em));
+  width: calc(100% - (2 * .5em));
 
-  border-radius: .4rem;
+  border-radius: .4em;
 }
 
 .card-frame {
@@ -209,57 +209,64 @@
 .frame-pt-loyalty,
 .frame-type-line {
   font-weight: bold;
-  height: 1.6rem;
+  height: 1.6em;
   justify-content: space-between;
 
-  padding: 0 .15rem 0 .25rem!important;
+  padding: 0 .15em 0 .25em!important;
 
-  border-radius: .4rem/.8rem;
-  border: .15rem solid;
+  border-radius: .4em/.8em;
+  border: .15em solid;
 
   width: 100%;
 
   box-shadow:
     inset 1px 1px black,
     inset -1px -1px black,
-    inset .15rem -.15rem rgba(0, 0, 0, .5),
-    inset -.15rem .15rem rgba(255, 255, 255, .4),
-    -.1rem .1rem rgba(0, 0, 0, .9),
-    -.1rem .1rem rgba(0, 0, 0, .9);
+    inset .15em -.15em rgba(0, 0, 0, .5),
+    inset -.15em .15em rgba(255, 255, 255, .4),
+    -.1em .1em rgba(0, 0, 0, .9),
+    -.1em .1em rgba(0, 0, 0, .9);
+}
+
+.frame-pt-loyalty {
+  font-size: .8em;
 }
 
 .frame-mana-cost {
-  font-size: .75rem;
-  margin-top: .14rem!important;
+  font-size: .75em;
+  margin-top: .14em!important;
 }
 
 .frame-card-name,
 .frame-card-type {
-  margin-top: .05rem!important;
+  margin-top: .05em!important;
+  font-size: .8em;
 }
 
 .frame-pt-loyalty {
   justify-content: center;
-  width: 3rem;
-  margin-top: -.5rem!important;
+  width: 3em;
+  margin-top: -.5em!important;
   align-self: flex-end;
 }
 
 .frame-art {
-  width: 14.8rem;
-  height: 10.7rem;
-  border-left: .15rem solid;
-  border-right: .15rem solid;
+  width: 14.8em;
+  height: 10.7em;
+  border-left: .15em solid;
+  border-right: .15em solid;
   box-shadow:
     -.1em .1em .05em rgba(0, 0, 0, .9);
 }
 
 .frame-text-box {
-  padding: .25rem;
+  font-size: .8em;
+
+  padding: .25em;
   line-height: 1;
-  width: 14.8rem;
-  min-height: 8rem;
-  border: .15rem solid;
+  width: 18.5em;
+  min-height: 8em;
+  border: .15em solid;
   border-top: 0;
 
   flex-direction: column;
@@ -273,15 +280,15 @@
 
 .frame-text-box div {
   flex-direction: column;
-  padding: .25rem;
+  padding: .25em;
 }
 
 .frame-text-box p {
-  margin-bottom: .4rem;
+  margin-bottom: .4em;
 }
 
 .frame-text-box i {
-  font-size: .6rem;
+  font-size: .6em;
 }
 
 .frame-description {

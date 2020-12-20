@@ -332,7 +332,7 @@ util.draw_card_frame = function(container, card_json) {
 
   // Draw back
   if (card_json.card_faces.length > 1) {
-    _redraw_card(back, card_json.card_faces[1])
+    util.draw_card_face(back, card_json.card_faces[1])
     back.show()
   }
   else {
