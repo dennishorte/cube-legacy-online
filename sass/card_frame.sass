@@ -109,12 +109,13 @@ $almost-black: #171314
     .frame-header,
     .frame-pt-loyalty,
     .frame-type-line
-      font-size: $unit * 6
-      font-weight: bold
-      height: $unit * 10
+      font-size: $unit * 5
+      font-weight: 550
+      height: $unit * 8
       justify-content: space-between
+      align-items: center
 
-      padding: $unit #{$unit * 2}
+      padding: 0 #{$unit * 2}
 
       border-radius: #{$unit*2}/#{$unit*5}
       border: 1px solid
@@ -124,7 +125,7 @@ $almost-black: #171314
       //box-shadow: inset 1px 1px black, inset -1px -1px black, inset 1px -1px rgba(0, 0, 0, .5), inset -1px 1px rgba(255, 255, 255, .4), 1px -1px rgba(0, 0, 0, .9), -1px 1px rgba(0, 0, 0, .9)
 
     .frame-mana-cost
-      font-size: $unit * 5.5
+      font-size: $unit * 4.5
 
     .frame-pt-loyalty
       width: $unit * 15
@@ -136,15 +137,16 @@ $almost-black: #171314
       margin-top: -#{$unit*5}
 
     .frame-art
-      width: $unit * 89
+      width: $unit * 90 - 2px
       border-left: 1px solid
       border-right: 1px solid
 
     .frame-text-box
-      font-size: $unit * 6
+      font-size: $unit * 5
+      font-weight: normal
       padding: $unit
       line-height: 1
-      width: $unit * 89
+      width: $unit * 90 - 2px
       min-height: $unit * 50
       flex-direction: column
       justify-content: space-between
@@ -159,7 +161,7 @@ $almost-black: #171314
         margin-bottom: $unit * 2
 
       i
-        font-size: $unit * 4.5
+        font-size: $unit * 4
 
     .frame-flavor-text
       font-style: italic
