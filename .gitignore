@@ -9,5 +9,6 @@ test.py
 app/static/cockatrice
 *~
 node_modules
+app/static/css/card_frame.css*
 app/static/js/clo.js
 build_time

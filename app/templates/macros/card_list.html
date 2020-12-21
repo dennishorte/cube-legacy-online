@@ -31,10 +31,10 @@
 
       {% if is_legacy %}
         <div style="margin: 2px;">
-        {{ card_frame(card.cube_card.id) }}
+        {{ card_frame(220, card.cube_card.id) }}
       {% else %}
 
-          <div class="col framed card-frame">
+          <div class="col framed framed-card">
             <!-- Card Image (and draft link) -->
             <p class="mb-0">
 
@@ -98,7 +98,7 @@
   <div class="row ">
     {% for card in cards|sort(attribute='picked_at', reverse=True) %}
       {% set card = card|cube_cardify %}
-      <div class="framed card-frame">
+      <div class="framed framed-card">
         <!-- Card Image (and draft link) -->
         <p>
           {% for image_url in card.image_urls() %}

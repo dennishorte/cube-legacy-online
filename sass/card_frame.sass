@@ -1,0 +1,175 @@
+$artifact-bg: #9facc3
+$artifact-fg: #dfe0f2
+$artifact-bdr: #dbd9e8
+$artifact-txt: #d6d8e7
+
+$blue-bg: #73b2e0
+$blue-fg: #cfdfec
+$blue-bdr: #2a6186
+$blue-txt: #eaeef7
+
+$black-bg: #292d3a
+$black-fg: #c4bbc2
+$black-bdr: #2a292c
+$black-txt: #eae6ef
+
+$green-bg: #709d61
+$green-fg: #c8d5cd
+$green-bdr: #1c6a31
+$green-txt: #dae5de
+
+$gold-bg: #cebc70
+$gold-fg: #dbc582
+$gold-bdr: #ddd09c
+$gold-txt: #f6f3e2
+
+$land-bg: #847467
+$land-fg: #c2bebf
+$land-bdr: #897978
+$land-txt: #c8c7c5
+
+$red-bg: #ce563d
+$red-fg: #f4c0ac
+$red-bdr: #d22e22
+$red-txt: #fde4e3
+
+$white-bg: #d5cba6
+$white-fg: #f4f5f0
+$white-bdr: #f3f1e9
+$white-txt: #fdfbf8
+
+$almost-black: #171314
+
+
+@mixin frame-colors($name, $background, $foreground, $border, $rules-background)
+  .#{$name}-card
+    .card-background
+      background-color: $background
+
+    .frame-foreground
+      background-color: $foreground
+      border-color: $border
+
+    .frame-art
+      border-color: $border
+
+    .frame-text-box
+      background-color: $rules-background
+      border-color: $border
+
+
+@include frame-colors('artifact', $artifact-bg, $artifact-fg, $artifact-bdr, $artifact-txt)
+@include frame-colors('black', $black-bg, $black-fg, $black-bdr, $black-txt)
+@include frame-colors('blue', $blue-bg, $blue-fg, $blue-bdr, $blue-txt)
+@include frame-colors('green', $green-bg, $green-fg, $green-bdr, $green-txt)
+@include frame-colors('red', $red-bg, $red-fg, $red-bdr, $red-txt)
+@include frame-colors('white', $white-bg, $white-fg, $white-bdr, $white-txt)
+@include frame-colors('gold', $gold-bg, $gold-fg, $gold-bdr, $gold-txt)
+@include frame-colors('land', $land-bg, $land-fg, $land-bdr, $land-txt)
+
+.closeup-card-wrapper
+  //font-family: "Arial Narrow", Arial, sans-serif
+  display: flex
+
+.closeup-card-wrapper
+  div
+    display: flex
+    margin: 0
+    padding: 0
+
+
+@mixin card-face($size)
+  $unit: $size * .01
+
+  .card-container-#{$size}
+    position: relative
+    width: $size
+
+    .card-border
+      background: $almost-black
+      border-radius: $unit * 3
+      justify-content: space-between
+
+    .card-background
+      $border-width: $unit * 2.5
+
+      margin: $border-width
+      width: $size - (2 * $border-width)
+      border-radius: $unit * 2
+
+    .card-frame
+      height: 100%
+      width: 100%
+      max-width: 100%
+      padding: #{$unit * 1.6} $unit
+
+      flex-direction: column
+      align-items: center
+
+    .frame-header,
+    .frame-pt-loyalty,
+    .frame-type-line
+      font-size: $unit * 6
+      font-weight: bold
+      height: $unit * 10
+      justify-content: space-between
+
+      padding: $unit #{$unit * 2}
+
+      border-radius: #{$unit*2}/#{$unit*5}
+      border: 1px solid
+
+      width: 100%
+
+      //box-shadow: inset 1px 1px black, inset -1px -1px black, inset 1px -1px rgba(0, 0, 0, .5), inset -1px 1px rgba(255, 255, 255, .4), 1px -1px rgba(0, 0, 0, .9), -1px 1px rgba(0, 0, 0, .9)
+
+    .frame-mana-cost
+      font-size: $unit * 5.5
+
+    .frame-pt-loyalty
+      width: $unit * 15
+      align-self: flex-end
+      flex-direction: column
+      align-items: center
+      padding: 0
+      height: $unit * 9
+      margin-top: -#{$unit*5}
+
+    .frame-art
+      width: $unit * 89
+      border-left: 1px solid
+      border-right: 1px solid
+
+    .frame-text-box
+      font-size: $unit * 6
+      padding: $unit
+      line-height: 1
+      width: $unit * 89
+      min-height: $unit * 50
+      flex-direction: column
+      justify-content: space-between
+      border: 1px solid
+      border-top: 0
+
+      div
+        flex-direction: column
+        padding: 0 $unit
+
+      p
+        margin-bottom: $unit * 2
+
+      i
+        font-size: $unit * 4.5
+
+    .frame-flavor-text
+      font-style: italic
+      font-weight: 300
+
+    .frame-flavor-text:first-of-type
+      padding-top: 5px
+      border-top: 1px solid
+      border-color: #999!important
+
+
+@include card-face(220px)
+@include card-face(270px)

@@ -85,7 +85,7 @@ body {
   margin-right: 0;
 }
 
-.card-frame {
+.framed-card {
   margin: .25rem!important;
   max-width: 220px;
   font-size: .8rem;
