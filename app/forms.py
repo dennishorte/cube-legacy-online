@@ -217,19 +217,23 @@ class NewDraftForm(FlaskForm):
     numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
     scar_rounds = StringField('Scar Rounds (eg. 0,3)')
     players = SelectMultipleField('Players', validators=[DataRequired()])
+    parent = SelectField('Parent')
     submit = SubmitField('Create')
 
     @staticmethod
     def factory():
         from app.models.cube_models import Cube
+        from app.models.draft_models import Draft
         from app.models.user_models import User
 
         cubes = [x.name for x in Cube.query.order_by('name')]
         users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+        drafts = [(0, '')] + [(x.id, x.name) for x in Draft.query.order_by('name')]
 
         form = NewDraftForm()
         form.cube.choices = cubes
         form.players.choices = users
+        form.parent.choices = drafts
 
         return form
 

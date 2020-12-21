@@ -109,6 +109,7 @@ def draft_new():
             num_packs=form.numpacks.data,
             user_names=form.players.data,
             scar_rounds=form.scar_rounds.data,
+            parent_id=form.parent.data,
         )
         return redirect(url_for('index'))
 

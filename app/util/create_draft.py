@@ -16,7 +16,14 @@ def create_draft(
         scar_rounds: str,
         pack_maker = None,
         picks_per_pack = 1,
+        parent_id = None,
 ):
+    if parent_id and parent_id != '0':
+        parent_id = int(parent_id)
+        parent_draft = Draft.query.get(parent_id)
+        if not parent_draft:
+            raise RuntimeError(f"Unable to link to draft {parent_id}")
+
     cube = Cube.query.filter(Cube.name == cube_name).first()
 
     draft = Draft(
@@ -28,9 +35,15 @@ def create_draft(
         scar_rounds_str=scar_rounds,
         picks_per_pack=picks_per_pack,
     )
+    if parent_id:
+        draft.parent_id = parent_id
     db.session.add(draft)
 
     users = User.query.filter(User.name.in_(user_names)).all()
+    if parent_id:
+        if sorted([x.id for x in users]) != sorted([x.user_id for x in parent_draft.seats]):
+            raise RuntimeError(f"Can't link drafts with different users")
+
     random.shuffle(users)
     for index, user in enumerate(users):
         seat = Seat(
