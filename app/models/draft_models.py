@@ -23,8 +23,11 @@ class Draft(db.Model):
 
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
 
     # Relationships
+    parent = db.relationship('Draft', remote_side=[id])
+
     seats = db.relationship('Seat', backref='draft')
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
@@ -35,6 +38,9 @@ class Draft(db.Model):
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
+
+    def children(self):
+        return Draft.query.filter(Draft.parent_id == self.id).all()
 
     @functools.cached_property
     def complete(self):

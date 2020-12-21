@@ -62,13 +62,16 @@ class CardSet(object):
 
 class DeckBuilder(object):
     def __init__(self, draft_id, user_id):
-        self.draft = Draft.query.get(draft_id)
+        draft = Draft.query.get(draft_id)
+        self.draft = draft.parent or draft
+        self.draft_ids = [self.draft.id] + [x.id for x in self.draft.children()]
+
         self.user = User.query.get(user_id)
 
-        self.seat = Seat.query.filter(
-            Seat.draft_id == self.draft.id,
+        self.seats = Seat.query.filter(
+            Seat.draft_id.in_(self.draft_ids),
             Seat.user_id == self.user.id,
-        ).first()
+        ).all()
 
         self.deck = self._load_deck()
 
@@ -133,11 +136,13 @@ class DeckBuilder(object):
 
     def _add_latest_picks(self, deck):
         deck_cards = deck.maindeck() + deck.sideboard()
-        if len(deck_cards) == len(self.seat.picks):
+        picked_cards = self._picked_cards()
+
+        if len(deck_cards) == len(picked_cards):
             return deck
 
         deck_counts = {}
-        picked_cards = [x.cube_card for x in self.seat.picks]
+
         for card in picked_cards:
             deck_counts.setdefault(card.id, []).append(card)
 
@@ -161,7 +166,7 @@ class DeckBuilder(object):
 
         maindeck = []
         sideboard = []
-        for card in self.seat.picks:
+        for card in self._picked_cards():
             if card.sideboard:
                 sideboard.append(card.cube_card)
             else:
@@ -174,3 +179,9 @@ class DeckBuilder(object):
         db.session.commit()
 
         return deck
+
+    def _picked_cards(self):
+        picked_cards = []
+        for seat in self.seats:
+            picked_cards += [x.cube_card for x in seat.picks]
+        return picked_cards
