@@ -96,7 +96,7 @@ class CardTable(object):
                     types[type].append(card)
                     break
             else:
-                raise ValueError(f"Card {card.name()} has unknown type {card.type_line()}")
+                types['other'].append(card)
 
         sections = []
         for type, cards in types.items():
