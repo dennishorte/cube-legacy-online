@@ -39,7 +39,10 @@ def index():
     achievements_finished = [x for x in current_user.achievements_unlocked if x.finalized_timestamp]
     achievements_finished.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
 
-    cubes = Cube.query.filter(Cube.admin != True).all()
+    cubes = Cube.query.filter(
+        Cube.admin != True,
+        Cube.active == True,
+    ).all()
     users = User.query.filter(User.name != 'starter').order_by(User.name).all()
 
     return render_template(
