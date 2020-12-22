@@ -715,6 +715,37 @@ class GameState {
     return this.state.priority
   }
 
+  randomize_bottom_of_library(player_idx, count) {
+    let library = this.card_list(player_idx, 'library')
+
+    if (count > library.length) {
+      count = library.length
+    }
+
+    let top = library.slice(0, library.length - count)
+    let bottom = library.slice(library.length - count, library.length)
+    util.arrayShuffle(bottom)
+
+    let updated = top.concat(bottom)
+
+    let delta = [{
+      action: 'set_cards_in_zone',
+      player_idx: player_idx,
+      zone: 'library',
+      old_value: library,
+      new_value: updated,
+    }]
+
+    let player_key = `PLAYER_${player_idx}_NAME`
+    let diff = {
+      delta: delta,
+      message: `Bottom ${count} cards of ${player_key}'s library randomized`,
+      player_idx: this.viewer_idx,
+    }
+
+    return this._execute(diff)
+  }
+
   reveal_top_of_library_to(player_idx, library_idx, count) {
     let card_list = this.card_list(library_idx, 'library')
     let player_name = this.player(player_idx).name

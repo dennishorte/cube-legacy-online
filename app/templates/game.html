@@ -215,7 +215,9 @@
           <li>collapse/expand</li>
           <li>view</li>
           <li>view top n</li>
+          <li>---</li>
           <li>move top n</li>
+          <li>randomize bottom n</li>
         </ul>
       </div>
 
@@ -369,6 +371,34 @@
     </div>
   </div>
   <!-- END: Move Top N of Library Modal -->
+
+
+  <!-- Randomize Bottom of Library Modal -->
+  <div id="randomize-bottom-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          Randomize Bottom of Library
+        </div>
+
+        <div class="modal-body">
+          <div class="d-none" id="randomize-bottom-modal-player-idx"></div>
+
+          <div class="form-group">
+            <label for="num-cards">How Many</label>
+            <input id="randomize-bottom-count" type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="randomize-bottom-submit" type="button" class="btn btn-primary">randomize</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Randomize Bottom of Library Modal -->
 
 
   <!-- Card Closeup -->

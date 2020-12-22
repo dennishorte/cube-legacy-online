@@ -245,9 +245,6 @@ let gameui = (function() {
       let count = parseInt($('#library-move-count').val())
       let face_down = $('#library-move-face-down').is(':checked')
 
-      console.log(face_down)
-      console.log($('#library-move-face-down'))
-
       _state.move_top_of_library_to(
         player_idx,
         util.player_idx_from_elem_id(dest_zone_id),
@@ -349,6 +346,25 @@ let gameui = (function() {
     window.addEventListener('click', function(event) {
       if (!event.target.matches('.zone-menu-icon')) {
         $(".popup-menu").hide()
+      }
+    })
+  }
+
+  function _init_randomize_bottom_modal() {
+    $('#randomize-bottom-submit').click(function() {
+      let player_idx = parseInt($('#randomize-bottom-modal-player-idx').text())
+      let count = parseInt($('#randomize-bottom-count').val())
+
+      _state.randomize_bottom_of_library(player_idx, count)
+
+      $('#randomize-bottom-modal').modal('hide')
+      _redraw()
+    })
+
+    $('#randomize-bottom-count').keydown(function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        $('#randomize-bottom-submit').click()
       }
     })
   }
@@ -570,6 +586,13 @@ let gameui = (function() {
       let player_idx = util.player_idx_from_elem(zone)
       $('#library-move-modal-player-idx').text(player_idx)
       $('#library-move-modal').modal('show')
+    }
+
+    else if (menu_item == 'randomize bottom n') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      $('#randomize-bottom-modal-player-idx').text(player_idx)
+      $('#randomize-bottom-modal').modal('show')
     }
 
     else {
@@ -815,6 +838,7 @@ let gameui = (function() {
         _init_card_dragging()
         _init_die_modal()
         _init_library_move_modal()
+        _init_randomize_bottom_modal()
         _init_life_buttons()
         _init_popup_menus()
         _init_scry_modal()
