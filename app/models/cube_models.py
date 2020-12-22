@@ -490,6 +490,9 @@ class Achievement(db.Model):
     linked_drafts = db.relationship('AchievementDraftLink', backref='ach')
     starred = db.relationship('AchievementStar', backref='achievement')
 
+    def unlock_date(self):
+        pass
+
     def available(self):
         return self.unlocked_by_id is None
 
