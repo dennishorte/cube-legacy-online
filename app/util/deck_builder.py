@@ -63,7 +63,10 @@ class CardSet(object):
 class DeckBuilder(object):
     def __init__(self, draft_id, user_id):
         draft = Draft.query.get(draft_id)
-        self.draft = draft.parent or draft
+        if draft.parent_id:
+            self.draft = Draft.query.get(draft.parent_id)
+        else:
+            self.draft = draft
         self.draft_ids = [self.draft.id] + [x.id for x in self.draft.children()]
 
         self.user = User.query.get(user_id)

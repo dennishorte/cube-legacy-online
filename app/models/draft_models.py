@@ -23,11 +23,9 @@ class Draft(db.Model):
 
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
-    parent_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
+    parent_id = db.Column(db.Integer)
 
     # Relationships
-    parent = db.relationship('Draft', remote_side=[id])
-
     seats = db.relationship('Seat', backref='draft')
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')

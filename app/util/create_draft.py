@@ -18,7 +18,10 @@ def create_draft(
         picks_per_pack = 1,
         parent_id = None,
 ):
-    if parent_id and parent_id != '0':
+    if parent_id == '0':
+        parent_id = None
+
+    if parent_id:
         parent_id = int(parent_id)
         parent_draft = Draft.query.get(parent_id)
         if not parent_draft:
@@ -34,9 +37,8 @@ def create_draft(
         num_seats=len(user_names),
         scar_rounds_str=scar_rounds,
         picks_per_pack=picks_per_pack,
+        parent_id=parent_id,
     )
-    if parent_id:
-        draft.parent_id = parent_id
     db.session.add(draft)
 
     users = User.query.filter(User.name.in_(user_names)).all()
