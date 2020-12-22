@@ -240,6 +240,16 @@
           data-target="#achievementLink">
           Link to Achievement
         </button>
+
+        {% if card.version != 1 %}
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-toggle="modal"
+            data-target="#flatten-scars-modal">
+            Flatten Scars
+          </button>
+        {% endif %}
       </div>
 
       <div class="col bg-light border p-2">
@@ -305,6 +315,32 @@
     <!-- END: Comments from previous versions -->
 
   </div>
+
+  <!-- Flatten Scars Modal -->
+  <div class="modal fade" id="flatten-scars-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Flatten Scars</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        <div class="modal-body">
+          This will delete all older versions of this card, and make this into the original version. This cannot be undone. Are you sure?
+        </div>
+
+        <div class="modal-footer">
+          <a class="btn btn-danger" href="{{ url_for('card_flatten', card_id=card.id) }}">
+            I'm Sure!
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Flatten Scars Modal -->
 
   <!-- Image Preview Modal -->
   <div class="modal fade" id="imagePreviewModal" tabindex="-1" role="dialog">
