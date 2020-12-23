@@ -17,28 +17,32 @@ clo_channel = 'C01AV1RGJSK'
 
 
 def send_new_game_notifications(game):
-    for player in game.players:
+    state = game.state_no_cache()
+
+    for player in state.players:
         if player.id == current_user.id:
             continue
 
         user = User.query.get(player.id)
         domain_host = urlparse(request.base_url).hostname
         game_url = f"http://{domain_host}/game/{game.id}"
-        message = f"You've been invited to a new game, '{game.name}'. <{game_url}|Don't keep your opponent waiting!>."
+        message = f"You've been invited to a new game, '{state.name}'. <{game_url}|Don't keep your opponent waiting!>."
 
     _send_slack_message(user, message)
 
 
 def send_your_turn_in_game_notification(game):
-    if len(game.players) == 1:
+    state = game.state_no_cache()
+
+    if len(state.players) == 1:
         return
 
-    next_player = game.priority_player()
+    next_player = state.priority_player()
 
     user = User.query.get(next_player.id)
     domain_host = urlparse(request.base_url).hostname
     game_url = f"http://{domain_host}/game/{game.id}"
-    message = f"You have received priority in {game.name}. <{game_url}|Don't keep your opponent waiting!>."
+    message = f"You have received priority in {state.name}. <{game_url}|Don't keep your opponent waiting!>."
 
     _send_slack_message(user, message)
 
