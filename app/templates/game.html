@@ -90,7 +90,11 @@
 
     {{ header() }}
 
-    <div class="row">
+    <div class="row
+                {% if num_players > 2 %}
+                  flex-lg-nowrap
+                {% endif %}
+                ">
       <div id="game-phase" class="col-4 col-lg-1 inner-frames">
         <div id="actions-zone" class="game-frame">
           <p class="border-bottom text-secondary text-xs">Actions</p>
@@ -143,10 +147,18 @@
 
       {% set current_user_idx = game_state.seat_index_by_user_id(current_user.id) %}
       {% for base_idx in range(current_user_idx, current_user_idx + game_state.players|length, 1) %}
-        {% set player_idx = (base_idx) % game_state.players|length %}
+        {% set player_idx = (base_idx) % num_players %}
         {% set id_prefix = "player-{}".format(player_idx) %}
 
-        <div id="{{ id_prefix }}-tableau" class="col-lg tableau game-frame">
+        <div
+          id="{{ id_prefix }}-tableau"
+          class="tableau game-frame
+              {% if num_players == 2 %}
+                col
+              {% else %}
+                col-lg-4
+              {% endif %}
+              ">
           <div class="row inner-frames
                       {% if loop.index > 1 %}
                       flex-row-reverse

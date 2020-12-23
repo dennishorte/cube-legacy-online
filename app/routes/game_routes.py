@@ -29,6 +29,7 @@ def game(game_id):
             'game.html',
             game_id=game_id,
             game_state=game.state,
+            num_players=len(game.state.players),
         )
 
     else:
