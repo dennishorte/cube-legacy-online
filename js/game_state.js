@@ -671,29 +671,6 @@ class GameState {
     }
   }
 
-  pass_turn() {
-    let next_player_idx = (this.turn_player_idx() + 1) % this.num_players()
-    var delta = [{
-      action: 'set_game_value',
-      key: 'turn',
-      old_value: this.turn_player_idx(),
-      new_value: next_player_idx,
-    }]
-
-    /* if (this.priority_player_idx() != next_player_idx) {
-     *   delta = delta.concat(this.pass_priority(false))
-     * } */
-
-    let next_player_name = this.player(next_player_idx).name
-    let diff = {
-      delta: delta,
-      message: `${next_player_name}'s turn`,
-      player: 'GM',
-    }
-
-    this._execute(diff)
-  }
-
   phase() {
     return this.state.phase
   }
@@ -876,6 +853,23 @@ class GameState {
     }
 
     return this._execute(diff)
+  }
+
+  start_turn() {
+    var delta = [{
+      action: 'set_game_value',
+      key: 'turn',
+      old_value: this.turn_player_idx(),
+      new_value: this.viewer_idx,
+    }]
+
+    let diff = {
+      delta: delta,
+      message: `PLAYER_${this.viewer_idx}_NAME's turn`,
+      player: 'GM',
+    }
+
+    this._execute(diff)
   }
 
   toggle_zone_collapse(player_idx, zone_id) {

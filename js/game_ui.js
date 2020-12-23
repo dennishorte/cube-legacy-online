@@ -63,8 +63,8 @@ let gameui = (function() {
       // _redraw()  // This happens in the save callback
     })
 
-    $('#pass-turn').click(function() {
-      _state.pass_turn()
+    $('#start-turn').click(function() {
+      _state.start_turn()
       _redraw()
     })
   }
