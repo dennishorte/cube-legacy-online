@@ -51,6 +51,8 @@ document.addEventListener('mousemove', function (e) {
   const x_offset = e.clientX + self.pageXOffset
   const y_offset = e.clientY + self.pageYOffset
 
+  let autocardPopup = _autocard_popup_element()
+
   if (rightPixelSpace > leftPixelSpace) {
     // display on right
     autocardPopup.style.left = Math.max(self.pageXOffset, 5 + x_offset) + 'px'
@@ -75,17 +77,12 @@ document.addEventListener('mousemove', function (e) {
 })
 
 function autocard_show_legacy_card(card_id) {
-  console.log(card_id)
-
-  let card = window.card_data[card_id]
-  console.log(card)
-
   let popup_element = $(_autocard_popup_element())
   popup_element.removeClass('d-none')
 
   clo.util.draw_card_frame(
-    popup_element.find('.card-container'),
-    card,
+    popup_element.find('.closeup-card-wrapper'),
+    window.card_data[card_id],
   )
 }
 
@@ -133,7 +130,7 @@ function _autocard_enter_listener(event) {
 }
 
 function _autocard_leave_card() {
-  document.getElementById('autocardPopup').classList.add('d-none')
+  _autocard_popup_element().classList.add('d-none')
 }
 
 function _autocard_popup_element() {

@@ -104,6 +104,15 @@ class Cube(db.Model):
         cards.sort(key=lambda x: x.name())
         return cards
 
+    def card_data(self):
+        """
+        Card json data for use in javascript (eg. legacy autocard popups)
+        """
+        cards = {}
+        for card in self.cards():
+            cards[card.id] = card.get_json()
+        return cards
+
     def cards_added(self):
         cards = CubeCard.query.filter(
             CubeCard.cube_id == self.id,

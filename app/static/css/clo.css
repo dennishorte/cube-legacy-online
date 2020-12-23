@@ -174,6 +174,11 @@ body {
   text-decoration: inherit;
 }
 
+#legacy-card-popup {
+  position: absolute;
+  z-index: 500;
+}
+
 #autocardPopup {
   width: 15rem;
   position: absolute;

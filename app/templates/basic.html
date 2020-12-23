@@ -1,3 +1,5 @@
+{% from 'macros/card_frame.html' import empty_card_frame %}
+
 {% set version = config.BUILD_TIME %}
 <!doctype html>
 <html>
@@ -50,6 +52,13 @@
       </div>
     </div>
     <!-- END: Card Image Popup -->
+
+
+    <!-- Legacy Card Popup -->
+    <div class="d-none" id="legacy-card-popup">
+      {{ empty_card_frame(220) }}
+    </div>
+    <!-- END: Legacy Card Popup -->
 
 
     <script

@@ -65,6 +65,7 @@
               {% endif %}
               <p
                 class="card-list-item"
+                data-card-id="{{ card.id }}"
                 data-front="{{ card.image_front() }}"
                 {% if card.image_back() %}
                   data-back="{{ card.image_back() }}"
@@ -305,7 +306,12 @@
 {% block scripts %}
   <script>
    $(document).ready(function() {
-     autocard_init('card-list-item')
+     {% if cube.style_a == 'legacy' %}
+       autocard_init('card-list-item', true)
+       window.card_data = {{ cube.card_data()|tojson }}
+     {% else %}
+       autocard_init('card-list-item', false)
+     {% endif %}
 
      $('#addCardsButton').click(function () {
        let modal = $('#addCardsModal')
