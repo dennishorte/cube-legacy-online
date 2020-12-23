@@ -86,7 +86,6 @@ $(document).ready(function() {
 
   // Initialization
   update_counts()
-  autocard_init('card-list-item')
 
   // Make the cards movable.
   $(".sortable").sortable({

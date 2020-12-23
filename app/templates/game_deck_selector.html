@@ -80,7 +80,16 @@
   <script src="/static/js/deck_builder.js?version={{ version }}"></script>
   <script>
    $(document).ready(function() {
-     autocard_init('card-list-item')
+
+     {% if db %}
+       {% set cube = db.draft.cube %}
+       {% if cube.style_a == 'legacy' %}
+         autocard_init('card-list-item', true)
+         window.card_data = {{ cube.card_data()|tojson }}
+       {% else %}
+         autocard_init('card-list-item', false)
+       {% endif %}
+     {% endif %}
 
      // When hitting ready, fill the hidden fields with the deck data before submitting.
      $('#readyForm').submit(function(event) {
