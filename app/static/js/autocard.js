@@ -1,135 +1,146 @@
-var stopAutocard = false;
-var autocardTimeout = null;
+'use_strict'
 
-const autocardEnterListeners = new Map();
-const autocardLeaveListeners = new Map();
-function autocard_init(classname) {
-  const elements = document.getElementsByClassName(classname);
+////////////////////////////////////////////////////////////////////////////////
+// Public Interface
+
+function autocard_init(classname, legacy) {
+  legacyAutocard = legacy
+
+  const elements = document.getElementsByClassName(classname)
   for (let i = 0; i < elements.length; i++) {
-    const element = elements[i];
+    const element = elements[i]
 
-    const enterListener = autocardEnterListeners.get(element);
-    if (enterListener) {
-      element.removeEventListener('mouseenter', enterListener);
+    if (!autocardEnterListeners.get(element)) {
+      autocardEnterListeners.set(
+        element,
+        element.addEventListener('mouseenter', _autocard_enter_listener),
+      )
     }
-    autocardEnterListeners.set(
-      element,
-      element.addEventListener('mouseenter', (event) => {
-        if (!stopAutocard) {
-          const target = $(event.target);
-          autocard_show_card(
-            target.data('front'),
-            target.data('back'),
-          );
-        }
-      }),
-    );
 
-    const leaveListener = autocardLeaveListeners.get(element);
-    if (leaveListener) {
-      element.removeEventListener('mouseleave', leaveListener);
+    if (!autocardLeaveListeners.get(element)) {
+      autocardLeaveListeners.set(
+        element,
+        element.addEventListener('mouseleave', _autocard_leave_card),
+      )
     }
-    autocardLeaveListeners.set(
-      element,
-      element.addEventListener('mouseleave', () => autocard_hide_card()),
-    );
   }
 }
 
-document.onmousemove = function (e) {
-  popupElement = document.getElementById('autocardPopup');
 
-  var leftPixelSpace = e.clientX;
-  var rightPixelSpace = window.innerWidth - leftPixelSpace;
-  var topPixelSpace = e.clientY;
-  var bottomPixelSpace = window.innerHeight - topPixelSpace;
 
-  var x_offset = e.clientX + self.pageXOffset;
-  var y_offset = e.clientY + self.pageYOffset;
+////////////////////////////////////////////////////////////////////////////////
+// Private Interface
+
+var stopAutocard = false
+var legacyAutocard = false
+
+// These maps prevent duplicate listeners from being added.
+const autocardEnterListeners = new Map()
+const autocardLeaveListeners = new Map()
+
+const autocardLoadListeners = {}
+
+
+// Each time the mouse is moved, calculate the position where the popup should be displayed.
+document.addEventListener('mousemove', function (e) {
+  const leftPixelSpace = e.clientX
+  const rightPixelSpace = window.innerWidth - leftPixelSpace
+  const topPixelSpace = e.clientY
+  const bottomPixelSpace = window.innerHeight - topPixelSpace
+
+  const x_offset = e.clientX + self.pageXOffset
+  const y_offset = e.clientY + self.pageYOffset
 
   if (rightPixelSpace > leftPixelSpace) {
     // display on right
-    autocardPopup.style.left = Math.max(self.pageXOffset, 5 + x_offset) + 'px';
-    autocardPopup.style.right = null;
-  } else {
+    autocardPopup.style.left = Math.max(self.pageXOffset, 5 + x_offset) + 'px'
+    autocardPopup.style.right = null
+  }
+  else {
     // display on left
-    autocardPopup.style.right = Math.max(window.innerWidth + 5 - x_offset, 0) + 'px';
-    autocardPopup.style.left = null;
+    autocardPopup.style.right = Math.max(window.innerWidth + 5 - x_offset, 0) + 'px'
+    autocardPopup.style.left = null
   }
-  if (autocardPopup.offsetHeight > window.innerHeight) {
-    autocardPopup.style.top = self.pageYOffset + 'px';
-    autocardPopup.style.bottom = null;
-  } else {
-    if (bottomPixelSpace > topPixelSpace) {
-      // display on bottom
-      autocardPopup.style.top = 5 + y_offset + 'px';
-      autocardPopup.style.bottom = null;
-    } else {
-      // display on top
-      autocardPopup.style.bottom = window.innerHeight + 5 - y_offset + 'px';
-      autocardPopup.style.top = null;
+
+  if (bottomPixelSpace > topPixelSpace) {
+    // display on bottom
+    autocardPopup.style.top = 5 + y_offset + 'px'
+    autocardPopup.style.bottom = null
+  }
+  else {
+    // display on top
+    autocardPopup.style.bottom = window.innerHeight + 5 - y_offset + 'px'
+    autocardPopup.style.top = null
+  }
+})
+
+function autocard_show_legacy_card(card_id) {
+  console.log(card_id)
+
+  let card = window.card_data[card_id]
+  console.log(card)
+
+  let popup_element = $(_autocard_popup_element())
+  popup_element.removeClass('d-none')
+
+  clo.util.draw_card_frame(
+    popup_element.find('.card-container'),
+    card,
+  )
+}
+
+function autocard_show_image_card(card_image, card_flip) {
+  const popup = _autocard_popup_element()
+  const popupImg = document.getElementById('autocardImageFront')
+  const popupImgBack = document.getElementById('autocardImageBack')
+
+  if (card_flip) {
+    popup.classList.add('double-width')
+  }
+  else {
+    popup.classList.remove('double-width')
+  }
+
+  popupImg.setAttribute('src', card_image)
+  if (card_flip) {
+    popupImgBack.setAttribute('src', card_flip)
+    popupImgBack.classList.remove('d-none')
+  }
+  else {
+    popupImgBack.removeAttribute('src')
+    popupImgBack.classList.add('d-none')
+  }
+
+  document.getElementById('autocardPopup').classList.remove('d-none')
+}
+
+function _autocard_enter_listener(event) {
+  if (!stopAutocard) {
+    const target = $(event.target)
+
+    if (legacyAutocard) {
+      autocard_show_legacy_card(
+        target.data('card-id')
+      )
     }
-  }
-};
-
-const autocardLoadListeners = {};
-function autocard_show_card(card_image, card_flip) {
-  const popup = document.getElementById('autocardPopup');
-  const popupImg = document.getElementById('autocardImageFront');
-  const popupImgBack = document.getElementById('autocardImageBack');
-
-  if (card_flip) {
-    popup.classList.add('double-width');
-  } else {
-    popup.classList.remove('double-width');
-  }
-
-  popupImg.setAttribute('src', card_image);
-  if (card_flip) {
-    popupImgBack.setAttribute('src', card_flip);
-    popupImgBack.classList.remove('d-none');
-  } else {
-    popupImgBack.removeAttribute('src');
-    popupImgBack.classList.add('d-none');
-  }
-
-  // only show the three autocard divs once the images are done loading
-  autocardLoadListeners[popupImg.id] = () => {
-    if (card_flip && !popupImgBack.complete) {
-      return;
+    else {
+      autocard_show_image_card(
+        target.data('front'),
+        target.data('back'),
+      )
     }
-    // only fill in tags area once the image is done loading
-    if (autocardTimeout) autocardTimeout = clearTimeout(autocardTimeout);
-    autocardTimeout = setTimeout(() => document.getElementById('autocardPopup').classList.remove('d-none'), 10);
-  };
-  popupImg.addEventListener('load', autocardLoadListeners[popupImg.id]);
-
-  if (card_flip) {
-    autocardLoadListeners[popupImgBack.id] = () => {
-      if (!popupImg.complete) {
-        return;
-      }
-      if (autocardTimeout) autocardTimeout = clearTimeout(autocardTimeout);
-      autocardTimeout = setTimeout(() => document.getElementById('autocardPopup').classList.remove('d-none'), 10);
-    };
-    popupImgBack.addEventListener('load', autocardLoadListeners[popupImgBack.id]);
-  }
-
-  if (popupImg.complete && (!card_flip || popupImgBack.complete)) {
-    // cached workaround
-    if (autocardTimeout) autocardTimeout = clearTimeout(autocardTimeout);
-    autocardTimeout = setTimeout(() => document.getElementById('autocardPopup').classList.remove('d-none'), 10);
   }
 }
 
-function autocard_hide_card() {
-  // clear any load events that haven't fired yet so that they don't fire after the card should be hidden
-  if (autocardTimeout) autocardTimeout = clearTimeout(autocardTimeout);
-  for (const id in autocardLoadListeners) {
-    const img = document.getElementById(id);
-    img.removeEventListener('load', autocardLoadListeners[id]);
-    delete autocardLoadListeners[id];
-  }
+function _autocard_leave_card() {
+  document.getElementById('autocardPopup').classList.add('d-none')
+}
 
-  document.getElementById('autocardPopup').classList.add('d-none');
+function _autocard_popup_element() {
+  if (legacyAutocard) {
+    return document.getElementById('legacy-card-popup')
+  }
+  else {
+    return document.getElementById('autocardPopup')
+  }
 }

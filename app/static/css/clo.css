@@ -177,6 +177,7 @@ body {
 #autocardPopup {
   width: 15rem;
   position: absolute;
+  z-index: 500;
 }
 
 #autocardPopup img {
