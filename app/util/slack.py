@@ -23,7 +23,8 @@ def send_new_game_notifications(game):
 
         user = User.query.get(player.id)
         domain_host = urlparse(request.base_url).hostname
-        message = f"You've been invited to a new game, '{game.name}'. <http://{domain_host}|Don't keep your opponent waiting!>."
+        game_url = f"http://{domain_host}/game/{game.id}"
+        message = f"You've been invited to a new game, '{game.name}'. <{game_url}|Don't keep your opponent waiting!>."
 
     _send_slack_message(user, message)
 
@@ -36,7 +37,8 @@ def send_your_turn_in_game_notification(game):
 
     user = User.query.get(next_player.id)
     domain_host = urlparse(request.base_url).hostname
-    message = f"You have received priority in {game.name}. <http://{domain_host}|Don't keep your opponent waiting!>."
+    game_url = f"http://{domain_host}/game/{game.id}"
+    message = f"You have received priority in {game.name}. <{game_url}|Don't keep your opponent waiting!>."
 
     _send_slack_message(user, message)
 
@@ -44,7 +46,8 @@ def send_your_turn_in_game_notification(game):
 def send_new_draft_notifications(draft):
     for user in [x.user for x in draft.seats]:
         domain_host = urlparse(request.base_url).hostname
-        message = f"A new draft, {draft.name}, has started. <http://{domain_host}|Come check it out>."
+        draft_url = f"http://{domain_host}/draft/{draft.id}"
+        message = f"A new draft, {draft.name}, has started. <{draft_url}|Come check it out>."
 
         _send_slack_message(user, message)
 
@@ -55,7 +58,7 @@ def send_your_pick_notification(user, draft):
 
     domain_host = urlparse(request.base_url).hostname
     draft_url = f"http://{domain_host}/draft/{draft.id}"
-    message = f"Someone has passed you a pack in {draft.name}. Time to <http://{draft_url}|make a pick>."
+    message = f"Someone has passed you a pack in {draft.name}. Time to <{draft_url}|make a pick>."
 
     if _send_slack_message(user, message):
         user.last_notif_timestamp = datetime.utcnow()
