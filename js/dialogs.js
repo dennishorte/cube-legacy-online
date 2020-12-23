@@ -40,7 +40,7 @@ module.exports = (function() {
 
   function _init_draggable() {
     $('.dialog').draggable({
-      handle: '.dialog-header',
+      handle: '.dialog-header, .drag-handle',
     })
   }
 
