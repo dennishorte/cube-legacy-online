@@ -94,7 +94,7 @@ def game_new():
         )
         game.update(game_state)
 
-        slack.send_new_game_notifications(game_state)
+        slack.send_new_game_notifications(game)
 
         return redirect(url_for('game', game_id=game.id))
 
@@ -171,7 +171,7 @@ def game_save():
     else:
         data['latest_version'] += 1
         game.update(data)
-        slack.send_your_turn_in_game_notification(game.state_no_cache())
+        slack.send_your_turn_in_game_notification(game)
         return "saved"
 
 
