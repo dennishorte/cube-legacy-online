@@ -94,37 +94,45 @@
 {% endmacro %}
 
 
-{% macro show_card_list(cards) %}
+{% macro show_card_list(cards, is_legacy) %}
   <div class="row ">
     {% for card in cards|sort(attribute='picked_at', reverse=True) %}
       {% set card = card|cube_cardify %}
-      <div class="framed framed-card">
-        <!-- Card Image (and draft link) -->
-        <p>
-          {% for image_url in card.image_urls() %}
-            <img
-              style="max-width:200px"
-              src="{{image_url}}"
-              alt="{{card.name()}}">
-          {% endfor %}
-        </p>
-        <!-- END: Card Image (and draft link) -->
 
-        {{ show_card_diff(card) }}
+      {% if is_legacy %}
+        <div style="margin: 2px;">
+          {{ card_frame(220, card.id) }}
 
-        <!-- Linked Achievements -->
-        {% if card.linked_achievements() %}
-          <div class="ml-1 text-muted text-xs">
-            Linked Achievements
+      {% else %}
+          <div class="framed framed-card">
+            <!-- Card Image (and draft link) -->
+            <p>
+              {% for image_url in card.image_urls() %}
+                <img
+                  style="max-width:200px"
+                  src="{{image_url}}"
+                  alt="{{card.name()}}">
+              {% endfor %}
+            </p>
+            <!-- END: Card Image (and draft link) -->
+
+            {{ show_card_diff(card) }}
+      {% endif %}
+
+      <!-- Linked Achievements -->
+      {% if card.linked_achievements() %}
+        <div class="ml-1 text-muted text-xs">
+          Linked Achievements
+        </div>
+      {% endif %}
+
+      {% for ach in card.linked_achievements() %}
+        <div class="linked-achievement text-secondary border-top">
+          {{ ach.conditions }}
+        </div>
+      {% endfor %}
+
           </div>
-        {% endif %}
-        {% for ach in card.linked_achievements() %}
-          <div class="linked-achievement text-secondary border-top">
-            {{ ach.conditions }}
-          </div>
-        {% endfor %}
-
-      </div>
     {% endfor %}
-  </div>
+        </div>
 {% endmacro %}

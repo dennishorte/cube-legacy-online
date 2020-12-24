@@ -2,6 +2,8 @@
 
 {% extends "base.html" %}
 
+{% set is_legacy = card_data|length > 0 %}
+
 
 {% block title_suffix %}
   Pack of Cards
@@ -12,6 +14,37 @@
   {{ title }}
 {% endblock title %}
 
+
 {% block content %}
-  {{ show_card_list(cards) }}
+  {{ show_card_list(cards, is_legacy) }}
 {% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   function fill_card_frames() {
+     $('.closeup-card-wrapper').each(function() {
+       let elem = $(this)
+       let card_id = elem.data('card-id')
+       let data = window.card_data[card_id]
+       if (!data) {
+         console.log(card_id)
+         return
+       }
+
+       clo.util.draw_card_frame(elem, data)
+     })
+   }
+
+   $(document).ready(function() {
+     {% if is_legacy %}
+       autocard_init('card-list-item', true)
+       window.card_data = {{ card_data|tojson }}
+     {% else %}
+       autocard_init('card-list-item', false)
+     {% endif %}
+
+     fill_card_frames()
+   })
+  </script>
+{% endblock scripts %}

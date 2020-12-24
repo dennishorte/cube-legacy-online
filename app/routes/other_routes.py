@@ -145,10 +145,16 @@ def make_pack():
         cards = interns[:count]
 
     if form.validate_on_submit():
+        card_data = {}
+        if cube.style_a == 'legacy':
+            for card in cards:
+                card_data[card.id] = card.get_json()
+
         return render_template(
             'pack_of_cards.html',
             title=f"Pack of {count} cards from {cube.name}",
             cards=cards,
+            card_data=card_data,
         )
 
     else:
