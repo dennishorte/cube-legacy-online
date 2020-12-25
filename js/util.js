@@ -133,7 +133,6 @@ util.format_rules_text = function(text) {
 
 
 util.icon_from_text = function(text) {
-  console.log(text)
   assert.equal(text.charAt(0), '{')
   assert.equal(text.charAt(text.length-1), '}')
 
