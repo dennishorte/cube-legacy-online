@@ -133,6 +133,7 @@ util.format_rules_text = function(text) {
 
 
 util.icon_from_text = function(text) {
+  console.log(text)
   assert.equal(text.charAt(0), '{')
   assert.equal(text.charAt(text.length-1), '}')
 
@@ -167,38 +168,20 @@ util.icon_from_text = function(text) {
 
 
 util.mana_symbols_from_string = function(mana) {
-  var grabbing = true
   var curr = ''
   let elements = []
 
   for (var i = 0; i < mana.length; i++) {
     let ch = mana.charAt(i)
-    if (ch == '{') {
-      grabbing = true
-    }
-    else if (ch == '}') {
-      elements.push(util.mana_symbols_from_string_single(curr))
+    curr += ch
+
+    if (ch == '}') {
+      elements.push(util.icon_from_text(curr))
       curr = ''
-    }
-    else {
-      curr += ch
     }
   }
 
   return elements
-}
-
-
-util.mana_symbols_from_string_single = function(mana) {
-  let classes = ['ms', 'ms-cost', 'ms-shadow']
-
-  mana = mana.replace('/', '')
-  classes.push('ms-' + mana.toLowerCase())
-
-  let elem = $('<i></i>')
-  elem.addClass(classes.join(' '))
-
-  return elem
 }
 
 
