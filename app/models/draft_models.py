@@ -266,6 +266,10 @@ class PackCard(db.Model):
     def picked(self):
         return self.pick_number > -1
 
+    @functools.cached_property
+    def pack_size(self):
+        return self.draft.pack_size
+
 
 class MatchResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)

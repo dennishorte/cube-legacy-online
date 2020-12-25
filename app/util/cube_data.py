@@ -1,9 +1,27 @@
 
+class CardPickInfo(object):
+    def __init__(self, card):
+        self.card = card
+        self.picks = []
+
+    def average_pick(self, normalize=9):
+        total = 0
+        for pick in self.picks:
+            total += ((pick.pick_number + 1) / pick.pack_size) * normalize
+
+        return total / self.num_picks()
+
+    def first_picks(self):
+        return len([x for x in self.picks if x.pick_number == 0])
+
+    def num_picks(self):
+        return len(self.picks)
+
+
 class CubeData(object):
     def __init__(self, cube):
         self.cube = cube
-
-        self.pick_info()
+        self.info = self._pick_info()
 
     def creature_types(self):
         types = {}
@@ -24,6 +42,17 @@ class CubeData(object):
 
         return types_list
 
+    def first_picks(self):
+        more_than_one = [x for x in self.info.values() if x.first_picks() > 1]
+        counts = [(x.card.name(), x.first_picks()) for x in more_than_one]
+        counts.sort(key=lambda x: (-x[1], x[0]))
+        return counts
+
+    def highest_picks(self):
+        sorted_picks = [x for x in self.info.values() if len(x.picks) > 1]
+        sorted_picks.sort(key=lambda x: x.average_pick(), reverse=True)
+        return sorted_picks[:20]
+
     def _extract_subtypes(self, type_line):
         for i in range(len(type_line)):
             if not type_line[i].isalpha() and not type_line[i].isspace():
@@ -31,7 +60,7 @@ class CubeData(object):
 
         return []
 
-    def pick_info(self):
+    def _pick_info(self):
         from app.models.cube_models import CubeCard
         from app.models.draft_models import Draft
         from app.models.draft_models import PackCard
@@ -42,21 +71,9 @@ class CubeData(object):
         ]
         picks = PackCard.query.filter(PackCard.draft_id.in_(drafts)).all()
 
-        first_picks = {}
+        pick_info = {}
         for pick in picks:
-            if pick.pick_number == 0:
-                group_id = pick.cube_card.latest_id
-                if group_id not in first_picks:
-                    first_picks[group_id] = 0
-                first_picks[group_id] += 1
+            info = pick_info.setdefault(pick.cube_card.latest_id, CardPickInfo(pick.cube_card))
+            info.picks.append(pick)
 
-        first_picks = {id: count for id, count in first_picks.items() if count > 1}
-
-        first_picks_ready = []
-        for card_id, count in first_picks.items():
-            card = CubeCard.query.get(card_id)
-            first_picks_ready.append((card.name(), count))
-
-        first_picks_ready.sort(key=lambda x: (-x[1], x[0]))
-
-        return first_picks_ready
+        return pick_info
