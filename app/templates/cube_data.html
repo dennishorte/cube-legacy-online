@@ -52,10 +52,10 @@
 
       <h5>Highest Average Picked Cards</h5>
       <ul class="list-unstyled">
-        {% for card_name, count in d.highest_picks() %}
+        {% for info in d.highest_picks() %}
           <li>
-            {{ count }}:
-            {{ card_name }}
+            {{ info.average_pick_formatted() }} ({{ info.picks|length }}):
+            {{ info.card.name() }}
           </li>
         {% endfor %}
       </ul>

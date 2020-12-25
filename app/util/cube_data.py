@@ -11,6 +11,10 @@ class CardPickInfo(object):
 
         return total / self.num_picks()
 
+    def average_pick_formatted(self, normalize=9):
+        num = self.average_pick(normalize)
+        return '{:.1f}'.format(num)
+
     def first_picks(self):
         return len([x for x in self.picks if x.pick_number == 0])
 
@@ -50,8 +54,8 @@ class CubeData(object):
 
     def highest_picks(self):
         sorted_picks = [x for x in self.info.values() if len(x.picks) > 1]
-        sorted_picks.sort(key=lambda x: x.average_pick(), reverse=True)
-        return sorted_picks[:20]
+        sorted_picks.sort(key=lambda x: x.average_pick())
+        return sorted_picks
 
     def _extract_subtypes(self, type_line):
         for i in range(len(type_line)):
