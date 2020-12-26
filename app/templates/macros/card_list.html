@@ -31,7 +31,7 @@
 
       {% if is_legacy %}
         <div style="margin: 2px;">
-        {{ card_frame(220, card.cube_card.id) }}
+        {{ card_frame(220, card.cube_card.id, not can_be_drafted) }}
       {% else %}
 
           <div class="col framed framed-card">

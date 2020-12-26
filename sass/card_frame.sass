@@ -69,14 +69,20 @@ $almost-black: #171314
 
 .closeup-card-wrapper
   //font-family: "Arial Narrow", Arial, sans-serif
-  display: flex
+  position: relative
 
-.closeup-card-wrapper
   div
     display: flex
     margin: 0
     padding: 0
 
+.card-wrapper-overlay
+  position: absolute
+  height: 100%
+  width: 100%
+  top: 0
+  left: 0
+  background-color: rgba(12, 34, 56, 0.5)
 
 @mixin card-face($size)
   $unit: $size * .01
