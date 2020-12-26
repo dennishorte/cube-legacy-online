@@ -497,6 +497,8 @@ def user_profile(user_id):
     drafts.sort(key=lambda x: x.timestamp, reverse=True)
 
     moniker_form = EditMonikersForm.factory(user)
+    persona_form = EditPersonasForm.factory(user)
+    portrait_form = EditPortraitForm()
 
     return render_template(
         'user.html',
@@ -504,6 +506,8 @@ def user_profile(user_id):
         drafts=drafts,
         games=user.all_games(),
         moniker_form=moniker_form,
+        persona_form=persona_form,
+        portrait_form=portrait_form,
     )
 
 
@@ -516,6 +520,33 @@ def user_set_monikers(user_id):
         monikers = [x.strip() for x in form.monikers.data.split('\n') if x.strip()]
         user = User.query.get(user_id)
         user.set_monikers(monikers)
+
+    return redirect(url_for('user_profile', user_id=user_id))
+
+
+@app.route("/user/<user_id>/set_personas", methods=['POST'])
+@login_required
+def user_set_personas(user_id):
+    form = EditPersonasForm()
+
+    if form.validate_on_submit():
+        personas = [x.strip() for x in form.personas.data.split('\n') if x.strip()]
+        user = User.query.get(user_id)
+        user.set_personas(personas)
+
+    return redirect(url_for('user_profile', user_id=user_id))
+
+
+@app.route("/user/<user_id>/set_portrait", methods=['POST'])
+@login_required
+def user_set_portrait(user_id):
+    form = EditPortraitForm()
+
+    if form.validate_on_submit():
+        user = User.query.get(user_id)
+        user.portrait_link = form.portrait.data.strip()
+        db.session.add(user)
+        db.session.commit()
 
     return redirect(url_for('user_profile', user_id=user_id))
 

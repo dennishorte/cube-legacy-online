@@ -141,6 +141,22 @@ class EditMultiFaceCardForm(FlaskForm):
         ]
 
 
+class EditPersonasForm(FlaskForm):
+    personas = TextAreaField('Personas (1 per line)')
+    submit = SubmitField('Update')
+
+    @staticmethod
+    def factory(user):
+        form = EditPersonasForm()
+        form.personas.data = '\n'.join(user.personas)
+        return form
+
+
+class EditPortraitForm(FlaskForm):
+    portrait = TextAreaField('Portrait')
+    submit = SubmitField('Update')
+
+
 class FinalizeAchievementForm(FlaskForm):
     story = TextAreaField('Tell the Story of This Achievement', validators=[DataRequired()])
     submit = SubmitField("I've done all the things")

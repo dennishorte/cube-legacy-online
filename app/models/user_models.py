@@ -17,9 +17,10 @@ class User(UserMixin, db.Model):
     last_pick_timestamp = db.Column(db.DateTime)
     last_notif_timestamp = db.Column(db.DateTime)
 
-    monikers_tsv = db.Column(db.Text)
-
     # Stats
+    monikers_tsv = db.Column(db.Text)
+    personas_tsv = db.Column(db.Text)
+    portrait_link = db.Column(db.Text)
     xp = db.Column(db.Integer, default=0)
 
     # Relationships
@@ -77,8 +78,20 @@ class User(UserMixin, db.Model):
         else:
             return []
 
+    @property
+    def personas(self):
+        if self.personas_tsv:
+            return self.personas_tsv.split('\t')
+        else:
+            return []
+
     def set_monikers(self, monikers: list):
         self.monikers_tsv = '\t'.join(monikers)
+        db.session.add(self)
+        db.session.commit()
+
+    def set_personas(self, personas: list):
+        self.personas_tsv = '\t'.join(personas)
         db.session.add(self)
         db.session.commit()
 

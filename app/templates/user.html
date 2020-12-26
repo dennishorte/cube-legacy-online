@@ -32,6 +32,25 @@
   <div class="row">
 
     <div class="col framed">
+      {% if user.portrait_link %}
+        <img src="{{ user.portrait_link }}" alt="user portrait" style="width: 100%;">
+      {% endif %}
+
+      <div style="float: right;">
+        <a href="#edit-portrait-modal" data-toggle="modal">portrait</a>
+        <br>
+        <a href="#edit-personas-modal" data-toggle="modal">personas</a>
+      </div>
+
+      {% if user.personas %}
+        <h5>Personas</h5>
+        <ul class="list-unstyled">
+          {% for persona in user.personas %}
+            <li>{{ persona }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
       <h5>Stats</h5>
       <ul class="list-unstyled">
         <li>
@@ -166,6 +185,64 @@
     </div>
   </div>
   <!-- END: Monikers Modal -->
+
+  <!-- Personas Modal -->
+  <div class="modal fade" id="edit-personas-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Personas</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form
+            action="{{ url_for('user_set_personas', user_id=user.id) }}"
+            method="post"
+            novalidate>
+
+            {{ persona_form.hidden_tag() }}
+            <div class="form-group">
+              {{ persona_form.personas.label }}
+              {{ persona_form.personas(class="form-control", rows=10) }}
+            </div>
+            <p>{{ persona_form.submit(class="btn btn-primary") }}</p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Personas Modal -->
+
+  <!-- Portrait Modal -->
+  <div class="modal fade" id="edit-portrait-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Portrait</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form
+            action="{{ url_for('user_set_portrait', user_id=user.id) }}"
+            method="post"
+            novalidate>
+
+            {{ portrait_form.hidden_tag() }}
+            <div class="form-group">
+              {{ portrait_form.portrait.label }}
+              {{ portrait_form.portrait(class="form-control", rows=10) }}
+            </div>
+            <p>{{ portrait_form.submit(class="btn btn-primary") }}</p>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Portrait Modal -->
 {% endblock content %}
 
 
