@@ -15,6 +15,15 @@ body {
   margin-bottom: 200px;
 }
 
+.plain-link {
+  color: black;
+  text-decoration: none;
+}
+.plain-link:hover {
+  color: black;
+  text-decoration: none;
+}
+
 .white {
   background-color: var(--card-white);
 }

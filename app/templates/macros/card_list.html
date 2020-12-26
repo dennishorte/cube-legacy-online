@@ -31,7 +31,20 @@
 
       {% if is_legacy %}
         <div style="margin: 2px;">
-        {{ card_frame(220, card.cube_card.id, not can_be_drafted) }}
+
+          <a
+            class="plain-link"
+            {% if face_up_optional %}
+              href="#draftFaceUpModal"
+              data-toggle="modal"
+              data-card-name="{{ card.cube_card.name() }}"
+              data-card-id="{{ card.id }}"
+            {% elif can_be_drafted %}
+              href="/draft/{{draft_id}}/pick/{{card.id}}"
+            {% endif %}
+          >
+            {{ card_frame(220, card.cube_card.id, not can_be_drafted) }}
+          </a>
       {% else %}
 
           <div class="col framed framed-card">
