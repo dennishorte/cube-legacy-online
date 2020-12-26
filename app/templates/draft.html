@@ -323,9 +323,9 @@
      $('.closeup-card-wrapper').each(function() {
        let elem = $(this)
        let card_id = elem.data('card-id')
-       let data = console.card_data[card_id]
+       let data = window.card_data[card_id]
        if (!data) {
-         console.log(card_id)
+         window.log(card_id)
          return
        }
 
