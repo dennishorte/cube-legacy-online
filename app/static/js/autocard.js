@@ -79,6 +79,7 @@ document.addEventListener('mousemove', function (e) {
 function autocard_show_legacy_card(card_id) {
   let popup_element = $(_autocard_popup_element())
   popup_element.removeClass('d-none')
+  popup_element.find('.scarred').removeClass('scarred')
 
   clo.util.draw_card_frame(
     popup_element.find('.closeup-card-wrapper'),
