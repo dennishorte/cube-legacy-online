@@ -157,11 +157,7 @@ class GameState(object):
     def factory(game_id: int, name: str, player_ids: list):
         data = {
             'id': game_id,
-            'history': [{
-                'delta': [],
-                'message': 'Game Created',
-                'player': 'GM',
-            }],
+            'history': [],
             'cards': {},  # id -> card.data
             'finished': False,
             'name': name,
@@ -191,13 +187,24 @@ class GameState(object):
 
         first_player_name = data['players'][data['turn']]['name']
 
-        data['history'].append({
-            'delta': [],
-            'message': f"{first_player_name} randomly chosen to go first",
-            'player': 'GM',
-        })
+        game = GameState(data)
 
-        return GameState(data)
+        data['history'] += [
+            {
+                'id': game.next_id(),
+                'delta': [],
+                'message': 'Game Created',
+                'player': 'GM',
+            },
+            {
+                'id': game.next_id(),
+                'delta': [],
+                'message': f"{first_player_name} randomly chosen to go first",
+                'player': 'GM',
+            },
+        ]
+
+        return game
 
     def card(self, card_id):
         return GameCard(self.data['cards'][card_id])

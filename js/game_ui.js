@@ -271,7 +271,8 @@ let gameui = (function() {
       let amount = parseInt(button.attr('amount'))
       let player_idx = util.player_idx_from_elem(button.parent())
       _state.increment_life(player_idx, amount)
-      _redraw()
+      _update_player_info(player_idx)
+      _update_history()
     })
   }
 
@@ -606,6 +607,7 @@ let gameui = (function() {
     _update_card_droppers()
     _update_phase()
     _update_turn_and_priority()
+    _update_history()
 
     for (var i = 0; i < _state.num_players(); i++) {
       _update_card_zone(i, 'battlefield')
@@ -618,7 +620,6 @@ let gameui = (function() {
       _update_card_zone(i, 'command')
       _update_card_zone(i, 'stack')
       _update_player_info(i)
-      _update_history()
       _update_library(i)
     }
 
@@ -735,14 +736,26 @@ let gameui = (function() {
 
   function _update_history() {
     let elem = $('#messages')
+    let messages = elem.children()
     let prev_message_count = elem.children().length
 
-    elem.empty()
-
-    var phase_count = 0
+    if (!_state.history[0].id) {
+      // No history ids means need to redraw the whole history.
+      // Kept in place for existing games that didn't have history ids.
+      elem.empty()
+    }
 
     for (var i = 0; i < _state.history.length; i++) {
       let hist = _state.history[i]
+
+      if (i < messages.length) {
+        let msg = $(messages[i])
+        let msg_id = msg.data('msg-id')
+        if (msg.data('msg-id') == hist.id) {
+          continue
+        }
+      }
+
       let message = _perform_message_substitutions(
         hist,
         _perform_message_styling(hist.message)
@@ -752,31 +765,30 @@ let gameui = (function() {
       let msg = $('<li></li>')
         .append(message_html)
         .addClass('message')
+        .attr('data-msg-id', hist.id)
 
       if (hist.message.endsWith("'s turn")) {
         msg.addClass('new-turn-message')
-        phase_count = 0
       }
       else if (hist.message.endsWith("gets priority")) {
         msg.addClass('pass-priority-message')
       }
       else if (hist.message.startsWith('phase: ')) {
         msg.addClass('phase-message')
-        phase_count += 1
-      }
-      else if (phase_count % 2 == 1) {
-        msg.addClass('odd-phase-message')
       }
 
       if (i > _state.history_index) {
         msg.addClass('future-message')
       }
 
-      if (i == _state.history_save_point) {
-        msg.addClass('history-save-point')
-      }
-
       elem.append(msg)
+    }
+
+    // Trim off excess messages (typically due to undo action)
+    if (_state.history.length < messages.length) {
+      let num_to_cut = messages.length - _state.history.length
+      console.log(`Cutting ${num_to_cut}`)
+      messages.slice(-num_to_cut).remove()
     }
 
     if (prev_message_count != elem.children().length) {

@@ -637,8 +637,6 @@ class GameState {
 
   next_id() {
     let id = this.state.next_id
-    assert.ok(!this.state.cards.hasOwnProperty(id), 'Card ID already exists')
-
     this.state.next_id += 1
     return id
   }
@@ -965,6 +963,7 @@ class GameState {
 
   _execute(diff) {
     this._ensure_history_up_to_date()
+    diff.id = this.next_id()
     this.history.push(diff)
     this._move_through_history(this.history.length - 1)
   }
