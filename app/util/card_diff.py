@@ -77,7 +77,8 @@ class FaceDiffer(BaseDiffer):
         simplified = []
         for diff in self._ndiff('oracle_text'):
             if diff.startswith('+ '):
-                simplified.append(diff)
+                if diff.strip() != '+':
+                    simplified.append(diff)
             elif diff.startswith('? '):
                 pass
             else:
