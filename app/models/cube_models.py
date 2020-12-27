@@ -110,7 +110,7 @@ class Cube(db.Model):
         """
         cards = {}
         for card in self.cards():
-            cards[card.id] = card.get_json()
+            cards[card.id] = card.get_json(add_scars=True)
         return cards
 
     def cards_added(self):
@@ -240,8 +240,15 @@ class CubeCard(db.Model):
         )
 
     @functools.lru_cache
-    def get_json(self):
-        return json.loads(self.json)
+    def get_json(self, add_scars=False):
+        data = json.loads(self.json)
+
+        if add_scars:
+            differ = self.differ()
+            for i, face in enumerate(data['card_faces']):
+                face['scarred_oracle_text'] = '\n'.join(differ.face(i).oracle_text_ndiff())
+
+        return data
 
     def image_back(self):
         images = self.image_urls()

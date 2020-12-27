@@ -67,6 +67,11 @@ util.format_rules_text = function(text) {
   /* let text = elem.text() */
   var new_html = '<span>'
 
+  if (text.startsWith('+ ')) {
+    new_html = '<span class="rule-scar">'
+    text = text.slice(2)
+  }
+
   var last_commit = -1;
   var open_curly = -1;
   var open_paren = -1;
@@ -221,7 +226,14 @@ util.draw_card_face = function(container, face_data) {
 
   // Rules Text
   rules_elem.empty()
-  let rules = face_data.oracle_text.split('\n')
+  var rules;
+  if (face_data.scarred_oracle_text) {
+    rules = face_data.scarred_oracle_text.split('\n')
+  }
+  else {
+    rules = face_data.oracle_text.split('\n')
+  }
+
   for (var i = 0; i < rules.length; i++) {
     let rule = rules[i].trim()
     let html_string = util.format_rules_text(rule)

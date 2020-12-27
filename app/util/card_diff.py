@@ -73,6 +73,17 @@ class FaceDiffer(BaseDiffer):
 
         return False
 
+    def oracle_text_ndiff(self):
+        simplified = []
+        for diff in self._ndiff('oracle_text'):
+            if diff.startswith('+ '):
+                simplified.append(diff)
+            elif diff.startswith('? '):
+                pass
+            else:
+                simplified.append(diff[2:])
+        return simplified
+
     def summary(self):
         summary = []
 
