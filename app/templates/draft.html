@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% from 'macros/card_frame.html' import card_frame %}
 {% from "macros/card_list.html" import show_draft_card_list %}
 {% from "macros/deck_builder.html" import deck_builder %}
 {% from "macros.html" import show_achievement %}
@@ -192,6 +193,7 @@
               {% for card in cards %}
                 <p
                   class="card-list-item"
+                  data-card-id="{{ card.cube_card.id }}"
                   data-front="{{ card.cube_card.image_front() }}"
                   {% if card.cube_card.image_back() %}
                     data-back="{{ card.cube_card.image_back() }}"
