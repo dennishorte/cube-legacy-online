@@ -40,6 +40,7 @@ $white-txt: #fdfbf8
 
 $almost-black: #171314
 $silver: #9facb4
+$gold: #d9631b
 
 
 @mixin frame-colors($name, $background, $foreground, $border, $rules-background)
@@ -186,7 +187,9 @@ $silver: #9facb4
 
   .card-container.scarred
     .card-border
-      background-color: $silver
+      background-image: linear-gradient(142deg, rgba(245,151,29,1) 0%, rgba(133,50,36,1) 32%, rgba(159,172,180,1) 100%)
+      //linear-gradient(27deg, rgba(245,151,29,1) 0%, rgba(133,50,36,1) 68%, rgba(245,151,29,1) 100%)
+      //background-color: $gold
 
 @include card-face(220px)
 @include card-face(270px)
