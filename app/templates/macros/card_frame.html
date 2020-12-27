@@ -43,8 +43,13 @@
 
 {% macro empty_card_frame(size) %}
   <div class="closeup-card-wrapper">
-    {{ empty_card_face(size, 'front') }}
-    {{ empty_card_face(size, 'back') }}
+    <div class="card-inner-wrapper">
+      {{ empty_card_face(size, 'front') }}
+      {{ empty_card_face(size, 'back') }}
+    </div>
+
+    <div class="card-wrapper-overlay {% if not grayed_out %}d-none{% endif %}">
+    </div>
   </div>
 {% endmacro %}
 
