@@ -79,7 +79,7 @@ class FaceDiffer(BaseDiffer):
             if diff.startswith('+ '):
                 if diff.strip() != '+':
                     simplified.append(diff)
-            elif diff.startswith('? '):
+            elif diff.startswith('? ') or diff.startswith('- '):
                 pass
             else:
                 simplified.append(diff[2:])
