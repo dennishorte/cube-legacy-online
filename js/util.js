@@ -213,6 +213,10 @@ util.draw_card_face = function(container, face_data) {
   let image_elem = container.find('.frame-art')
   let ptl_elem = container.find('.frame-pt-loyalty')
 
+  if (face_data.scarred) {
+    container.addClass('scarred')
+  }
+
   // Name, Mana, Type
   name_elem.text(face_data.name)
   type_elem.text(face_data.type_line)

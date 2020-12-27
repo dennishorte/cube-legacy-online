@@ -39,6 +39,7 @@ $white-bdr: #f3f1e9
 $white-txt: #fdfbf8
 
 $almost-black: #171314
+$silver: #9facb4
 
 
 @mixin frame-colors($name, $background, $foreground, $border, $rules-background)
@@ -182,6 +183,10 @@ $almost-black: #171314
       border-top: 1px solid
       border-color: #999!important
 
+
+  .card-container.scarred
+    .card-border
+      background-color: $silver
 
 @include card-face(220px)
 @include card-face(270px)

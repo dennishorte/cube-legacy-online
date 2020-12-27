@@ -247,6 +247,7 @@ class CubeCard(db.Model):
             differ = self.differ()
             for i, face in enumerate(data['card_faces']):
                 face['scarred_oracle_text'] = '\n'.join(differ.face(i).oracle_text_ndiff())
+                face['scarred'] = '+ ' in face['scarred_oracle_text']
 
         return data
 
