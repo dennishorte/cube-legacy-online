@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-
+{% from 'macros/card_frame.html' import empty_card_frame %}
 {% from 'macros.html' import show_achievement %}
 
 
@@ -176,6 +176,11 @@
           <!-- END: Scar -->
         {% endif %}
 
+        <div class="row">
+          <div class="col d-flex framed justify-content-center">
+            {{ empty_card_frame(270) }}
+          </div>
+        </div>
 
         <!-- Edit forms for each face -->
         <div class="row mt-1">
@@ -389,7 +394,43 @@
      $('#backImagePreview img').attr('src', back_image_url)
    }
 
+   function show_card_preview() {
+     let fields = [
+       'name',
+       'mana_cost',
+       'image_url',
+       'art_crop_url',
+       'type_line',
+       'oracle_text',
+       'flavor_text',
+       'power',
+       'toughness',
+       'loyalty',
+     ]
+
+     let front = {}
+     let back = {}
+
+     for (var i = 0; i < fields.length; i++) {
+       let field = fields[i]
+       front[field] = $(`#face_0_${field}`).val()
+       back[field]  = $(`#face_1_${field}`).val()
+     }
+
+     let data = {
+       card_faces: [front, back],
+     }
+
+     clo.util.draw_card_frame($('.closeup-card-wrapper'), data)
+   }
+
    $(document).ready(function() {
+     show_card_preview()
+
+     $('input').focusout(function() {
+       show_card_preview()
+     })
+
      // Hide the card_id in achievement link, since that is fixed in this template.
      $('#achLinkCard').hide()
 
