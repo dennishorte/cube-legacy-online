@@ -174,18 +174,29 @@
                     <i id="{{ id_prefix }}-menu-button" class="fas fa-bars zone-menu-icon"></i>
                   </div>
                 </div>
+
                 <p class="card-section-header">
                   <span id="{{ id_prefix }}-name">NO_NAME</span>
                 </p>
-                <p class="card-section-info">life:
-                  <span id="{{ id_prefix }}-life"></span>
-                  <span id="{{ id_prefix }}-life-buttons" class="life-buttons" style="float:right;">
-                    <i amount="-5" class="fas fa-dice-five text-danger"></i>
-                    <i amount="-1" class="fas fa-dice-one text-danger"></i>
-                    <i amount="+1" class="fas fa-dice-one text-success"></i>
-                    <i amount="+5" class="fas fa-dice-five text-success"></i>
-                  </span>
-                </p>
+
+                <div id="{{ id_prefix }}-counters" class="player-counters-area">
+                  <div
+                    id="{{ id_prefix }}-counter-life"
+                    class="player-counter"
+                    data-counter-name="life">
+
+                    <div class="counter-buttons">
+                      <i amount="-5" class="fas fa-dice-five text-danger counter-button"></i>
+                      <i amount="-1" class="fas fa-dice-one text-danger counter-button"></i>
+                      <i amount="+1" class="fas fa-dice-one text-success counter-button"></i>
+                      <i amount="+5" class="fas fa-dice-five text-success counter-button"></i>
+                    </div>
+
+                    <span class="counter-name">life:</span>
+                    <span class="counter-value"></span>
+                  </div>
+
+                </div>
               </div>
               <!-- END: Player Info Zone -->
 
@@ -383,6 +394,30 @@
     </div>
   </div>
   <!-- END: Move Top N of Library Modal -->
+
+
+  <!-- Add Counter to Player Modal -->
+  <div id="player-counter-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="d-none" id="player-counter-modal-player-idx"></div>
+
+          <div class="form-group">
+            <label for="player-counter-name">Counter Name</label>
+            <input id="player-counter-name" name="player-counter-name" type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="player-counter-submit" type="button" class="btn btn-primary">move</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Add Counter to Player Modal -->
 
 
   <!-- Randomize Bottom of Library Modal -->

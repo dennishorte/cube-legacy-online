@@ -265,12 +265,20 @@ let gameui = (function() {
     })
   }
 
-  function _init_life_buttons() {
-    $('.life-buttons').click(function(event) {
+  function _init_counters_area() {
+    // Attach handlers to the counters area rather than specific counters because new
+    // counters can be added and this ensures events will catch new as well as existing ones.
+    $('.player-counters-area').click(function(event) {
       let button = $(event.target)
+      if (!button.hasClass('counter-button'))
+        return
+
+      let counter_elem = button.parents('.player-counter')
+      let counter_name = counter_elem.data('counter-name')
+
       let amount = parseInt(button.attr('amount'))
-      let player_idx = util.player_idx_from_elem(button.parent())
-      _state.increment_life(player_idx, amount)
+      let player_idx = util.player_idx_from_elem(counter_elem)
+      _state.increment_counter(player_idx, counter_name, amount)
       _update_player_info(player_idx)
       _update_history()
     })
@@ -294,6 +302,28 @@ let gameui = (function() {
 
       _state.set_phase(phase.substring(6))
       _redraw()
+    })
+  }
+
+  function _init_player_counter_modal() {
+    $('#player-counter-submit').click(function() {
+      let player_idx = parseInt($('#player-counter-modal-player-idx').text())
+      let counter_name = $('#player-counter-name').val().trim()
+
+      if (counter_name.length == 0)
+        return
+
+      _state.add_player_counter(player_idx, counter_name)
+
+      $('#player-counter-modal').modal('hide')
+      _redraw()
+    })
+
+    $('#player-counter-count').keydown(function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        $('#player-counter-submit').click()
+      }
     })
   }
 
@@ -809,8 +839,25 @@ let gameui = (function() {
 
   function _update_player_info(player_idx) {
     let player = _state.player(player_idx)
+
+    // Name
     $(`#player-${player_idx}-name`).text(player.name)
-    $(`#player-${player_idx}-life`).text(player.tableau.counters['life'])
+
+    // Counters
+    for (let key in player.tableau.counters) {
+      if (!player.tableau.counters.hasOwnProperty(key))
+        continue
+
+      let counter_id = `#player-${player_idx}-counter-${key}`
+      let elem = $(counter_id)
+
+      // Create the counter elem, if needed
+      if (elem.length == 0) {
+      }
+
+      // Update the counter elem
+      elem.find('.counter-value').text(player.tableau.counters[key])
+    }
   }
 
   function _update_turn_and_priority() {
@@ -848,10 +895,10 @@ let gameui = (function() {
         // UI interactions
         _init_card_closeup_interations()
         _init_card_dragging()
+        _init_counters_area()
         _init_die_modal()
         _init_library_move_modal()
         _init_randomize_bottom_modal()
-        _init_life_buttons()
         _init_popup_menus()
         _init_scry_modal()
 

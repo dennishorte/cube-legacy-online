@@ -372,19 +372,19 @@ class GameState {
     return this._execute(diff)
   }
 
-  increment_life(player_idx, amount) {
+  increment_counter(player_idx, counter, amount) {
     let player = this.state.players[player_idx]
     let counters = player.tableau.counters
 
     let diff = {
       delta: [{
         action: 'set_player_counter',
-        key: 'life',
+        key: counter,
         player_idx: player_idx,
-        old_value: counters.life,
-        new_value: counters.life + amount,
+        old_value: counters[counter],
+        new_value: counters[counter] + amount,
       }],
-      message: `${player.name} life change ${amount}`,
+      message: `${player.name} ${counter} change ${amount}`,
       player: this.viewer_name,
     }
 

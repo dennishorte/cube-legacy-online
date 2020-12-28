@@ -130,6 +130,10 @@
   position: relative;
 }
 
+.counter-buttons {
+  float: right;
+}
+
 .library-divider {
   font-size: .6rem;
   color: var(--secondary);
