@@ -278,7 +278,7 @@ let gameui = (function() {
 
       let amount = parseInt(button.attr('amount'))
       let player_idx = util.player_idx_from_elem(counter_elem)
-      _state.increment_counter(player_idx, counter_name, amount)
+      _state.player_counter_increment(player_idx, counter_name, amount)
       _update_player_info(player_idx)
       _update_history()
     })
@@ -313,7 +313,7 @@ let gameui = (function() {
       if (counter_name.length == 0)
         return
 
-      _state.add_player_counter(player_idx, counter_name)
+      _state.player_counter_create(player_idx, counter_name)
 
       $('#player-counter-modal').modal('hide')
       _redraw()
@@ -544,6 +544,14 @@ let gameui = (function() {
     else if (menu_item == 'concede') {
       _state.concede(_state.viewer_idx)
       _redraw()
+    }
+
+    else if (menu_item == 'create counter') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+
+      $('#player-counter-modal-player-idx').text(player_idx)
+      $('#player-counter-modal').modal('show')
     }
 
     else if (menu_item == 'create token') {
@@ -817,7 +825,6 @@ let gameui = (function() {
     // Trim off excess messages (typically due to undo action)
     if (_state.history.length < messages.length) {
       let num_to_cut = messages.length - _state.history.length
-      console.log(`Cutting ${num_to_cut}`)
       messages.slice(-num_to_cut).remove()
     }
 
@@ -849,10 +856,18 @@ let gameui = (function() {
         continue
 
       let counter_id = `#player-${player_idx}-counter-${key}`
-      let elem = $(counter_id)
+      var elem = $(counter_id)
 
       // Create the counter elem, if needed
       if (elem.length == 0) {
+        // Grab a copy of the the life counter.
+        let clone = $(`#player-${player_idx}-counter-life`).clone()
+
+        // Replace 'life' with the new counter name.
+        let updated = clone[0].outerHTML.replace(/life/g, key)
+        elem = $(updated)
+
+        $(`#player-${player_idx}-counters`).append(elem)
       }
 
       // Update the counter elem
@@ -898,8 +913,9 @@ let gameui = (function() {
         _init_counters_area()
         _init_die_modal()
         _init_library_move_modal()
-        _init_randomize_bottom_modal()
+        _init_player_counter_modal()
         _init_popup_menus()
+        _init_randomize_bottom_modal()
         _init_scry_modal()
 
         // Dialogs

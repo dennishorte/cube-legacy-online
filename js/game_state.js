@@ -372,25 +372,6 @@ class GameState {
     return this._execute(diff)
   }
 
-  increment_counter(player_idx, counter, amount) {
-    let player = this.state.players[player_idx]
-    let counters = player.tableau.counters
-
-    let diff = {
-      delta: [{
-        action: 'set_player_counter',
-        key: counter,
-        player_idx: player_idx,
-        old_value: counters[counter],
-        new_value: counters[counter] + amount,
-      }],
-      message: `${player.name} ${counter} change ${amount}`,
-      player: this.viewer_name,
-    }
-
-    return this._execute(diff)
-  }
-
   is_collapsed(player_idx, zone_id) {
     if (this.spectator)
       return zone_id == 'sideboard' ? true : false
@@ -675,6 +656,32 @@ class GameState {
 
   player(player_idx) {
     return this.state.players[player_idx]
+  }
+
+  player_counter_create(player_idx, counter) {
+    let player = this.state.players[player_idx]
+    let counters = player.tableau.counters
+    assert.ok(!(counter in counters), `Can't create counter ${counter}`)
+    counters[counter] = 0
+  }
+
+  player_counter_increment(player_idx, counter, amount) {
+    let player = this.state.players[player_idx]
+    let counters = player.tableau.counters
+
+    let diff = {
+      delta: [{
+        action: 'set_player_counter',
+        key: counter,
+        player_idx: player_idx,
+        old_value: counters[counter],
+        new_value: counters[counter] + amount,
+      }],
+      message: `${player.name} ${counter} change ${amount}`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
   }
 
   player_idx_by_name(player_name) {
