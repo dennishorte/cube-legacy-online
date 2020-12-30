@@ -75,6 +75,13 @@
               save
             </a>
           </li>
+
+          <li>
+            <a href="#add-cards-modal" data-toggle="modal">
+              add cards
+            </a>
+          </li>
+
         </ul>
       </div>
 
@@ -136,4 +143,55 @@
       {{ deck_builder_row('sideboardOther', 'other', d.card_set.sideboard().non_creature()) }}
     </div>
   </div>
+
+
+  <div class="modal fade" id="add-cards-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add Cards to Deck</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form action="" method="post" id="addCardsForm" novalidate>
+            <div class="form-group">
+              <label for="add-card-names">card names (1 per line)</label>
+              <textarea class="form-control" id="add-card-names" name="add-card-names"></textarea>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="button" id="add-cards-submit">Add Cards</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Add Cards Modal -->
+
+  <script>
+   document.addEventListener("DOMContentLoaded", function(event) {
+     $('#add-cards-submit').click(function () {
+       let card_names = $('#add-card-names').val().split('\n')
+       let request_data = {
+         card_names: card_names,
+       }
+
+       $.ajax({
+         type: "POST",
+         url: "{{ url_for('draft_deck_add_cards', draft_id=d.draft.id) }}",
+         contentType: "application/json; charset=utf-8",
+         data: JSON.stringify(request_data),
+         success: function (data) {
+           location.reload()
+         },
+       })
+     })
+   })
+  </script>
 {% endmacro %}

@@ -87,6 +87,15 @@ class DeckBuilder(object):
             card.sideboard = True
             self.card_set.cards.append(card)
 
+    def all_cards(self):
+        cards = []
+
+        drafts = Draft.query.filter(Draft.id.in_(self.draft_ids)).all()
+        for draft in drafts:
+            cards += draft.cube.cards(include_removed=True)
+
+        return list(set(cards))
+
     def basics(self, name):
         if not self.deck.basic_lands:
             return '0'
@@ -150,7 +159,8 @@ class DeckBuilder(object):
             deck_counts.setdefault(card.id, []).append(card)
 
         for card in deck_cards:
-            deck_counts[card.id].pop()
+            if card.id in deck_counts:  # Sometimes non-drafted cards are added to decks
+                deck_counts[card.id].pop()
 
         for card_list in deck_counts.values():
             for card in card_list:
