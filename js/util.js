@@ -154,6 +154,9 @@ util.icon_from_text = function(text) {
     if (text == 't') {
       classes.push('ms-tap')
     }
+    else if (text == 'q') {
+      classes.push('ms-untap')
+    }
     else if (text == 'inf') {
       classes.push('ms-infinity')
     }
