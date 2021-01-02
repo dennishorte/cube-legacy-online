@@ -22,8 +22,9 @@
   <div class="row" >
     <div class="col">
       <div>
-        <h3>Drafts</h3>
+        <h3>Active</h3>
         <div id="active" class="framed">
+
           <p>Active Drafts</p>
           <ul class="list-unstyled ml-4">
             {% for p in active %}
@@ -38,19 +39,6 @@
             {% endfor %}
           </ul>
         </div>
-
-        <div id="complete" class="framed">
-          <p>Completed Drafts</p>
-          <ul class="list-unstyled ml-4">
-            {% for p in complete %}
-              <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-
-      <div class="mt-2">
-        <h3>Games</h3>
 
         <div class="framed">
           <p>Active Games</p>
@@ -70,6 +58,19 @@
 
                 </li>
               {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-2">
+        <h3>Completed</h3>
+
+        <div id="complete" class="framed">
+          <p>Completed Drafts</p>
+          <ul class="list-unstyled ml-4">
+            {% for p in complete %}
+              <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
             {% endfor %}
           </ul>
         </div>
