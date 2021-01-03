@@ -272,10 +272,10 @@ class GameState(object):
 
     def start_game(self):
         self.data['turn'] = random.randrange(len(self.players))
-        self.data['priority'] = data['turn']
-        first_player_name = self.players[data['turn']]['name']
-        data['history'].append({
-            'id': game.next_id(),
+        self.data['priority'] = self.data['turn']
+        first_player_name = self.players[self.data['turn']].data['name']
+        self.data['history'].append({
+            'id': self.next_id(),
             'delta': [],
             'message': f"{first_player_name} randomly chosen to go first",
             'player': 'GM',

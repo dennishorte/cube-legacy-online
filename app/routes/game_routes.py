@@ -25,6 +25,10 @@ def game(game_id):
     game = Game.query.get(game_id)
 
     if game.state.ready_to_start():
+        if len(game.state.data['history']) < 2:
+            game.state.start_game()
+            game.update(game.state_no_cache())
+
         return render_template(
             'game.html',
             game_id=game_id,
