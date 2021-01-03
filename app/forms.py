@@ -162,6 +162,11 @@ class FinalizeAchievementForm(FlaskForm):
     submit = SubmitField("I've done all the things")
 
 
+class GameEditNameForm(FlaskForm):
+    new_game_name = StringField('New Game Name', validators=[DataRequired()])
+    submit = SubmitField("Update Name")
+
+
 class LinkAchievemetAndCardForm(FlaskForm):
     card = SelectField('Card')
     achievement = SelectField('Achievement')

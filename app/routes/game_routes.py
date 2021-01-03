@@ -52,6 +52,7 @@ def game(game_id):
 
             apform=SelectPlayerForm.factory(),
             dsform=DeckSelectorForm.factory(current_user.id),
+            genform=GameEditNameForm(),
             rform=GameDeckReadyForm(),
 
             db=deck_builder,
@@ -80,6 +81,22 @@ def game_delete(game_id):
     flash("Game deleted")
 
     return redirect(url_for('admin'))
+
+
+@app.route("/game/<game_id>/edit_name", methods=["POST"])
+@login_required
+def game_edit_name(game_id):
+    form = GameEditNameForm()
+    if form.validate_on_submit():
+        if len(form.new_game_name.data.strip()) == 0:
+            raise ValueError('Invalid game name')
+
+        game = Game.query.get(game_id)
+        state = game.state
+        state.data['name'] = form.new_game_name.data.strip()
+        game.update(state)
+
+    return redirect(url_for('game', game_id=game_id))
 
 
 @app.route("/game/next")

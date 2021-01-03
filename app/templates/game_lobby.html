@@ -13,7 +13,24 @@
 
   <div class="row">
     <div class="col framed text-center text-secondary">
-      <h1>
+      <div class="text-right">
+        <a id="edit-name-toggle" href="#">edit</a>
+      </div>
+
+      <div id="game-name-edit" class="row justify-content-center d-none">
+        <div class="col-lg-4">
+          <form action="{{ url_for('game_edit_name', game_id=game_id) }}" method="post" novalidate>
+            {{ genform.hidden_tag() }}
+            <div class="form-group">
+              {{ genform.new_game_name.label }}
+              {{ genform.new_game_name(class='form-control', id='new-game-name-input') }}
+            </div>
+            {{ genform.submit(class="btn btn-primary") }}
+          </form>
+        </div>
+      </div>
+
+      <h1 id="game-name">
         ~ {{ game_state.name }} ~
       </h1>
     </div>
@@ -115,6 +132,20 @@
      // Automatically add selected players.
      $('#player-selector').change(function(event) {
        $('#player-selector-submit').click()
+     })
+
+     $('#edit-name-toggle').click(function() {
+       let name_edit = $('#game-name-edit')
+       let game_name = $('#game-name')
+
+       if (name_edit.hasClass('d-none')) {
+         name_edit.removeClass('d-none')
+         game_name.addClass('d-none')
+       }
+       else {
+         name_edit.addClass('d-none')
+         game_name.removeClass('d-none')
+       }
      })
    })
   </script>
