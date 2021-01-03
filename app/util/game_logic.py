@@ -154,7 +154,7 @@ class GameState(object):
         self.data = json
 
     @staticmethod
-    def factory(game_id: int, name: str, player_ids: list):
+    def factory(game_id: int, name: str):
         data = {
             'id': game_id,
             'history': [],
@@ -172,39 +172,22 @@ class GameState(object):
             'latest_version': 1, # Safety check to avoid data overwrites
         }
 
-        players = []
-        view_option_defaults = {}
-        for i, id in enumerate(player_ids):
-            players.append(GamePlayer.factory(id))
-            view_option_defaults[f"collapse_player-{i}-sideboard"] = True
-
-        for player in players:
-            player.view_options.update(view_option_defaults)
-            data['players'].append(player.data)
-
-        data['turn'] = random.randrange(len(players))
-        data['priority'] = data['turn']
-
-        first_player_name = data['players'][data['turn']]['name']
-
         game = GameState(data)
 
-        data['history'] += [
-            {
-                'id': game.next_id(),
-                'delta': [],
-                'message': 'Game Created',
-                'player': 'GM',
-            },
-            {
-                'id': game.next_id(),
-                'delta': [],
-                'message': f"{first_player_name} randomly chosen to go first",
-                'player': 'GM',
-            },
-        ]
+        data['history'].append({
+            'id': game.next_id(),
+            'delta': [],
+            'message': 'Game Created',
+            'player': 'GM',
+        })
 
         return game
+
+    def add_player(self, player_id):
+        player = GamePlayer.factory(player_id)
+        for i in range(4):
+            player.view_options[f"collapse_player-{i}-sideboard"] = True
+        self.data['players'].append(player.data)
 
     def card(self, card_id):
         return GameCard(self.data['cards'][card_id])
@@ -286,6 +269,17 @@ class GameState(object):
                 return i
 
         return -1
+
+    def start_game(self):
+        self.data['turn'] = random.randrange(len(self.players))
+        self.data['priority'] = data['turn']
+        first_player_name = self.players[data['turn']]['name']
+        data['history'].append({
+            'id': game.next_id(),
+            'delta': [],
+            'message': f"{first_player_name} randomly chosen to go first",
+            'player': 'GM',
+        })
 
     def winner(self):
         return self.data.get('winner', '')

@@ -33,9 +33,7 @@ def game(game_id):
         )
 
     else:
-        dsform = DeckSelectorForm.factory(current_user.id)
-        rform = GameDeckReadyForm()
-
+        # Deck Builder
         player = game.state.player_by_id(current_user.id)
         if player.has_deck():
             deck = Deck.query.get(player.deck_id)
@@ -46,14 +44,31 @@ def game(game_id):
         else:
             deck_builder = None
 
+        # Output
         return render_template(
             'game_deck_selector.html',
             game_id=game_id,
             game_state=game.state,
-            dsform=dsform,
-            rform=rform,
+
+            apform=SelectPlayerForm.factory(),
+            dsform=DeckSelectorForm.factory(current_user.id),
+            rform=GameDeckReadyForm(),
+
             db=deck_builder,
         )
+
+
+@app.route("/game/<game_id>/add_player", methods=['POST'])
+@login_required
+def game_add_player(game_id):
+    form = SelectPlayerForm.factory()
+
+    if form.validate_on_submit():
+        game = Game.query.get(game_id)
+        game.add_player_by_name(form.players.data)  # Commited internally
+        slack.send_new_game_notifications(game, form.players.data)
+
+    return redirect(url_for('game', game_id=game_id))
 
 
 @app.route("/game/<game_id>/delete")
@@ -77,30 +92,21 @@ def game_next():
         return redirect(url_for('game', game_id=waiting_games[0].id))
 
 
-@app.route("/game/new", methods=['POST'])
+@app.route("/game/new")
 @login_required
 def game_new():
-    form = NewGameForm.factory()
+    game = Game()
+    db.session.add(game)
+    db.session.commit()
 
-    if form.validate_on_submit():
-        game = Game()
-        db.session.add(game)
-        db.session.commit()
+    game_state = GameState.factory(
+        game_id=game.id,
+        name=f"{current_user.name}'s game",
+    )
+    game.update(game_state)
+    game.add_player(current_user)
 
-        game_state = GameState.factory(
-            game_id=game.id,
-            name=form.name.data.strip(),
-            player_ids=[int(x) for x in form.players.data],
-        )
-        game.update(game_state)
-
-        slack.send_new_game_notifications(game)
-
-        return redirect(url_for('game', game_id=game.id))
-
-    else:
-        flash('Error creating game')
-        return redirect(url_for('index'))
+    return redirect(url_for('game', game_id=game.id))
 
 
 @app.route("/game/<game_id>/ready", methods=["POST"])

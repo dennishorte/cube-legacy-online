@@ -4,7 +4,7 @@
 
 
 {% block title_suffix %}
-  {{ game_state.name }} - Deck Selector
+  {{ game_state.name }} - Lobby
 {% endblock %}
 
 
@@ -12,11 +12,17 @@
   {% set player = game_state.player_by_id(current_user.id) %}
 
   <div class="row">
+    <div class="col framed text-center text-secondary">
+      <h1>
+        ~ {{ game_state.name }} ~
+      </h1>
+    </div>
+  </div>
+
+  <div class="row">
 
     <!-- Game Info -->
     <div class="col framed">
-      <h4>{{ game_state.name }}</h4>
-
       <p class="text-secondary border-bottom mb-0">Players</p>
       <ul class="list-unstyled">
         {% for player in game_state.players %}
@@ -32,19 +38,12 @@
         {% endfor %}
       </ul>
 
-      {% if db %}
-        <div class="text-right">
-          <form
-            id="readyForm"
-            action="{{ url_for('game_ready', game_id=game_id) }}"
-            method="post"
-            novalidate>
-
-            {{ rform.hidden_tag() }}
-            {{ rform.submit(class="btn btn-success") }}
-          </form>
-        </div>
-      {% endif %}
+      <p class="text-secondary mb-0">Add Player</p>
+      <form action="{{ url_for('game_add_player', game_id=game_id) }}" method="post" novalidate>
+        {{ apform.hidden_tag() }}
+        {{ apform.players(class='form-control', id='player-selector') }}
+        {{ apform.submit(class='d-none', id='player-selector-submit') }}
+      </form>
     </div>
     <!-- END: Game Info -->
 
@@ -61,6 +60,20 @@
           {{ dsform.submit(class="btn btn-info") }}
         </div>
       </form>
+
+      {% if db %}
+        <div class="text-right mt-2">
+          <form
+            id="readyForm"
+            action="{{ url_for('game_ready', game_id=game_id) }}"
+            method="post"
+            novalidate>
+
+            {{ rform.hidden_tag() }}
+            {{ rform.submit(class="btn btn-success") }}
+          </form>
+        </div>
+      {% endif %}
     </div>
     <!-- END: Deck Selector -->
 
@@ -94,10 +107,14 @@
      // When hitting ready, fill the hidden fields with the deck data before submitting.
      $('#readyForm').submit(function(event) {
        let data = build_deck_data()
-       console.log(data)
        $('#maindeck_ids').val(data.maindeck.join(','))
        $('#sideboard_ids').val(data.sideboard.join(','))
        $('#basics_list').val(data.basics.join(','))
+     })
+
+     // Automatically add selected players.
+     $('#player-selector').change(function(event) {
+       $('#player-selector-submit').click()
      })
    })
   </script>

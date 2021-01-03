@@ -15,7 +15,7 @@
       /
       <a href="#newCubeModal" data-toggle="modal">new cube</a>
       /
-      <a href="#newGameModal" data-toggle="modal">new game</a>
+      <a href="{{ url_for('game_new') }}">new game</a>
     </div>
   </div>
 
@@ -338,36 +338,5 @@
     </div>
   </div>
   <!-- END: New Draft Modal -->
-
-  <!-- New Game Modal -->
-  <div class="modal fade" id="newGameModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">New Game</h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-
-        <div class="modal-body">
-          <form action="{{ url_for('game_new') }}" method="post" novalidate>
-            {{ game_form.hidden_tag() }}
-            <div class="form-group">
-              {{ game_form.name.label }}
-              {{ game_form.name(class='form-control') }}
-            </div>
-            <div class="form-group">
-              {{ game_form.players.label }}
-              {{ game_form.players(class='form-control', size=6) }}
-            </div>
-            <div class="form-group">
-              {{ game_form.submit() }}
-            </div>
-          </form>
-        </div>
-
-      </div>
-    </div>
-  </div>
-  <!-- END: New Game Modal -->
 
 {% endblock %}

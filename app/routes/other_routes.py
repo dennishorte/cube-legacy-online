@@ -51,11 +51,12 @@ def index():
         complete = complete_seats,
         achievements_unfinished = achievements_unfinished,
         achievements_finished = achievements_finished,
+
         new_draft_form = NewDraftForm.factory(),
         new_set_draft_form = NewSetDraftForm.factory(),
         new_cube_form = NewCubeForm(),
-        game_form = NewGameForm.factory(),
         pack_maker_form = PackMakerForm.factory(15),
+
         cubes = cubes,
         games = current_user.all_games(),
         users = users,

@@ -276,20 +276,6 @@ class NewSetDraftForm(FlaskForm):
         return form
 
 
-class NewGameForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    players = SelectMultipleField('Players', validators=[DataRequired()])
-    submit = SubmitField('Create')
-
-    @staticmethod
-    def factory():
-        from app.models.user_models import User
-        user_names = [(str(x.id), x.name) for x in User.query.order_by('name') if x.name != 'starter']
-        form = NewGameForm()
-        form.players.choices = user_names
-        return form
-
-
 class NewAchievementForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     conditions = TextAreaField('How to Unlock', validators=[DataRequired()])
@@ -430,11 +416,25 @@ class SelectDraftForm(FlaskForm):
     draft = SelectField('Draft')
     submit = SubmitField('Select')
 
+    @staticmethod
     def factory():
         from app.models.draft_models import Draft
         drafts = Draft.query.order_by(Draft.timestamp.desc()).all()
         form = SelectDraftForm()
         form.draft.choices = [(0, '')] + [(x.id, x.name) for x in drafts]
+        return form
+
+
+class SelectPlayerForm(FlaskForm):
+    players = SelectField('Player Name')
+    submit = SubmitField('Add')
+
+    @staticmethod
+    def factory():
+        from app.models.user_models import User
+        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+        form = SelectPlayerForm()
+        form.players.choices = [('__FAKE__', '')] + users
         return form
 
 

@@ -16,11 +16,11 @@ _client = WebClient(token=Config.SLACK_BOT_TOKEN)
 clo_channel = 'C01AV1RGJSK'
 
 
-def send_new_game_notifications(game):
+def send_new_game_notifications(game, name):
     state = game.state_no_cache()
 
     for player in state.players:
-        if player.id == current_user.id:
+        if player.name != name or player.name == current_user.name:
             continue
 
         user = User.query.get(player.id)
@@ -28,7 +28,7 @@ def send_new_game_notifications(game):
         game_url = f"http://{domain_host}/game/{game.id}"
         message = f"You've been invited to a new game, '{state.name}'. <{game_url}|Don't keep your opponent waiting!>."
 
-    _send_slack_message(user, message)
+        _send_slack_message(user, message)
 
 
 def send_your_turn_in_game_notification(game):

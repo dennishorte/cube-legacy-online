@@ -18,6 +18,20 @@ class Game(db.Model):
         all_games = Game.query.order_by(Game.timestamp.desc()).all()
         return [x for x in all_games if not x.state.is_finished()]
 
+    def add_player(self, user):
+        state = self.state
+        state.add_player(user.id)
+        self.update(state)
+
+    def add_player_by_name(self, name):
+        from app.models.user_models import User
+
+        player = User.query.filter(User.name == name).first()
+        if not player:
+            raise ValueError(f"Unknown player: {name}")
+
+        self.add_player(player)
+
     def age(self):
         age = datetime.utcnow() - self.timestamp
         years = age.days // 365
@@ -29,8 +43,6 @@ class Game(db.Model):
             return f"{days} days"
 
     def is_my_turn(self, user):
-        from app.util.game_logic import GamePhase
-
         if not self.state or not self.state.player_by_id(user.id):
             return False
 
