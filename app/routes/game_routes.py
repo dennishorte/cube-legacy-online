@@ -46,7 +46,7 @@ def game(game_id):
 
         # Output
         return render_template(
-            'game_deck_selector.html',
+            'game_lobby.html',
             game_id=game_id,
             game_state=game.state,
 
