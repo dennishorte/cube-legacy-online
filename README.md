@@ -1,8 +1,8 @@
 Build the image using the following command
 
-To run: `python3 main.py`
+To run: `flask run`
 
-The application will be accessible at http:127.0.0.1:5000.
+The application will be accessible at http://localhost:5000.
 
 **Setup EC2 Instance**
 
@@ -87,4 +87,7 @@ sudo service apache2 restart
 sudo apt-get install mysql-server
 
 # This page finally let me figure out how to connect to the DB from my EC2 instance.
-# https://www.cloudbooklet.com/how-to-setup-rds-and-connect-with-ec2-in-aws/
+https://www.cloudbooklet.com/how-to-setup-rds-and-connect-with-ec2-in-aws/
+
+# Setting up SSL
+Used the handy tools from https://letsencrypt.org/
