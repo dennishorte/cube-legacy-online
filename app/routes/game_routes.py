@@ -34,6 +34,8 @@ def game(game_id):
             game_id=game_id,
             game_state=game.state,
             num_players=len(game.state.players),
+
+            genform=GameEditNameForm(),
         )
 
     else:

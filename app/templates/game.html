@@ -90,9 +90,44 @@
 
     {{ header() }}
 
+    <!-- Game Name -->
+    <div class="row">
+      <div class="col game-frame text-center">
+        <div class="row">
+
+          <div class="col-1">
+          </div>
+
+          <div class="col">
+            <div id="game-name-edit" class="row justify-content-center d-none">
+              <div class="col-lg-4">
+                <form action="{{ url_for('game_edit_name', game_id=game_id) }}" method="post" novalidate>
+                  {{ genform.hidden_tag() }}
+                  <div class="form-group">
+                    {{ genform.new_game_name.label }}
+                    {{ genform.new_game_name(class='form-control', id='new-game-name-input') }}
+                  </div>
+                  {{ genform.submit(class="btn btn-primary") }}
+                </form>
+              </div>
+            </div>
+
+            <h5 id="game-name">
+              ~ {{ game_state.name }} ~
+            </h5>
+          </div>
+
+          <div class="col-1">
+            <a id="edit-name-toggle" href="#">edit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END: Game Name -->
+
     <div class="row
                 {% if num_players > 2 %}
-                  flex-lg-nowrap
+                flex-lg-nowrap
                 {% endif %}
                 ">
       <div id="game-phase" class="col-4 col-lg-1 inner-frames">
@@ -534,9 +569,24 @@
 
   <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
   <script>
-   let initial_state = {{ game_state.data|tojson }}
+   let initial_state = {{ game_state.data|tojson }};
+
    $(document).ready(function() {
      clo.game.init(initial_state, '{{ current_user.name }}')
+
+     $('#edit-name-toggle').click(function() {
+       let name_edit = $('#game-name-edit')
+       let game_name = $('#game-name')
+
+       if (name_edit.hasClass('d-none')) {
+         name_edit.removeClass('d-none')
+         game_name.addClass('d-none')
+       }
+       else {
+         name_edit.addClass('d-none')
+         game_name.removeClass('d-none')
+       }
+     })
    })
   </script>
 
