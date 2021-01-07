@@ -12,6 +12,8 @@ class Draft(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64))
+
+    complete = db.Column(db.Boolean, default=False)
     killed = db.Column(db.Boolean, default=False)
 
     # Setup info
@@ -20,6 +22,9 @@ class Draft(db.Model):
     num_seats = db.Column(db.Integer)
     scar_rounds_str = db.Column(db.String(64), default="")  # eg. "1,4"
     picks_per_pack = db.Column(db.Integer, default=1)
+
+    # Progress info
+    num_picked_tmp = db.Column(db.Integer, default=0)
 
     # Foreign Keys
     cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
@@ -37,19 +42,15 @@ class Draft(db.Model):
     def __repr__(self):
         return '<Draft {}>'.format(self.name)
 
+    def achs(self, user_id):
+        return [x for x in self.ach_links if x.ach.unlocked_by_id == user_id]
+
     def children(self):
         return Draft.query.filter(Draft.parent_id == self.id).all()
 
-    @functools.cached_property
+    @property
     def complete(self):
-        unpicked_cards = PackCard.query.filter(
-            PackCard.draft_id == self.id,
-            PackCard.pick_number == -1,
-        ).first()
-        return unpicked_cards is None
-
-    def scar_rounds(self):
-        return [int(x) for x in self.scar_rounds_str.split(',') if x.strip()]
+        return self.num_picked >= self.pack_size * self.num_packs * self.num_seats
 
     def match_record(self, user_id):
         wins = 0
@@ -67,8 +68,16 @@ class Draft(db.Model):
 
         return f"{wins}-{losses}-{draws}"
 
-    def achs(self, user_id):
-        return [x for x in self.ach_links if x.ach.unlocked_by_id == user_id]
+    @property
+    def num_picked(self):
+        if self.num_picked_tmp is None:
+            self.num_picked_tmp = sum([x.num_picked for x in self.packs])
+            db.session.add(self)
+            db.session.commit()
+        return self.num_picked_tmp
+
+    def scar_rounds(self):
+        return [int(x) for x in self.scar_rounds_str.split(',') if x.strip()]
 
 
 class Seat(db.Model):
@@ -149,6 +158,8 @@ class Pack(db.Model):
     pack_number = db.Column(db.Integer)
     scarred_this_round_id = db.Column(db.Integer)  # CubeCard id
 
+    num_picked_tmp = db.Column(db.Integer, default=0)
+
     cards = db.relationship('PackCard', backref='pack')
 
     def __repr__(self):
@@ -198,9 +209,13 @@ class Pack(db.Model):
             Seat.order == self.next_seat_order()
         ).first()
 
-    @functools.cached_property
+    @property
     def num_picked(self):
-        return len(self.picked_cards())
+        if self.num_picked_tmp is None:
+            self.num_picked_tmp = len(self.picked_cards())
+            db.session.add(self)
+            db.session.commit()
+        return self.num_picked_tmp
 
     def pick_number(self):
         return self.total_pick_number() % self.draft.pack_size

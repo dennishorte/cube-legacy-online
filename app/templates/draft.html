@@ -40,10 +40,11 @@
             {% endif %}
           </td>
           {% for idx in range(d.draft.num_packs) %}
+            {% set num_picked_for_round = s.num_picked_for_round(idx) %}
             <td>
-              {{ s.num_picked_for_round(idx) }}
+              {{ num_picked_for_round }}
               /
-              {% if s.num_picked_for_round(idx) == d.draft.pack_size %}
+              {% if num_picked_for_round == d.draft.pack_size %}
                 <span>
               {% else %}
                   <span class="text-warning">

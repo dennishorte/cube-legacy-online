@@ -103,8 +103,10 @@ class DraftWrapper(object):
         pack_card.picked_at = datetime.utcnow()
         db.session.add(pack_card)
 
-        self.pack.num_picked += 1
+        self.pack.num_picked_tmp += 1
+        self.draft.num_picked_tmp += 1
         db.session.add(self.pack)
+        db.session.add(self.draft)
 
         self.user.last_pick_timestamp = datetime.utcnow()
         db.session.add(self.user)
