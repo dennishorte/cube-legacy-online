@@ -20,7 +20,7 @@ class Layout(enum.Enum):
     # planar = 9  # Plane and Phenomenon-type cards
     # scheme = 10  # Scheme-type cards
     # vanguard = 11  # Vanguard-type cards
-    # token = 12  # Token cards
+    token = 12  # Token cards
     # double_faced_token = 13  # Tokens with another token printed on the back
     # emblem = 14  # Emblem cards
     augment = 15  # Cards with Augment
@@ -42,6 +42,7 @@ class Layout(enum.Enum):
             Layout.leveler.name,
             Layout.saga.name,
             Layout.meld.name,
+            Layout.token.name,
             Layout.host.name,
             Layout.augment.name,
         )
