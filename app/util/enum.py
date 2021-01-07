@@ -23,8 +23,8 @@ class Layout(enum.Enum):
     # token = 12  # Token cards
     # double_faced_token = 13  # Tokens with another token printed on the back
     # emblem = 14  # Emblem cards
-    # augment = 15  # Cards with Augment
-    # host = 16  # Host-type cards
+    augment = 15  # Cards with Augment
+    host = 16  # Host-type cards
     # art_series = 17  # Art Series collectable double-faced cards
     # double_sided = 18  # A Magic card with two sides that are unrelated
 
@@ -42,6 +42,8 @@ class Layout(enum.Enum):
             Layout.leveler.name,
             Layout.saga.name,
             Layout.meld.name,
+            Layout.host.name,
+            Layout.augment.name,
         )
 
     @staticmethod
