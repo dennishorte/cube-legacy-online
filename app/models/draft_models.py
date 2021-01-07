@@ -202,12 +202,14 @@ class Pack(db.Model):
         else:
             return None
 
-    @functools.cached_property
     def next_seat(self):
         return Seat.query.filter(
             Seat.draft_id == self.draft_id,
             Seat.order == self.next_seat_order()
         ).first()
+
+    def next_seat_user_id(self):
+        return self.next_seat().user_id
 
     @property
     def num_picked(self):
@@ -236,11 +238,11 @@ class Pack(db.Model):
         if not self.is_scarring_round:
             return None
 
-        user = self.next_seat.user
-        choices = Scar.get_for_pack(self.id, user.id)
+        user_id = self.next_seat_user_id()
+        choices = Scar.get_for_pack(self.id, user_id)
 
         if not choices:
-            choices = Scar.lock_random_scars(self.id, user.id, 2)
+            choices = Scar.lock_random_scars(self.id, user_id, 2)
 
         choices.sort(key=lambda x: x.id)
 
@@ -281,7 +283,7 @@ class PackCard(db.Model):
     def picked(self):
         return self.pick_number > -1
 
-    @functools.cached_property
+    @property
     def pack_size(self):
         return self.draft.pack_size
 
