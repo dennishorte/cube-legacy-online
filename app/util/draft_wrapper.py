@@ -59,7 +59,7 @@ class DraftWrapper(object):
         return [x for x in self.seat.picks if x.sideboard]
 
     def is_scarring_round(self):
-        return self.pack and self.pack.is_scarring_round
+        return self.pack and self.pack.is_scarring_round()
 
     def passing_to(self):
         """User who will see this pack after you pick from it."""

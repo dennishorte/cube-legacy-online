@@ -94,7 +94,7 @@
         {% endfor %}
 
         <!-- Add Scars Buttons -->
-        {% if draft_id and card.pack.is_scarring_round %}
+        {% if draft_id and card.pack.is_scarring_round() %}
           {% for scar in card.pack.scar_options() %}
             <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card.cube_card.id, scar_id=scar.id) }}">
               Add Scar {{ loop.index }}

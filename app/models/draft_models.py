@@ -171,7 +171,7 @@ class Pack(db.Model):
             self.can_be_seen(pack_card)           # Is possible to see the card at all
             and not self.just_scarred(pack_card)  # Not just scarred by current drafter
             and pack_card.pick_number == -1       # Not picked yet
-            and not self.is_scarring_round        # Already placed scar, if scarring round
+            and not self.is_scarring_round()      # Already placed scar, if scarring round
         )
 
     def can_be_seen(self, pack_card):
@@ -185,7 +185,6 @@ class Pack(db.Model):
         else:
             return 'right'
 
-    @functools.cached_property
     def is_scarring_round(self):
         return (
             self.num_picked == 0  # first pick of round
@@ -228,14 +227,13 @@ class Pack(db.Model):
     def complete(self):
         return self.num_picked == self.draft.pack_size
 
-    @functools.lru_cache
     def picked_cards(self):
         picked = [x for x in self.cards if x.pick_number != -1]
         picked.sort(key=lambda x: x.pick_number)
         return picked
 
     def scar_options(self):
-        if not self.is_scarring_round:
+        if not self.is_scarring_round():
             return None
 
         user_id = self.next_seat_user_id()
