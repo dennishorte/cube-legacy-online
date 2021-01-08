@@ -17,6 +17,7 @@ from app.util import cube_util
 from app.util.card_table import CardTable
 from app.util.cube_data import CubeData
 from app.util.cube_util import add_cards_to_cube
+from app.util.cube_wrapper import CubeWrapper
 
 
 @app.route("/cubes/new", methods=['POST'])
@@ -50,7 +51,12 @@ def cube_achievements(cube_id):
     form.group_fields()
 
     cube = Cube.query.get(cube_id)
-    return render_template('cube_achievements.html', cube=cube, form=form)
+    return render_template(
+        'cube_achievements.html',
+        cube=cube,
+        cw=CubeWrapper(cube),
+        form=form,
+    )
 
 
 @app.route("/cubes/<cube_id>/add", methods=["POST"])
@@ -114,6 +120,7 @@ def cube_cards(cube_id):
     return render_template(
         'cube_cards.html',
         cube = cube,
+        cw = CubeWrapper(cube),
         t = CardTable(cube),
         add_cards_form = AddCardsForm(),
         rare_form = CardRarityForm(),
@@ -129,6 +136,7 @@ def cube_data(cube_id):
     return render_template(
         'cube_data.html',
         cube=cube,
+        cw=CubeWrapper(cube),
         d=data,
     )
 
@@ -144,6 +152,7 @@ def cube_factions(cube_id):
     return render_template(
         'cube_factions.html',
         cube=cube,
+        cw=CubeWrapper(cube),
         form=form,
         achievements=achievements,
     )
@@ -169,6 +178,7 @@ def cube_interns(cube_id):
     return render_template(
         'cube_interns.html',
         cube=cube,
+        cw=CubeWrapper(cube),
         live_interns=live_interns,
         dead_interns=dead_interns,
     )
@@ -273,12 +283,15 @@ def cube_scars(cube_id):
         rsform.count.data = '2'
         random_scars = []
 
+    cube_wrapper = CubeWrapper(cube)
+
     use_scar_form = UseScarForm()
-    use_scar_form.card_name.choices = [''] + [x.name() for x in cube.cards()]
+    use_scar_form.card_name.choices = [''] + [x.name() for x in cube_wrapper.cards()]
 
     return render_template(
         'cube_scars.html',
         cube=cube,
+        cw=cube_wrapper,
         form=form,
         rsform=rsform,
         usform=use_scar_form,

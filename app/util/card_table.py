@@ -1,4 +1,5 @@
 from app.util.card_util import CardConsts
+from app.util.cube_wrapper import CubeWrapper
 
 
 class CardColumnSection(object):
@@ -107,7 +108,8 @@ class CardTable(object):
     def _divide_cards_by_column(self):
         columns = {x: [] for x in self.HEADERS}
 
-        for card in self.cube.cards():
+        cw = CubeWrapper(self.cube)
+        for card in cw.cards():
             if card.color_identity() == 'W':
                 columns['White'].append(card)
             elif card.color_identity() == 'U':

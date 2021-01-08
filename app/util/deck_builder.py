@@ -3,6 +3,7 @@ from app import db
 from app.models.deck_models import *
 from app.models.draft_models import *
 from app.models.user_models import *
+from app.util.cube_wrapper import CubeWrapper
 
 
 class CardSet(object):
@@ -68,6 +69,9 @@ class DeckBuilder(object):
         else:
             self.draft = draft
         self.draft_ids = [self.draft.id] + [x.id for x in self.draft.children()]
+
+        self.cube = self.draft.cube
+        self.cube_wrapper = CubeWrapper(self.cube)
 
         self.user = User.query.get(user_id)
 

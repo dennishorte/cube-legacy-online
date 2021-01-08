@@ -196,7 +196,7 @@
     <div class="col framed">
       <h5>Renamed Card Finder</h5>
       <ul class="list-unstyled">
-        {% for card in cube.cards() %}
+        {% for card in cw.cards() %}
           {% if card.differ().is_changed('name') %}
             <li>
               <a href="{{ url_for('card_editor', card_id=card.id) }}">
@@ -314,7 +314,7 @@
    $(document).ready(function() {
      {% if cube.style_a == 'legacy' %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ cube.card_data()|tojson }}
+       window.card_data = {{ cw.card_data()|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}

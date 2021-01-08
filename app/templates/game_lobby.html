@@ -112,10 +112,9 @@
    $(document).ready(function() {
 
      {% if db %}
-       {% set cube = db.draft.cube %}
-       {% if cube.style_a == 'legacy' %}
+       {% if db.cube.style_a == 'legacy' %}
          autocard_init('card-list-item', true)
-         window.card_data = {{ cube.card_data()|tojson }}
+         window.card_data = {{ db.cube_wrapper.card_data()|tojson }}
        {% else %}
          autocard_init('card-list-item', false)
        {% endif %}

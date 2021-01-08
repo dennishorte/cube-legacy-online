@@ -90,35 +90,6 @@ class Cube(db.Model):
         else:
             return f"{days} days"
 
-    @functools.lru_cache
-    def cards(self, include_removed=False):
-        """
-        Get only the latest version of the cards in the cube.
-        """
-        if include_removed:
-            cards = CubeCard.query.filter(
-                CubeCard.cube_id == self.id,
-                CubeCard.latest == True,
-            ).all()
-        else:
-            cards = CubeCard.query.filter(
-                CubeCard.cube_id == self.id,
-                CubeCard.latest == True,
-                CubeCard.removed_by_id == None,
-            ).all()
-
-        cards.sort(key=lambda x: x.name())
-        return cards
-
-    def card_data(self):
-        """
-        Card json data for use in javascript (eg. legacy autocard popups)
-        """
-        cards = {}
-        for card in self.cards(include_removed=True):
-            cards[card.id] = card.get_json(add_scars=True)
-        return cards
-
     def cards_added(self):
         cards = CubeCard.query.filter(
             CubeCard.cube_id == self.id,

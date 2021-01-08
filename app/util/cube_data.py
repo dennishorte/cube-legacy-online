@@ -1,3 +1,5 @@
+from app.util.cube_wrapper import CubeWrapper
+
 
 class CardPickInfo(object):
     def __init__(self, card):
@@ -25,12 +27,13 @@ class CardPickInfo(object):
 class CubeData(object):
     def __init__(self, cube):
         self.cube = cube
+        self.cube_wrapper = CubeWrapper(self.cube)
         self.info = self._pick_info()
 
     def creature_types(self):
         types = {}
 
-        for card in self.cube.cards():
+        for card in self.cube_wrapper.cards():
             for face in card.card_faces():
                 if 'creature' in face['type_line'].lower():
                     subtypes = self._extract_subtypes(face['type_line'])

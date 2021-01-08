@@ -138,8 +138,8 @@
         <li><strong>Draft: </strong>{{ d.draft.name }}</li>
         <li>
           <strong>Cube: </strong>
-          <a href="{{ url_for('cube_cards', cube_id=d.draft.cube.id) }}">
-            {{ d.draft.cube.name }}
+          <a href="{{ url_for('cube_cards', cube_id=d.cube.id) }}">
+            {{ d.cube.name }}
           </a>
         </li>
         <li><strong>Packs: </strong>{{ d.draft.num_packs }}</li>
@@ -338,10 +338,9 @@
 
    $(document).ready(function() {
 
-     {% set cube = d.draft.cube %}
-     {% if cube.style_a == 'legacy' %}
+     {% if d.cube.style_a == 'legacy' %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ cube.card_data()|tojson }}
+       window.card_data = {{ d.cube_wrapper.card_data()|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}

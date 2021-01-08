@@ -8,11 +8,14 @@ from app.models.draft_models import *
 from app.util import slack
 from app.util.deck_builder import DeckBuilder
 from app.util.enum import DraftFaceUp
+from app.util.cube_wrapper import CubeWrapper
 
 
 class DraftWrapper(object):
     def __init__(self, draft_id, user):
         self.draft = Draft.query.get(draft_id)
+        self.cube = self.draft.cube
+        self.cube_wrapper = CubeWrapper(self.cube)
 
         self.seats = self.draft.seats
         self.seats.sort(key=lambda x: x.order)
