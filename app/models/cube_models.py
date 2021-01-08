@@ -260,13 +260,6 @@ class CubeCard(db.Model):
             CubeCard.latest_id == self.latest_id,
         ).first()
 
-    @property
-    def removed_by(self):
-        if not self.removed_by_id:
-            return None
-        else:
-            return User.query.get(self.removed_by_id).name
-
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
 
