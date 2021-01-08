@@ -38,7 +38,7 @@
               href="#draftFaceUpModal"
               data-toggle="modal"
               data-card-name="{{ card.cube_card.name() }}"
-              data-card-id="{{ card.id }}"
+            data-card-id="{{ card.id }}"
             {% elif can_be_drafted %}
               href="/draft/{{draft_id}}/pick/{{card.id}}"
             {% endif %}
@@ -56,7 +56,7 @@
                   href="#draftFaceUpModal"
                   data-toggle="modal"
                   data-card-name="{{ card.cube_card.name() }}"
-                  data-card-id="{{ card.id }}"
+                data-card-id="{{ card.id }}"
                 {% elif can_be_drafted %}
                   href="/draft/{{draft_id}}/pick/{{card.id}}"
                 {% endif %}
@@ -78,33 +78,34 @@
 
             {{ show_card_diff(card) }}
 
-        {% endif %}
+      {% endif %}
 
-        <!-- Linked Achievements -->
-        {% if card.cube_card.linked_achievements() %}
-          <div class="ml-1 text-muted text-xs">
-            Linked Achievements
-          </div>
-        {% endif %}
+      <!-- Linked Achievements -->
+      {% set linked_achievements = card.cube_card.linked_achievements() %}
+      {% if linked_achievements %}
+        <div class="ml-1 text-muted text-xs">
+          Linked Achievements
+        </div>
+      {% endif %}
 
-        {% for ach in card.cube_card.linked_achievements() %}
-          <div class="linked-achievement text-secondary border-top" style="max-width: 220px; font-size: .8rem;">
-            {{ ach.conditions }}
-          </div>
+      {% for ach in linked_achievements %}
+        <div class="linked-achievement text-secondary border-top" style="max-width: 220px; font-size: .8rem;">
+          {{ ach.conditions }}
+        </div>
+      {% endfor %}
+
+      <!-- Add Scars Buttons -->
+      {% if draft_id and card.pack.is_scarring_round() %}
+        {% for scar in card.pack.scar_options() %}
+          <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card.cube_card.id, scar_id=scar.id) }}">
+            Add Scar {{ loop.index }}
+          </a>
         {% endfor %}
-
-        <!-- Add Scars Buttons -->
-        {% if draft_id and card.pack.is_scarring_round() %}
-          {% for scar in card.pack.scar_options() %}
-            <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card.cube_card.id, scar_id=scar.id) }}">
-              Add Scar {{ loop.index }}
-            </a>
-          {% endfor %}
-        {% endif %}
-        <!-- END: Add Scars Buttons -->
-      </div>
+      {% endif %}
+      <!-- END: Add Scars Buttons -->
+          </div>
     {% endfor %}
-  </div>
+        </div>
 {% endmacro %}
 
 
@@ -134,13 +135,14 @@
       {% endif %}
 
       <!-- Linked Achievements -->
-      {% if card.linked_achievements() %}
+      {% set linked_achievements = card.linked_achievements() %}
+      {% if linked_achievements %}
         <div class="ml-1 text-muted text-xs">
           Linked Achievements
         </div>
       {% endif %}
 
-      {% for ach in card.linked_achievements() %}
+      {% for ach in linked_achievements %}
         <div class="linked-achievement text-secondary border-top">
           {{ ach.conditions }}
         </div>
