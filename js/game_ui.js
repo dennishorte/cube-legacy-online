@@ -423,6 +423,7 @@ let gameui = (function() {
     $('#token-create').click(function() {
       let name = $('#token-name').val()
       let annotation = $('#token-annotation').val()
+      let persistent = $('#token-persistent').prop('checked')
 
       let player_idx = dialogs.data('token-maker').player_idx
       let player = _state.player(player_idx)
@@ -431,6 +432,7 @@ let gameui = (function() {
       token.annotation = annotation
       token.owner = player.name
       token.visibility = _state.state.players.map(p => p.name).sort()
+      token.token = !persistent  // Persistent cards are not actually tokens
 
       let data = token.json
       data.name = name
