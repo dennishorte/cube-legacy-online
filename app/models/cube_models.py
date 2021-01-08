@@ -253,14 +253,14 @@ class CubeCard(db.Model):
     def linked_achievements(self):
         return [x.achievement for x in self.linked_achs if not x.achievement.unlocked_by_id]
 
-    @functools.cached_property
+    @property
     def original(self):
         return CubeCard.query.filter(
             CubeCard.version == 1,
             CubeCard.latest_id == self.latest_id,
         ).first()
 
-    @functools.cached_property
+    @property
     def removed_by(self):
         if not self.removed_by_id:
             return None
