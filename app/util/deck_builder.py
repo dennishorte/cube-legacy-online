@@ -96,7 +96,7 @@ class DeckBuilder(object):
 
         drafts = Draft.query.filter(Draft.id.in_(self.draft_ids)).all()
         for draft in drafts:
-            cards += draft.cube.cards(include_removed=True)
+            cards += self.cube_wrapper.cards(include_removed=True)
 
         return list(set(cards))
 
