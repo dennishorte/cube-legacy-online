@@ -36,6 +36,8 @@
 {% block content %}
   {{ super() }}
 
+  {% set achievements_available = cube.achievements_available() %}
+
   <!-- First Row -->
   <div class="row">
 
@@ -45,7 +47,7 @@
         <a name="starredAchievements"></a>
         <h4>StarredAchievements</h4>
 
-        {% for achievement in cube.achievements_available() %}
+        {% for achievement in achievements_available %}
           {% if achievement.starred_by_user(current_user) %}
             {{ show_achievement(achievement, current_user) }}
           {% endif %}
@@ -56,7 +58,7 @@
         <a name="availableAchievements"></a>
         <h4>Available Achievements</h4>
 
-        {% for achievement in cube.achievements_available() %}
+        {% for achievement in achievements_available %}
           {% if not achievement.starred_by_user(current_user) and not achievement.linked_cards %}
             {{ show_achievement(achievement, current_user) }}
           {% endif %}
@@ -123,7 +125,7 @@
         <em>Achievements that are linked to specific cards.</em>
       </p>
 
-      {% for achievement in cube.achievements_available() %}
+      {% for achievement in achievements_available %}
         {% if not achievement.starred_by_user(current_user) and achievement.linked_cards %}
           {{ show_achievement(achievement, current_user) }}
         {% endif %}
