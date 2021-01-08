@@ -60,6 +60,7 @@ class DeckSelectorForm(FlaskForm):
     def factory(user_id):
         from app.models.deck_models import Deck
         decks = Deck.query.filter(Deck.user_id == user_id).order_by(Deck.name).all()
+        decks.sort(key=lambda x: x.timestamp, reverse=True)
         decks = [('none', '')] + [(str(x.id), x.name) for x in decks]
 
         form = DeckSelectorForm()
