@@ -14,10 +14,12 @@ from app.models.cube_models import *
 from app.models.deck_models import *
 from app.models.game_models import *
 from app.util import slack
+from app.util.cube_wrapper import CubeWrapper
 from app.util.deck_builder import DeckBuilder
 from app.util.game_logic import GameCard
 from app.util.game_logic import GamePhase
 from app.util.game_logic import GameState
+
 
 @app.route("/game/<game_id>")
 @login_required
@@ -162,7 +164,8 @@ def game_ready(game_id):
         maindeck_cards.append(state.make_card(id))
 
     basics_cube = Cube.query.filter(Cube.name == 'basic lands').first()
-    basic_cards = {x.name(): x for x in basics_cube.cards()}
+    basics_cube_wrapper = CubeWrapper(basics_cube)
+    basic_cards = {x.name(): x for x in basics_cube_wrapper.cards()}
     for basic in basic_lands:
         if not basic:
             continue
