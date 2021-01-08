@@ -132,11 +132,12 @@ def make_pack():
 
     # Get form data
     cube = Cube.query.filter(Cube.name == form.cube_name.data).first()
+    cube_wrapper = CubeWrapper(cube)
     count = int(form.count.data)
 
     # Make pack
     if form.obj_type.data == 'Cards':
-        cards = cube.cards()
+        cards = cube_wrapper.cards()
         random.shuffle(cards)
         cards = cards[:count]
 
