@@ -23,6 +23,7 @@ from app.models.user_models import *
 from app.util import cockatrice
 from app.util.card_util import empty_card_json
 from app.util.card_util import update_json_keys
+from app.util.cube_wrapper import CubeWrapper
 from app.util.string import normalize_newlines
 
 
