@@ -200,6 +200,7 @@ class CubeCard(db.Model):
         else:
             return DraftFaceUp.false
 
+    @functools.lru_cache
     def differ(self):
         return CardDiffer(self.original, self)
 
