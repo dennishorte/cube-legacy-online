@@ -234,21 +234,22 @@ class GameState {
     return this._execute(diff)
   }
 
-  // True if the current player has more visibility than other players
-  // AND the card is in a zone with zero visibility.
+  // True if normally only the current player could see the card, but other players can
+  // see it as well.
   card_is_revealed(card_id, zone_id) {
-    let card = this.card(card_id)
-    let player_vis = card.visibility.indexOf(this.viewer_name) >= 0
-    let limited_vis = card.visibility.length < this.state.players.length
+    const zone_name = this._zone_name_from_id(zone_id)
+    const zone_vis = card_zones[zone_name].visibility
 
-    let zone_name = this._zone_name_from_id(zone_id)
-    let zone_vis = card_zones[zone_name].visibility
-
-    return (
-      limited_vis
-      && player_vis
-      && zone_vis == 'none'
+    const card = this.card(card_id)
+    const non_owners_can_see = (
+      card.visibility.length > 1
+      || (card.visibility.length > 0 && card.visibility.indexOf(card.owner) < 0)
     )
+
+    console.log(card)
+    console.log(`${card_id} ${card.json.name} ${zone_vis} ${non_owners_can_see} ${card.visibility}`)
+
+    return zone_vis != 'all' && non_owners_can_see
   }
 
   card_is_visible(card_id, zone_id) {

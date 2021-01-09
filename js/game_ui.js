@@ -733,6 +733,10 @@ let gameui = (function() {
         card.face_down,
       )
 
+      if (_state.card_is_revealed(card.id, zone_prefix)) {
+        cardui.set_revealed(elem)
+      }
+
       if (zone == 'hand' && player_idx == _state.viewer_idx) {
         cardui.show_mana_cost(elem)
       }
