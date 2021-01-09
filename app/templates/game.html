@@ -126,9 +126,7 @@
     <!-- END: Game Name -->
 
     <div class="row
-                {% if num_players > 2 %}
-                flex-lg-nowrap
-                {% endif %}
+                flex-nowrap
                 ">
       <div id="game-phase" class="col-4 col-lg-1 inner-frames">
         <div id="actions-zone" class="game-frame">
@@ -188,6 +186,7 @@
         <div
           id="{{ id_prefix }}-tableau"
           class="tableau game-frame
+                col-12
               {% if num_players == 2 %}
                 col-lg
               {% else %}
