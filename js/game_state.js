@@ -763,6 +763,28 @@ class GameState {
     return this._execute(diff)
   }
 
+  reveal_zone(player_idx, zone_name) {
+    const card_list = this.card_list(player_idx, zone_name)
+    const visibility = this.state.players.map(player => player.name).sort()
+
+    const delta = []
+    card_list.forEach(card_id => {
+      const card = this.card(card_id)
+      if (card.visibility.length < visibility.length) {
+        const diff = this._visibility_diff(card, visibility)
+        delta.push(diff)
+      }
+    })
+
+    const diff = {
+      delta: delta,
+      message: `PLAYER_${this.viewer_idx}_NAME reveals PLAYER_${player_idx}_NAME's ${zone_name}`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   save_data() {
     return this.state
   }
