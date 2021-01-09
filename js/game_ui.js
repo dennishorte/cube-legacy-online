@@ -593,6 +593,14 @@ let gameui = (function() {
       _redraw()
     }
 
+    else if (menu_item == 'reveal') {
+      let zone = target.closest('.card-zone')
+      let player_idx = util.player_idx_from_elem(zone)
+      let zone_name = _zone_from_id(zone.attr('id'))
+      _state.reveal_zone(player_idx, zone_name)
+      _redraw()
+    }
+
     else if (menu_item == 'roll a die') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)
