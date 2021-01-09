@@ -225,6 +225,10 @@ class GameState(object):
             card = self.card(card_id)
             card.data['owner'] = player.name
 
+        for card_id in tableau.sideboard:
+            card = self.card(card_id)
+            card.data['visibility'].append(player.name)
+
     @property
     def name(self):
         return self.data['name']
