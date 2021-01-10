@@ -332,9 +332,10 @@ def cube_scars_add(cube_id):
 @login_required
 def cube_scars_use(cube_id):
     cube = Cube.query.get(cube_id)
+    cube_wrapper = CubeWrapper(cube)
 
     form = UseScarForm()
-    form.card_name.choices = [x.name() for x in cube.cards()]
+    form.card_name.choices = [x.name() for x in cube_wrapper.cards()]
 
     if not form.validate_on_submit():
         flash('Scar use failed')
