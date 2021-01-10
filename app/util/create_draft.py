@@ -5,6 +5,7 @@ from app.models.cube_models import *
 from app.models.draft_models import *
 from app.models.user_models import *
 from app.util import slack
+from app.util.cube_wrapper import CubeWrapper
 
 
 def create_draft(
@@ -97,7 +98,7 @@ def create_set_draft(
         picks_per_pack = 2
     else:
         pack_size = 15
-        pack_maker = _make_set_packs
+        pack_maker = _make_standard_packs
         picks_per_pack = 1
 
     create_draft(
@@ -113,7 +114,8 @@ def create_set_draft(
 
 
 def _make_cube_packs(cube, pack_size, num_packs, num_players):
-    cards = cube.cards()
+    cube_wrapper = CubeWrapper(cube)
+    cards = cube_wrapper.cards()
 
     total_cards = pack_size * num_packs * num_players
     total_packs = num_packs * num_players
@@ -133,8 +135,9 @@ def _make_cube_packs(cube, pack_size, num_packs, num_players):
 
 
 def _make_commander_packs(cube, unused, num_packs, num_players):
+    cube_wrapper = CubeWrapper(cube)
     card_breakdown = {
-        'all': cube.cards(),
+        'all': cube_wrapper.cards(),
         'rare': [],  # mythics get shuffled in here
         'uncommon': [],
         'common': [],
@@ -165,8 +168,9 @@ def _make_commander_packs(cube, unused, num_packs, num_players):
 
 
 def _make_standard_packs(cube, unused, num_packs, num_players):
+    cube_wrapper = CubeWrapper(cube)
     card_breakdown = {
-        'all': cube.cards(),
+        'all': cube_wrapper.cards(),
         'rare': [],  # mythics get shuffled in here
         'uncommon': [],
         'common': [],
