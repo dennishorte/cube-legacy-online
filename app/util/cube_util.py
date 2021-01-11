@@ -33,6 +33,7 @@ def create_set_cube(set_code):
         card = CubeCard()
         card.cube_id = cube.id
         card.added_by = starter_user
+        card.version = 1
         card.set_json(card_json)
         db.session.add(card)
     db.session.commit()

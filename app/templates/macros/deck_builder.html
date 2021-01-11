@@ -1,5 +1,6 @@
 {% macro deck_builder_row(id, class, cards) %}
   {# id: used to update the card counts by deck_builder.js #}
+  {% set is_legacy = cards.cards and cards.cards[0].cube.style_a == 'legacy' %}
 
   <div id="{{ id }}" class="row deckbuilder-row {{ class }}-row">
     {% for cmc in range(8) %}
@@ -20,6 +21,7 @@
           </div>
           <ul class="card-list sortable list-unstyled">
             {% for card in cards %}
+
               {% if card.is_land() %}
                 {% set card_class = 'card-type-land' %}
               {% endif %}
@@ -32,16 +34,18 @@
                   data-back="{{ card.image_back() }}"
                 {% endif %}
               >
-                {# Linked Achievements Icon #}
-                {% if card.linked_achievements() %}
-                  <i class="fab fa-font-awesome-flag"></i>
-                {% endif %}
+                {% if is_legacy %}
+                  {# Linked Achievements Icon #}
+                  {% if card.linked_achievements() %}
+                    <i class="fab fa-font-awesome-flag"></i>
+                  {% endif %}
 
-                {# Scars Icon #}
-                {% if card.differ().is_significant() %}
-                  <i class="fas fa-bolt"></i>
-                {% elif card.differ().is_minor() %}
-                  <i class="fas fa-bolt text-muted"></i>
+                  {# Scars Icon #}
+                  {% if card.differ().is_significant() %}
+                    <i class="fas fa-bolt"></i>
+                  {% elif card.differ().is_minor() %}
+                    <i class="fas fa-bolt text-muted"></i>
+                  {% endif %}
                 {% endif %}
 
                 {{ card.name() }}

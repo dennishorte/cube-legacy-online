@@ -258,7 +258,7 @@ class CubeCard(db.Model):
             raise ValueError(f"Unknown layout type: {layout}")
 
     def is_scarred(self):
-        return self.version > 1 and self.cube.name != 'basic lands'
+        return self.version and self.version > 1 and self.cube.style_a == 'legacy'
 
     def linked_achievements(self):
         return [x.achievement for x in self.linked_achs if not x.achievement.unlocked_by_id]
