@@ -97,7 +97,7 @@ def create_set_draft(
         pack_maker = _make_commander_packs
         picks_per_pack = 2
     else:
-        pack_size = 15
+        pack_size = 14
         pack_maker = _make_standard_packs
         picks_per_pack = 1
 
