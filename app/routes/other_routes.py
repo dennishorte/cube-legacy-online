@@ -55,6 +55,7 @@ def index():
         new_draft_form = NewDraftForm.factory(),
         new_set_draft_form = NewSetDraftForm.factory(),
         new_cube_form = NewCubeForm(),
+        new_set_form = NewSetForm(),
         pack_maker_form = PackMakerForm.factory(15),
 
         cubes = cubes,

@@ -7,7 +7,7 @@ from app.util.card_util import CardConsts
 
 def fetch_one_from_scryfall(card_name):
     params = {'fuzzy': card_name}
-    r = requests.get('http://api.scryfall.com/cards/named?fuzzy=', params=params)
+    r = requests.get('http://api.scryfall.com/cards/named', params=params)
     return r.json()
 
 
@@ -30,6 +30,45 @@ def fetch_many_from_scryfall(card_names: list):
     print("...COMPLETE (fetching cards from Scryfall")
 
     return results
+
+
+def fetch_set_cards(set_code: str, count: int):
+    """
+    count: The total number of cards in the set
+    """
+    batch_id = 0
+    batch_size = 75
+    total_requested = 0
+
+    aggregated_results = []
+
+    while total_requested < count:
+        batch_start = 1 + (batch_size * batch_id)
+        batch_end = min(batch_start + batch_size, count + 1)
+        collector_numbers = range(batch_start, batch_end)
+
+        identifiers = []
+        for num in collector_numbers:
+            identifiers.append({
+                'set': set_code,
+                'collector_number': str(num),
+            })
+
+        r = requests.post('https://api.scryfall.com/cards/collection', json = {
+            'identifiers': identifiers
+        })
+
+        batch_id += 1
+        total_requested += batch_end - batch_start
+        aggregated_results += r.json()['data']
+
+    return aggregated_results
+
+
+def fetch_set_info(set_code: str):
+    set_code = set_code.lower()
+    r = requests.get(f'https://api.scryfall.com/sets/{set_code}')
+    return r.json()
 
 
 def convert_to_clo_standard_json(card_json):

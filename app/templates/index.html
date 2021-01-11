@@ -225,18 +225,43 @@
         </div>
 
         <div class="modal-body">
-          <form action="{{ url_for('cubes_new') }}" method="post" novalidate>
-            {{ new_cube_form.hidden_tag() }}
-            <div class="form-group">
-              {{ new_cube_form.name.label }}
-              {{ new_cube_form.name(class='form-control') }}
+
+          <ul class="nav nav-tabs justify-content-around">
+            <li class="active">
+              <a  href="#new-cube-tab" data-toggle="tab">New Cube</a>
+            </li>
+            <li>
+              <a  href="#new-set-tab" data-toggle="tab">New Set</a>
+            </li>
+          </ul>
+
+	  <div class="tab-content clearfix">
+	    <div class="tab-pane active" id="new-cube-tab">
+              <form action="{{ url_for('cubes_new') }}" method="post" novalidate>
+                {{ new_cube_form.hidden_tag() }}
+                <div class="form-group">
+                  {{ new_cube_form.name.label }}
+                  {{ new_cube_form.name(class='form-control') }}
+                </div>
+                <div class="form-group">
+                  {{ new_cube_form.style.label }}
+                  {{ new_cube_form.style(class="list-unstyled") }}
+                </div>
+                <p>{{ new_cube_form.submit(class="btn btn-primary") }}</p>
+              </form>
             </div>
-            <div class="form-group">
-              {{ new_cube_form.style.label }}
-              {{ new_cube_form.style(class="list-unstyled") }}
+
+	    <div class="tab-pane" id="new-set-tab">
+              <form action="{{ url_for('cubes_new_set') }}" method="post" novalidate>
+                {{ new_set_form.hidden_tag() }}
+                <div class="form-group">
+                  {{ new_set_form.set_code.label }}
+                  {{ new_set_form.set_code(class="form-control") }}
+                </div>
+                <p>{{ new_set_form.submit(class="btn btn-primary") }}</p>
+              </form>
             </div>
-            <p>{{ new_cube_form.submit(class="btn btn-primary") }}</p>
-          </form>
+          </div>
 
         </div>
       </div>

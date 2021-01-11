@@ -53,6 +53,7 @@ class Cube(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     style = db.Column(db.Enum(CubeStyle))
     style_a = db.Column(db.String(16))
+    set_code = db.Column(db.String(16))
 
     # If True, this cube is for administrative purposes (eg. basic lands)
     admin = db.Column(db.Boolean, default=False)
@@ -216,6 +217,15 @@ class CubeCard(db.Model):
             json=base_card.json,
             added_by_id=added_by.id,
         )
+
+    @staticmethod
+    def from_base_json(cube_id, card_json, added_by_id):
+        card = CubeCard()
+        card.version = 1
+        card.cube_id = cube_id
+        card.json = card_json
+        card.added_by_id = added_by_id
+        return card
 
     @functools.lru_cache
     def get_json(self, add_scars=False):

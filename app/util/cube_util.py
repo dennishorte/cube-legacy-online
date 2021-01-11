@@ -3,6 +3,47 @@ from app.models.cube_models import *
 from app.util import scryfall
 
 
+def create_set_cube(set_code):
+    # Get the set info from Scryfall
+    set_info = scryfall.fetch_set_info(set_code)
+    set_name = set_info['name']
+
+    # Get the card info from Scryfall
+    scryfall_cards = scryfall.fetch_set_cards(set_code, set_info['card_count'])
+    print(f"Fetched {len(scryfall_cards)} cards for set {set_name}")
+
+    # Convert the Scryfall json to CLO json
+    for card_json in scryfall_cards:
+        scryfall.convert_to_clo_standard_json(card_json)
+
+    # Create the cube
+    cube = Cube()
+    cube.name = 'Set: ' + set_name
+    cube.style_a = 'set'
+    cube.set_code = set_code
+    db.session.add(cube)
+    db.session.commit()
+
+    starter_user = User.query.filter(User.name == 'starter').first()
+
+    for card_json in scryfall_cards:
+        if card_json['name'] in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']:
+            continue
+
+        card = CubeCard()
+        card.cube_id = cube.id
+        card.added_by = starter_user
+        card.set_json(card_json)
+        db.session.add(card)
+    db.session.commit()
+
+    # Give all the new cards a group id.
+    for c in cube._cards:
+        c.latest_id = c.id
+        db.session.add(c)
+    db.session.commit()
+
+
 def add_cards_to_cube(cube_id, card_names, added_by, comment):
     comment = comment.strip()
 

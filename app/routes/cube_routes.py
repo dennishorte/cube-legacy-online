@@ -17,6 +17,7 @@ from app.util import cube_util
 from app.util.card_table import CardTable
 from app.util.cube_data import CubeData
 from app.util.cube_util import add_cards_to_cube
+from app.util.cube_util import create_set_cube
 from app.util.cube_wrapper import CubeWrapper
 
 
@@ -37,6 +38,22 @@ def cubes_new():
         )
         db.session.add(cube)
         db.session.commit()
+
+    return redirect(url_for('index'))
+
+
+@app.route("/cubes/new_set", methods=['POST'])
+@login_required
+def cubes_new_set():
+    form = NewSetForm()
+
+    if form.validate_on_submit():
+        cube = Cube.query.filter(Cube.set_code == form.set_code.data).first()
+        if cube is not None:
+            flash('A Cube with set code "{}" already exists.'.format(cube.set_code))
+            return redirect(url_for('index'))
+
+        create_set_cube(form.set_code.data)
 
     return redirect(url_for('index'))
 

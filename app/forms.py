@@ -282,6 +282,11 @@ class NewSetDraftForm(FlaskForm):
         return form
 
 
+class NewSetForm(FlaskForm):
+    set_code = StringField('Set Code', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+
 class NewAchievementForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     conditions = TextAreaField('How to Unlock', validators=[DataRequired()])
