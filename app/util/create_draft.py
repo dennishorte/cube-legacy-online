@@ -169,6 +169,7 @@ def _make_commander_packs(cube, unused, num_packs, num_players):
 
 def _make_standard_packs(cube, unused, num_packs, num_players):
     cube_wrapper = CubeWrapper(cube)
+
     card_breakdown = {
         'all': cube_wrapper.cards(),
         'rare': [],  # mythics get shuffled in here
@@ -182,8 +183,34 @@ def _make_standard_packs(cube, unused, num_packs, num_players):
         ('common', 10),
     ]
 
+    separate_double_faced = False
+
+    # These sets replaced one common slot with a double-faced card of any rarity.
+    if cube.set_code.lower() in ('isd', 'dka'):
+        separate_double_faced = True
+        card_breakdown['double-faced'] = []
+        distribution = [
+            ('rare', 1),
+            ('uncommon', 3),
+            ('double-faced', 1),
+            ('common', 9),
+        ]
+
+
     for card in card_breakdown['all']:
-        if card.rarity() in ('rare', 'mythic'):
+        if separate_double_faced and '//' in card.name():
+            # Need to get the distribution right for rarity.
+            if card.rarity() == 'mythic':
+                card_breakdown['double-faced'].append(card)
+            elif card.rarity() == 'rare':
+                card_breakdown['double-faced'] += [card] * 7
+            elif card.rarity() == 'uncommon':
+                card_breakdown['double-faced'] += [card] * 24
+            elif card.rarity() == 'common':
+                card_breakdown['double-faced'] += [card] * 88
+            else:
+                raise ValueError(f"Unknown rarity '{card.rarity()}' on '{card.name()}'")
+        elif card.rarity() in ('rare', 'mythic'):
             card_breakdown['rare'].append(card)
         elif card.rarity() == 'uncommon':
             card_breakdown['uncommon'].append(card)
