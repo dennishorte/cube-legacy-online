@@ -145,6 +145,9 @@ class CubeCard(db.Model):
     json = db.Column(db.Text)
     comment = db.Column(db.Text)
 
+    # JSON cache of diff between this version and the original version
+    diff = db.Column(db.Text)
+
     # True if created through the card_create form. False otherwise.
     is_original = db.Column(db.Boolean, default=False)
 
@@ -201,10 +204,6 @@ class CubeCard(db.Model):
         else:
             return DraftFaceUp.false
 
-    @functools.lru_cache
-    def differ(self):
-        return CardDiffer(self.original, self)
-
     def days_since_last_edit(self):
         return (datetime.utcnow() - self.timestamp).days
 
@@ -228,14 +227,26 @@ class CubeCard(db.Model):
         return card
 
     @functools.lru_cache
+    def get_diff(self):
+        if not self.diff:
+            differ = CardDiffer(self.original, self)
+            self.diff = json.dumps(differ.json_summary())
+            db.session.add(self)
+            db.session.commit()
+
+        return json.loads(self.diff)
+
+    @functools.lru_cache
     def get_json(self, add_scars=False):
         data = json.loads(self.json)
 
         if add_scars:
-            differ = self.differ()
-            for i, face in enumerate(data['card_faces']):
-                face['scarred_oracle_text'] = '\n'.join(differ.face(i).oracle_text_ndiff())
-                face['scarred'] = '+ ' in face['scarred_oracle_text']
+            diff = self.get_diff()
+            for i in range(len(data['card_faces'])):
+                rules_diff = diff['faces'][i]['oracle_text']
+                face = data['card_faces'][i]
+                face['scarred_oracle_text'] = rules_diff['plussed']
+                face['scarred'] = rules_diff['is_changed']
 
         return data
 

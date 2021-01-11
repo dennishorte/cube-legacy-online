@@ -1,6 +1,8 @@
 import difflib
 import functools
 
+from app.util.card_util import CardConsts
+
 
 class BaseDiffer(object):
     def __init__(self, old_json, new_json):
@@ -139,6 +141,35 @@ class CardDiffer(object):
     def is_significant(self):
         """True if the diff is likely to have an effect on gameplay."""
         return any([x.is_significant() for x in self.face_differs])
+
+    def no_changes(self):
+        return all([x.no_changes for x in self.face_differs])
+
+    def json_summary(self):
+        diff = {}
+        diff['is_empty'] = self.no_changes()
+        diff['is_minor'] = self.is_minor()
+        diff['is_major'] = self.is_significant()
+
+        faces = []
+        diff['faces'] = faces
+
+        for face_diff in self.face_differs:
+            fields = {}
+            faces.append(fields)
+
+            for field in CardConsts.FACE_KEYS:
+                field_diff = {}
+                fields[field] = field_diff
+                field_diff['is_changed'] = face_diff.is_changed(field)
+                field_diff['latest'] = face_diff.new.get(field, '')
+                if field_diff['is_changed']:
+                    field_diff['original'] = face_diff.old.get(field, '')
+
+                if field == 'oracle_text':
+                    field_diff['plussed'] = '\n'.join(face_diff.oracle_text_ndiff())
+
+        return diff
 
     def _init_face_diffs(self):
         for i in range(10):

@@ -73,9 +73,9 @@
                   {% if card.linked_achievements() %}
                     <i class="fab fa-font-awesome-flag"></i>
                   {% endif %}
-                  {% if card.differ().is_significant() %}
+                  {% if card.get_diff()['is_major'] %}
                     <i class="fas fa-bolt"></i>
-                  {% elif card.differ().is_minor() %}
+                  {% elif card.get_diff()['is_minor'] %}
                     <i class="fas fa-bolt text-muted"></i>
                   {% endif %}
                 {% endif %}
@@ -195,7 +195,7 @@
         <h5>Renamed Card Finder</h5>
         <ul class="list-unstyled">
           {% for card in cw.cards() %}
-            {% if card.differ().is_changed('name') %}
+            {% if card.get_diff()['is_empty'] %}
               <li>
                 <a href="{{ url_for('card_editor', card_id=card.id) }}">
                   {{ card.original.name() }} &#x2014; {{ card.name() }}

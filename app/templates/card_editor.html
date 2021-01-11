@@ -5,18 +5,28 @@
 
 
 {% macro render_field_diff(diff, field_name) %}
-  {% if diff %}
+  {% set field_diff = diff[field_name] %}
+  {% if diff and field_diff['is_changed'] %}
+
     <ul class="field-diff list-unstyled">
-      {% for line in diff[field_name] %}
-        <li class="
-                   {% if line.startswith('+ ') %}
-                   text-success
-                   {% else %}
-                   text-danger
-                   {% endif %}
-                   "
-        >{{ line }}</li>
-      {% endfor %}
+      {% if field_name == 'oracle_text' %}
+        {% for line in field_diff['plussed'].split('\n') %}
+          {% if line.startswith('+ ') or line.startswith('- ') %}
+            <li class="
+                {% if line.startswith('+ ') %}
+              text-success
+                {% else %}
+              text-danger
+                {% endif %}
+              "
+            >{{ line }}</li>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <li class="text-danger">
+          {{ field_diff['original'] }}
+        </li>
+      {% endif %}
     </ul>
   {% endif %}
 {% endmacro %}
@@ -185,8 +195,8 @@
         <!-- Edit forms for each face -->
         <div class="row mt-1">
           {% if card %}
-            {{ face_form(form.faces[0], card.differ().face(0), 'front') }}
-            {{ face_form(form.faces[1], card.differ().face(1), 'back') }}
+            {{ face_form(form.faces[0], card.get_diff()['faces'][0], 'front') }}
+            {{ face_form(form.faces[1], card.get_diff()['faces'][1], 'back') }}
           {% else %}
             {{ face_form(form.faces[0], None, 'front') }}
             {{ face_form(form.faces[1], None, 'back') }}

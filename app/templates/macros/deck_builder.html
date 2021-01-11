@@ -41,9 +41,9 @@
                   {% endif %}
 
                   {# Scars Icon #}
-                  {% if card.differ().is_significant() %}
+                  {% if card.get_diff()['is_major'] %}
                     <i class="fas fa-bolt"></i>
-                  {% elif card.differ().is_minor() %}
+                  {% elif card.get_diff()['is_minor'] %}
                     <i class="fas fa-bolt text-muted"></i>
                   {% endif %}
                 {% endif %}
