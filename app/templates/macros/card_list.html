@@ -2,8 +2,8 @@
 
 
 {% macro show_card_diff(card) %}
-  {% if card.cube_card.cube.style_a == 'legacy' %}
-    {% set card = card|cube_cardify %}
+  {% set card = card|cube_cardify %}
+  {% if card.cube.style_a == 'legacy' %}
     <ul class="list-unstyled mt-0">
       {% for face in [0, 1] %}
         {% for line in card.differ().face(face).summary() %}
