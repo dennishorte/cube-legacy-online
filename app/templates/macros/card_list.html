@@ -2,23 +2,25 @@
 
 
 {% macro show_card_diff(card) %}
-  {% set card = card|cube_cardify %}
-  <ul class="list-unstyled mt-0">
-    {% for face in [0, 1] %}
-      {% for line in card.differ().face(face).summary() %}
-        <li class="
-                   {% if line.startswith('+ ') %}
-                   text-success
-                   {% elif line.startswith('- ') %}
-                   text-danger
-                   {% elif line.startswith('. ') %}
-                   text-success
-                   {% endif %}
-                   "
-        >{{ line }}</li>
+  {% if card.cube_card.cube.style_a == 'legacy' %}
+    {% set card = card|cube_cardify %}
+    <ul class="list-unstyled mt-0">
+      {% for face in [0, 1] %}
+        {% for line in card.differ().face(face).summary() %}
+          <li class="
+                     {% if line.startswith('+ ') %}
+                     text-success
+                     {% elif line.startswith('- ') %}
+                     text-danger
+                     {% elif line.startswith('. ') %}
+                     text-success
+                     {% endif %}
+                     "
+          >{{ line }}</li>
+        {% endfor %}
       {% endfor %}
-    {% endfor %}
-  </ul>
+    </ul>
+  {% endif %}
 {% endmacro %}
 
 
