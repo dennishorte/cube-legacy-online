@@ -243,28 +243,6 @@ def cube_link_achievement(cube_id):
     return redirect(request.referrer)
 
 
-@app.route("/cubes/<cube_id>/rarity", methods=["POST"])
-@login_required
-def cube_rarity(cube_id):
-    form = CardRarityForm()
-
-    if form.validate_on_submit():
-        lines = [x.strip() for x in form.rarities.data.split('\n') if x.strip()]
-        tuples = [x.split('\t') for x in lines]
-        failed = card_util.update_card_rarities(cube_id, tuples)
-
-        if failed:
-            flash('Failed to set rarity for: ' + ', '.join(failed))
-
-        else:
-            flash('Updated rarity for all cards.')
-
-    else:
-        flash('Error validating form')
-
-    return redirect(url_for('cube_cards', cube_id=cube_id))
-
-
 @app.route("/cubes/<cube_id>/scars", methods=["GET", "POST"])
 @login_required
 def cube_scars(cube_id):

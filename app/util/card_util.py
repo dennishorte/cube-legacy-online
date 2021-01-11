@@ -86,47 +86,6 @@ class CardConsts(object):
     }
 
 
-def _ensure_rarity(data):
-    if 'rarity' not in data:
-        data['rarity'] = 'common'
-
-
-def update_json_keys(card):
-    """
-    Utility for updating the card data when a new key is added.
-    """
-    data = card.get_json().copy()
-    _ensure_rarity(data)
-    return card.soft_update(data)
-
-
-def update_card_rarities(cube_id, card_rarity_tuples: list):
-    from app import db
-    from app.models.cube import CubeCard
-
-    card_rarity_dict = {}
-    for card_name, rarity in card_rarity_tuples:
-        if rarity.lower() in CardConsts.RARITY_SHORT_FORMS:
-            rarity = CardConsts.RARITY_SHORT_FORMS[rarity.lower()]
-
-        if rarity not in CardConsts.RARITIES:
-            raise ValueError(f"Unknown rarity '{rarity}' for '{card_name}'")
-
-        card_rarity_dict[card_name] = rarity
-
-    cards = CubeCard.query.filter(CubeCard.cube_id == cube_id).all()
-    for card in cards:
-        if card.name() in card_rarity_dict:
-            data = card.get_json().copy()
-            data['rarity'] = card_rarity_dict[card.name()]
-            card.soft_update(data)
-            del card_rarity_dict[card.name()]
-
-    db.session.commit()
-
-    return list(card_rarity_dict.keys())
-
-
 def empty_card_json():
     return {
         'object': 'card',
