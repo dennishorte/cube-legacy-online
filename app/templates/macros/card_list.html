@@ -1,29 +1,6 @@
 {% from 'macros/card_frame.html' import card_frame %}
 
 
-{% macro show_card_diff(card) %}
-  {% set card = card|cube_cardify %}
-  {% if card.cube.style_a == 'legacy' %}
-    <ul class="list-unstyled mt-0">
-      {% for face in [0, 1] %}
-        {% for line in card.differ().face(face).summary() %}
-          <li class="
-                     {% if line.startswith('+ ') %}
-                     text-success
-                     {% elif line.startswith('- ') %}
-                     text-danger
-                     {% elif line.startswith('. ') %}
-                     text-success
-                     {% endif %}
-                     "
-          >{{ line }}</li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endmacro %}
-
-
 {% macro show_draft_card_list(cards, draft_id) %}
   <div class="row">
     {% set is_legacy = cards[0].draft.cube.style_a == 'legacy' %}
@@ -77,9 +54,6 @@
               </a>
             </p>
             <!-- END: Card Image (and draft link) -->
-
-            {{ show_card_diff(card) }}
-
       {% endif %}
 
       <!-- Linked Achievements -->
@@ -132,8 +106,6 @@
               {% endfor %}
             </p>
             <!-- END: Card Image (and draft link) -->
-
-            {{ show_card_diff(card) }}
       {% endif %}
 
       <!-- Linked Achievements -->
