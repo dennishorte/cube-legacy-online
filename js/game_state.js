@@ -246,9 +246,6 @@ class GameState {
       || (card.visibility.length > 0 && card.visibility.indexOf(card.owner) < 0)
     )
 
-    console.log(card)
-    console.log(`${card_id} ${card.json.name} ${zone_vis} ${non_owners_can_see} ${card.visibility}`)
-
     return zone_vis != 'all' && non_owners_can_see
   }
 

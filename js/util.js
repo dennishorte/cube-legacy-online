@@ -211,6 +211,7 @@ util.draw_card_face = function(container, face_data) {
   let name_elem = container.find('.frame-card-name')
   let mana_elem = container.find('.frame-mana-cost')
   let type_elem = container.find('.frame-card-type')
+  let faction_elem = container.find('.frame-card-factions')
   let rules_elem = container.find('.frame-description-wrapper')
   let flavor_elem = container.find('.frame-flavor-wrapper')
   let image_elem = container.find('.frame-art')
@@ -223,6 +224,19 @@ util.draw_card_face = function(container, face_data) {
   // Name, Mana, Type
   name_elem.text(face_data.name)
   type_elem.text(face_data.type_line)
+
+  // Factions
+  faction_elem.empty()
+  if (face_data.factions && face_data.factions.length > 0) {
+    face_data.factions.forEach(faction => {
+      const elem = $('<p></p>')
+      elem.text(faction)
+      faction_elem.append(elem)
+    })
+  }
+  else {
+    faction_elem.append($(`<p class="unaligned-faction">unaligned</p>`))
+  }
 
   // Mana
   mana_elem.empty().append(util.mana_symbols_from_string(face_data.mana_cost))

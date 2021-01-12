@@ -8,6 +8,7 @@ from datetime import datetime
 from app import db
 from app.models.user_models import *
 from app.util import card_util
+from app.util import faction_util
 from app.util import cockatrice
 from app.util.card_diff import CardDiffer
 from app.util.card_util import color_sort_key
@@ -171,7 +172,7 @@ class CubeCard(db.Model):
     scars = db.relationship('Scar', backref='applied_to')
 
     def __repr__(self):
-        return '<CubeCard {}>'.format(self.get_json()['name'])
+        return '<CubeCard {}>'.format(self.name())
 
     def card_face(self, index):
         faces = self.card_faces()
@@ -181,10 +182,10 @@ class CubeCard(db.Model):
             return faces[index]
 
     def card_faces(self):
-        return self.get_json()['card_faces']
+        return self.get_json_cached()['card_faces']
 
     def cockatrice_name(self):
-        data = self.get_json()
+        data = self.get_json_cached()
         return cockatrice._card_name(
             card_data=data,
             face_index=0,
@@ -236,9 +237,15 @@ class CubeCard(db.Model):
 
         return json.loads(self.diff)
 
-    @functools.lru_cache
+    def get_factions(self):
+        return faction_util.factions_for_card(self)
+
     def get_json(self, add_scars=False):
-        data = json.loads(self.json)
+        data = self.get_json_cached()
+
+        factions = self.get_factions()
+        for i in range(len(factions)):
+            data['card_faces'][i]['factions'] = factions[i]
 
         if add_scars:
             diff = self.get_diff()
@@ -250,6 +257,10 @@ class CubeCard(db.Model):
 
         return data
 
+    @functools.lru_cache
+    def get_json_cached(self):
+        return json.loads(self.json)
+
     def image_back(self):
         images = self.image_urls()
         if len(images) > 1:
@@ -259,7 +270,7 @@ class CubeCard(db.Model):
         return self.image_urls()[0]
 
     def image_urls(self):
-        data = self.get_json()
+        data = self.get_json_cached()
         layout = data['layout']
         if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
             return [data['card_faces'][0]['image_url']]
@@ -307,7 +318,7 @@ class CubeCard(db.Model):
         if self.removed_by_id:
             raise ValueError("Can't edit a removed card.")
 
-        if self.get_json() != new_json:
+        if self.get_json_cached() != new_json:
 
             if new_version:
                 # Create a copy of this card as a non-latest version.
@@ -377,10 +388,10 @@ class CubeCard(db.Model):
         return card_type.lower() in self.card_faces()[0].get('type_line', '').lower()
 
     def layout(self):
-        return self.get_json()['layout']
+        return self.get_json_cached()['layout']
 
     def name(self):
-        return self.get_json().get('name', 'NO_NAME')
+        return self.get_json_cached().get('name', 'NO_NAME')
 
     def is_creature(self):
         return 'creature' in self.card_faces()[0].get('type_line', '').lower()
@@ -389,13 +400,13 @@ class CubeCard(db.Model):
         return 'land' in self.card_faces()[0].get('type_line', '').lower()
 
     def oracle_text(self):
-        return self.get_json()['oracle_text']
+        return self.get_json_cached()['oracle_text']
 
     def rarity(self):
-        return self.get_json()['rarity']
+        return self.get_json_cached()['rarity']
 
     def type_line(self):
-        return self.get_json().get('type_line', 'NO_TYPE')
+        return self.get_json_cached().get('type_line', 'NO_TYPE')
 
 
 class Scar(db.Model):
