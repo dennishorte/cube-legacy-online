@@ -36,6 +36,7 @@ module.exports = (function() {
 
     _init_draggable()
     _init_close_buttons()
+    _init_closeup_close_on_enter()
   }
 
   function _init_draggable() {
@@ -67,6 +68,14 @@ module.exports = (function() {
       }
 
       dialog.trigger('clo.dialogs.closed')
+    })
+  }
+
+  function _init_closeup_close_on_enter() {
+    $('.card-closeup-annotation-input').keydown(function(event) {
+      if (event.keyCode == 13) {
+        $('#card-closeup').find('.dialog-close').click()
+      }
     })
   }
 

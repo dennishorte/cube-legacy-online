@@ -340,7 +340,7 @@
 
   font-size: .8rem;
 
-  height: 4rem;
+  height: 6rem;
   width: 18rem;
 
   top: 50px;
@@ -349,13 +349,7 @@
   padding: 0.5rem;
 }
 
-#card-closeup .card-container {
-  margin-top: .5rem;
-}
-
 .card-closeup-annotation {
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-
   font-size: .8rem;
 
   height: 4.5rem;
