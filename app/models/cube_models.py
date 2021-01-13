@@ -1,5 +1,4 @@
 import enum
-import functools
 import json
 import random
 import re
@@ -171,6 +170,8 @@ class CubeCard(db.Model):
     linked_achs = db.relationship('AchievementLink', backref='card')
     scars = db.relationship('Scar', backref='applied_to')
 
+    _json_cached = None
+
     def __repr__(self):
         return '<CubeCard {}>'.format(self.name())
 
@@ -182,10 +183,10 @@ class CubeCard(db.Model):
             return faces[index]
 
     def card_faces(self):
-        return self.get_json_cached()['card_faces']
+        return self.get_json()['card_faces']
 
     def cockatrice_name(self):
-        data = self.get_json_cached()
+        data = self.get_json()
         return cockatrice._card_name(
             card_data=data,
             face_index=0,
@@ -227,7 +228,6 @@ class CubeCard(db.Model):
         card.added_by_id = added_by_id
         return card
 
-    @functools.lru_cache
     def get_diff(self):
         if not self.diff:
             differ = CardDiffer(self.original, self)
@@ -241,25 +241,23 @@ class CubeCard(db.Model):
         return faction_util.factions_for_card(self)
 
     def get_json(self, add_scars=False):
-        data = self.get_json_cached()
+        if not self._json_cached:
+            data = json.loads(self.json)
+            self._json_cached = data
 
-        factions = self.get_factions()
-        for i in range(len(factions)):
-            data['card_faces'][i]['factions'] = factions[i]
+            if self.cube.style_a == 'legacy':
+                diff = self.get_diff()
+                for i in range(len(data['card_faces'])):
+                    rules_diff = diff['faces'][i]['oracle_text']
+                    face = data['card_faces'][i]
+                    face['scarred_oracle_text'] = rules_diff['plussed']
+                    face['scarred'] = rules_diff['is_changed']
 
-        if add_scars:
-            diff = self.get_diff()
-            for i in range(len(data['card_faces'])):
-                rules_diff = diff['faces'][i]['oracle_text']
-                face = data['card_faces'][i]
-                face['scarred_oracle_text'] = rules_diff['plussed']
-                face['scarred'] = rules_diff['is_changed']
+            factions = self.get_factions()
+            for i in range(len(factions)):
+                data['card_faces'][i]['factions'] = factions[i]
 
-        return data
-
-    @functools.lru_cache
-    def get_json_cached(self):
-        return json.loads(self.json)
+        return self._json_cached
 
     def image_back(self):
         images = self.image_urls()
@@ -270,7 +268,7 @@ class CubeCard(db.Model):
         return self.image_urls()[0]
 
     def image_urls(self):
-        data = self.get_json_cached()
+        data = self.get_json()
         layout = data['layout']
         if Layout.simple_faced_layout(layout) or Layout.split_faced_layout(layout):
             return [data['card_faces'][0]['image_url']]
@@ -318,7 +316,7 @@ class CubeCard(db.Model):
         if self.removed_by_id:
             raise ValueError("Can't edit a removed card.")
 
-        if self.get_json_cached() != new_json:
+        if self.get_json() != new_json:
 
             if new_version:
                 # Create a copy of this card as a non-latest version.
@@ -388,10 +386,10 @@ class CubeCard(db.Model):
         return card_type.lower() in self.card_faces()[0].get('type_line', '').lower()
 
     def layout(self):
-        return self.get_json_cached()['layout']
+        return self.get_json()['layout']
 
     def name(self):
-        return self.get_json_cached().get('name', 'NO_NAME')
+        return self.get_json().get('name', 'NO_NAME')
 
     def is_creature(self):
         return 'creature' in self.card_faces()[0].get('type_line', '').lower()
@@ -400,13 +398,13 @@ class CubeCard(db.Model):
         return 'land' in self.card_faces()[0].get('type_line', '').lower()
 
     def oracle_text(self):
-        return self.get_json_cached()['oracle_text']
+        return self.get_json()['oracle_text']
 
     def rarity(self):
-        return self.get_json_cached()['rarity']
+        return self.get_json()['rarity']
 
     def type_line(self):
-        return self.get_json_cached().get('type_line', 'NO_TYPE')
+        return self.get_json().get('type_line', 'NO_TYPE')
 
 
 class Scar(db.Model):

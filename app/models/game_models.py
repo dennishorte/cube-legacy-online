@@ -1,4 +1,3 @@
-import functools
 import json
 from datetime import datetime
 
@@ -52,7 +51,7 @@ class Game(db.Model):
         else:
             return not self.state.player_by_id(user.id).has_deck()
 
-    @functools.cached_property
+    @property
     def state(self):
         return self.state_no_cache()
 

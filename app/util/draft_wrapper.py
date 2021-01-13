@@ -1,4 +1,3 @@
-import functools
 import random
 from datetime import datetime
 

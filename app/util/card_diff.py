@@ -1,5 +1,4 @@
 import difflib
-import functools
 
 from app.util.card_util import CardConsts
 
@@ -40,7 +39,6 @@ class BaseDiffer(object):
     def plus(self, field):
         return [x for x in self._ndiff(field) if x.startswith('+ ')]
 
-    @functools.lru_cache
     def _ndiff(self, field):
         return list(difflib.ndiff(
             self.old.get(field, '').strip().split('\n'),
