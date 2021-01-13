@@ -46,6 +46,7 @@ class ChangeUserDetailsForm(FlaskForm):
 
 
 class GameDeckReadyForm(FlaskForm):
+    command_ids = HiddenField('command')
     maindeck_ids = HiddenField('maindeck')
     sideboard_ids = HiddenField('sideboard')
     basics_list = HiddenField('basics')

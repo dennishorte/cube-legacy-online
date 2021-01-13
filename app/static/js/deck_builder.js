@@ -38,6 +38,10 @@ function build_deck_data() {
     return $(this).data('card-id')
   }).get()
 
+  let command = $('#command .card-list-item').map(function() {
+    return $(this).data('card-id')
+  }).get()
+
   let basics = $('.basic-selector').map(function() {
     let sel = $(this)
     let land = sel.find('.basic-type').text()
@@ -46,9 +50,10 @@ function build_deck_data() {
   }).get()
 
   return {
+    command: command,
     maindeck: maindeck,
     sideboard: sideboard,
-    basics: basics
+    basics: basics,
   }
 
 }

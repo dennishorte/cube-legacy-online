@@ -1,3 +1,35 @@
+{% macro card_list_item(card, is_legacy) %}
+  {% if card.is_land() %}
+    {% set card_class = 'card-type-land' %}
+  {% endif %}
+
+  <li
+    class="card-list-item {{ card_class }}"
+    data-card-id="{{ card.id }}"
+    data-front="{{ card.image_front() }}"
+    {% if card.image_back() %}
+      data-back="{{ card.image_back() }}"
+    {% endif %}
+  >
+    {% if is_legacy %}
+      {# Linked Achievements Icon #}
+      {% if card.linked_achievements() %}
+        <i class="fab fa-font-awesome-flag"></i>
+      {% endif %}
+
+      {# Scars Icon #}
+      {% if card.get_diff()['is_major'] %}
+        <i class="fas fa-bolt"></i>
+      {% elif card.get_diff()['is_minor'] %}
+        <i class="fas fa-bolt text-muted"></i>
+      {% endif %}
+    {% endif %}
+
+    {{ card.name() }}
+  </li>
+{% endmacro %}
+
+
 {% macro deck_builder_row(id, class, cards) %}
   {# id: used to update the card counts by deck_builder.js #}
   {% set is_legacy = cards.cards and cards.cards[0].cube.style_a == 'legacy' %}
@@ -21,35 +53,7 @@
           </div>
           <ul class="card-list sortable list-unstyled">
             {% for card in cards %}
-
-              {% if card.is_land() %}
-                {% set card_class = 'card-type-land' %}
-              {% endif %}
-
-              <li
-                class="card-list-item {{ card_class }}"
-                data-card-id="{{ card.id }}"
-                data-front="{{ card.image_front() }}"
-                {% if card.image_back() %}
-                  data-back="{{ card.image_back() }}"
-                {% endif %}
-              >
-                {% if is_legacy %}
-                  {# Linked Achievements Icon #}
-                  {% if card.linked_achievements() %}
-                    <i class="fab fa-font-awesome-flag"></i>
-                  {% endif %}
-
-                  {# Scars Icon #}
-                  {% if card.get_diff()['is_major'] %}
-                    <i class="fas fa-bolt"></i>
-                  {% elif card.get_diff()['is_minor'] %}
-                    <i class="fas fa-bolt text-muted"></i>
-                  {% endif %}
-                {% endif %}
-
-                {{ card.name() }}
-              </li>
+              {{ card_list_item(card, is_legacy) }}
             {% endfor %}
           </ul>
         </div>
@@ -132,6 +136,16 @@
 
       </div>
       <!-- END: Basic Lands -->
+
+      <div id="command" class="col col-2 framed">
+        <h5>Command Zone</h5>
+        <ul class="card-list sortable list-unstyled">
+          {% set is_legacy = d.is_legacy() %}
+          {% for card in d.card_set.command() %}
+            {{ card_list_item(card, is_legacy) }}
+          {% endfor %}
+        </ul>
+      </div>
 
     </div>
 

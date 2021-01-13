@@ -27,9 +27,6 @@ def game(game_id):
     game = Game.query.get(game_id)
 
     if game.state.ready_to_start():
-        if len(game.state.data['history']) < 2:
-            game.state.start_game()
-            game.update(game.state_no_cache())
 
         return render_template(
             'game.html',
@@ -149,6 +146,7 @@ def game_ready(game_id):
 
     maindeck_ids = form.maindeck_ids.data.split(',')
     sideboard_ids = form.sideboard_ids.data.split(',')
+    command_ids = form.command_ids.data.split(',')
     basic_lands = form.basics_list.data.split(',')
 
     sideboard_cards = []
@@ -163,6 +161,12 @@ def game_ready(game_id):
             continue
         maindeck_cards.append(state.make_card(id))
 
+    command_cards = []
+    for id in command_ids:
+        if not id:
+            continue
+        command_cards.append(state.make_card(id))
+
     basics_cube = Cube.query.filter(Cube.name == 'basic lands').first()
     basics_cube_wrapper = CubeWrapper(basics_cube)
     basic_cards = {x.name(): x for x in basics_cube_wrapper.cards()}
@@ -174,9 +178,10 @@ def game_ready(game_id):
             maindeck_cards.append(state.make_card(basic_cards[name].id))
 
 
-    state.load_deck(player.id, maindeck_cards, sideboard_cards)
+    state.load_deck(player.id, maindeck_cards, sideboard_cards, command_cards)
 
     if state.ready_to_start():
+        state.start_game()
         state.set_phase = GamePhase.untap
 
     game.update(state)

@@ -1,3 +1,4 @@
+import functools
 import random
 from datetime import datetime
 
@@ -29,13 +30,12 @@ class DraftWrapper(object):
             DeckList.user_id == self.user.id,
         ).first()
 
+        self.deck_builder = DeckBuilder(self.draft.id, self.user.id)
+
     def card_data(self):
         pack_cards = PackCard.query.filter(PackCard.draft_id == self.draft.id).all()
         cube_cards = [x.cube_card for x in pack_cards]
         return {x.id: x.get_json() for x in cube_cards}
-
-    def deck_builder(self):
-        return DeckBuilder(self.draft.id, self.user.id)
 
     def face_up_cards(self):
         cards = PackCard.query.filter(

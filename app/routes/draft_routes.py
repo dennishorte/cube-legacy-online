@@ -81,11 +81,16 @@ def draft_deck_save(draft_id):
     data = request.json
     d = DeckBuilder(draft_id, current_user.id)
 
+    print(data)
+
     maindeck = CubeCard.query.filter(CubeCard.id.in_(data['maindeck'])).all()
     d.deck.set_maindeck(maindeck)
 
     sideboard = CubeCard.query.filter(CubeCard.id.in_(data['sideboard'])).all()
     d.deck.set_sideboard(sideboard)
+
+    command = CubeCard.query.filter(CubeCard.id.in_(data['command'])).all()
+    d.deck.set_command(command)
 
     basics = ','.join([x for x in data['basics'] if x[0] != '0'])
     d.deck.basic_lands = basics

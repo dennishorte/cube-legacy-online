@@ -16,12 +16,24 @@ class Deck(db.Model):
     # Format is comma-separated CubeCard ids.
     maindeck_ids = db.Column(db.Text, default='')
     sideboard_ids = db.Column(db.Text, default='')
+    command_ids = db.Column(db. Text, default='')
 
     # Format is "5 Mountain,3 Island"
     basic_lands = db.Column(db.Text, default='')
 
     def add_card(self, card):
         self.maindeck_ids += ',' + str(card.id)
+
+    def all_cards(self):
+        return self.maindeck() + self.sideboard() + self.command()
+
+    def command(self):
+        if not self.command_ids:
+            return []
+
+        ids = [int(x) for x in self.command_ids.split(',') if x]
+        card_map = {x.id: x for x in CubeCard.query.filter(CubeCard.id.in_(ids)).all()}
+        return [card_map[x] for x in ids]
 
     def maindeck(self):
         ids = [int(x) for x in self.maindeck_ids.split(',') if x]
@@ -33,8 +45,13 @@ class Deck(db.Model):
         card_map = {x.id: x for x in CubeCard.query.filter(CubeCard.id.in_(ids)).all()}
         return [card_map[x] for x in ids]
 
+    def set_command(self, cards: list):
+        self.command_ids = self._card_list_to_comma_separated(cards)
+        print(self.command_ids)
+
     def set_maindeck(self, cards: list):
         self.maindeck_ids = self._card_list_to_comma_separated(cards)
+        print(self.maindeck_ids)
 
     def set_sideboard(self, cards: list):
         self.sideboard_ids = self._card_list_to_comma_separated(cards)

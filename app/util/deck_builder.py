@@ -49,8 +49,12 @@ class CardSet(object):
         new_filter = lambda x: not x.is_land() and not x.is_creature()
         return self.with_filter(new_filter)
 
+    def command(self):
+        new_filter = lambda x: x.command
+        return self.with_filter(new_filter)
+
     def maindeck(self):
-        new_filter = lambda x: not x.sideboard
+        new_filter = lambda x: x.maindeck
         return self.with_filter(new_filter)
 
     def sideboard(self):
@@ -83,13 +87,32 @@ class DeckBuilder(object):
         self.deck = self._load_deck()
 
         self.card_set = CardSet([])
+        print('maindeck')
         for card in self.deck.maindeck():
+            print(card)
+            card.command = False
+            card.maindeck = True
             card.sideboard = False
             self.card_set.cards.append(card)
 
+        print('sideboard')
         for card in self.deck.sideboard():
+            print(card)
+            card.command = False
+            card.maindeck = False
             card.sideboard = True
             self.card_set.cards.append(card)
+
+        print('command')
+        for card in self.deck.command():
+            print(card)
+            card.command = True
+            card.maindeck = False
+            card.sideboard = False
+            self.card_set.cards.append(card)
+
+        self.card_set.cards.sort(key=lambda x: x.name())
+        print(self.card_set.cards)
 
     def all_cards(self):
         cards = []
@@ -130,13 +153,16 @@ class DeckBuilder(object):
 
         cards.append('\u00a0')  # Non-breaking space
 
-        for card in self.deck.sideboard():
+        for card in self.deck.sideboard() + self.deck.command():
             if legacy_names:
                 cards.append(card.cockatrice_name())
             else:
                 cards.append(card.name())
 
         return cards
+
+    def is_legacy(self):
+        return self.draft.cube.style_a == 'legacy'
 
     def _load_deck(self):
         existing_deck = Deck.query.filter(
@@ -151,7 +177,7 @@ class DeckBuilder(object):
             return self._new_deck()
 
     def _add_latest_picks(self, deck):
-        deck_cards = deck.maindeck() + deck.sideboard()
+        deck_cards = deck.all_cards()
         picked_cards = self._picked_cards()
 
         if len(deck_cards) == len(picked_cards):

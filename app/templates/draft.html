@@ -259,7 +259,7 @@
   {% endif %}
   <!-- END: Card Picker -->
 
-  {{ deck_builder(d.deck_builder()) }}
+  {{ deck_builder(d.deck_builder) }}
 
   <div class="row">
     <div class="col framed">
@@ -277,7 +277,7 @@
       <h4>Legacy Card Names</h4>
       <p class="text-secondary text-s">Use these if you have loaded the custom cockatrice card XML</p>
       <ul class="list-unstyled">
-        {% for line in d.deck_builder().deck_list(legacy_names=True) %}
+        {% for line in d.deck_builder.deck_list(legacy_names=True) %}
           <li>{{ line }}</li>
         {% endfor %}
       </ul>
@@ -286,7 +286,7 @@
     <div class="col framed">
       <h4>Standard Card Names</h4>
       <ul class="list-unstyled">
-        {% for line in d.deck_builder().deck_list() %}
+        {% for line in d.deck_builder.deck_list() %}
           <li>{{ line }}</li>
         {% endfor %}
       </ul>

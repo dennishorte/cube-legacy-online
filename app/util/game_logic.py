@@ -77,6 +77,10 @@ class PlayerTableau(object):
         return PlayerTableau(data)
 
     @property
+    def command(self):
+        return self.data['command']
+
+    @property
     def library(self):
         return self.data['library']
 
@@ -206,7 +210,7 @@ class GameState(object):
     def latest_version(self):
         return self.data.get('latest_version')
 
-    def load_deck(self, player_id, maindeck, sideboard):
+    def load_deck(self, player_id, maindeck, sideboard, command):
         if not isinstance(maindeck[0], int):
             raise ValueError("Decks should be lists of GameCard.id int values.")
 
@@ -218,16 +222,21 @@ class GameState(object):
 
         tableau.data['library'] = maindeck[:]
         tableau.data['sideboard'] = sideboard[:]
+        tableau.data['command'] = command[:]
 
         random.shuffle(tableau.data['library'])
 
-        for card_id in (tableau.library + tableau.sideboard):
+        for card_id in (tableau.library + tableau.sideboard + tableau.command):
             card = self.card(card_id)
             card.data['owner'] = player.name
 
         for card_id in tableau.sideboard:
             card = self.card(card_id)
             card.data['visibility'].append(player.name)
+
+        for card_id in tableau.command:
+            card = self.card(card_id)
+            card.data['visibility'] = sorted([x.name for x in self.players])
 
     @property
     def name(self):
