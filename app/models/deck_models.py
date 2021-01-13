@@ -47,11 +47,9 @@ class Deck(db.Model):
 
     def set_command(self, cards: list):
         self.command_ids = self._card_list_to_comma_separated(cards)
-        print(self.command_ids)
 
     def set_maindeck(self, cards: list):
         self.maindeck_ids = self._card_list_to_comma_separated(cards)
-        print(self.maindeck_ids)
 
     def set_sideboard(self, cards: list):
         self.sideboard_ids = self._card_list_to_comma_separated(cards)

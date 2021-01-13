@@ -81,8 +81,6 @@ def draft_deck_save(draft_id):
     data = request.json
     d = DeckBuilder(draft_id, current_user.id)
 
-    print(data)
-
     maindeck = CubeCard.query.filter(CubeCard.id.in_(data['maindeck'])).all()
     d.deck.set_maindeck(maindeck)
 

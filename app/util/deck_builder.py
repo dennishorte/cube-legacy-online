@@ -87,32 +87,25 @@ class DeckBuilder(object):
         self.deck = self._load_deck()
 
         self.card_set = CardSet([])
-        print('maindeck')
         for card in self.deck.maindeck():
-            print(card)
             card.command = False
             card.maindeck = True
             card.sideboard = False
             self.card_set.cards.append(card)
 
-        print('sideboard')
         for card in self.deck.sideboard():
-            print(card)
             card.command = False
             card.maindeck = False
             card.sideboard = True
             self.card_set.cards.append(card)
 
-        print('command')
         for card in self.deck.command():
-            print(card)
             card.command = True
             card.maindeck = False
             card.sideboard = False
             self.card_set.cards.append(card)
 
         self.card_set.cards.sort(key=lambda x: x.name())
-        print(self.card_set.cards)
 
     def all_cards(self):
         cards = []
