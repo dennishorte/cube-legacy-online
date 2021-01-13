@@ -277,12 +277,45 @@ class GameState(object):
         self.data['turn'] = random.randrange(len(self.players))
         self.data['priority'] = self.data['turn']
         first_player_name = self.players[self.data['turn']].data['name']
-        self.data['history'].append({
-            'id': self.next_id(),
-            'delta': [],
-            'message': f"{first_player_name} randomly chosen to go first",
-            'player': 'GM',
-        })
+        self.data['history'] += [
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': f"{first_player_name} randomly chosen to go first",
+                'player': 'GM',
+            },
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': "Reminders!",
+                'player': 'GM',
+            },
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': "1. Declare your persona",
+                'player': 'GM',
+            },
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': "2. Companions?",
+                'player': 'GM',
+            },
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': "3. Hidden Agendas?",
+                'player': 'GM',
+            },
+            {
+                'id': self.next_id(),
+                'delta': [],
+                'message': "4. Other weird stuff?",
+                'player': 'GM',
+            },
+        ]
+
 
     def winner(self):
         return self.data.get('winner', '')

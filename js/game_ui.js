@@ -828,6 +828,9 @@ let gameui = (function() {
       else if (hist.message.startsWith('phase: ')) {
         msg.addClass('phase-message')
       }
+      else if (hist.message == "Reminders!") {
+        msg.addClass('reminders-message')
+      }
 
       if (i > _state.history_index) {
         msg.addClass('future-message')

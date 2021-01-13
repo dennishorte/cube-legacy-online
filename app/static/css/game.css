@@ -245,6 +245,12 @@
   background-color: var(--primary);
 }
 
+.reminders-message {
+  font-size: 1.2rem;
+  color: white;
+  background-color: red;
+}
+
 .pass-priority-message {
   background-color: #afa;
 }
