@@ -198,6 +198,9 @@
   marging: 0;
   counter-reset: message-counter;
   list-style: none;
+
+  display: flex;
+  flex-direction: column;
 }
 
 #message-input-wrapper {
@@ -254,11 +257,19 @@
 }
 
 .pass-priority-message {
-  color: green;
+  background-color: #7db881;
+  color: white;
   margin-left: .5rem;
   margin-right: .5rem;
-  margin-top: .5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   border-radius: .5rem;
+  align-self: center;
+  border: 1px solid white;
+}
+
+.pass-priority-message::before {
+  content: '';
 }
 
 .future-message {
