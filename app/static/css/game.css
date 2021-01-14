@@ -234,15 +234,17 @@
 }
 
 .phase-message {
-  font-size: .95rem;
-  font-weight: bold;
-  background-color: #88b;
+  /* font-size: .95rem; */
+  /* font-weight: bold; */
+  background-color: #DCA;
 }
 
 .new-turn-message {
   font-weight: bold;
-  font-size: 1.1rem;
-  background-color: var(--primary);
+  background-color: #C3B091;
+  margin-top: .75rem;
+  border-top: 1px solid #80663e;
+  border-radius: .25rem .25rem 0 0;
 }
 
 .reminders-message {
@@ -252,7 +254,11 @@
 }
 
 .pass-priority-message {
-  background-color: #afa;
+  color: green;
+  margin-left: .5rem;
+  margin-right: .5rem;
+  margin-top: .5rem;
+  border-radius: .5rem;
 }
 
 .future-message {
