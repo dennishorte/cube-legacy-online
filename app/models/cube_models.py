@@ -286,7 +286,7 @@ class CubeCard(db.Model):
     @property
     def original(self):
         return CubeCard.query.filter(
-            CubeCard.version == 1,
+            CubeCard.latest == True,
             CubeCard.latest_id == self.latest_id,
         ).first()
 

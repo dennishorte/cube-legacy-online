@@ -195,10 +195,11 @@
         <h5>Renamed Card Finder</h5>
         <ul class="list-unstyled">
           {% for card in cw.cards() %}
-            {% if card.get_diff()['is_empty'] %}
+            {% set name_diff = card.get_diff()['faces'][0]['name'] %}
+            {% if name_diff['is_changed'] %}
               <li>
                 <a href="{{ url_for('card_editor', card_id=card.id) }}">
-                  {{ card.original.name() }} &#x2014; {{ card.name() }}
+                  {{ name_diff['original'] }} &#x2014; {{ name_diff['latest'] }}
                 </a>
               </li>
             {% endif %}
