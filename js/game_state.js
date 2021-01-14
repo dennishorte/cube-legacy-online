@@ -696,6 +696,10 @@ class GameState {
   }
 
   randomize_bottom_of_library(player_idx, count) {
+    if (count <= 1) {
+      return
+    }
+
     let library = this.card_list(player_idx, 'library')
 
     if (count > library.length) {
@@ -704,17 +708,28 @@ class GameState {
 
     let top = library.slice(0, library.length - count)
     let bottom = library.slice(library.length - count, library.length)
+
+    const delta = []
+
+    // Step 1: Clear the visibility on the cards.
+    for (let i = library.length - count; i < library.length; i++) {
+      const card = this.card(library[i])
+      if (card.visibility.length > 0) {
+        delta.push(this._visibility_diff(card, []))
+      }
+    }
+
+    // Step 2: Randomize the card positions
     util.arrayShuffle(bottom)
+    const updated = top.concat(bottom)
 
-    let updated = top.concat(bottom)
-
-    let delta = [{
+    delta.push({
       action: 'set_cards_in_zone',
       player_idx: player_idx,
       zone: 'library',
       old_value: library,
       new_value: updated,
-    }]
+    })
 
     let player_key = `PLAYER_${player_idx}_NAME`
     let diff = {
