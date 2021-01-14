@@ -20,7 +20,7 @@ class BaseDiffer(object):
 
         changes = {}
 
-        for field in self.old:
+        for field in CardConsts.FACE_KEYS:
             if self.is_changed(field):
                 changes[field] = True
 
