@@ -199,6 +199,8 @@
   counter-reset: message-counter;
   list-style: none;
 
+  background-color: #FEC;
+
   display: flex;
   flex-direction: column;
 }
@@ -243,10 +245,14 @@
 }
 
 .new-turn-message {
+  color: #FFD;
+  font-size: 1rem;
   font-weight: bold;
   background-color: #C3B091;
-  margin-top: .75rem;
-  border-top: 1px solid #80663e;
+  margin-top: .5rem;
+  padding-top: .5rem;
+  text-align: center;
+  /* border-top: 1px solid #80663e; */
   border-radius: .25rem .25rem 0 0;
 }
 
@@ -265,9 +271,10 @@
   padding-right: 2rem;
   border-radius: .5rem;
   align-self: center;
-  border: 1px solid white;
+  border: 1px solid #FEC;
 }
 
+.new-turn-message::before,
 .pass-priority-message::before {
   content: '';
 }
