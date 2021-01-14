@@ -279,10 +279,15 @@ class CubeCard(db.Model):
 
     @property
     def original(self):
-        return CubeCard.query.filter(
+        orig = CubeCard.query.filter(
             CubeCard.latest == True,
             CubeCard.latest_id == self.latest_id,
         ).first()
+
+        if not orig:
+            raise RuntimeError(f"No original card found for {self.name()}")
+
+        return orig
 
     def set_json(self, json_obj):
         self.json = json.dumps(json_obj)
