@@ -121,7 +121,7 @@ def cube_bump_xp(cube_id):
     """Increase the XP for all unclaimed achievements by 1"""
     cube = Cube.query.get(cube_id)
 
-    for ach in cube.achievements_available():
+    for ach in cube.achievements_wrapper().available().andnot().levelup():
         ach.xp = ach.xp + 1 if ach.xp is not None else 1
         db.session.add(ach)
 
@@ -164,14 +164,11 @@ def cube_factions(cube_id):
     cube = Cube.query.get(cube_id)
     form = NewFactionForm()
 
-    achievements = [x for x in cube.achievements_available() if 'faction' in x.conditions.lower()]
-
     return render_template(
         'cube_factions.html',
         cube=cube,
         cw=CubeWrapper(cube),
         form=form,
-        achievements=achievements,
     )
 
 

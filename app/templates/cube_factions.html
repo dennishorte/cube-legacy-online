@@ -47,7 +47,7 @@
 
     <!-- Faction Achievements -->
     <div class="col framed">
-      {% for ach in achievements %}
+      {% for ach in cube.achievements_wrapper().faction() %}
         {{ show_achievement(ach, current_player) }}
       {% endfor %}
     </div>

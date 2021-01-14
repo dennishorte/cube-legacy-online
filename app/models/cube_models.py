@@ -71,15 +71,9 @@ class Cube(db.Model):
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
 
-    def achievements_available(self):
-        achs = [x for x in self.achievements if x.available()]
-        achs.sort(key=lambda x: x.created_timestamp, reverse=True)
-        return achs
-
-    def achievements_completed(self):
-        achs = [x for x in self.achievements if not x.available()]
-        achs.sort(key=lambda x: x.unlocked_timestamp, reverse=True)
-        return achs
+    def achievements_wrapper(self):
+        from app.util.achievements_wrapper import AchievementsWrapper
+        return AchievementsWrapper.from_cube(self)
 
     def age(self):
         age = datetime.utcnow() - self.timestamp
@@ -484,7 +478,8 @@ class Achievement(db.Model):
     # Content info
     name = db.Column(db.Text)
     conditions = db.Column(db.Text)
-    multiunlock = db.Column(db.Boolean)
+    multiunlock = db.Column(db.Boolean, default=False)
+    levelup = db.Column(db.Boolean, default=False)
     version = db.Column(db.Integer, default=1)
     unlock_json = db.Column(db.Text)
     xp = db.Column(db.Integer, default=0)
@@ -525,6 +520,7 @@ class Achievement(db.Model):
         ach.name = self.name
         ach.conditions = self.conditions
         ach.multiunlock = self.multiunlock
+        ach.levelup = self.levelup
         ach.unlock_json = self.unlock_json
         ach.created_by_id = self.created_by_id
         ach.version = latest_version.version + 1
@@ -540,12 +536,15 @@ class Achievement(db.Model):
     def set_json(self, data):
         self.unlock_json = json.dumps(data)
 
-    def starred_by_user(self, user):
-        if not user:
+    def starred_by_user(self, user_id):
+        if not user_id:
             return False
 
+        if hasattr(user_id, 'id'):
+            user_id = user_id.id
+
         for star in self.starred:
-            if star.user_id == user.id:
+            if star.user_id == user_id:
                 return True
 
         return False

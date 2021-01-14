@@ -105,9 +105,13 @@
       {% endfor %}
       <div class="row">
         <div class="col">
-          <div class="form-group">
+          <div class="form-group mt-1 mb-0">
             {{ form.multiunlock() }}
-            {{ form.multiunlock.label }}
+            {{ form.multiunlock.label(class="mb-0") }}
+          </div>
+          <div class="form-group mt-0 mb-0">
+            {{ form.levelup() }}
+            {{ form.levelup.label(class="mb-0") }}
           </div>
         </div>
 
