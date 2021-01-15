@@ -210,8 +210,11 @@ def _make_standard_packs(cube, unused, num_packs, num_players):
                 card_breakdown['double-faced'] += [card] * 88
             else:
                 raise ValueError(f"Unknown rarity '{card.rarity()}' on '{card.name()}'")
-        elif card.rarity() in ('rare', 'mythic'):
+        elif card.rarity() == 'mythic':
             card_breakdown['rare'].append(card)
+        elif card.rarity() == 'rare':
+            card_breakdown['rare'].append(card)
+            card_breakdown['rare'].append(card)  # Mythics are twice as rare as regular rares
         elif card.rarity() == 'uncommon':
             card_breakdown['uncommon'].append(card)
         elif card.rarity() == 'common':
