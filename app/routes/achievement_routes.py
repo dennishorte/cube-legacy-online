@@ -161,7 +161,6 @@ def achievement_submit():
     ach.conditions = form.conditions.data
     ach.xp = int(form.xp_value.data)
     ach.multiunlock = form.multiunlock.data
-    ach.levelup = form.levelup.data
     ach.created_by = User.query.filter(User.name == form.update_as.data).first()
     ach.set_json(form.unlock_json())
 

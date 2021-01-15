@@ -484,7 +484,6 @@ class Achievement(db.Model):
     name = db.Column(db.Text)
     conditions = db.Column(db.Text)
     multiunlock = db.Column(db.Boolean, default=False)
-    levelup = db.Column(db.Boolean, default=False)
     version = db.Column(db.Integer, default=1)
     unlock_json = db.Column(db.Text)
     xp = db.Column(db.Integer, default=0)
@@ -525,7 +524,6 @@ class Achievement(db.Model):
         ach.name = self.name
         ach.conditions = self.conditions
         ach.multiunlock = self.multiunlock
-        ach.levelup = self.levelup
         ach.unlock_json = self.unlock_json
         ach.created_by_id = self.created_by_id
         ach.version = latest_version.version + 1
