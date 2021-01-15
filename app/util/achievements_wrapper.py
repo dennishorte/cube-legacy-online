@@ -61,7 +61,7 @@ class AchievementsWrapper(object):
 
     def starred_by(self, user_id):
         return self._with_filter(
-            lambda x: x.starred_by_user(user_id),
+            lambda x: x.available() and x.starred_by_user(user_id),
             sort_key = SortKey(lambda x: x.name),
         )
 
