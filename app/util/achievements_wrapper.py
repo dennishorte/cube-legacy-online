@@ -80,6 +80,7 @@ class AchievementsWrapper(object):
     def _with_filter(self, f, sort_key=None):
         if self.apply_not:
             g = lambda x: not f(x)
+            sort_key = self.sort_key
         else:
             g = f
 
