@@ -68,13 +68,13 @@ class AchievementsWrapper(object):
     def unlocked(self):
         return self._with_filter(
             lambda x: not x.available(),
-            sort_key = SortKey(lambda x: x.created_timestamp, reverse=True),
+            sort_key = SortKey(lambda x: x.unlocked_timestamp, reverse=True),
         )
 
     def unlocked_by(self, user_id):
         return self._with_filter(
             lambda x: x.unlocked_by_id == user_id,
-            sort_key = SortKey(lambda x: x.created_timestamp, reverse=True),
+            sort_key = SortKey(lambda x: x.unlocked_timestamp, reverse=True),
         )
 
     def _with_filter(self, f, sort_key=None):
