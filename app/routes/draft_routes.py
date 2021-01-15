@@ -41,15 +41,6 @@ def draft_debug(draft_id):
     return render_template('draft_debug.html', d=draft_debugger)
 
 
-@app.route("/draft/<draft_id>/deck_builder")
-@login_required
-def draft_deck_builder(draft_id):
-    return render_template(
-        'deck_builder.html',
-        d=DeckBuilder(draft_id, current_user.id),
-    )
-
-
 @app.route("/draft/<draft_id>/deck_add_cards", methods=["POST"])
 @login_required
 def draft_deck_add_cards(draft_id):
