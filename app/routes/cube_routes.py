@@ -121,7 +121,7 @@ def cube_bump_xp(cube_id):
     """Increase the XP for all unclaimed achievements by 1"""
     cube = Cube.query.get(cube_id)
 
-    for ach in cube.achievements_wrapper().available().andnot().levelup():
+    for ach in cube.achievements_wrapper().available():
         ach.xp = ach.xp + 1 if ach.xp is not None else 1
         db.session.add(ach)
 
