@@ -331,6 +331,8 @@ class CubeCard(db.Model):
                     base_id=self.base_id,
                     added_by_id=self.added_by_id,
                     edited_by_id=self.edited_by_id,
+
+                    diff=None,  # Don't generally need the diff for old versions.
                 )
                 db.session.add(new_card)
 
@@ -341,6 +343,7 @@ class CubeCard(db.Model):
                 self.timestamp = datetime.utcnow()
 
             self.json = json.dumps(new_json)
+            self.diff = None
             db.session.add(self)
 
             if commit:

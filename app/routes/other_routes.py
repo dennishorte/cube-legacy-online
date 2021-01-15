@@ -126,6 +126,22 @@ def admin_add_user():
 
     return redirect(url_for('admin'))
 
+
+@app.route("/admin/clear_diffs")
+@login_required
+def admin_clear_diffs():
+    if not current_user.is_admin:
+        return "Not allowed"
+
+    for card in CubeCard.query.filter(CubeCard.diff != None).all():
+        card.diff = None
+        db.session.add(card)
+
+    db.session.commit()
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/make_pack", methods=["POST"])
 @login_required
 def make_pack():
