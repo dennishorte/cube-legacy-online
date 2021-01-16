@@ -223,11 +223,11 @@ class CubeCard(db.Model):
         return card
 
     def get_diff(self):
-        if not self.diff:
-            differ = CardDiffer(self.original, self)
-            self.diff = json.dumps(differ.json_summary())
-            db.session.add(self)
-            db.session.commit()
+        # if not self.diff:
+        differ = CardDiffer(self.original, self)
+        self.diff = json.dumps(differ.json_summary())
+        db.session.add(self)
+        db.session.commit()
 
         return json.loads(self.diff)
 
@@ -280,9 +280,8 @@ class CubeCard(db.Model):
     @property
     def original(self):
         orig = CubeCard.query.filter(
-            CubeCard.latest == True,
             CubeCard.latest_id == self.latest_id,
-        ).first()
+        ).order_by(CubeCard.version).first()
 
         if not orig:
             raise RuntimeError(f"No original card found for {self.name()}")
