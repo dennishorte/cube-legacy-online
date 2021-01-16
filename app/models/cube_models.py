@@ -223,11 +223,11 @@ class CubeCard(db.Model):
         return card
 
     def get_diff(self):
-        # if not self.diff:
-        differ = CardDiffer(self.original, self)
-        self.diff = json.dumps(differ.json_summary())
-        db.session.add(self)
-        db.session.commit()
+        if not self.diff:
+            differ = CardDiffer(self.original, self)
+            self.diff = json.dumps(differ.json_summary())
+            db.session.add(self)
+            db.session.commit()
 
         return json.loads(self.diff)
 
