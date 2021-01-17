@@ -70,13 +70,19 @@ class DeckSelectorForm(FlaskForm):
         return form
 
 
+class EditLevelupStoryForm(FlaskForm):
+    levelup_id = HiddenField('Level')
+    story = TextAreaField('Story')
+    submit = SubmitField('Save')
+
+
 class EditMonikersForm(FlaskForm):
     monikers = TextAreaField('Monikers (1 per line)')
     submit = SubmitField('Update')
 
     @staticmethod
     def factory(user):
-        form = EditMonikersForm()
+        form = EditMonikersForm(prefix='monikers')
         form.monikers.data = '\n'.join(user.monikers)
         return form
 
@@ -149,7 +155,7 @@ class EditPersonasForm(FlaskForm):
 
     @staticmethod
     def factory(user):
-        form = EditPersonasForm()
+        form = EditPersonasForm(prefix='personas')
         form.personas.data = '\n'.join(user.personas)
         return form
 

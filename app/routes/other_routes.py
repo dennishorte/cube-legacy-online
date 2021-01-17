@@ -487,6 +487,33 @@ def my_account_change_password():
     return redirect(url_for('my_account'))
 
 
+@app.route("/levelup/manage")
+@login_required
+def levelup_manage():
+    return render_template(
+        "levelup_manager.html",
+        levelups=Levelup.query.order_by(Levelup.xp).all(),
+    )
+
+
+@app.route("/levelup/update", methods=["POST"])
+@login_required
+def levelup_update():
+    data = request.json
+
+    if data['id'] == 'new':
+        levelup = Levelup()
+    else:
+        levelup = Levelup.query.get(data['id'])
+
+    levelup.xp = data['xp']
+    levelup.reward = '\n'.join([x.strip() for x in data['reward'].split('\n')])
+    db.session.add(levelup)
+    db.session.commit()
+
+    return 'saved'
+
+
 @app.route("/user/<user_id>")
 @login_required
 def user_profile(user_id):
@@ -497,18 +524,18 @@ def user_profile(user_id):
     drafts = [x.draft for x in seats if not x.draft.killed]
     drafts.sort(key=lambda x: x.timestamp, reverse=True)
 
-    moniker_form = EditMonikersForm.factory(user)
-    persona_form = EditPersonasForm.factory(user)
-    portrait_form = EditPortraitForm()
-
     return render_template(
         'user.html',
         user=user,
         drafts=drafts,
         games=user.all_games(),
-        moniker_form=moniker_form,
-        persona_form=persona_form,
-        portrait_form=portrait_form,
+
+        moniker_form=EditMonikersForm.factory(user),
+        persona_form=EditPersonasForm.factory(user),
+        portrait_form=EditPortraitForm(prefix='portrait'),
+        story_form=EditLevelupStoryForm(prefix='story'),
+
+        levelups=Levelup.query.order_by(Levelup.xp).all(),
     )
 
 
@@ -534,6 +561,23 @@ def user_set_personas(user_id):
         personas = [x.strip() for x in form.personas.data.split('\n') if x.strip()]
         user = User.query.get(user_id)
         user.set_personas(personas)
+
+    return redirect(url_for('user_profile', user_id=user_id))
+
+
+@app.route("/user/<user_id>/levelup/story", methods=['POST'])
+@login_required
+def user_levelup_story(user_id):
+    form = EditLevelupStoryForm(prefix='story')
+    if form.validate_on_submit():
+        levelup = Levelup.query.get(form.levelup_id.data)
+        claim = levelup.claim_for(user_id)
+        if not claim:
+            claim = LevelupClaim(levelup_id = levelup.id, user_id = user_id)
+
+        claim.story = '\n'.join([x.strip() for x in form.story.data.strip().split()])
+        db.session.add(claim)
+        db.session.commit()
 
     return redirect(url_for('user_profile', user_id=user_id))
 

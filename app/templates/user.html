@@ -51,15 +51,61 @@
         </ul>
       {% endif %}
 
-      <h5>Stats</h5>
-      <ul class="list-unstyled">
-        <li>
-          XP:
-          <a id="stat-xp" class="stat-value" data-stat="xp" href="#stat-modal" data-toggle="modal">
-            {{ user.xp or 0 }}
-          </a>
-        </li>
-      </ul>
+      <h5>Levels and Experience</h5>
+      <div style="float: right; font-size: .6rem;">
+        <a href="{{ url_for('levelup_manage') }}">manage levelups</a>
+      </div>
+
+      <div>
+        XP:
+        <a id="stat-xp" class="stat-value" data-stat="xp" href="#stat-modal" data-toggle="modal">
+          {{ user.xp or 0 }}
+        </a>
+      </div>
+      <div id="levelups">
+        {% for levelup in levelups %}
+          <div class="card" data-id="{{ levelup.id }}">
+
+            <div class="card-header">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#levelup-{{ loop.index }}">
+                  Level {{ loop.index }}: {{ levelup.xp }} XP
+                </button>
+              </h5>
+            </div>
+
+            <div id="levelup-{{ loop.index }}" class="collapse" data-parent="#levelups">
+              <div class="card-body p-2">
+                <div>
+                  <p class="text-secondary border-bottom mb-0" style="font-size: .8rem;">
+                    reward
+                  </p>
+                  {{ levelup.reward }}
+                </div>
+
+                <div class="mt-2">
+                  {% set claim = levelup.claim_for(current_user.id) %}
+                  <p class="text-secondary border-bottom mb-0" style="font-size: .8rem;">
+                    story
+                  </p>
+                  <div class="m-0 levelup-story">
+                    {% if claim %}
+                      {{ claim.story }}
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="text-right mt-0 mb-0">
+                  <button id="edit-story-button" type="button" class="btn btn-link" style="font-size: .8rem;" data-target="#edit-story-modal" data-toggle="modal">
+                    edit story
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="col framed">
@@ -243,6 +289,35 @@
     </div>
   </div>
   <!-- END: Portrait Modal -->
+
+
+  <!-- Story Modal -->
+  <div class="modal fade" id="edit-story-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Story</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <form action="{{ url_for('user_levelup_story', user_id=current_user.id) }}" method="post" novalidate>
+          <div class="modal-body">
+            {{ story_form.hidden_tag() }}
+            <div class="form-group">
+              {{ story_form.story.label }}
+              {{ story_form.story(class="form-control", rows="8") }}
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            {{ story_form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Story Modal -->
 {% endblock content %}
 
 
@@ -262,6 +337,17 @@
    }
 
    $(document).ready(function() {
+     $('#edit-story-button').click(function(event) {
+       const card = $(event.target).parents('.card')
+       const levelup_id = card.data('id')
+       const levelup_story = card.find('.levelup-story').val()
+
+       console.log(levelup_id)
+
+       $("#story-levelup_id").val(levelup_id)
+       $("#story-story").val(levelup_story.trim())
+     })
+
      $('.stat-value').click(function(event) {
        let stat = $(this)
        let stat_name = stat.data('stat').trim()
@@ -288,7 +374,7 @@
          success: function (response) {
            if (response == 'success') {
              $('#stat-modal').modal('hide')
-             $(`#stat-${stat_name}`).text(stat_value)
+     $(`#stat-${stat_name}`).text(stat_value)
            }
            else {
              stat_error(response)

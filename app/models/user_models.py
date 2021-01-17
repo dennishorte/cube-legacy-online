@@ -43,6 +43,8 @@ class User(UserMixin, db.Model):
 
     decks = db.relationship('Deck', backref='user')
 
+    levelup_claims = db.relationship('LevelupClaim', backref='user')
+
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
@@ -118,6 +120,27 @@ class User(UserMixin, db.Model):
             if x.is_my_turn(self)
             and x.id != exclude_id
         ]
+
+
+class Levelup(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    xp = db.Column(db.Integer, nullable=False)
+    reward = db.Column(db.Text, nullable=False)
+
+    claims = db.relationship('LevelupClaim', backref='levelup')
+
+    def claim_for(self, user_id):
+        return LevelupClaim.query.filter(
+            LevelupClaim.levelup_id == self.id,
+            LevelupClaim.user_id == user_id,
+        ).first()
+
+
+class LevelupClaim(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    levelup_id = db.Column(db.Integer, db.ForeignKey('levelup.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    story = db.Column(db.Text)
 
 
 @login.user_loader

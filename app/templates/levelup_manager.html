@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title_suffix %}
+  Levelup Manager
+{% endblock %}
+
+{% block title %}
+  Levelup Manager
+{% endblock %}
+
+{% block content %}
+
+  {% for levelup in levelups %}
+    <div class="row">
+      <div class="col framed">
+
+
+        <div id="level-up-{{ levelup.id }}">
+
+          <div style="float: right;">
+            <button type="button" class="btn btn-primary" onclick="save_tier({{ levelup.id }})">
+              save
+            </button>
+          </div>
+
+          <div class="form-group">
+            XP:
+            <input class="levelup-xp form-control" type="text" value="{{ levelup.xp }}">
+          </div>
+
+          <div class="form-group">
+            Reward
+            <textarea class="levelup-reward form-control" cols="5" class="form-control">{{ levelup.reward }}</textarea>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  {% endfor %}
+
+
+  <div class="row">
+    <div class="col framed">
+
+      <div id="add-button">
+        <button type="button" class="btn btn-link" onclick="add_new_levelup_tier()">
+          add new levelup tier
+        </button>
+      </div>
+
+      <div id="new-tier">
+        <div id="level-up-new">
+
+          <div style="float: right;">
+            <button type="button" class="btn btn-primary" onclick="save_tier('new')">
+              save
+            </button>
+          </div>
+
+          <div class="form-group">
+            XP:
+            <input class="levelup-xp form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            Reward
+            <textarea class="levelup-reward form-control" cols="5" class="form-control"></textarea>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   function add_new_levelup_tier() {
+     $('#add-button').hide()
+     $('#new-tier').show()
+   }
+
+   function save_tier(tier_id) {
+     const elem = $(`#level-up-${tier_id}`)
+     if (elem.length == 0) {
+       throw "Unable to find div"
+     }
+
+     const data = {
+       id: tier_id,
+       xp: elem.find('.levelup-xp').val(),
+       reward: elem.find('.levelup-reward').val(),
+     }
+
+     $.ajax({
+       type: 'POST',
+       url: '{{ url_for('levelup_update') }}',
+       data: JSON.stringify(data),
+       contentType: "application/json; charset=utf-8",
+       success: function(response) {
+         if (response == 'saved') {
+           location.reload()
+         }
+         else {
+           throw response
+         }
+       },
+       error: function(error_message) {
+         alert('Error Saving Level Tier')
+       }
+     })
+   }
+
+   $(document).ready(function() {
+     $('#new-tier').hide()
+   })
+  </script>
+{% endblock scripts %}
