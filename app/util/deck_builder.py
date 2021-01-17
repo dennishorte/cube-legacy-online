@@ -6,47 +6,64 @@ from app.models.user_models import *
 from app.util.cube_wrapper import CubeWrapper
 
 
+class CardWrapper(object):
+    """Required in order to ensure that duplicate cards can have different metadata
+    """
+    def __init__(self, card):
+        self.card = card
+        self.maindeck = False
+        self.sideboard = False
+        self.command = False
+
+
 class CardSet(object):
-    def __init__(self, cards, filters=[]):
-        self.cards = cards
-        self.cards.sort(key=lambda x: x.name())
+    def __init__(self, wrappers=[], filters=[]):
+        self.wrappers = wrappers
+        self.wrappers.sort(key=lambda x: x.card.name())
 
         self.filters = filters
 
     def __iter__(self):
         filtered = []
-        for card in self.cards:
-            if all([f(card) for f in self.filters]):
-                filtered.append(card)
+        for wrapper in self.wrappers:
+            if all([f(wrapper) for f in self.filters]):
+                filtered.append(wrapper.card)
 
         return iter(filtered)
 
+    def add_card(self, card, maindeck=False, sideboard=False, command=False):
+        card = CardWrapper(card)
+        card.maindeck = maindeck
+        card.sideboard = sideboard
+        card.command = command
+        self.wrappers.append(card)
+
     def cmc(self, cmc):
-        new_filter = lambda x: x.cmc() == cmc
+        new_filter = lambda x: x.card.cmc() == cmc
         return self.with_filter(new_filter)
 
     def cmc_gte(self, cmc):
-        new_filter = lambda x: x.cmc() >= cmc
+        new_filter = lambda x: x.card.cmc() >= cmc
         return self.with_filter(new_filter)
 
     def cmc_lte(self, cmc):
-        new_filter = lambda x: x.cmc() <= cmc
+        new_filter = lambda x: x.card.cmc() <= cmc
         return self.with_filter(new_filter)
 
     def creatures(self):
-        new_filter = lambda x: x.is_creature()
+        new_filter = lambda x: x.card.is_creature()
         return self.with_filter(new_filter)
 
     def land(self):
-        new_filter = lambda x: x.is_land()
+        new_filter = lambda x: x.card.is_land()
         return self.with_filter(new_filter)
 
     def non_creature(self):
-        new_filter = lambda x: not x.is_creature()
+        new_filter = lambda x: not x.card.is_creature()
         return self.with_filter(new_filter)
 
     def other(self):
-        new_filter = lambda x: not x.is_land() and not x.is_creature()
+        new_filter = lambda x: not x.card.is_land() and not x.card.is_creature()
         return self.with_filter(new_filter)
 
     def command(self):
@@ -62,7 +79,7 @@ class CardSet(object):
         return self.with_filter(new_filter)
 
     def with_filter(self, f):
-        return CardSet(self.cards, self.filters + [f])
+        return CardSet(self.wrappers, self.filters + [f])
 
 
 class DeckBuilder(object):
@@ -86,26 +103,15 @@ class DeckBuilder(object):
 
         self.deck = self._load_deck()
 
-        self.card_set = CardSet([])
+        self.card_set = CardSet()
         for card in self.deck.maindeck():
-            card.command = False
-            card.maindeck = True
-            card.sideboard = False
-            self.card_set.cards.append(card)
+            self.card_set.add_card(card, maindeck=True)
 
         for card in self.deck.sideboard():
-            card.command = False
-            card.maindeck = False
-            card.sideboard = True
-            self.card_set.cards.append(card)
+            self.card_set.add_card(card, sideboard=True)
 
         for card in self.deck.command():
-            card.command = True
-            card.maindeck = False
-            card.sideboard = False
-            self.card_set.cards.append(card)
-
-        self.card_set.cards.sort(key=lambda x: x.name())
+            self.card_set.add_card(card, command=True)
 
     def all_cards(self):
         cards = []
@@ -176,21 +182,29 @@ class DeckBuilder(object):
         if len(deck_cards) == len(picked_cards):
             return deck
 
+        # Record how many of each card is currently in the deck.
         deck_counts = {}
-
-        for card in picked_cards:
-            deck_counts.setdefault(card.id, []).append(card)
-
         for card in deck_cards:
-            if card.id in deck_counts:  # Sometimes non-drafted cards are added to decks
-                deck_counts[card.id].pop()
+            if card.id not in deck_counts:
+                deck_counts[card.id] = 1
+            else:
+                deck_counts[card.id] += 1
 
-        for card_list in deck_counts.values():
-            for card in card_list:
+        # Count down using the picked cards, and any time you'd go below zero, add it to the deck
+        to_add = []
+        for card in picked_cards:
+            if card.id not in deck_counts or deck_counts[card.id] == 0:
+                to_add.append(card)
+            else:
+                deck_counts[card.id] -= 1
+
+        # Add in all the cards that have been picked but were not present in the deck.
+        if to_add:
+            for card in to_add:
                 deck.add_card(card)
 
-        db.session.add(deck)
-        db.session.commit()
+            db.session.add(deck)
+            db.session.commit()
 
         return deck
 
