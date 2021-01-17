@@ -68,7 +68,11 @@
             {% for levelup in levelups %}
               <div class="card" data-id="{{ levelup.id }}">
 
-                <div class="card-header">
+                <div class="card-header
+                            {% if levelup.xp <= current_user.xp %}
+                            levelup-achieved
+                            {% endif %}
+                            ">
                   <h5 class="mb-0">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#levelup-{{ loop.index }}">
                       Level {{ loop.index }}: {{ levelup.xp }} XP

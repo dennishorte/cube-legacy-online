@@ -289,3 +289,11 @@ body {
   float: right;
   margin: .5rem;
 }
+
+.levelup-achieved {
+  background-color: green;
+}
+
+.levelup-achieved button {
+  color: white;
+}
