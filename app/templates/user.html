@@ -66,11 +66,16 @@
           </div>
           <div id="levelups">
             {% for levelup in levelups %}
+              {% set claim = levelup.claim_for(current_user.id) %}
               <div class="card" data-id="{{ levelup.id }}">
 
                 <div class="card-header
                             {% if levelup.xp <= current_user.xp %}
-                            levelup-achieved
+                              {% if claim and claim.story %}
+                                levelup-claimed
+                              {% else %}
+                                levelup-achieved
+                              {% endif %}
                             {% endif %}
                             ">
                   <h5 class="mb-0">
@@ -90,7 +95,6 @@
                     </div>
 
                     <div class="mt-2">
-                      {% set claim = levelup.claim_for(current_user.id) %}
                       <p class="text-secondary border-bottom mb-0" style="font-size: .8rem;">
                         story
                       </p>
@@ -390,8 +394,7 @@
          contentType: "application/json; charset=utf-8",
          success: function (response) {
            if (response == 'success') {
-             $('#stat-modal').modal('hide')
-             $(`#stat-${stat_name}`).text(stat_value)
+             location.reload()
            }
            else {
              stat_error(response)

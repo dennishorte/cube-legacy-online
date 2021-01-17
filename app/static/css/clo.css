@@ -291,9 +291,13 @@ body {
 }
 
 .levelup-achieved {
+  background-color: yellow;
+}
+
+.levelup-claimed {
   background-color: green;
 }
 
-.levelup-achieved button {
+.levelup-claimed button {
   color: white;
 }
