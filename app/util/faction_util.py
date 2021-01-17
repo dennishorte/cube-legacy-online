@@ -40,6 +40,9 @@ def factions_for_card(card):
         if 'angel' in subtypes or 'demon' in subtypes or 'dragon' in subtypes:
             factions.append("Kaalia's Army of the Vast")
 
+        if 'werewolf' in subtypes:
+            factions.append("Werewolf Immigrant Advocacy Network")
+
         card_factions.append(factions)
 
     return card_factions
