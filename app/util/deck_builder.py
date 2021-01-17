@@ -17,11 +17,9 @@ class CardWrapper(object):
 
 
 class CardSet(object):
-    def __init__(self, wrappers=[], filters=[]):
-        self.wrappers = wrappers
-        self.wrappers.sort(key=lambda x: x.card.name())
-
-        self.filters = filters
+    def __init__(self):
+        self.wrappers = []
+        self.filters = []
 
     def __iter__(self):
         filtered = []
@@ -79,7 +77,10 @@ class CardSet(object):
         return self.with_filter(new_filter)
 
     def with_filter(self, f):
-        return CardSet(self.wrappers, self.filters + [f])
+        updated = CardSet()
+        updated.wrappers = self.wrappers
+        updated.filters = self.filters + [f]
+        return updated
 
 
 class DeckBuilder(object):
