@@ -117,7 +117,9 @@ class Cube(db.Model):
         ).limit(limit)
 
     def get_card_by_name(self, name):
-        filtered = [x for x in self.cards() if x.name() == name]
+        from app.util.cube_wrapper import CubeWrapper
+        cube_wrapper = CubeWrapper(self)
+        filtered = [x for x in cube_wrapper.cards() if x.name() == name]
         if not filtered:
             return None
         elif len(filtered) == 1:
