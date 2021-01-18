@@ -542,7 +542,7 @@ def user_profile(user_id):
 @app.route("/user/<user_id>/set_monikers", methods=['POST'])
 @login_required
 def user_set_monikers(user_id):
-    form = EditMonikersForm()
+    form = EditMonikersForm(prefix='monikers')
 
     if form.validate_on_submit():
         monikers = [x.strip() for x in form.monikers.data.split('\n') if x.strip()]
