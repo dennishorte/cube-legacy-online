@@ -234,7 +234,7 @@ class CubeCard(db.Model):
     def get_factions(self):
         return faction_util.factions_for_card(self)
 
-    def get_json(self, add_scars=False):
+    def get_json(self):
         if not self._json_cached:
             data = json.loads(self.json)
             self._json_cached = data
