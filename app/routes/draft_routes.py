@@ -273,6 +273,9 @@ def draft_undo(draft_id, user_id):
         last_pick.pack.num_picked -= 1
         db.session.add(last_pick.pack)
 
+        last_pick.draft.num_picked_tmp -=1
+        db.session.add(draft)
+
         # Remove this card from the player's deck.
         deck = Deck.query.filter(
             Deck.user_id == user_id,
