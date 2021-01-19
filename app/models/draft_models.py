@@ -12,7 +12,6 @@ class Draft(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64))
 
-    complete = db.Column(db.Boolean, default=False)
     killed = db.Column(db.Boolean, default=False)
 
     # Setup info
