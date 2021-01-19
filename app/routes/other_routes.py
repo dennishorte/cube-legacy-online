@@ -280,6 +280,10 @@ def card_editor(card_id):
     else:
         read_only = request.args.get('read_only', ''),
 
+    from app.util.cube_data import CubeData
+    cube_data = CubeData(card.cube)
+    card_data = cube_data.info[card.latest_id]
+
     return render_template(
         'card_editor.html',
         title="Card Editor",
@@ -290,6 +294,7 @@ def card_editor(card_id):
         read_only=read_only,
         form=form,
         alform=alform,
+        card_data=card_data,
     )
 
 
