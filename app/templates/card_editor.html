@@ -315,6 +315,26 @@
     </div>
     <!-- END: Linked Achievements -->
 
+    <div class="col framed ml-2">
+      <h4>Pick Info</h4>
+      <ul class="unstyled-list">
+        <li>Times first picked: {{ card_data.first_picks() }} / {{ card_data.picks|length }}</li>
+        <li style="line-height: 1;">
+          Average pick position: {{ card_data.average_pick_formatted() }}
+          <br>
+          <span class="text-secondary" style="font-size: .7rem;">
+            normalized to 15 card pack size
+          </span>
+        </li>
+      </ul>
+
+      <h4>Pick History</h4>
+      <ul class="unstyled-list">
+        {% for pick in card_data.picks %}
+          <li>{{ pick.pick_number + 1 }}, {{ pick.draft.pack_size }}, {{ pick.draft.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
 
     <!-- Comments from previous versions -->
     <div class="col framed ml-2">
