@@ -281,8 +281,9 @@ def card_editor(card_id):
         read_only = request.args.get('read_only', ''),
 
     from app.util.cube_data import CubeData
+    from app.util.cube_data import CardPickInfo
     cube_data = CubeData(card.cube)
-    card_data = cube_data.info[card.latest_id]
+    card_data = cube_data.info.get(card.latest_id, CardPickInfo(card))
 
     return render_template(
         'card_editor.html',

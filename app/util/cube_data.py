@@ -7,13 +7,16 @@ class CardPickInfo(object):
         self.picks = []
 
     def average_pick(self, normalize=15):
+        if not self.picks:
+            return normalize
+
         total = 0
         for pick in self.picks:
             total += (pick.pick_number / pick.pack_size) * normalize
 
         return 1 + (total / self.num_picks())
 
-    def average_pick_formatted(self, normalize=9):
+    def average_pick_formatted(self, normalize=15):
         num = self.average_pick(normalize)
         return '{:.1f}'.format(num)
 
