@@ -106,7 +106,7 @@
                     </div>
 
                     <div class="text-right mt-0 mb-0">
-                      <button id="edit-story-button" type="button" class="btn btn-link" style="font-size: .8rem;" data-target="#edit-story-modal" data-toggle="modal">
+                      <button type="button" class="btn btn-link edit-story-button" style="font-size: .8rem;" data-target="#edit-story-modal" data-toggle="modal">
                         edit story
                       </button>
                     </div>
@@ -358,12 +358,10 @@
    }
 
    $(document).ready(function() {
-     $('#edit-story-button').click(function(event) {
+     $('.edit-story-button').click(function(event) {
        const card = $(event.target).parents('.card')
        const levelup_id = card.data('id')
        const levelup_story = card.find('.levelup-story').val()
-
-       console.log(levelup_id)
 
        $("#story-levelup_id").val(levelup_id)
        $("#story-story").val(levelup_story.trim())
