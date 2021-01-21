@@ -235,6 +235,7 @@ def card_creator(cube_id):
         form=form,
         scar=None,
         read_only=False,
+        card_data=None,
     )
 
 
