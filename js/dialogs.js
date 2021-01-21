@@ -85,6 +85,7 @@ module.exports = (function() {
     _redraw_token_maker()
   }
 
+
   function _redraw_card_closeup() {
     let closeup = $('#card-closeup')
     let d = _dialogs['card-closeup']
@@ -108,6 +109,10 @@ module.exports = (function() {
 
     // Set annotation
     closeup.find('.card-closeup-annotation-input').val(card.annotation)
+
+    // Set external link to card editor
+    const link = `https://cubelegacyonline.com/card/${d.card_id}`
+    $('#closeup-card-link').attr('href', link)
   }
 
   function _redraw_popup_viewer_zone() {
