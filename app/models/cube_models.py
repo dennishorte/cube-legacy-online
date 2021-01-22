@@ -117,15 +117,10 @@ class Cube(db.Model):
         ).limit(limit)
 
     def get_card_by_name(self, name):
-        from app.util.cube_wrapper import CubeWrapper
-        cube_wrapper = CubeWrapper(self)
-        filtered = [x for x in cube_wrapper.cards() if x.name() == name]
-        if not filtered:
-            return None
-        elif len(filtered) == 1:
-            return filtered[0]
-        else:
-            return filtered
+        return CubeCard.query.filter(
+            CubeCard.cube_id == self.id,
+            CubeCard.name_tmp == name,
+        ).first()
 
     def used_scars(self):
         used = [x for x in self.scars if x.applied_timestamp]
