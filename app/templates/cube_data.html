@@ -9,15 +9,28 @@
 
   <div class="row">
 
-    <!-- Creature Type Breakdown -->
     <div class="col framed">
+
+      <!-- Creature Type Breakdown -->
       <ul class="list-unstyled">
         {% for type, cards in d.creature_types() %}
           <li>{{ type }} ({{ cards|length }})</li>
         {% endfor %}
       </ul>
+      <!-- END: Creature Type Breakdown -->
+
+      <h5>Creature Ratios</h5>
+      <ul class="list-unstyled">
+        {% set ratio = d.ratios.ratio_formatted %}
+        <li>White: {{ ratio('w') }}</li>
+        <li>Blue: {{ ratio('u') }}</li>
+        <li>Black: {{ ratio('b') }}</li>
+        <li>Red: {{ ratio('r') }}</li>
+        <li>Green: {{ ratio('g') }}</li>
+        <li>Gold: {{ ratio('gold') }}</li>
+        <li>Colorless: {{ ratio('colorless') }}</li>
+      </ul>
     </div>
-    <!-- END: Creature Type Breakdown -->
 
 
     <!-- Creatures Display -->

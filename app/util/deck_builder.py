@@ -3,6 +3,7 @@ from app import db
 from app.models.deck_models import *
 from app.models.draft_models import *
 from app.models.user_models import *
+from app.util import card_util
 from app.util.cube_wrapper import CubeWrapper
 
 
@@ -22,12 +23,18 @@ class CardSet(object):
         self.filters = []
 
     def __iter__(self):
+        return iter(self.as_list())
+
+    def __len__(self):
+        return len(self.as_list())
+
+    def as_list(self):
         filtered = []
         for wrapper in self.wrappers:
             if all([f(wrapper) for f in self.filters]):
                 filtered.append(wrapper.card)
 
-        return iter(filtered)
+        return filtered
 
     def add_card(self, card, maindeck=False, sideboard=False, command=False):
         card = CardWrapper(card)
@@ -48,8 +55,21 @@ class CardSet(object):
         new_filter = lambda x: x.card.cmc() <= cmc
         return self.with_filter(new_filter)
 
+    def color(self, color_letter):
+        color_letter = color_letter.upper()
+        new_filter = lambda x: x.card.color_identity() == color_letter
+        return self.with_filter(new_filter)
+
+    def colorless(self):
+        new_filter = lambda x: len(x.card.color_identity()) == 0
+        return self.with_filter(new_filter)
+
     def creatures(self):
         new_filter = lambda x: x.card.is_creature()
+        return self.with_filter(new_filter)
+
+    def gold(self):
+        new_filter = lambda x: len(x.card.color_identity()) > 1
         return self.with_filter(new_filter)
 
     def land(self):

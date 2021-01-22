@@ -13,6 +13,7 @@ class CubeWrapper(object):
 
         self._cards = None
         self._cards_include_removed = None
+        self._card_set = None
 
     def card_data(self):
         """
@@ -44,3 +45,12 @@ class CubeWrapper(object):
                 ).all()
                 self._cards.sort(key=lambda x: x.name())
             return self._cards
+
+    def card_set(self):
+        from app.util.deck_builder import CardSet
+        if not self._card_set:
+            self._card_set = CardSet()
+            for card in self.cards():
+                self._card_set.add_card(card)
+
+        return self._card_set

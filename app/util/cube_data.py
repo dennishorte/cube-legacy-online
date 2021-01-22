@@ -27,11 +27,38 @@ class CardPickInfo(object):
         return len(self.picks)
 
 
+class CreatureRatios(object):
+    def __init__(self, card_set):
+        self.card_set = card_set
+        self.ratios = {}
+
+        for color in 'wubrg':
+            creatures = len(self.card_set.color(color).creatures()) + 1
+            total = creatures + len(self.card_set.color(color).non_creature())
+            self.ratios[color] = float(creatures) / total
+
+        g_creatures = len(self.card_set.gold().creatures()) + 1
+        g_total = g_creatures + len(self.card_set.gold().non_creature())
+        self.ratios['gold'] = float(g_creatures) / g_total
+
+        c_creatures = len(self.card_set.colorless().creatures()) + 1
+        c_total = c_creatures + len(self.card_set.colorless().non_creature())
+        self.ratios['colorless'] = float(c_creatures) / c_total
+
+    def ratio(self, key):
+        return self.ratios[key]
+
+    def ratio_formatted(self, key):
+        ratio = self.ratio(key)
+        return '{:.2f}'.format(ratio)
+
+
 class CubeData(object):
     def __init__(self, cube):
         self.cube = cube
         self.cube_wrapper = CubeWrapper(self.cube)
         self.info = self._pick_info()
+        self.ratios = CreatureRatios(self.cube_wrapper.card_set())
 
     def creature_types(self):
         types = {}
