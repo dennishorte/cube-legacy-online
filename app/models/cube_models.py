@@ -210,22 +210,15 @@ class CubeCard(db.Model):
 
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
+        data = base_card.get_json()
         return CubeCard(
             version=1,
             cube_id=cube_id,
             base_id=base_card.id,
             json=base_card.json,
             added_by_id=added_by.id,
+            name_tmp=data['name'],
         )
-
-    @staticmethod
-    def from_base_json(cube_id, card_json, added_by_id):
-        card = CubeCard()
-        card.version = 1
-        card.cube_id = cube_id
-        card.json = card_json
-        card.added_by_id = added_by_id
-        return card
 
     def get_diff(self):
         if not self.diff:
