@@ -143,6 +143,26 @@ def admin_clear_diffs():
     return redirect(url_for('admin'))
 
 
+@app.route("/admin/name_fix")
+@login_required
+def admin_name_fix():
+    if not current_user.is_admin:
+        return "Not allowed"
+
+    for card in CubeCard.query.all():
+        print(card.id)
+        card_data = json.loads(card.json)
+        if card_data:
+            card.name_tmp = card_data.get('name', 'NO_NAME')
+        else:
+            card.name_tmp = 'NO_NAME'
+        db.session.add(card)
+
+    db.session.commit()
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/make_pack", methods=["POST"])
 @login_required
 def make_pack():

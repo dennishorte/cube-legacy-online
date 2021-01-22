@@ -141,6 +141,9 @@ class CubeCard(db.Model):
     json = db.Column(db.Text)
     comment = db.Column(db.Text)
 
+    # Duplicate of what's in the JSON, but so often desired for querying that it's cached here.
+    name_tmp = db.Column(db.String(128))
+
     # JSON cache of diff between this version and the original version
     diff = db.Column(db.Text)
 
@@ -327,6 +330,7 @@ class CubeCard(db.Model):
                     latest_id=self.id,
                     json=self.json,
                     comment=self.comment,
+                    name_tmp=self.name(),
 
                     cube_id=self.cube_id,
                     base_id=self.base_id,
@@ -344,6 +348,7 @@ class CubeCard(db.Model):
                 self.timestamp = datetime.utcnow()
 
             self.json = json.dumps(new_json)
+            self.name_tmp = new_json['name']
             self.diff = None
             db.session.add(self)
 
