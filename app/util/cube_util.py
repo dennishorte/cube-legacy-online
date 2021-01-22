@@ -1,5 +1,6 @@
 from app import db
 from app.models.cube_models import *
+from app.util import admin_util
 from app.util import scryfall
 
 
@@ -24,7 +25,7 @@ def create_set_cube(set_code):
     db.session.add(cube)
     db.session.commit()
 
-    starter_user = User.query.filter(User.name == 'starter').first()
+    starter_user = admin_util.starter_user()
 
     for card_json in scryfall_cards:
         if card_json['name'] in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']:

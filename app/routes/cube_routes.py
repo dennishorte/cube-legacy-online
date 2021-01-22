@@ -13,6 +13,7 @@ from app.forms import *
 from app.models.cube_models import *
 from app.models.draft_models import *
 from app.models.user_models import *
+from app.util import admin_util
 from app.util import cube_util
 from app.util.card_table import CardTable
 from app.util.cube_data import CubeData
@@ -85,7 +86,7 @@ def cube_add_cards(cube_id):
         card_names = [x.strip() for x in form.cardnames.data.split('\n') if x.strip()]
 
         if form.add_as_starter.data == True:
-            added_by = User.query.filter(User.name == 'starter').first()
+            added_by = admin_util.starter_user()
         else:
             added_by = current_user
 

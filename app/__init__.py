@@ -38,10 +38,3 @@ from app.models.cube_models import *
 from app.models.draft_models import *
 from app.models.game_models import *
 from app.models.user_models import *
-
-# Ensure initial objects are created
-# These need to be commented out if the db isn't set up for them yet.
-# from app.util import setup
-# setup.ensure_starter_user()
-# setup.ensure_basic_lands()
-# setup.ensure_art_crop()
