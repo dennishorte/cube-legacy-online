@@ -19,6 +19,7 @@ login.init_app(app)
 login.login_view = 'login'
 
 # Load all routes
+from app.routes import admin_routes
 from app.routes import auth_routes
 from app.routes import achievement_routes
 from app.routes import cube_routes
