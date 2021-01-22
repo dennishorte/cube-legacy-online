@@ -22,6 +22,7 @@ login.login_view = 'login'
 from app.routes import admin_routes
 from app.routes import auth_routes
 from app.routes import achievement_routes
+from app.routes import card_routes
 from app.routes import cube_routes
 from app.routes import custom_routes
 from app.routes import draft_routes
