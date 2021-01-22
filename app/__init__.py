@@ -27,6 +27,7 @@ from app.routes import custom_routes
 from app.routes import draft_routes
 from app.routes import game_routes
 from app.routes import other_routes
+from app.routes import user_routes
 
 # Load custom filters
 from app.filters import *
