@@ -83,6 +83,7 @@ def card_create(cube_id):
     card_json = empty_card_json()
     _card_update_copy_form_data_into_card_json(card_json, form)
     card.set_json(card_json)
+    card.name = card_json['name']
 
     db.session.add(card)
     db.session.commit()
