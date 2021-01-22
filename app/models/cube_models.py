@@ -397,7 +397,7 @@ class CubeCard(db.Model):
         return self.get_json()['layout']
 
     def name(self):
-        return self.get_json().get('name', 'NO_NAME')
+        return self.name_tmp
 
     def is_creature(self):
         return 'creature' in self.card_faces()[0].get('type_line', '').lower()
