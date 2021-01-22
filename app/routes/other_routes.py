@@ -375,16 +375,6 @@ def _card_update_copy_form_data_into_card_json(card_json, form):
     card_json['oracle_text'] = '\n-----\n'.join([x['oracle_text'] for x in card_faces])
 
 
-@app.route("/card/<card_id>/json", methods=['POST'])
-@login_required
-def card_json(card_id):
-    card = CubeCard.query.get(card_id)
-    if not card:
-        return 'Unknown Card'
-    else:
-        return card.get_json()
-
-
 @app.route("/my_account")
 @login_required
 def my_account():
