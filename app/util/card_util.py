@@ -1,7 +1,6 @@
 import difflib
 import re
 
-
 class CardConsts(object):
     RARITIES = (
         'common',
@@ -91,6 +90,80 @@ def empty_card_json():
         'object': 'card',
         'cmc': '0',
         'card_faces': [],
+    }
+
+
+def cards_by_id(card_ids: list):
+    from app.models.cube_models import CubeCard
+
+    card_ids = [int(x) for x in card_ids]
+    cards = CubeCard.query.filter(CubeCard.id.in_(card_ids)).all()
+
+    # Let the user know if any cards weren't able to be added.
+    id_set = set(card_ids)
+    card_set = set([x.id for x in cards])
+    missing = list(id_set - card_set)
+
+    return {
+        'cards': cards,
+        'missing': missing,
+    }
+
+
+def card_by_name(card_name):
+    from app.models.cube_models import Cube
+    from app.models.cube_models import CubeCard
+    from app.util import admin_util
+    from app.util.cube_util import add_cards_to_cube
+
+    # See if it exists in any active cube.
+    cards = CubeCard.query.join(CubeCard.cube).filter(
+        CubeCard.name_tmp == card_name,
+        CubeCard.id == CubeCard.latest_id,
+        Cube.admin == False,
+    ).all()
+
+    if cards:
+        return cards
+
+    # Finally, see if we can grab it from Scryfall.
+    starter_user = admin_util.starter_user()
+    scryfall_cube = admin_util.scryfall_cube()
+
+    result = add_cards_to_cube(
+        scryfall_cube.id,
+        [card_name],
+        starter_user,
+        "Dynamic fetch for get card by name",
+    )
+
+    if result['num_added'] == 1:
+        return CubeCard.query.filter(
+            CubeCard.cube_id == scryfall_cube.id,
+            CubeCard.name_tmp == card_name,
+        ).all()
+    else:
+        return []
+
+
+def cards_by_name(card_names: list):
+    cards = []
+    missing = []
+    multiples = []
+
+    for name in card_names:
+        card = card_by_name(name)
+        if len(card) == 0:
+            missing.append(name)
+        elif len(card) == 1:
+            cards.append(card[0])
+        else:
+            multiples.append(card)
+
+    return {
+        'cards': cards,
+        'missing': missing,
+        'multiples': multiples,
     }
 
 

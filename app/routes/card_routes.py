@@ -16,7 +16,7 @@ from app.models.cube_models import *
 from app.models.draft_models import *
 from app.models.game_models import *
 from app.models.user_models import *
-from app.util.card_util import empty_card_json
+from app.util import card_util
 from app.util.cube_wrapper import CubeWrapper
 from app.util.string import normalize_newlines
 
@@ -59,6 +59,34 @@ def make_pack():
         return 'Error making pack'
 
 
+@app.route("/cards_by_id", methods=["GET"])
+@login_required
+def cards_by_id():
+    card_id = request.args.get('card_id')
+    result = card_util.cards_by_id([card_id])
+    return {
+        'cards': { x.id: x.get_json() for x in result['cards'] },
+        'missing': result['missing'],
+    }
+
+
+@app.route("/cards_by_name", methods=["GET"])
+@login_required
+def cards_by_name():
+    card_name = request.args.get('card_name')
+    result = card_util.cards_by_name([card_name])
+
+    multi = []
+    for m in result['multiples']:
+        multi.append([x.name_tmp for x in m])
+
+    return {
+        'cards': { x.id: x.get_json() for x in result['cards'] },
+        'missing': result['missing'],
+        'multiples': multi,
+    }
+
+
 @app.route("/cube/<cube_id>/create", methods=["POST"])
 @login_required
 def card_create(cube_id):
@@ -80,7 +108,7 @@ def card_create(cube_id):
     card.is_original = True
     card.version = 1
 
-    card_json = empty_card_json()
+    card_json = card_util.empty_card_json()
     _card_update_copy_form_data_into_card_json(card_json, form)
     card.set_json(card_json)
     card.name_tmp = card_json['name']
