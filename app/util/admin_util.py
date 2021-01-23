@@ -4,7 +4,7 @@ from app.models.user_models import User
 from app.util import cube_util
 
 
-def basic_lands_cube(self):
+def basic_lands_cube():
     cube = Cube.query.filter(Cube.name == 'basic lands').first()
 
     if not cube:
@@ -24,7 +24,7 @@ def basic_lands_cube(self):
     return cube
 
 
-def scryfall_cube(self):
+def scryfall_cube():
     cube = Cube.query.filter(Cube.name == 'scryfall').first()
 
     if not cube:
@@ -40,7 +40,7 @@ def scryfall_cube(self):
     return cube
 
 
-def starter_user(self):
+def starter_user():
     user = User.query.filter(User.name == 'starter').first()
 
     if not user:
