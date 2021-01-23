@@ -33,11 +33,6 @@
 {% macro deck_builder_row(id, class, cards) %}
   {# id: used to update the card counts by deck_builder.js #}
   {% set is_legacy = cards|length > 0 and cards.wrappers[0].card.cube.style_a == 'legacy' %}
-  <div>
-    Hello
-    {{ cards|length > 0 }}
-    {{ is_legacy }}
-  </div>
 
   <div id="{{ id }}" class="row deckbuilder-row {{ class }}-row">
     {% for cmc in range(8) %}
