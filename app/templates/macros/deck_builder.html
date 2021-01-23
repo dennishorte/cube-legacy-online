@@ -32,7 +32,12 @@
 
 {% macro deck_builder_row(id, class, cards) %}
   {# id: used to update the card counts by deck_builder.js #}
-  {% set is_legacy = cards.cards and cards.cards[0].cube.style_a == 'legacy' %}
+  {% set is_legacy = cards|length > 0 and cards.wrappers[0].card.cube.style_a == 'legacy' %}
+  <div>
+    Hello
+    {{ cards|length > 0 }}
+    {{ is_legacy }}
+  </div>
 
   <div id="{{ id }}" class="row deckbuilder-row {{ class }}-row">
     {% for cmc in range(8) %}
@@ -177,8 +182,13 @@
         <div class="modal-body">
           <form action="" method="post" id="addCardsForm" novalidate>
             <div class="form-group">
-              <label for="add-card-names">card names (1 per line)</label>
+              <label for="add-card-names">card names/ids (1 per line)</label>
               <textarea class="form-control" id="add-card-names" name="add-card-names"></textarea>
+            </div>
+
+            <div class="form-group">
+              <input type="checkbox" name="add-by-id" id="add-by-id">
+              <label for="add-by-id">add by id</label>
             </div>
           </form>
         </div>
@@ -195,9 +205,9 @@
   <script>
    document.addEventListener("DOMContentLoaded", function(event) {
      $('#add-cards-submit').click(function () {
-       let card_names = $('#add-card-names').val().split('\n')
-       let request_data = {
-         card_names: card_names,
+       const request_data = {
+         by_id: $('#add-by-id').prop("checked"),
+         card_names: $('#add-card-names').val().split('\n'),
        }
 
        $.ajax({
