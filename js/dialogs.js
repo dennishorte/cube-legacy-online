@@ -37,6 +37,7 @@ module.exports = (function() {
     _init_draggable()
     _init_close_buttons()
     _init_closeup_close_on_enter()
+    _init_token_maker_interactions()
   }
 
   function _init_draggable() {
@@ -76,6 +77,37 @@ module.exports = (function() {
       if (event.keyCode == 13) {
         $('#card-closeup').find('.dialog-close').click()
       }
+    })
+  }
+
+  function _init_token_maker_interactions() {
+    $('#token-create').click(function() {
+      let name = $('#token-name').val()
+      let zone = $('#token-zone').val()
+      let annotation = $('#token-annotation').val()
+      let persistent = $('#token-persistent').prop('checked')
+
+      let player_idx = _data('token-maker').player_idx
+      let player = _state.player(player_idx)
+
+      let token = _state.card_factory()
+      token.annotation = annotation
+      token.owner = player.name
+      token.visibility = _state.state.players.map(p => p.name).sort()
+      token.token = !persistent  // Persistent cards are not actually tokens
+
+      let data = token.json
+      data.name = name
+      data.type_line = 'Token'
+
+      let front = data.card_faces[0]
+      front.image_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
+      front.art_crop_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
+      front.name = name
+      front.type_line = 'Token'
+
+      _state.card_create(token, zone)
+      $(window).trigger('redraw')
     })
   }
 

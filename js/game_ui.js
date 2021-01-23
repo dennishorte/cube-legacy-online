@@ -400,6 +400,10 @@ let gameui = (function() {
     })
   }
 
+  function _init_redraw_event_hanlder() {
+    $(window).on('redraw', function() { _redraw() })
+  }
+
   function _init_scry_modal() {
     $('#scry-submit').click(function() {
       let player_idx = parseInt($('#scry-modal-player-idx').text())
@@ -416,36 +420,6 @@ let gameui = (function() {
         event.preventDefault()
         $('#scry-submit').click()
       }
-    })
-  }
-
-  function _init_token_maker_interactions() {
-    $('#token-create').click(function() {
-      let name = $('#token-name').val()
-      let annotation = $('#token-annotation').val()
-      let persistent = $('#token-persistent').prop('checked')
-
-      let player_idx = dialogs.data('token-maker').player_idx
-      let player = _state.player(player_idx)
-
-      let token = _state.card_factory()
-      token.annotation = annotation
-      token.owner = player.name
-      token.visibility = _state.state.players.map(p => p.name).sort()
-      token.token = !persistent  // Persistent cards are not actually tokens
-
-      let data = token.json
-      data.name = name
-      data.type_line = 'Token'
-
-      let front = data.card_faces[0]
-      front.image_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
-      front.art_crop_url = 'https://i.ibb.co/bBjMCHC/tc19-28-manifest.png'
-      front.name = name
-      front.type_line = 'Token'
-
-      _state.card_create(token, dialogs.data('token-maker').zone)
-      _redraw()
     })
   }
 
@@ -560,6 +534,8 @@ let gameui = (function() {
       let zone = target.closest('.card-zone')
       let zone_name = _zone_from_id(zone.attr('id'))
       let player_idx = util.player_idx_from_elem(zone)
+
+      $('#token-zone').val(zone_name)
       dialogs.show('token-maker', {
         player_idx: player_idx,
         zone: zone_name,
@@ -933,10 +909,8 @@ let gameui = (function() {
         _init_player_counter_modal()
         _init_popup_menus()
         _init_randomize_bottom_modal()
+        _init_redraw_event_hanlder()
         _init_scry_modal()
-
-        // Dialogs
-        _init_token_maker_interactions()
 
         // Player activites
         _init_actions()
