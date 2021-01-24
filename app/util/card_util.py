@@ -130,6 +130,15 @@ def card_by_name(card_name):
     starter_user = admin_util.starter_user()
     scryfall_cube = admin_util.scryfall_cube()
 
+    scryfall_card = CubeCard.query.filter(
+        CubeCard.cube_id == scryfall_cube.id,
+        CubeCard.name_tmp == card_name,
+        CubeCard.id == CubeCard.latest_id,
+    ).first()
+
+    if scryfall_card:
+        return [scryfall_card]
+
     result = add_cards_to_cube(
         scryfall_cube.id,
         [card_name],

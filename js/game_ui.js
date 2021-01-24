@@ -37,6 +37,17 @@ let gameui = (function() {
   ////////////////////////////////////////////////////////////////////////////////
   // Functions
 
+  function _create_imported_card(card_data, zone) {
+    const base = _state.card_factory()
+    base.json = card_data
+    base.owner = _state.viewer_name
+    base.token = false
+    base.visibility = _state.state.players.map(player => player.name).sort()
+
+    _state.card_create(base, zone)
+    _redraw()
+  }
+
   function _find_by_path(root, path) {
     assert.ok(root instanceof jQuery, "root should be a jQuery obj")
     assert.ok(Array.isArray(path), "path should be an array")
@@ -218,6 +229,61 @@ let gameui = (function() {
         _state.set_history_index(_state.history_index + 1)
         _redraw()
       }
+    })
+  }
+
+  function _init_import_card_modal() {
+    $('#import-card-submit').click(function() {
+      const name = $('#import-card-name').val().trim()
+      const id = parseInt($('#import-card-id').val())
+      const zone = $('#import-card-zone').val()
+
+      const import_card_data = {}
+      let request_url = undefined
+      let key = undefined
+
+      if (id) {
+        import_card_data.id = id
+        request_url = "/cards_by_id"
+        key = id
+      }
+      else if (name) {
+        import_card_data.name = name
+        request_url = "/cards_by_name"
+        key = name
+      }
+      else {
+        return
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: request_url,
+        data: JSON.stringify(import_card_data),
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          $('#import-card-modal').modal('hide')
+
+          if (Object.keys(response.cards).length == 1) {
+            const card_data = Object.values(response.cards)[0]
+            _create_imported_card(card_data, zone)
+          }
+          else if (response.missing.length == 1) {
+            throw "not implemented"
+          }
+          else if (response.multiples.length == 1) {
+            throw "not implemented"
+          }
+          else {
+            console.log(response)
+            alert('Unexpected response when importing card')
+          }
+        },
+        error: function(error_message) {
+          alert('Error importing card')
+        }
+      })
+
     })
   }
 
@@ -560,6 +626,10 @@ let gameui = (function() {
       let card_id = dialogs.data('card-closeup').card_id
       _state.card_flip_down_up(card_id)
       _redraw()
+    }
+
+    else if (menu_item == 'import card') {
+      $('#import-card-modal').modal('show')
     }
 
     else if (menu_item == 'mulligan') {
@@ -905,6 +975,7 @@ let gameui = (function() {
         _init_card_dragging()
         _init_counters_area()
         _init_die_modal()
+        _init_import_card_modal()
         _init_library_move_modal()
         _init_player_counter_modal()
         _init_popup_menus()

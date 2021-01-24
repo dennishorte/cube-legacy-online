@@ -59,10 +59,10 @@ def make_pack():
         return 'Error making pack'
 
 
-@app.route("/cards_by_id", methods=["GET"])
+@app.route("/cards_by_id", methods=["POST"])
 @login_required
 def cards_by_id():
-    card_id = request.args.get('card_id')
+    card_id = request.json.get('id')
     result = card_util.cards_by_id([card_id])
     return {
         'cards': { x.id: x.get_json() for x in result['cards'] },
@@ -70,10 +70,10 @@ def cards_by_id():
     }
 
 
-@app.route("/cards_by_name", methods=["GET"])
+@app.route("/cards_by_name", methods=["POST"])
 @login_required
 def cards_by_name():
-    card_name = request.args.get('card_name')
+    card_name = request.json.get('name')
     result = card_util.cards_by_name([card_name])
 
     multi = []

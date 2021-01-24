@@ -131,7 +131,7 @@ class GameState {
 
     let diff = {
       delta: delta,
-      message: `${data.json.name} token created`,
+      message: `${data.json.name} created`,
       player: this.viewer_name,
     }
 
