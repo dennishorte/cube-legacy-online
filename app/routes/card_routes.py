@@ -73,12 +73,26 @@ def cards_by_id():
 @app.route("/cards_by_name", methods=["POST"])
 @login_required
 def cards_by_name():
+    def make_data(card):
+        card_data = card.get_json()
+        card_data['meta'] = {}
+        card_data['meta']['cube_id'] = card.cube.id
+        card_data['meta']['cube_name'] = card.cube.name
+        card_data['meta']['cube_card_id'] = card.id
+        card_data['meta']['card_editor_link'] = url_for('card_editor', card_id=card.id)
+        return card_data
+
+
     card_name = request.json.get('name')
     result = card_util.cards_by_name([card_name])
 
     multi = []
     for m in result['multiples']:
-        multi.append([x.name_tmp for x in m])
+        multi.append([make_data(x) for x in m])
+
+    cards = {}
+    for card in result['cards']:
+        cards[card.id] = make_data(card)
 
     return {
         'cards': { x.id: x.get_json() for x in result['cards'] },

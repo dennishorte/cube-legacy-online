@@ -10,6 +10,8 @@ let util = require('./util.js')
 
 let gameui = (function() {
   var _state
+  var _import_options
+  var _import_zone
 
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -269,10 +271,12 @@ let gameui = (function() {
             _create_imported_card(card_data, zone)
           }
           else if (response.missing.length == 1) {
-            throw "not implemented"
+            alert('Unable to find card')
           }
           else if (response.multiples.length == 1) {
-            throw "not implemented"
+            _import_options = response.multiples[0]
+            _import_zone = zone
+            _open_import_select_modal()
           }
           else {
             console.log(response)
@@ -523,6 +527,49 @@ let gameui = (function() {
       zone_idx: parseInt(index),
       name: tokens[2],
     }
+  }
+
+  function _open_import_select_modal() {
+    console.log(_import_options)
+
+    const name_field = $('#import-select-name')
+    name_field.val(_import_options[0].name)
+
+    const select_field = $('#import-select-version')
+    select_field.empty()
+    _import_options.forEach(function(opt) {
+      console.log(opt)
+      const button = $('<button type="button"></button>')
+      button.addClass('btn btn-link import-select-opt')
+      button.attr('data-card-id', opt.meta.cube_card_id)
+      button.text(opt.meta.cube_name)
+
+      const li = $('<li></li>')
+      li.append(button)
+
+      select_field.append(li)
+    })
+
+    $('#import-select-modal').modal('show')
+
+    $('.import-select-opt').click(function(event) {
+      const opt = $(event.target)
+      const id = opt.data('card-id')
+
+      let data = undefined
+      _import_options.forEach(function(card_data) {
+        if (card_data.meta.cube_card_id == id) {
+          data = card_data
+        }
+      })
+
+      if (!data) {
+        throw "Selected card not found"
+      }
+
+      _create_imported_card(data, _import_zone)
+      $('#import-select-modal').modal('hide')
+    })
   }
 
   function _perform_message_styling(message) {

@@ -116,43 +116,29 @@ def card_by_name(card_name):
     from app.util import admin_util
     from app.util.cube_util import add_cards_to_cube
 
-    # See if it exists in any active cube.
-    cards = CubeCard.query.join(CubeCard.cube).filter(
-        CubeCard.name_tmp == card_name,
-        CubeCard.id == CubeCard.latest_id,
-        Cube.admin == False,
-    ).all()
-
-    if cards:
-        return cards
-
-    # Finally, see if we can grab it from Scryfall.
+    # Import the Scryfall version if it doesn't exist.
+    # Even if the card already exists in some cube, it might be a modified card, and the user
+    # might be looking for the vanilla version, so always offer that option.
     starter_user = admin_util.starter_user()
     scryfall_cube = admin_util.scryfall_cube()
-
     scryfall_card = CubeCard.query.filter(
         CubeCard.cube_id == scryfall_cube.id,
         CubeCard.name_tmp == card_name,
-        CubeCard.id == CubeCard.latest_id,
     ).first()
 
-    if scryfall_card:
-        return [scryfall_card]
+    if not scryfall_card:
+        add_cards_to_cube(
+            scryfall_cube.id,
+            [card_name],
+            starter_user,
+            "Dynamic fetch for get card by name",
+        )
 
-    result = add_cards_to_cube(
-        scryfall_cube.id,
-        [card_name],
-        starter_user,
-        "Dynamic fetch for get card by name",
-    )
-
-    if result['num_added'] == 1:
-        return CubeCard.query.filter(
-            CubeCard.cube_id == scryfall_cube.id,
-            CubeCard.name_tmp == card_name,
-        ).all()
-    else:
-        return []
+    # Return the latest version from all cubes.
+    return CubeCard.query.filter(
+        CubeCard.name_tmp == card_name,
+        CubeCard.id == CubeCard.latest_id,
+    ).all()
 
 
 def cards_by_name(card_names: list):
