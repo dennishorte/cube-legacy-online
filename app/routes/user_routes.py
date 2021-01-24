@@ -85,7 +85,7 @@ def user_levelup_story(user_id):
 @app.route("/user/<user_id>/set_portrait", methods=['POST'])
 @login_required
 def user_set_portrait(user_id):
-    form = EditPortraitForm()
+    form = EditPortraitForm('portrait')
 
     if form.validate_on_submit():
         user = User.query.get(user_id)
