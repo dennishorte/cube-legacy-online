@@ -66,11 +66,11 @@
           </div>
           <div id="levelups">
             {% for levelup in levelups %}
-              {% set claim = levelup.claim_for(current_user.id) %}
+              {% set claim = levelup.claim_for(user.id) %}
               <div class="card" data-id="{{ levelup.id }}">
 
                 <div class="card-header
-                            {% if levelup.xp <= current_user.xp %}
+                            {% if levelup.xp <= user.xp %}
                               {% if claim and claim.story %}
                                 levelup-claimed
                               {% else %}
@@ -321,7 +321,7 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form action="{{ url_for('user_levelup_story', user_id=current_user.id) }}" method="post" novalidate>
+        <form action="{{ url_for('user_levelup_story', user_id=user.id) }}" method="post" novalidate>
           <div class="modal-body">
             {{ story_form.hidden_tag() }}
             <div class="form-group">
