@@ -72,13 +72,19 @@ def draft_deck_save(draft_id):
     data = request.json
     d = DeckBuilder(draft_id, current_user.id)
 
-    maindeck = CubeCard.query.filter(CubeCard.id.in_(data['maindeck'])).all()
+    maindeck = []
+    for card_id in data['maindeck']:
+        maindeck.append(CubeCard.query.get(card_id))
     d.deck.set_maindeck(maindeck)
 
-    sideboard = CubeCard.query.filter(CubeCard.id.in_(data['sideboard'])).all()
+    sideboard = []
+    for card_id in data['sideboard']:
+        sideboard.append(CubeCard.query.get(card_id))
     d.deck.set_sideboard(sideboard)
 
-    command = CubeCard.query.filter(CubeCard.id.in_(data['command'])).all()
+    command = []
+    for card_id in data['command']:
+        command.append(CubeCard.query.get(card_id))
     d.deck.set_command(command)
 
     basics = ','.join([x for x in data['basics'] if x[0] != '0'])
