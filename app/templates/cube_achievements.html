@@ -115,7 +115,7 @@
         <em>Achievements that are linked to specific cards.</em>
       </p>
 
-      {% for achievement in achs.linked().andnot().starred_by(current_user.id) %}
+      {% for achievement in achs.available().linked().andnot().starred_by(current_user.id) %}
         {{ show_achievement(achievement, current_user) }}
       {% endfor %}
     </div>
