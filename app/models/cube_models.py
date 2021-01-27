@@ -282,6 +282,7 @@ class CubeCard(db.Model):
         return orig
 
     def set_json(self, json_obj):
+        self.name_tmp = json_obj['name']
         self.json = json.dumps(json_obj)
 
     def soft_update(self, new_json):

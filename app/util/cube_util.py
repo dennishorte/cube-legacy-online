@@ -13,6 +13,23 @@ def create_set_cube(set_code):
     scryfall_cards = scryfall.fetch_set_cards(set_code, set_info['card_count'])
     print(f"Fetched {len(scryfall_cards)} cards for set {set_name}")
 
+    # If two cards have the same name, keep only the one with the lower set number
+    name_to_data = {}
+    for card in scryfall_cards:
+        use_card = True
+
+        if card['name'] in name_to_data:
+            this_id = int(card['collector_number'])
+            other_id = int(name_to_data[card['name']]['collector_number'])
+
+            if this_id > other_id:
+                use_card = False
+
+        if use_card:
+            name_to_data[card['name']] = card
+
+    scryfall_cards = list(name_to_data.values())
+
     # Convert the Scryfall json to CLO json
     for card_json in scryfall_cards:
         scryfall.convert_to_clo_standard_json(card_json)
