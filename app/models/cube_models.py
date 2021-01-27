@@ -510,6 +510,17 @@ class Achievement(db.Model):
         return self.unlocked_by_id is None
 
     def clone(self):
+        all_open_versions = Achievement.query.filter(
+            Achievement.name == self.name,
+            Achievement.cube_id == self.cube_id,
+            Achievement.unlocked_by_id == None,
+        ).first()
+
+        if all_open_versions:
+            # There is already an active version of this achievement.
+            # So, don't make another.
+            return
+
         latest_version = Achievement.query.filter(
             Achievement.name == self.name,
             Achievement.cube_id == self.cube_id,

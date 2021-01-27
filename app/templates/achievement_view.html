@@ -108,6 +108,9 @@
               {{ form.story(class='form-control', rows='5') }}
             </div>
             {{ form.submit(class='btn btn-primary') }}
+            {% if achievement.multiunlock and not achievement.finalized_timestamp %}
+              <p class="text-secondary">Will create a clone of this achievement automatically</p>
+            {% endif %}
           </form>
         </div>
         <!-- END: Finalize Achievement -->

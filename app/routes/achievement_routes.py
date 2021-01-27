@@ -77,11 +77,20 @@ def achievement_finalize(achievement_id):
     form = FinalizeAchievementForm()
     achievement = Achievement.query.get(achievement_id)
 
+    should_clone = achievement.multiunlock and not achievement.finalized_timestamp
+
     if form.validate_on_submit():
         achievement.finalized_timestamp = datetime.utcnow()
         achievement.story = form.story.data
         db.session.add(achievement)
         db.session.commit()
+
+        # Clone multi-unlocks
+        if should_clone:
+            new = achievement.clone()
+            db.session.add(new)
+            db.session.commit()
+
     else:
         print(form.errors)
 
