@@ -126,6 +126,7 @@ def card_create(cube_id):
     _card_update_copy_form_data_into_card_json(card_json, form)
     card.set_json(card_json)
     card.name_tmp = card_json['name']
+    card.comment = form.comment.data.strip()
 
     db.session.add(card)
     db.session.commit()
