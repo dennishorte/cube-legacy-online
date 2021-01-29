@@ -41,29 +41,16 @@ def draft_debug(draft_id):
     return render_template('draft_debug.html', d=draft_debugger)
 
 
-@app.route("/draft/<draft_id>/deck_add_cards", methods=["POST"])
+@app.route("/draft/<draft_id>/deck_add_by_id/<card_id>")
 @login_required
-def draft_deck_add_cards(draft_id):
-    data = request.json
-    card_names = [x.strip().lower() for x in data['card_names'] if x.strip()]
-    if not card_names:
-        flash('No card names to add to deck')
-        return 'error'
-
+def draft_deck_add_card(draft_id, card_id):
     deck_builder = DeckBuilder(draft_id, current_user.id)
-    cards = [x for x in deck_builder.all_cards() if x.name().lower() in card_names]
-    if len(cards) != len(card_names):
-        flash('Unknown card included in list')
-        return 'error'
-
     deck = deck_builder.deck
-    for card in cards:
-        deck.add_card(card)
+    deck.add_card_by_id(card_id)
     db.session.add(deck)
     db.session.commit()
 
-    flash('Successfully added cards')
-    return 'success'
+    return redirect(url_for('draft', draft_id=draft_id))
 
 
 @app.route("/draft/<draft_id>/deck_save", methods=["POST"])

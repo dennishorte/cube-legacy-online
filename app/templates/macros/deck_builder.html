@@ -85,7 +85,7 @@
           </li>
 
           <li>
-            <a href="#add-cards-modal" data-toggle="modal">
+            <a href="#import-card-modal" data-toggle="modal">
               add cards
             </a>
           </li>
@@ -163,58 +163,150 @@
   </div>
 
 
-  <div class="modal fade" id="add-cards-modal" tabindex="-1" role="dialog">
+  <!-- Import Card Modal -->
+  <div class="modal fade" id="import-card-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
 
         <div class="modal-header">
-          <h5 class="modal-title">Add Cards to Deck</h5>
-          <button type="button" class="close" data-dismiss="modal">
-            <span>&times;</span>
-          </button>
+          <h5 class="modal-title">Import Card</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <div class="modal-body">
-          <form action="" method="post" id="addCardsForm" novalidate>
-            <div class="form-group">
-              <label for="add-card-names">card names/ids (1 per line)</label>
-              <textarea class="form-control" id="add-card-names" name="add-card-names"></textarea>
+        <form>
+          <div class="modal-body">
+
+            <div class="row no-gutters">
+              <div class="col form-group">
+                <label for="import-card-name">Name</label>
+                <input id="import-card-name" type="text" class="form-control">
+              </div>
+
+              <div class="col form-group pl-1">
+                <label for="import-card-id">ID</label>
+                <input id="import-card-id" type="text" class="form-control">
+              </div>
             </div>
 
-            <div class="form-group">
-              <input type="checkbox" name="add-by-id" id="add-by-id">
-              <label for="add-by-id">add by id</label>
-            </div>
-          </form>
-        </div>
+          </div> <!-- modal-body -->
 
-        <div class="modal-footer">
-          <button class="btn btn-primary" type="button" id="add-cards-submit">Add Cards</button>
-        </div>
+          <div class="modal-footer">
+            <button id="import-card-submit" type="button" class="btn btn-primary">import</button>
+          </div>
+        </form>
 
       </div>
     </div>
   </div>
-  <!-- END: Add Cards Modal -->
+  <!-- END: Import Card Modal -->
+
+
+  <!-- Import Select Modal -->
+  <div class="modal fade" id="import-select-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Select Card Version</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form>
+
+            <div class="col form-group pl-1">
+              <p id="import-select-name"></p>
+            </div>
+
+            <div>
+              <ul class="list-unstyled" id="import-select-version">
+              </ul>
+            </div>
+
+          </form>
+        </div> <!-- modal-body -->
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Import Select Modal -->
 
   <script>
+   const draft_path_root = "{{ url_for('draft_deck_add_card', draft_id=d.draft.id, card_id='') }}"
+
+   function _open_import_select_modal(import_options) {
+     const name_field = $('#import-select-name')
+     name_field.val(import_options[0].name)
+
+     const select_field = $('#import-select-version')
+     select_field.empty()
+     import_options.forEach(function(opt) {
+       const link = $('<a></a>')
+       link.attr('href', draft_path_root + opt.meta.cube_card_id)
+       link.text(opt.meta.cube_name)
+
+       const li = $('<li></li>')
+       li.append(link)
+
+       select_field.append(li)
+     })
+
+     $('#import-select-modal').modal('show')
+   }
+
    document.addEventListener("DOMContentLoaded", function(event) {
-     $('#add-cards-submit').click(function () {
-       const request_data = {
-         by_id: $('#add-by-id').prop("checked"),
-         card_names: $('#add-card-names').val().split('\n'),
+     $('#import-card-submit').click(function() {
+       const name = $('#import-card-name').val().trim()
+       const id = parseInt($('#import-card-id').val())
+
+       const import_card_data = {}
+       let request_url = undefined
+       let key = undefined
+
+       if (id) {
+         import_card_data.id = id
+         request_url = "/cards_by_id"
+         key = id
+       }
+       else if (name) {
+         import_card_data.name = name
+         request_url = "/cards_by_name"
+         key = name
+       }
+       else {
+         return
        }
 
        $.ajax({
-         type: "POST",
-         url: "{{ url_for('draft_deck_add_cards', draft_id=d.draft.id) }}",
+         type: 'POST',
+         url: request_url,
+         data: JSON.stringify(import_card_data),
          contentType: "application/json; charset=utf-8",
-         data: JSON.stringify(request_data),
-         success: function (data) {
-           location.reload()
+         success: function(response) {
+           $('#import-card-modal').modal('hide')
+
+           if (Object.keys(response.cards).length == 1) {
+             const card_data = Object.values(response.cards)[0]
+             window.location.href = draft_path_root + card_data.meta.cube_card_id
+           }
+           else if (response.missing.length == 1) {
+             alert('Unable to find card')
+           }
+           else if (response.multiples.length == 1) {
+             _open_import_select_modal(response.multiples[0])
+           }
+           else {
+             console.log(response)
+             alert('Unexpected response when importing card')
+           }
          },
+         error: function(error_message) {
+           alert('Error importing card')
+         }
        })
+
      })
    })
+
   </script>
 {% endmacro %}

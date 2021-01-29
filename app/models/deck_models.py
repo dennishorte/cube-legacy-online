@@ -22,7 +22,10 @@ class Deck(db.Model):
     basic_lands = db.Column(db.Text, default='')
 
     def add_card(self, card):
-        self.maindeck_ids += ',' + str(card.id)
+        self.add_card_by_id(card.id)
+
+    def add_card_by_id(self, card_id):
+        self.maindeck_ids += ',' + str(card_id)
 
     def all_cards(self):
         return self.maindeck() + self.sideboard() + self.command()

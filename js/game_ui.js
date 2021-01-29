@@ -530,8 +530,6 @@ let gameui = (function() {
   }
 
   function _open_import_select_modal() {
-    console.log(_import_options)
-
     const name_field = $('#import-select-name')
     name_field.val(_import_options[0].name)
 
