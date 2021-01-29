@@ -24,11 +24,6 @@ class DraftWrapper(object):
         self.seat = next(x for x in self.seats if x.user_id == self.user.id)
         self.pack = self.seat.waiting_pack()
 
-        self.decklist = DeckList.query.filter(
-            DeckList.draft_id == self.draft.id,
-            DeckList.user_id == self.user.id,
-        ).first()
-
         self.deck_builder = DeckBuilder(self.draft.id, self.user.id)
 
     def card_data(self):

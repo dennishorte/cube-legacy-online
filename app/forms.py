@@ -424,12 +424,6 @@ class ResultForm(FlaskForm):
     submit = SubmitField('update')
 
 
-class SaveDeckListForm(FlaskForm):
-    name = StringField('Deck Name', validators=[DataRequired()])
-    decklist = TextAreaField('Deck List', validators=[DataRequired()])
-    submit = SubmitField('Save')
-
-
 class SelectDraftForm(FlaskForm):
     draft = SelectField('Draft')
     submit = SubmitField('Select')

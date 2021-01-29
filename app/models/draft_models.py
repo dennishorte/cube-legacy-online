@@ -317,31 +317,6 @@ class MatchResult(db.Model):
         return result
 
 
-class DeckList(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
-    name = db.Column(db.String(128))
-    decklist = db.Column(db.Text)
-
-    def mainboard(self):
-        return self._split_decklist_on_empty_line()[0]
-
-    def sideboard(self):
-        return self._split_decklist_on_empty_line()[1]
-
-    def _split_decklist_on_empty_line(self):
-        card_names = self.decklist.split('\n')
-        empty_index = card_names.index('')
-
-        if empty_index > 0:
-            return card_names[:empty_index], card_names[empty_index+1:]
-
-        else:
-            return card_names, []
-
-
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)

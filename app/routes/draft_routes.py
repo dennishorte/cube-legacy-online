@@ -224,26 +224,6 @@ def draft_swap_sideboard(card_id):
     return redirect(url_for('draft', draft_id=card.draft_id))
 
 
-@app.route("/draft/<draft_id>/save_decklist", methods=["POST"])
-@login_required
-def draft_save_decklist(draft_id):
-    form = SaveDeckListForm()
-    if form.validate_on_submit():
-        decklist = DeckList(
-            user_id=current_user.id,
-            draft_id=draft_id,
-            name=form.name.data.strip(),
-            decklist=normalize_newlines(form.decklist.data.strip()),
-        )
-        db.session.add(decklist)
-        db.session.commit()
-
-    else:
-        flash('Error saving decklist')
-
-    return redirect(url_for('draft', draft_id=draft_id))
-
-
 @app.route("/draft/<draft_id>/undo/<user_id>")
 @login_required
 def draft_undo(draft_id, user_id):
