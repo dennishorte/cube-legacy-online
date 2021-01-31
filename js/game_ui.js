@@ -476,10 +476,19 @@ let gameui = (function() {
 
   function _init_scry_modal() {
     $('#scry-submit').click(function() {
-      let player_idx = parseInt($('#scry-modal-player-idx').text())
-      let count = parseInt($('#scry-count').val())
+      const player_idx = parseInt($('#scry-modal-player-idx').text())
+      const count = parseInt($('#scry-count').val())
+      const reveal = $('#scry-reveal').is(':checked')
 
-      _state.reveal_top_of_library_to(_state.viewer_idx, player_idx, count)
+      let player_names
+      if (reveal) {
+        player_names = _state.state.players.map(p => p.name)
+      }
+      else {
+        player_names = [_state.viewer_name]
+      }
+
+      _state.reveal_top_of_library_to(player_names, player_idx, count)
 
       $('#scry-modal').modal('hide')
       _redraw()

@@ -741,33 +741,43 @@ class GameState {
     return this._execute(diff)
   }
 
-  reveal_top_of_library_to(player_idx, library_idx, count) {
-    let card_list = this.card_list(library_idx, 'library')
-    let player_name = this.player(player_idx).name
+  reveal_top_of_library_to(player_names, library_idx, count) {
+    const card_list = this.card_list(library_idx, 'library')
+    const delta = []
 
-    let delta = []
+    for (let i = 0; i < count; i++) {
+      const card = this.card(card_list[i])
 
-    for (var i = 0; i < count; i++) {
-      let card = this.card(card_list[i])
+      const new_visibility = [...card.visibility]
+      let was_changed = false
+      player_names.forEach(name => {
+        if (new_visibility.indexOf(name) == -1) {
+          new_visibility.push(name)
+          was_changed = true
+        }
+      })
 
-      if (card.visibility.indexOf(player_name) == -1) {
-        let new_visibility = card.visibility.concat([player_name])
+      if (was_changed) {
         delta.push(this._visibility_diff(card, new_visibility))
       }
     }
 
     var message;
-    if (player_idx == library_idx) {
-      let player_key = `PLAYER_${player_idx}_NAME`
+    if (this.viewer_idx == library_idx) {
+      const player_key = `PLAYER_${this.viewer_idx}_NAME`
       message = `${player_key} looks at the top ${count} cards of library`
     }
     else {
-      let player_key = `PLAYER_${player_idx}_NAME`
-      let library_key = `PLAYER_${library_idx}_NAME`
+      const player_key = `PLAYER_${this.viewer_idx}_NAME`
+      const library_key = `PLAYER_${library_idx}_NAME`
       message = `${player_key} looks at the top ${count} cards of ${library_key}'s library`
     }
 
-    let diff = {
+    if (player_names.length > 1) {
+      message = message.replace('looks at', 'reveals')
+    }
+
+    const diff = {
       delta: delta,
       message: message,
       player: this.viewer_name,
