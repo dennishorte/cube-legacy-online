@@ -1,4 +1,5 @@
 import copy
+import time
 from datetime import datetime
 from random import random
 
@@ -26,37 +27,45 @@ from app.util.string import normalize_newlines
 def make_pack():
     form = PackMakerForm.factory()
 
-    # Get form data
-    cube = Cube.query.filter(Cube.name == form.cube_name.data).first()
-    cube_wrapper = CubeWrapper(cube)
-    count = int(form.count.data)
-
-    # Make pack
-    if form.obj_type.data == 'Cards':
-        cards = cube_wrapper.cards()
-        random.shuffle(cards)
-        cards = cards[:count]
-
-    elif form.obj_type.data == 'Dead Interns':
-        removed_cards = cube.cards_removed()
-        interns = [x for x in removed_cards if 'intern of ' in x.get_json()['oracle_text'].lower()]
-        cards = interns[:count]
-
     if form.validate_on_submit():
-        card_data = {}
-        if cube.style_a == 'legacy':
-            for card in cards:
-                card_data[card.id] = card.get_json()
+        cube = Cube.query.filter(Cube.name == form.cube_name.data).first()
+        count = int(form.count.data)
 
-        return render_template(
-            'pack_of_cards.html',
-            title=f"Pack of {count} cards from {cube.name}",
-            cards=cards,
-            card_data=card_data,
-        )
+        return redirect(url_for(
+            'pack_of_cards',
+            cube_id=cube.id,
+            num_cards=count,
+            random_seed=int(time.time())
+        ))
 
     else:
         return 'Error making pack'
+
+
+@app.route("/pack_of_cards/<cube_id>/<num_cards>/<random_seed>")
+@login_required
+def pack_of_cards(cube_id, num_cards, random_seed):
+    num_cards = int(num_cards)
+
+    randomizer = random.Random(random_seed)
+    cube = Cube.query.get(cube_id)
+    cube_wrapper = CubeWrapper(cube)
+
+    cards = cube_wrapper.cards()
+    randomizer.shuffle(cards)
+    cards = cards[:num_cards]
+
+    card_data = {}
+    if cube.style_a == 'legacy':
+        for card in cards:
+            card_data[card.id] = card.get_json()
+
+    return render_template(
+        'pack_of_cards.html',
+        title=f"Pack of {num_cards} cards from {cube.name}",
+        cards=cards,
+        card_data=card_data,
+    )
 
 
 @app.route("/cards_by_id", methods=["POST"])
