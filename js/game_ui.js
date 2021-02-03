@@ -218,7 +218,7 @@ let gameui = (function() {
       _redraw()
     })
 
-    $(document).keyup(function(event) {
+    window.addEventListener('keyup', function(event) {
       let focus = $(document.activeElement).prop('tagName').toLowerCase()
       if (focus == 'input' || focus == 'textarea')
         return

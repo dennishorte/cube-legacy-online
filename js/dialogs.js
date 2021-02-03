@@ -38,12 +38,7 @@ module.exports = (function() {
     _init_close_buttons()
     _init_closeup_close_on_enter()
     _init_token_maker_interactions()
-  }
-
-  function _init_draggable() {
-    $('.dialog').draggable({
-      handle: '.dialog-header, .drag-handle',
-    })
+    _init_esc_closes_dialogs()
   }
 
   function _init_close_buttons() {
@@ -76,6 +71,21 @@ module.exports = (function() {
     $('.card-closeup-annotation-input').keydown(function(event) {
       if (event.keyCode == 13) {
         $('#card-closeup').find('.dialog-close').click()
+      }
+    })
+  }
+
+  function _init_draggable() {
+    $('.dialog').draggable({
+      handle: '.dialog-header, .drag-handle',
+    })
+  }
+
+  function _init_esc_closes_dialogs() {
+    window.addEventListener('keyup', function(event) {
+      if (event.keyCode == 27) { // escape
+        Object.values(_dialogs).forEach(state => state.active = false)
+        $(window).trigger('redraw')
       }
     })
   }
