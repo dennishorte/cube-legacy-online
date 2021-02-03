@@ -3,8 +3,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Public Interface
 
-function autocard_init(classname, legacy) {
+function autocard_init(classname, legacy, dataFetcher=undefined) {
   legacyAutocard = legacy
+  autocardDataFetcher = dataFetcher
 
   const elements = document.getElementsByClassName(classname)
   for (let i = 0; i < elements.length; i++) {
@@ -33,6 +34,7 @@ function autocard_init(classname, legacy) {
 
 var stopAutocard = false
 var legacyAutocard = false
+var autocardDataFetcher
 
 // These maps prevent duplicate listeners from being added.
 const autocardEnterListeners = new Map()
@@ -81,9 +83,17 @@ function autocard_show_legacy_card(card_id) {
   popup_element.removeClass('d-none')
   popup_element.find('.scarred').removeClass('scarred')
 
+  let card_data
+  if (autocardDataFetcher) {
+    card_data = autocardDataFetcher(card_id)
+  }
+  else {
+    card_data = window.card_data[card_id]
+  }
+
   clo.util.draw_card_frame(
     popup_element.find('.closeup-card-wrapper'),
-    window.card_data[card_id],
+    card_data,
   )
 }
 

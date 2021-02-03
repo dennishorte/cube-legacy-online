@@ -14,6 +14,7 @@ module.exports = (function() {
   cardui.factory = function(data) {
     let elem = $('<li></li>')
     elem.attr('id', `card-${data.id}`)
+    elem.attr('data-card-id', data.id)  // Used by autocard
 
     // Styling and autocard popup
     elem.addClass('card-list-item')
