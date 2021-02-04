@@ -52,9 +52,16 @@
         {% endfor %}
       </div>
 
-      <div class="framed">
+      <div id="available-achievements" class="framed">
         <a name="availableAchievements"></a>
         <h4>Available Achievements</h4>
+
+        <div id="sort-options">
+          <button type="button" class="btn btn-sm btn-secondary sort-button" data-sort-key="age">age</button>
+          <button type="button" class="btn btn-sm btn-secondary sort-button" data-sort-key="xp">xp</button>
+        </div>
+
+        <hr>
 
         {% for achievement in achs.standard().andnot().starred_by(current_user.id) %}
           {{ show_achievement(achievement, current_user) }}
@@ -130,3 +137,43 @@
     <!-- END: New achievement form -->
   </div>
 {% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   $(document).ready(function() {
+
+     $('.sort-button').click(function(event) {
+       const sort_key = $(event.target).data('sort-key')
+       const available_achievements = $('#available-achievements')
+
+       const sorted = available_achievements
+         .children('.achievement')
+         .sort(function(a, b) {
+           a = $(a)
+           b = $(b)
+
+           const a_name = a.find('achievement-name').text()
+           const b_name = a.find('achievement-name').text()
+
+           if (sort_key == 'xp') {
+             const a_xp = parseInt(a.find('.achievement-xp').text())
+             const b_xp = parseInt(b.find('.achievement-xp').text())
+
+             return (b_xp - a_xp) || a_name.localeCompare(b_name)
+           }
+
+           else if (sort_key == 'age') {
+             const a_date = a.find('.achievement-created-date').text().trim()
+             const b_date = b.find('.achievement-created-date').text().trim()
+
+             return b_date.localeCompare(a_date) || a_name.localeCompare(b_name)
+           }
+         })
+
+       available_achievements.append(sorted)
+     })
+
+   })
+  </script>
+{% endblock %}

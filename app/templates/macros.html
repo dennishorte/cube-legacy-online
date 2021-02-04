@@ -9,67 +9,71 @@
 {% endmacro %}
 
 {% macro show_achievement(achievement, current_user) %}
-  <div class="d-flex">
+  <div class="achievement">
+    <div class="d-flex">
+      <div class="d-none achievement-created-date">
+        {{ achievement.created_timestamp }}
+      </div>
 
-    <!-- Achievement Name -->
-    <div class="mr-auto mt-1 text-primary">
-      {{ achievement.full_name() }}
+      <!-- Achievement Name -->
+      <div class="mr-auto mt-1 text-primary">
+        {{ achievement.full_name() }}
 
-      {% if not achievement.unlocked_by_id %}
-        <a href="{{ url_for('achievement_star', ach_id=achievement.id) }}">
-          {% if achievement.starred_by_user(current_user) %}
-            <i class="fas fa-star text-warning"></i>
-          {% else %}
-            <i class="far fa-star text-secondary"></i>
-          {% endif %}
-        </a>
-      {% endif %}
-
-      {% if achievement.multiunlock %}
-        <span class="badge badge-pill badge-warning">multi</span>
-      {% endif %}
-      <p class="text-secondary font-weight-light ml-3 mb-0" style="font-size:.8rem">
-        by: {{ achievement.created_by.name }},
-        xp: {{ achievement.xp or 1 }}
-      </p>
-    </div>
-
-    <!-- Edit Button -->
-    <div class="mr-1">
-      <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
-        <button class="btn btn-warning">edit</button>
-      </a>
-    </div>
-
-    <!-- Claim Button -->
-    {% if not achievement.unlocked_by_id %}
-    <div>
-      <a href="{{ url_for('achievement_claim_confirmation', achievement_id=achievement.id) }}">
-        <button class="btn btn-success">unlock</button>
-      </a>
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- Achievement Conditions -->
-  <div class="d-flex text-secondary">
-    {{ achievement.conditions }}
-  </div>
-
-  <!-- Linked Cards -->
-  <div>
-    <ul class="list-unstyled ml-4">
-      {% for link in achievement.linked_cards %}
-        <li>
-          <a href="{{ url_for('card_editor', card_id=link.card.id) }}">
-            <span class="text-info">{{ link.card.name() }}</span>
+        {% if not achievement.unlocked_by_id %}
+          <a href="{{ url_for('achievement_star', ach_id=achievement.id) }}">
+            {% if achievement.starred_by_user(current_user) %}
+              <i class="fas fa-star text-warning"></i>
+            {% else %}
+              <i class="far fa-star text-secondary"></i>
+            {% endif %}
           </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
+        {% endif %}
 
-  <hr>
+        {% if achievement.multiunlock %}
+          <span class="badge badge-pill badge-warning">multi</span>
+        {% endif %}
+        <p class="text-secondary font-weight-light ml-3 mb-0" style="font-size:.8rem">
+          by: <span class='achievement-name'>{{ achievement.created_by.name }}</span>,
+          xp: <span class='achievement-xp'>{{ achievement.xp }}</span>
+        </p>
+      </div>
+
+      <!-- Edit Button -->
+      <div class="mr-1">
+        <a href="{{ url_for('achievement_edit', achievement_id=achievement.id) }}">
+          <button class="btn btn-warning">edit</button>
+        </a>
+      </div>
+
+      <!-- Claim Button -->
+      {% if not achievement.unlocked_by_id %}
+        <div>
+          <a href="{{ url_for('achievement_claim_confirmation', achievement_id=achievement.id) }}">
+            <button class="btn btn-success">unlock</button>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Achievement Conditions -->
+    <div class="d-flex text-secondary">
+      {{ achievement.conditions }}
+    </div>
+
+    <!-- Linked Cards -->
+    <div>
+      <ul class="list-unstyled ml-4">
+        {% for link in achievement.linked_cards %}
+          <li>
+            <a href="{{ url_for('card_editor', card_id=link.card.id) }}">
+              <span class="text-info">{{ link.card.name() }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <hr>
+  </div>
 {% endmacro %}
 
 {% macro show_achievement_form(form) %}
