@@ -530,6 +530,7 @@ class Achievement(db.Model):
         ).first()
 
         ach = Achievement()
+        ach.xp = 1
         ach.name = self.name
         ach.conditions = self.conditions
         ach.multiunlock = self.multiunlock
