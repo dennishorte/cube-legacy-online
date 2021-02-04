@@ -15,6 +15,10 @@ body {
   margin-bottom: 200px;
 }
 
+.index-section-header {
+  margin-bottom: .25rem;
+}
+
 .plain-link {
   color: black;
   text-decoration: none;

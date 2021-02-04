@@ -25,7 +25,7 @@
         <h3>Active</h3>
         <div id="active" class="framed">
 
-          <p>Active Drafts</p>
+          <p class="index-section-header">Active Drafts</p>
           <ul class="list-unstyled ml-4">
             {% for p in active %}
               <li>
@@ -41,8 +41,8 @@
         </div>
 
         <div class="framed">
-          <p>Active Games</p>
-          <ul class="list-unstyled ml-4 mt-3">
+          <p class="index-section-header">Active Games</p>
+          <ul class="list-unstyled ml-4">
             {% for game in games %}
               {% if not game.state.is_finished() %}
                 <li>
@@ -67,7 +67,7 @@
         <h3>Completed</h3>
 
         <div id="complete" class="framed">
-          <p>Completed Drafts</p>
+          <p class="index-section-header">Completed Drafts</p>
           <ul class="list-unstyled ml-4">
             {% for p in complete %}
               <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
@@ -76,7 +76,7 @@
         </div>
 
         <div class="framed">
-          <p>Finished Games</p>
+          <p class="index-section-header">Finished Games</p>
           <ul class="list-unstyled ml-4 mt-3">
             {% for game in games %}
               {% if game.state.is_finished() %}
@@ -109,15 +109,46 @@
       <!-- Cube List -->
       <div>
         <h3>Cubes</h3>
-        <div id="activeCubes" class="framed">
-          <ul class="list-unstyled ml-4 mt-3">
+
+        <div id="legacy-cubes" class="framed">
+          <p class="index-section-header">Legacy Cubes</p>
+          <ul class="list-unstyled ml-4">
             {% for cube in cubes|sort(attribute='name') %}
-              <li>
-                <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
-              </li>
+              {% if cube.style_a == 'legacy' %}
+                <li>
+                  <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                </li>
+              {% endif %}
             {% endfor %}
           </ul>
         </div>
+
+        <div id="standard-cubes" class="framed">
+          <p class="index-section-header">Standard Cubes</p>
+          <ul class="list-unstyled ml-4 mt-3">
+            {% for cube in cubes|sort(attribute='name') %}
+              {% if cube.style_a == 'standard' %}
+                <li>
+                  <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div id="set-cubes" class="framed">
+          <p class="index-section-header">Sets</p>
+          <ul class="list-unstyled ml-4 mt-3">
+            {% for cube in cubes|sort(attribute='name') %}
+              {% if cube.style_a == 'set' %}
+                <li>
+                  <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
       </div>
       <!-- END: Cube List -->
 
@@ -146,7 +177,7 @@
       <div>
         <h3>My Achievements</h3>
         <div id="claimedAchievements" class="framed">
-          <p>Claimed Achievements</p>
+          <p class="index-section-header">Claimed Achievements</p>
           <ul class="list-unstyled ml-4">
             {% for achievement in achievements_unfinished %}
               <li>
@@ -159,7 +190,7 @@
         </div>
 
         <div id="completedAchievements" class="framed">
-          <p>Finalized Achievements</p>
+          <p class="index-section-header">Finalized Achievements</p>
           <ul class="list-unstyled ml-4">
             {% for achievement in achievements_finished %}
               <li>
