@@ -1,0 +1,164 @@
+{% macro card_list_item(card, is_legacy) %}
+  {% if card.is_land() %}
+    {% set card_class = 'card-type-land' %}
+  {% endif %}
+
+  <li
+    class="card-list-item {{ card_class }}"
+    data-card-id="{{ card.id }}"
+    data-front="{{ card.image_front() }}"
+    {% if card.image_back() %}
+      data-back="{{ card.image_back() }}"
+    {% endif %}
+  >
+    <div class="card-mana-cost" style="float: right; font-size: .7rem;">
+      {{ card.card_face(0)['mana_cost'] }}
+    </div>
+
+    {% if is_legacy %}
+      {# Linked Achievements Icon #}
+      {% if card.linked_achievements() %}
+        <i class="fab fa-font-awesome-flag"></i>
+      {% endif %}
+
+      {# Scars Icon #}
+      {% if card.get_diff()['is_major'] %}
+        <i class="fas fa-bolt"></i>
+      {% elif card.get_diff()['is_minor'] %}
+        <i class="fas fa-bolt text-muted"></i>
+      {% endif %}
+    {% endif %}
+
+    {{ card.name() }}
+  </li>
+{% endmacro %}
+
+
+{% macro deck_builder_v2(d) %}
+  <div class="row deckbuilder">
+
+    <div class="maindeck col-5">
+      <div class="row">
+        <div class="col-6">
+          <h5>Maindeck</h5>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-6 creatures">
+          creatures
+          <ul class="list-unstyled">
+            {% for card in d.card_set.maindeck().creatures() %}
+              {{ card_list_item(card, True) }}
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="col-6 other">
+          other
+          <ul class="list-unstyled">
+            {% for card in d.card_set.maindeck().non_creature() %}
+              {{ card_list_item(card, True) }}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sideboard col-5">
+      <div class="row">
+        <div class="col-6">
+          <h5>Sideboard</h5>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 creatures">
+          creatures
+          <ul class="list-unstyled">
+            {% for card in d.card_set.sideboard().creatures() %}
+              {{ card_list_item(card, True) }}
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="col-6 other">
+          other
+          <ul class="list-unstyled">
+            {% for card in d.card_set.sideboard().non_creature() %}
+              {{ card_list_item(card, True) }}
+            {% endfor %}
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="options col-2">
+      <div class="info">
+
+        <h5>Card Counts</h5>
+        <ul class="list-unstyled">
+          <li>
+            Total:
+            <span id="countMaindeck"></span>
+          </li>
+          <li>
+            Creatures:
+            <span id="countCreatures"</span>
+          </li>
+          <li>
+            Others:
+
+            <span id="countOther"</span>
+          </li>
+          <li>
+            Lands:
+            <span id="countLands"</span>
+          </li>
+        </ul>
+      </div>
+
+
+      <div class="lands">
+        <h5>Basic Lands</h5>
+
+        {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
+          <div class="basic-selector">
+            <i class="far fa-plus-square basic-adjust basic-add"></i>
+            <i class="far fa-minus-square basic-adjust basic-remove"></i>
+            <span class="basic-type">{{ basic }}</span>
+            ...
+            <span class="basic-count">{{ d.basics(basic) }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="command">
+        <h5>Command Zone</h5>
+        <ul class="card-list sortable list-unstyled">
+          {% set is_legacy = d.is_legacy() %}
+          {% for card in d.card_set.command() %}
+            {{ card_list_item(card, is_legacy) }}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+
+     // Convert the mana costs to fancy mana symbols
+     $('.card-mana-cost').each(function(i, elem) {
+       elem = $(elem)
+       const mana_string = elem.text().trim()
+       const mana_icons = clo.util.mana_symbols_from_string(mana_string)
+       elem.html(mana_icons)
+     })
+
+   })
+  </script>
+{% endmacro %}
