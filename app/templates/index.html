@@ -117,6 +117,11 @@
               {% if cube.style_a == 'legacy' %}
                 <li>
                   <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                  <div class="text-s" style="float: right;">
+                    (<a href="{{ url_for('cube_achievements', cube_id=cube.id) }}">a</a>)
+                    (<a href="{{ url_for('cube_scars', cube_id=cube.id) }}">s</a>)
+                    (<a href="{{ url_for('cube_data', cube_id=cube.id) }}">d</a>)
+                  </div>
                 </li>
               {% endif %}
             {% endfor %}
@@ -130,6 +135,10 @@
               {% if cube.style_a == 'standard' %}
                 <li>
                   <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                  <div class="text-s" style="float: right;">
+                    (<a href="{{ url_for('cube_achievements', cube_id=cube.id) }}">a</a>)
+                    (<a href="{{ url_for('cube_data', cube_id=cube.id) }}">d</a>)
+                  </div>
                 </li>
               {% endif %}
             {% endfor %}
@@ -143,6 +152,10 @@
               {% if cube.style_a == 'set' %}
                 <li>
                   <a href="{{ url_for('cube_cards', cube_id=cube.id) }}">{{ cube.name }}</a>
+                  <div class="text-s" style="float: right;">
+                    (<a href="{{ url_for('cube_achievements', cube_id=cube.id) }}">a</a>)
+                    (<a href="{{ url_for('cube_data', cube_id=cube.id) }}">d</a>)
+                  </div>
                 </li>
               {% endif %}
             {% endfor %}
