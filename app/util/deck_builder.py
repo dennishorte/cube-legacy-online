@@ -153,6 +153,13 @@ class DeckBuilder(object):
                 return tokens[0]
         return '0'
 
+    def card_data(self):
+        data = {}
+        for card in self.card_set:
+            data[card.id] = card.get_json()
+
+        return data
+
     def deck_list(self, legacy_names=False):
         """
         Return a decklist formatted to be used by Cockatrice and other systems.

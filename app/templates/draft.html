@@ -328,6 +328,9 @@
   <script>
    function fill_card_frames() {
      $('.closeup-card-wrapper').each(function() {
+       if (!window.card_data)
+         return
+
        let elem = $(this)
        let card_id = elem.data('card-id')
        let data = window.card_data[card_id]
@@ -344,7 +347,7 @@
 
      {% if d.cube.style_a == 'legacy' %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ d.cube_wrapper.card_data()|tojson }}
+       window.card_data = {{ d.deck_builder.card_data()|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}
