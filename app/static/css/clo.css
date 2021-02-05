@@ -116,6 +116,10 @@ body {
   font-size: .8rem;
 }
 
+.deckbuilder {
+  min-width: 1140px;
+}
+
 .deckbuilder-col {
   box-sizing: border-box;
   min-width: 12.5%!important;

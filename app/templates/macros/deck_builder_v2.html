@@ -124,15 +124,6 @@
       <div class="lands">
         <h5>Basic Lands</h5>
 
-        {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
-          <div class="basic-selector">
-            <i class="far fa-plus-square basic-adjust basic-add"></i>
-            <i class="far fa-minus-square basic-adjust basic-remove"></i>
-            <span class="basic-type">{{ basic }}</span>
-            ...
-            <span class="basic-count">{{ d.basics(basic) }}</span>
-          </div>
-        {% endfor %}
       </div>
 
       <div class="command">
