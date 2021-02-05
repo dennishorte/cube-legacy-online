@@ -196,9 +196,21 @@ def _make_standard_packs(cube, unused, num_packs, num_players):
             ('common', 9),
         ]
 
+    if cube.set_code.lower() == 'khm':
+        distribution.append(('snow-land', 1))
+        card_breakdown['snow-land'] = []
+
 
     for card in card_breakdown['all']:
-        if separate_double_faced and '//' in card.name():
+        if cube.set_code.lower() == 'khm' and 'snow land' in card.type_line().lower():
+            # One pack in six should have a snow dual.
+            # Since there are ten snow duals, have 10 of each basic to make the ratios right.
+            if 'basic' in card.type_line().lower():
+                card_breakdown['snow-land'] += [card] * 10
+            else:
+                card_breakdown['snow-land'].append(card)
+
+        elif separate_double_faced and '//' in card.name():
             # Need to get the distribution right for rarity.
             if card.rarity() == 'mythic':
                 card_breakdown['double-faced'].append(card)
