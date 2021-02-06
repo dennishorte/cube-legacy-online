@@ -192,53 +192,15 @@ class DeckBuilder(object):
         return self.draft.cube.style_a == 'legacy'
 
     def _load_deck(self):
-        existing_deck = Deck.query.filter(
-            Deck.draft_id == self.draft.id,
-            Deck.user_id == self.user.id,
-        ).first()
+        existing_deck = self.draft.deck_for(self.user.id)
 
         if existing_deck:
-            return self._add_latest_picks(existing_deck)
-
+            return existing_deck
         else:
             return self._new_deck()
 
-    def _add_latest_picks(self, deck):
-        deck_cards = deck.all_cards()
-        picked_cards = self._picked_cards()
-
-        if len(deck_cards) == len(picked_cards):
-            return deck
-
-        # Record how many of each card is currently in the deck.
-        deck_counts = {}
-        for card in deck_cards:
-            if card.id not in deck_counts:
-                deck_counts[card.id] = 1
-            else:
-                deck_counts[card.id] += 1
-
-        # Count down using the picked cards, and any time you'd go below zero, add it to the deck
-        to_add = []
-        for card in picked_cards:
-            if card.id not in deck_counts or deck_counts[card.id] == 0:
-                to_add.append(card)
-            else:
-                deck_counts[card.id] -= 1
-
-        # Add in all the cards that have been picked but were not present in the deck.
-        if to_add:
-            for card in to_add:
-                deck.add_card(card)
-
-            db.session.add(deck)
-            db.session.commit()
-
-        return deck
-
     def _new_deck(self):
         deck = Deck()
-        deck.draft_id = self.draft.id
         deck.user_id = self.user.id
         deck.name = f"{self.user.name}'s {self.draft.name} Deck"
 
@@ -254,6 +216,13 @@ class DeckBuilder(object):
         deck.set_sideboard(sideboard)
 
         db.session.add(deck)
+        db.session.commit()
+
+        # Create a link between this deck and the draft
+        link = DeckDraftLink()
+        link.deck_id = deck.id
+        link.draft_id = self.draft.id
+        db.session.add(link)
         db.session.commit()
 
         return deck

@@ -43,7 +43,7 @@ def game(game_id):
         if player.has_deck():
             deck = Deck.query.get(player.deck_id)
             deck_builder = DeckBuilder(
-                draft_id=deck.draft_id,
+                draft_id=deck.draft_link.draft_id,
                 user_id=current_user.id
             )
         else:

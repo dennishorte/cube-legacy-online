@@ -34,7 +34,7 @@ class Draft(db.Model):
     pack_cards = db.relationship('PackCard', backref='draft')
     match_results = db.relationship('MatchResult', backref='draft')
     messages = db.relationship('Message', backref='draft')
-    decks = db.relationship('Deck', backref='draft')
+    deck_links = db.relationship('DeckDraftLink', backref='draft')
     ach_links = db.relationship('AchievementDraftLink', backref='draft')
 
     def __repr__(self):
@@ -49,6 +49,13 @@ class Draft(db.Model):
     @property
     def complete(self):
         return self.num_picked >= self.pack_size * self.num_packs * self.num_seats
+
+    def deck_for(self, user_id):
+        for link in self.deck_links:
+            if link.deck.user_id == user_id:
+                return link.deck
+
+        return None
 
     def match_record(self, user_id):
         wins = 0

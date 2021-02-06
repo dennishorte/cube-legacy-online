@@ -21,6 +21,8 @@ class Deck(db.Model):
     # Format is "5 Mountain,3 Island"
     basic_lands = db.Column(db.Text, default='')
 
+    draft_link = db.relationship('DeckDraftLink', backref='deck', uselist=False)
+
     def add_card(self, card):
         self.add_card_by_id(card.id)
 
@@ -29,6 +31,14 @@ class Deck(db.Model):
 
     def all_cards(self):
         return self.maindeck() + self.sideboard() + self.command()
+
+    def remove_by_id(self, card_id):
+        main = self.maindeck_ids.split(',')
+        if not card_id in main:
+            raise ValueError(f"{card_id} not found in {self.name}")
+
+        main.remove(card_id)
+        self.maindeck_ids = ','.join(main)
 
     def command(self):
         if not self.command_ids:
@@ -68,3 +78,9 @@ class Deck(db.Model):
                 raise ValueError(f"Unknown card type: {card}")
 
         return ','.join([str(x.id) for x in cube_cards])
+
+
+class DeckDraftLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    deck_id = db.Column(db.Integer, db.ForeignKey('deck.id'), nullable=False)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)

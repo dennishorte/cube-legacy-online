@@ -95,18 +95,29 @@ class DraftWrapper(object):
             message.text = f"{self.user.name} drafted {pack_card.cube_card.name()} face up."
             db.session.add(message)
 
+        # Basic pack_card updates to indicate a card was picked.
         pack_card.picked_by_id = self.seat.id
         pack_card.pick_number = self.pack.num_picked
         pack_card.picked_at = datetime.utcnow()
         db.session.add(pack_card)
 
+        # Update the pack and draft pick counts.
+        # This is an optimization because a huge amount of time was being spent querying
+        # the database for all of the picks in order to determine which pack was available
+        # and if the draft was complete.
         self.pack.num_picked_tmp += 1
         self.draft.num_picked_tmp += 1
         db.session.add(self.pack)
         db.session.add(self.draft)
 
+        # Remember last pick timestamp to determine if notifications should be sent
+        # when a pack is passed.
         self.user.last_pick_timestamp = datetime.utcnow()
         db.session.add(self.user)
+
+        # Add the card to the deck
+        self.deck_builder.deck.add_card(pack_card.cube_card)
+        db.session.add(self.deck_builder.deck)
 
         # commit the update
         db.session.commit()
