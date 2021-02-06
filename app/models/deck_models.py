@@ -7,10 +7,7 @@ from app.models.cube_models import CubeCard
 class Deck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
-
     name = db.Column(db.String(64))
 
     # Format is comma-separated CubeCard ids.
