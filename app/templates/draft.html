@@ -347,7 +347,7 @@
 
      {% if d.cube.style_a == 'legacy' %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ d.deck_builder.card_data()|tojson }}
+       window.card_data = {{ d.card_data()|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}

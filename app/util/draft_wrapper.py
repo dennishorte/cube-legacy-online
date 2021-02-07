@@ -29,7 +29,9 @@ class DraftWrapper(object):
     def card_data(self):
         pack_cards = PackCard.query.filter(PackCard.draft_id == self.draft.id).all()
         cube_cards = [x.cube_card for x in pack_cards]
-        return {x.id: x.get_json() for x in cube_cards}
+        base_set = {x.id: x.get_json() for x in cube_cards}
+        base_set.update(self.deck_builder.card_data())
+        return base_set
 
     def face_up_cards(self):
         cards = PackCard.query.filter(
