@@ -12,6 +12,7 @@ let gameui = (function() {
   var _state
   var _import_options
   var _import_zone
+  var _import_count
 
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -39,14 +40,16 @@ let gameui = (function() {
   ////////////////////////////////////////////////////////////////////////////////
   // Functions
 
-  function _create_imported_card(card_data, zone) {
-    const base = _state.card_factory()
-    base.json = card_data
-    base.owner = _state.viewer_name
-    base.token = false
-    base.visibility = _state.state.players.map(player => player.name).sort()
+  function _create_imported_card(card_data, zone, count) {
+    for (let i = 0; i < count; i++) {
+      const base = _state.card_factory()
+      base.json = card_data
+      base.owner = _state.viewer_name
+      base.token = false
+      base.visibility = _state.state.players.map(player => player.name).sort()
+      _state.card_create(base, zone)
+    }
 
-    _state.card_create(base, zone)
     _redraw()
   }
 
@@ -239,6 +242,7 @@ let gameui = (function() {
       const name = $('#import-card-name').val().trim()
       const id = parseInt($('#import-card-id').val())
       const zone = $('#import-card-zone').val()
+      const count = parseInt($('#import-card-count').val())
 
       const import_card_data = {}
       let request_url = undefined
@@ -268,7 +272,7 @@ let gameui = (function() {
 
           if (Object.keys(response.cards).length == 1) {
             const card_data = Object.values(response.cards)[0]
-            _create_imported_card(card_data, zone)
+            _create_imported_card(card_data, zone, count)
           }
           else if (response.missing.length == 1) {
             alert('Unable to find card')
@@ -276,6 +280,7 @@ let gameui = (function() {
           else if (response.multiples.length == 1) {
             _import_options = response.multiples[0]
             _import_zone = zone
+            _import_count = count
             _open_import_select_modal()
           }
           else {
@@ -545,7 +550,6 @@ let gameui = (function() {
     const select_field = $('#import-select-version')
     select_field.empty()
     _import_options.forEach(function(opt) {
-      console.log(opt)
       const button = $('<button type="button"></button>')
       button.addClass('btn btn-link import-select-opt')
       button.attr('data-card-id', opt.meta.cube_card_id)
@@ -574,7 +578,7 @@ let gameui = (function() {
         throw "Selected card not found"
       }
 
-      _create_imported_card(data, _import_zone)
+      _create_imported_card(data, _import_zone, _import_count)
       $('#import-select-modal').modal('hide')
     })
   }
