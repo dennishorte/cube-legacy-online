@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 from random import random
@@ -17,9 +18,11 @@ from flask_login import logout_user
 from app import app
 from app.forms import *
 from app.models.cube_models import *
+from app.models.deck_models import *
 from app.models.draft_models import *
 from app.models.user_models import *
 from app.util import cockatrice
+from app.util import cull_util
 from app.util.card_util import empty_card_json
 from app.util.deck_builder import DeckBuilder
 from app.util.draft_debugger import DraftDebugger
@@ -32,6 +35,27 @@ from app.util.string import normalize_newlines
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
     return render_template('draft.html', d=dw)
+
+
+@app.route("/draft/<draft_id>/cull_sideboards")
+@login_required
+def draft_cull_sideboards(draft_id):
+    draft = Draft.query.get(draft_id)
+    deck_links = DeckDraftLink.query.filter(DeckDraftLink.draft_id == draft_id).all()
+
+    culled = {}
+
+    for link in deck_links:
+        culled[link.deck.user.name] = cull_util.cull_sideboard(
+            link.deck,
+            .5,
+            f"Culled from sideboard during {draft.name}",
+        )
+
+    for key in culled:
+        culled[key] = [x.name_tmp for x in culled[key]]
+
+    return culled
 
 
 @app.route("/draft/<draft_id>/debug")

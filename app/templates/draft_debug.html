@@ -37,7 +37,13 @@
     </div>
 
     <div class="col col-md-4">
+      <div>
         <a class="btn btn-danger" href="{{ url_for('draft_kill', draft_id=d.draft.id) }}">kill</a>
+      </div>
+
+      <div class="mt-4">
+        <a class="btn btn-warning" href="{{ url_for('draft_cull_sideboards', draft_id=d.draft.id) }}">cull sideboards</a>
+      </div>
     </div>
   </div>  <!-- Players -->
 
