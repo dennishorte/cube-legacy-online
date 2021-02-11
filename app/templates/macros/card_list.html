@@ -57,11 +57,13 @@
       {% endif %}
 
       <!-- Linked Achievements -->
-      {% set linked_achievements = card.cube_card.linked_achievements() %}
-      {% if linked_achievements %}
-        <div class="ml-1 text-muted text-xs">
-          Linked Achievements
-        </div>
+      {% if not is_legacy %}
+        {% set linked_achievements = card.cube_card.linked_achievements() %}
+        {% if linked_achievements %}
+          <div class="ml-1 text-muted text-xs">
+            Linked Achievements
+          </div>
+        {% endif %}
       {% endif %}
 
       {% for ach in linked_achievements %}
