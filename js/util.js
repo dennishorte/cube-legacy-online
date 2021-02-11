@@ -285,14 +285,16 @@ util.draw_card_face = function(container, face_data) {
 
   // Linked achievements
   ach_elem.empty()
-  face_data.achievements.forEach(ach => {
-    const elem = $('<p>')
-    elem.addClass('frame-achievement-desc')
-    elem.text(' ' + ach.conditions)
-    elem.prepend($('<i class="fab fa-font-awesome-flag"></i>'))
+  if (face_data.achievements) {
+    face_data.achievements.forEach(ach => {
+      const elem = $('<p>')
+      elem.addClass('frame-achievement-desc')
+      elem.text(' ' + ach.conditions)
+      elem.prepend($('<i class="fab fa-font-awesome-flag"></i>'))
 
-    ach_elem.append(elem)
-  })
+      ach_elem.append(elem)
+    })
+  }
 
   // Power/Toughness or Loyalty
   if (face_data.power) {
