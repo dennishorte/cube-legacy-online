@@ -110,6 +110,8 @@ class CubeData(object):
 
         pick_info = {}
         for pick in picks:
+            if pick.cube_card.removed_by_timestamp:
+                continue
             info = pick_info.setdefault(pick.cube_card.latest_id, CardPickInfo(pick.cube_card))
             info.picks.append(pick)
 
