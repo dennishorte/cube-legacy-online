@@ -208,14 +208,15 @@ util.player_idx_from_elem_id = function(elem_id) {
 
 util.draw_card_face = function(container, face_data) {
   // Elements to be updated
-  let name_elem = container.find('.frame-card-name')
-  let mana_elem = container.find('.frame-mana-cost')
-  let type_elem = container.find('.frame-card-type')
-  let faction_elem = container.find('.frame-card-factions')
-  let rules_elem = container.find('.frame-description-wrapper')
-  let flavor_elem = container.find('.frame-flavor-wrapper')
-  let image_elem = container.find('.frame-art')
-  let ptl_elem = container.find('.frame-pt-loyalty')
+  const name_elem = container.find('.frame-card-name')
+  const mana_elem = container.find('.frame-mana-cost')
+  const type_elem = container.find('.frame-card-type')
+  const faction_elem = container.find('.frame-card-factions')
+  const rules_elem = container.find('.frame-description-wrapper')
+  const flavor_elem = container.find('.frame-flavor-wrapper')
+  const image_elem = container.find('.frame-art')
+  const ptl_elem = container.find('.frame-pt-loyalty')
+  const ach_elem = container.find('.frame-achievements-wrapper')
 
   if (face_data.scarred) {
     container.addClass('scarred')
@@ -242,12 +243,12 @@ util.draw_card_face = function(container, face_data) {
   mana_elem.empty().append(util.mana_symbols_from_string(face_data.mana_cost))
 
   // Image
-  let art_crop = face_data.art_crop_url || face_data.image_url.replace('normal', 'art_crop')
+  const art_crop = face_data.art_crop_url || face_data.image_url.replace('normal', 'art_crop')
   image_elem.attr('src', art_crop)
 
   // Rules Text
   rules_elem.empty()
-  var rules;
+  let rules;
   if (face_data.scarred_oracle_text) {
     rules = face_data.scarred_oracle_text.split('\n')
   }
@@ -255,14 +256,14 @@ util.draw_card_face = function(container, face_data) {
     rules = face_data.oracle_text.split('\n')
   }
 
-  for (var i = 0; i < rules.length; i++) {
-    let rule = rules[i].trim()
-    let html_string = util.format_rules_text(rule)
+  for (let i = 0; i < rules.length; i++) {
+    const rule = rules[i].trim()
+    const html_string = util.format_rules_text(rule)
 
     if (rule.length == 0)
       continue
 
-    let rule_elem = $('<p></p>')
+    const rule_elem = $('<p></p>')
     rule_elem.addClass('frame-description')
     rule_elem.html(html_string)
     rules_elem.append(rule_elem)
@@ -270,13 +271,13 @@ util.draw_card_face = function(container, face_data) {
 
   // Flavor text
   flavor_elem.empty()
-  let flavor = face_data.flavor_text.split('\n')
-  for (var i = 0; i < flavor.length; i++) {
-    let flav = flavor[i].trim()
+  const flavor = face_data.flavor_text.split('\n')
+  for (let i = 0; i < flavor.length; i++) {
+    const flav = flavor[i].trim()
     if (flav.length == 0)
       continue
 
-    let flav_elem = $('<p></p>')
+    const flav_elem = $('<p></p>')
     flav_elem.addClass('frame-flavor-text')
     flav_elem.text(flav)
     flavor_elem.append(flav_elem)
@@ -284,7 +285,7 @@ util.draw_card_face = function(container, face_data) {
 
   // Power/Toughness or Loyalty
   if (face_data.power) {
-    let pt = `${face_data.power}/${face_data.toughness}`
+    const pt = `${face_data.power}/${face_data.toughness}`
     ptl_elem.text(pt)
     ptl_elem.show()
   }
@@ -312,7 +313,7 @@ util.draw_card_face = function(container, face_data) {
     container.addClass('land-card')
   }
   else {
-    let colors = util.mana_cost_colors(face_data.mana_cost)
+    const colors = util.mana_cost_colors(face_data.mana_cost)
 
     if (colors == 'W')
       container.addClass('white-card')
