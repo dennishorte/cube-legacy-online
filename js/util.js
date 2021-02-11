@@ -263,7 +263,7 @@ util.draw_card_face = function(container, face_data) {
     if (rule.length == 0)
       continue
 
-    const rule_elem = $('<p></p>')
+    const rule_elem = $('<p>')
     rule_elem.addClass('frame-description')
     rule_elem.html(html_string)
     rules_elem.append(rule_elem)
@@ -277,11 +277,22 @@ util.draw_card_face = function(container, face_data) {
     if (flav.length == 0)
       continue
 
-    const flav_elem = $('<p></p>')
+    const flav_elem = $('<p>')
     flav_elem.addClass('frame-flavor-text')
     flav_elem.text(flav)
     flavor_elem.append(flav_elem)
   }
+
+  // Linked achievements
+  ach_elem.empty()
+  face_data.achievements.forEach(ach => {
+    const elem = $('<p>')
+    elem.addClass('frame-achievement-desc')
+    elem.text(' ' + ach.conditions)
+    elem.prepend($('<i class="fab fa-font-awesome-flag"></i>'))
+
+    ach_elem.append(elem)
+  })
 
   // Power/Toughness or Loyalty
   if (face_data.power) {

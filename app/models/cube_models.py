@@ -240,6 +240,15 @@ class CubeCard(db.Model):
                     face['scarred_oracle_text'] = rules_diff['plussed']
                     face['scarred'] = rules_diff['is_changed']
 
+            # Get linked achievements
+            for ach in self.linked_achievements():
+                data['card_faces'][0].setdefault('achievements', []).append({
+                    'name': ach.name,
+                    'conditions': ach.conditions,
+                    'version': ach.version,
+                    'xp': ach.xp,
+                })
+
             factions = self.get_factions()
             for i in range(len(factions)):
                 data['card_faces'][i]['factions'] = factions[i]
