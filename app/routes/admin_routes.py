@@ -85,3 +85,14 @@ def admin_name_fix():
     db.session.commit()
 
     return redirect(url_for('admin'))
+
+
+@app.route("/admin/pick_info_update")
+@login_required
+def admin_pick_info_update():
+    for card in CubeCard.query.filter(CubeCard.latest_id == CubeCard.id).all():
+        card.pick_info_update(commit=False)
+
+    db.session.commit()
+
+    return redirect(url_for('admin'))

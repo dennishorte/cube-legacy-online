@@ -217,6 +217,7 @@ util.draw_card_face = function(container, face_data) {
   const image_elem = container.find('.frame-art')
   const ptl_elem = container.find('.frame-pt-loyalty')
   const ach_elem = container.find('.frame-achievements-wrapper')
+  const pick_info = container.find('.card-pick-info')
 
   if (face_data.scarred) {
     container.addClass('scarred')
@@ -308,6 +309,11 @@ util.draw_card_face = function(container, face_data) {
   }
   else {
     ptl_elem.hide()
+  }
+
+  // Pick Info
+  if (face_data.pick_info) {
+    pick_info.text(`picks: ${face_data.pick_info.num_picks}, avg: ${face_data.pick_info.average_pick}`)
   }
 
   // Container classes

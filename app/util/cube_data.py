@@ -53,6 +53,20 @@ class CreatureRatios(object):
         return '{:.2f}'.format(ratio)
 
 
+class CardData(object):
+    """
+    For when you just want data on a single card.
+    """
+    def __init__(self, cube_card):
+        from app.models.draft_models import PackCard
+        self.card = cube_card
+        self.pick_info = CardPickInfo(self.card)
+        self.pick_info.picks = PackCard.query.filter(
+            PackCard.card_id == self.card.id,
+            PackCard.pick_number >= 0,
+        ).all()
+
+
 class CubeData(object):
     def __init__(self, cube):
         self.cube = cube
@@ -106,7 +120,10 @@ class CubeData(object):
             x.id for x in Draft.query.filter(Draft.cube_id == self.cube.id).all()
             if x.complete
         ]
-        picks = PackCard.query.filter(PackCard.draft_id.in_(drafts)).all()
+        picks = PackCard.query.filter(
+            PackCard.draft_id.in_(drafts),
+            PackCard.pick_number >= 0,
+        ).all()
 
         pick_info = {}
         for pick in picks:

@@ -100,16 +100,23 @@ $gold: #d9631b
 
     .card-background
       $border-width: $unit * 2.5
-
       margin: $border-width
       width: $size - (2 * $border-width)
       border-radius: $unit * 2
+      flex-direction: column
+
+    .card-pick-info
+      font-size: $unit * 4
+      margin-top: 0
+      margin-left: $unit * 4
 
     .card-frame
       height: 100%
       width: 100%
       max-width: 100%
       padding: #{$unit * 1.6} $unit
+      margin-bottom: 0
+      padding-bottom: 0
 
       flex-direction: column
       align-items: center
@@ -206,7 +213,6 @@ $gold: #d9631b
       padding-top: 5px
       border-top: 1px solid
       border-color: #999!important
-
 
   .card-container.scarred
     .card-border

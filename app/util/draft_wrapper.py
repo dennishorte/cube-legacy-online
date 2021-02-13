@@ -124,6 +124,9 @@ class DraftWrapper(object):
         # commit the update
         db.session.commit()
 
+        # update pick info for card
+        pack_card.cube_card.pick_info_update()
+
         next_seat = self.passing_to_seat()
         if next_seat and next_seat.waiting_pack():
             slack.send_your_pick_notification(self.passing_to(), self.draft)

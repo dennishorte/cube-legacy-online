@@ -159,6 +159,10 @@ class CubeCard(db.Model):
     removed_by_comment = db.Column(db.Text)
     removed_by_timestamp = db.Column(db.DateTime)
 
+    # Cached pick info (updated each time the card is picked in a draft)
+    pick_info_count = db.Column(db.Integer, default=0)
+    pick_info_avg = db.Column(db.Float, default=0)
+
     # Relationships
     draft_cards = db.relationship('PackCard', backref='cube_card')
     linked_achs = db.relationship('AchievementLink', backref='card')
@@ -233,6 +237,7 @@ class CubeCard(db.Model):
             self._json_cached = data
 
             if self.cube.style_a == 'legacy':
+                # Get diff
                 diff = self.get_diff()
                 for i in range(len(data['card_faces'])):
                     rules_diff = diff['faces'][i]['oracle_text']
@@ -240,14 +245,20 @@ class CubeCard(db.Model):
                     face['scarred_oracle_text'] = rules_diff['plussed']
                     face['scarred'] = rules_diff['is_changed']
 
-            # Get linked achievements
-            for ach in self.linked_achievements():
-                data['card_faces'][0].setdefault('achievements', []).append({
-                    'name': ach.name,
-                    'conditions': ach.conditions,
-                    'version': ach.version,
-                    'xp': ach.xp,
-                })
+                # Get linked achievements
+                for ach in self.linked_achievements():
+                    data['card_faces'][0].setdefault('achievements', []).append({
+                        'name': ach.name,
+                        'conditions': ach.conditions,
+                        'version': ach.version,
+                        'xp': ach.xp,
+                    })
+
+                # Get pick info
+                data['card_faces'][0]['pick_info'] = {
+                    'num_picks': self.pick_info_count,
+                    'average_pick': '{:.1f}'.format(self.pick_info_avg),
+                }
 
             factions = self.get_factions()
             for i in range(len(factions)):
@@ -289,6 +300,21 @@ class CubeCard(db.Model):
             raise RuntimeError(f"No original card found for {self.name()}")
 
         return orig
+
+    def pick_info_update(self, commit=True):
+        from app.util import cube_data
+        info = cube_data.CardData(self).pick_info
+        self.pick_info_count = info.num_picks()
+
+        if self.pick_info_count:
+            self.pick_info_avg = info.average_pick()
+        else:
+            self.pick_info_avg = 0
+
+        db.session.add(self)
+
+        if commit:
+            db.session.commit()
 
     def set_json(self, json_obj):
         self.name_tmp = json_obj['name']
@@ -334,6 +360,9 @@ class CubeCard(db.Model):
                     base_id=self.base_id,
                     added_by_id=self.added_by_id,
                     edited_by_id=self.edited_by_id,
+
+                    pick_info_count=self.pick_info_count,
+                    pick_info_avg=self.pick_info_avg,
 
                     diff=None,  # Don't generally need the diff for old versions.
                 )
