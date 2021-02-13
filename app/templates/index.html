@@ -16,6 +16,8 @@
       <a href="#newCubeModal" data-toggle="modal">new cube</a>
       /
       <a href="{{ url_for('game_new') }}">new game</a>
+      /
+      <a href="#pack-maker-modal" data-toggle="modal">make pack</a>
     </div>
   </div>
 
@@ -217,12 +219,20 @@
       </div>
       <!-- END: List of Achievements -->
 
+    </div>
+  </div>
 
-      <!-- Tools -->
-      <div class="mt-2">
-        <h3>Tools</h3>
-        <div class="framed">
-          <h5>Pack Generator</h5>
+
+  <!-- Pack Maker Modal -->
+  <div class="modal fade" id="pack-maker-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Make Pack</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
           <form action="{{ url_for('make_pack') }}" method="post" novalidate>
             {{ pack_maker_form.hidden_tag() }}
             <div class="form-group row">
@@ -253,11 +263,9 @@
           </form>
         </div>
       </div>
-      <!-- END: Tools -->
-
     </div>
   </div>
-
+  <!-- END: Pack Maker Modal -->
 
   <!-- New Cube Modal -->
   <div class="modal fade" id="newCubeModal" tabindex="-1" role="dialog">
