@@ -2,16 +2,20 @@
   --not-as-light: #eeeff0;
 }
 
-.game-frame {
-  background-color: var(--light);
-  border: 1px solid #dee2e6!important;
-  border-color: var(--secondary);
-  border-radius: .25rem;
-  padding: .5rem!important;
-  margin-top: .25rem!important;
-  /* margin-left: .25rem!important;
-     margin-right: .25rem!important; */
+.modal-content {
+  max-width: 380px;
 }
+
+.game-frame {
+    background-color: var(--light);
+    border: 1px solid #dee2e6!important;
+    border-color: var(--secondary);
+    border-radius: .25rem;
+    padding: .5rem!important;
+    margin-top: .25rem!important;
+    /* margin-left: .25rem!important;
+       margin-right: .25rem!important; */
+  }
 
 #actions-zone {
   background-color: var(--not-as-light);
