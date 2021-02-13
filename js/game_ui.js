@@ -719,12 +719,13 @@ let gameui = (function() {
       _redraw()
     }
 
-    else if (menu_item == 'view') {
+    else if (menu_item == 'view all') {
+      console.log('view all')
       let zone = target.closest('.card-zone')
-
-      dialogs.show('popup-viewer-zone', {
-        source_id: zone.attr('id')
-      })
+      let player_idx = util.player_idx_from_elem(zone)
+      $('#scry-modal-player-idx').text(player_idx)
+      $('#scry-count').val('9999')
+      $('#scry-submit').click()
     }
 
     else if (menu_item == 'view top n') {
@@ -741,7 +742,7 @@ let gameui = (function() {
       $('#library-move-modal').modal('show')
     }
 
-    else if (menu_item == 'randomize bottom n') {
+    else if (menu_item == 'shuffle bottom n') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)
       $('#randomize-bottom-modal-player-idx').text(player_idx)

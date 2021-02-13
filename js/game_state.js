@@ -745,6 +745,10 @@ class GameState {
     const card_list = this.card_list(library_idx, 'library')
     const delta = []
 
+    if (count > card_list.length) {
+      count = card_list.length
+    }
+
     for (let i = 0; i < count; i++) {
       const card = this.card(card_list[i])
 

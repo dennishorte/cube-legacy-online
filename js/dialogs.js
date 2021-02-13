@@ -20,11 +20,6 @@ module.exports = (function() {
       player_idx: undefined,
       zone: undefined,
     },
-
-    'popup-viewer-zone': {
-      active: false,
-      source_id: undefined,
-    }
   }
 
   function _data(dialog_id) {
@@ -123,7 +118,6 @@ module.exports = (function() {
 
   function _redraw() {
     _redraw_card_closeup()
-    _redraw_popup_viewer_zone()
     _redraw_token_maker()
   }
 
@@ -155,40 +149,6 @@ module.exports = (function() {
     // Set external link to card editor
     const link = `https://cubelegacyonline.com/card/${d.card_id}`
     $('#closeup-card-link').attr('href', link)
-  }
-
-  function _redraw_popup_viewer_zone() {
-    let id = 'popup-viewer-zone'
-    let popup = $(`#${id}`)
-    let d = _dialogs[id]
-
-    if (!d.active) {
-      popup.hide()
-      return
-    }
-    else {
-      popup.show()
-    }
-
-    assert.ok(d.source_id, "popup-viewer zone should have source id when active")
-
-    let player_idx = util.player_idx_from_elem_id(d.source_id)
-    let zone = $(`#${d.source_id}`)
-    let zone_name = zone.find('.card-section-name').text().trim()
-    let zone_id = zone_name.toLowerCase()
-
-    popup.find('.card-section-header').text(zone_name)
-
-    let card_list = $('#popup-viewer-cards')
-    card_list.empty()
-
-    let zone_card_ids = _state.player(player_idx).tableau[zone_id]
-    for (var i = 0; i < zone_card_ids.length; i++) {
-      let card_id = zone_card_ids[i]
-      let card = cardui.factory(_state.card(card_id))
-      card.attr('data-source-index', i)
-      card_list.append(card)
-    }
   }
 
   function _redraw_token_maker() {
