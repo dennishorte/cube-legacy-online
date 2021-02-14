@@ -255,6 +255,9 @@ class CubeCard(db.Model):
                     })
 
                 # Get pick info
+                if self.pick_info_count is None:
+                    self.pick_info_count = 0
+                    self.pick_info_avg = 0
                 data['card_faces'][0]['pick_info'] = {
                     'num_picks': self.pick_info_count,
                     'average_pick': '{:.1f}'.format(self.pick_info_avg),
