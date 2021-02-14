@@ -778,7 +778,7 @@ let gameui = (function() {
 
     dialogs.redraw()
     autocard_init(
-      'card-list-item',
+      'card-autocard',
       true,
       card_id => _state.card(card_id).json,
     )

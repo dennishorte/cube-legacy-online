@@ -16,8 +16,8 @@ module.exports = (function() {
     elem.attr('id', `card-${data.id}`)
     elem.attr('data-card-id', data.id)  // Used by autocard
 
-    // Styling and autocard popup
-    elem.addClass('card-list-item')
+    elem.addClass('card-list-item')  // Base for CSS
+    elem.addClass('card-autocard')  // Show autocard popups
 
     cardui.set_name(elem, data.json.name)
     cardui.set_annotation(elem, data.annotation)
@@ -37,6 +37,7 @@ module.exports = (function() {
       }
 
       elem.addClass('face-down')
+      elem.removeClass('card-autocard')
       let icon = $('<i class="not-visible-icon fas fa-caret-square-down"></i>')
       elem.find('.card-name').prepend(icon)
     }
@@ -108,6 +109,7 @@ module.exports = (function() {
     }
     else if (!is_face_down) {
       elem.addClass('not-visible')
+      elem.removeClass('card-autocard')
       cardui.set_name(elem, 'hidden')
     }
   }
