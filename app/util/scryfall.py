@@ -18,18 +18,32 @@ def fetch_many_from_scryfall(card_names: list):
     be perfect in order to fetch the data. For the same reasons, the card names in the
     scryfall json might not match the card name used as the key in the returned dict.
     """
-    results = {}
+    batch_id = 0
+    batch_size = 75
+    total_requested = 0
 
-    print("Fetching {} cards from Scryfall".format(len(card_names)))
+    aggregated_results = []
 
-    for i, name in enumerate(card_names):
-        print("...{} of {}: {}".format(i, len(card_names), name))
-        results[name] = fetch_one_from_scryfall(name)
-        time.sleep(.100)  # 100 ms delay, as requested by scryfall
+    while total_requested < len(card_names):
+        batch_start = (batch_size * batch_id)
+        batch_end = min(batch_start + batch_size, len(card_names))
+        batch_names = card_names[batch_start:batch_end]
 
-    print("...COMPLETE (fetching cards from Scryfall")
+        identifiers = []
+        for name in batch_names:
+            identifiers.append({
+                'name': name,
+            })
 
-    return results
+        r = requests.post('https://api.scryfall.com/cards/collection', json = {
+            'identifiers': identifiers
+        })
+
+        batch_id += 1
+        total_requested += batch_end - batch_start
+        aggregated_results += r.json()['data']
+
+    return aggregated_results
 
 
 def fetch_set_cards(set_code: str, count: int):

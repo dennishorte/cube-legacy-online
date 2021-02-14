@@ -68,22 +68,14 @@ def add_cards_to_cube(cube_id, card_names, added_by, comment):
 
     _ensure_cube(cube_id)
     scryfall_data = scryfall.fetch_many_from_scryfall(card_names)
-    failed_to_fetch = []
 
-    for name, datum in list(scryfall_data.items()):
-        if datum is None or datum['object'] == 'error':
-            failed_to_fetch.append(name)
-            del scryfall_data[name]
-        else:
-            scryfall.convert_to_clo_standard_json(datum)
+    # Convert the Scryfall json to CLO json
+    for card_json in scryfall_data:
+        scryfall.convert_to_clo_standard_json(card_json)
 
     _create_base_cards_from_scryfall_data(scryfall_data)
 
-    true_names_with_dups = []
-    for name in card_names:
-        if name in scryfall_data:
-            true_names_with_dups.append(scryfall_data[name]['name'])
-
+    true_names_with_dups = [x['name'] for x in scryfall_data]
     base_cards = BaseCard.query.filter(BaseCard.name.in_(true_names_with_dups)).all()
     base_card_map = {x.name: x for x in base_cards}
 
@@ -108,12 +100,6 @@ def add_cards_to_cube(cube_id, card_names, added_by, comment):
         db.session.add(c)
     db.session.commit()
 
-    return {
-        'num_added': len(true_names_with_dups),
-        'num_unique_added': len(base_cards),
-        'failed_to_fetch': failed_to_fetch,
-    }
-
 
 def _ensure_cube(cube_id):
     cube = Cube.query.get(cube_id)
@@ -123,13 +109,13 @@ def _ensure_cube(cube_id):
     return cube
 
 
-def _create_base_cards_from_scryfall_data(data: dict):
-    true_names = [x['name'] for x in data.values()]
+def _create_base_cards_from_scryfall_data(data: list):
+    true_names = [x['name'] for x in data]
 
     existing_cards = BaseCard.query.filter(BaseCard.name.in_(true_names))
     existing_names = set([x.name for x in existing_cards])
 
-    for scryfall_datum in data.values():
+    for scryfall_datum in data:
         if scryfall_datum and scryfall_datum['name'] not in existing_names:
             bc = BaseCard(name=scryfall_datum['name'])
             bc.set_json(scryfall_datum)

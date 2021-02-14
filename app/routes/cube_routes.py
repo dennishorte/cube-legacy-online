@@ -90,21 +90,14 @@ def cube_add_cards(cube_id):
         else:
             added_by = current_user
 
-        result = add_cards_to_cube(
+        add_cards_to_cube(
             cube_id,
             card_names,
             added_by,
             form.comment.data,
         )
 
-        flash('Added {} cards ({} unique)'.format(
-            result['num_added'],
-            result['num_unique_added'],
-        ))
-
-        for card_name in result['failed_to_fetch']:
-            flash('Failed to fetch Scryfall data for: {}'.format(card_name))
-
+        flash('cards added')
         return 'success'
 
     else:
