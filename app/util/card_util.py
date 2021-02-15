@@ -25,6 +25,7 @@ class CardConsts(object):
         'oracle_text',
         'rarity',
         'type_line',
+        'set',
     )
 
     FACE_KEYS = (
