@@ -63,6 +63,8 @@
             <a id="stat-xp" class="stat-value" data-stat="xp" href="#stat-modal" data-toggle="modal">
               {{ user.xp or 0 }}
             </a>
+            <p class="text-s text-secondary">XP is earned by finishing CLO matches and by claiming achievements. For each CLO draft, you get XP for your first three matches: 3 per win and 2 per loss. XP is not automatically calculated, so you must update it yourself. When you have enough XP to level up, open up each of the following level tabs in order. No peeking.</p>
+
           </div>
           <div id="levelups">
             {% for levelup in levelups %}
