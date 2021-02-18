@@ -123,8 +123,8 @@ module.exports = (function() {
 
 
   function _redraw_card_closeup() {
-    let closeup = $('#card-closeup')
-    let d = _dialogs['card-closeup']
+    const closeup = $('#card-closeup')
+    const d = _dialogs['card-closeup']
 
     if (!d.active) {
       closeup.hide()
@@ -138,10 +138,16 @@ module.exports = (function() {
       )
     }
 
-    let card = _state.card(d.card_id)
-    let data = card.json
+    const card = _state.card(d.card_id)
+    const data = card.json
 
-    util.draw_card_frame(closeup, data)
+    if (card.visibility.indexOf(_state.viewer_name) >= 0) {
+      util.draw_card_frame(closeup, data)
+      closeup.find('.closeup-card-wrapper').removeClass('d-none')
+    }
+    else {
+      closeup.find('.closeup-card-wrapper').addClass('d-none')
+    }
 
     // Set annotation
     closeup.find('.card-closeup-annotation-input').val(card.annotation)
