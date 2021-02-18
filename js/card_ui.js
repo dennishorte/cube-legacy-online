@@ -22,8 +22,12 @@ module.exports = (function() {
     cardui.set_name(elem, data.json.name)
     cardui.set_annotation(elem, data.annotation)
 
+    if (data.token) {
+      elem.prepend($('<i class="token-symbol fas fa-ghost">'))
+    }
+
     if (data.scarred) {
-      elem.prepend($('<i class="scar-symbol fas fa-bolt"></i>'))
+      elem.prepend($('<i class="scar-symbol fas fa-bolt">'))
       elem.addClass('scarred')
     }
 
@@ -38,12 +42,12 @@ module.exports = (function() {
 
       elem.addClass('face-down')
       elem.removeClass('card-autocard')
-      let icon = $('<i class="not-visible-icon fas fa-caret-square-down"></i>')
+      let icon = $('<i class="not-visible-icon fas fa-caret-square-down">')
       elem.find('.card-name').prepend(icon)
     }
 
     // Mana cost (hidden by default)
-    let mana_cost = $('<div class="card-mana-cost"></div>')
+    let mana_cost = $('<div class="card-mana-cost">')
     mana_cost.addClass('d-none')
     mana_cost.append(util.mana_symbols_from_string(data.json.card_faces[0].mana_cost))
     elem.prepend(mana_cost)

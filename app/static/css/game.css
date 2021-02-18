@@ -69,9 +69,14 @@
   padding-top: .1em;
 }
 
+.token-symbol,
 .scar-symbol {
   float: left;
   margin-top: .25rem!important;
+}
+
+.token-symbol {
+  margin-right: 2px;
 }
 
 .tapped {
