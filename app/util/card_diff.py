@@ -170,7 +170,7 @@ class CardDiffer(object):
         return diff
 
     def _init_face_diffs(self):
-        for i in range(10):
+        for i in range(2):
             old_face = self._get_face(self.old_card, i)
             new_face = self._get_face(self.new_card, i)
             self.face_differs.append(FaceDiffer(old_face, new_face))

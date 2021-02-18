@@ -219,8 +219,8 @@ class CubeCard(db.Model):
             name_tmp=data['name'],
         )
 
-    def get_diff(self):
-        if not self.diff:
+    def get_diff(self, force_update=False):
+        if not self.diff or force_update:
             differ = CardDiffer(self.original, self)
             self.diff = json.dumps(differ.json_summary())
             db.session.add(self)
