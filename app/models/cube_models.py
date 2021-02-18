@@ -263,6 +263,14 @@ class CubeCard(db.Model):
                     'average_pick': '{:.1f}'.format(self.pick_info_avg),
                 }
 
+                # Replace name in rules text
+                for i in range(len(data['card_faces'])):
+                    if diff['faces'][i]['name']['is_changed']:
+                        new_name = diff['faces'][i]['name']['latest']
+                        old_name = diff['faces'][i]['name']['original']
+                        card_face = data['card_faces'][i]
+                        card_face['scarred_oracle_text'] = card_face['scarred_oracle_text'].replace(old_name, new_name)
+
             factions = self.get_factions()
             for i in range(len(factions)):
                 data['card_faces'][i]['factions'] = factions[i]
