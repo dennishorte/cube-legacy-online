@@ -99,6 +99,12 @@
   text-overflow: ellipsis;
 }
 
+.card-list-item .card-annotation {
+  overflow: visible;
+  white-space: normal;
+  line-height: 1;
+}
+
 .sortable-highlight {
   border: 1px solid blue;
   background-color: lightblue;
