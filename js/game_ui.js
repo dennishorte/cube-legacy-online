@@ -13,6 +13,7 @@ let gameui = (function() {
   var _import_options
   var _import_zone
   var _import_count
+  var _import_token
 
 
   ////////////////////////////////////////////////////////////////////////////////
