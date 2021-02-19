@@ -65,3 +65,9 @@ class Game(db.Model):
         self.state_json = json.dumps(game_state)
         db.session.add(self)
         db.session.commit()
+
+
+class GameUserLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
