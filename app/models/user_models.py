@@ -65,10 +65,10 @@ class User(UserMixin, db.Model):
 
     def all_games(self):
         from app.models.game_models import Game
-        return [
-            x for x in Game.query.order_by(Game.timestamp.desc()).all()
-            if x.state.player_by_id(self.id)
-        ]
+        from app.models.game_models import GameUserLink
+
+        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
+        return Game.query.filter(Game.id.in_(game_ids)).order_by(Game.timestamp.desc()).all()
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)

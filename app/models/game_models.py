@@ -31,6 +31,10 @@ class Game(db.Model):
 
         self.add_player(player)
 
+        link = GameUserLink(game_id=self.id, user_id=player.id)
+        db.session.add(link)
+        db.session.commit()
+
     def age(self):
         age = datetime.utcnow() - self.timestamp
         years = age.days // 365

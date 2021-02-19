@@ -128,6 +128,10 @@ def game_new():
     game.update(game_state)
     game.add_player(current_user)
 
+    link = GameUserLink(game_id=game.id, user_id=current_user.id)
+    db.session.add(link)
+    db.session.commit()
+
     return redirect(url_for('game', game_id=game.id))
 
 

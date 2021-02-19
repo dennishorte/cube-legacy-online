@@ -67,6 +67,29 @@ def admin_clear_diffs():
     return redirect(url_for('admin'))
 
 
+@app.route("/admin/game_user_link")
+@login_required
+def admin_game_user_link():
+    if not current_user.is_admin:
+        return "Not allowed"
+
+    for game in Game.query.all():
+        for player in game.state.players:
+            user = User.query.get(player.id)
+            existing = GameUserLink.query.filter(
+                GameUserLink.game_id == game.id,
+                GameUserLink.user_id == user.id,
+            ).all()
+
+            if not existing:
+                link = GameUserLink(game_id=game.id, user_id=user.id)
+                db.session.add(link)
+
+    db.session.commit()
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/admin/name_fix")
 @login_required
 def admin_name_fix():
