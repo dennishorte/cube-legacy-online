@@ -86,6 +86,16 @@ let gameui = (function() {
     })
   }
 
+  function _init_auto_draw_checkbox() {
+    // Set the correct checked/unchecked status
+    $('#auto-draw').prop('checked', _state.is_auto_draw(_state.viewer_idx))
+
+    // Create the check/uncheck handler
+    $('#auto-draw').change(function() {
+      _state.set_auto_draw(_state.viewer_idx, this.checked)
+    })
+  }
+
   function _init_card_click_handler() {
     $('.card-list').click(function(event) {
       event.preventDefault()
@@ -1038,6 +1048,7 @@ let gameui = (function() {
       if (!_state.spectator) {
 
         // UI interactions
+        _init_auto_draw_checkbox()
         _init_card_closeup_interations()
         _init_card_dragging()
         _init_counters_area()

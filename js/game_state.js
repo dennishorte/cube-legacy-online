@@ -370,6 +370,18 @@ class GameState {
     return this._execute(diff)
   }
 
+  is_auto_draw(player_idx) {
+    const view_options = this.view_options(player_idx)
+
+    // Set up a default value since this will start being in effect for games in progress.
+    // The default option can be removed once all games start with it set.
+    if (!view_options.hasOwnProperty('auto-draw')) {
+      view_options['auto-draw'] = true
+    }
+
+    return view_options['auto-draw']
+  }
+
   is_collapsed(player_idx, zone_id) {
     if (this.spectator)
       return zone_id == 'sideboard' ? true : false
@@ -816,6 +828,10 @@ class GameState {
     return this.state
   }
 
+  set_auto_draw(player_idx, value) {
+    this.view_options(player_idx)['auto-draw'] = value
+  }
+
   set_history_save_point() {
     this.history_save_point = this.history_index
   }
@@ -834,28 +850,28 @@ class GameState {
     if (this.phase() == phase)
       return
 
-    var delta = [{
+    let delta = [{
       action: 'set_game_value',
       key: 'phase',
       old_value: this.phase(),
       new_value: phase,
     }]
 
-    var message = `phase: ${phase}`
+    let message = `phase: ${phase}`
 
     // Untap all the player's cards
     if (phase == 'untap') {
-      var count = 0
+      let count = 0
 
       for (let zone in card_zones) {
         if (!card_zones.hasOwnProperty(zone))
           continue
 
         let card_list = this.card_list(this.state.turn, zone)
-        for (var i = 0; i < card_list.length; i++) {
-          let card = this.card(card_list[i])
+        for (let i = 0; i < card_list.length; i++) {
+          const card = this.card(card_list[i])
           if (card.tapped) {
-            let untap_delta = this.twiddle(card.id, true)
+            const untap_delta = this.twiddle(card.id, true)
             delta = delta.concat(untap_delta)
             count += 1
           }
@@ -867,7 +883,12 @@ class GameState {
       }
     }
 
-    let diff = {
+    else if (phase == 'draw' && this.is_auto_draw(this.state.turn)) {
+      delta = delta.concat(this.draw(this.state.turn, 1, true))
+      message += ', draw a card'
+    }
+
+    const diff = {
       delta: delta,
       message: message,
       player: this.viewer_name
