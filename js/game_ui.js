@@ -867,6 +867,9 @@ let gameui = (function() {
       if (zone == 'hand' && player_idx == _state.viewer_idx) {
         cardui.show_mana_cost(elem)
       }
+      else if (zone == 'creatures') {
+        cardui.show_power_toughness(elem)
+      }
 
       cards_elem.append(elem)
     }

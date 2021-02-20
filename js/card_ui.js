@@ -12,7 +12,7 @@ module.exports = (function() {
   }
 
   cardui.factory = function(data) {
-    let elem = $('<li></li>')
+    const elem = $('<li></li>')
     elem.attr('id', `card-${data.id}`)
     elem.attr('data-card-id', data.id)  // Used by autocard
 
@@ -42,15 +42,25 @@ module.exports = (function() {
 
       elem.addClass('face-down')
       elem.removeClass('card-autocard')
-      let icon = $('<i class="not-visible-icon fas fa-caret-square-down">')
+      const icon = $('<i class="not-visible-icon fas fa-caret-square-down">')
       elem.find('.card-name').prepend(icon)
     }
 
     // Mana cost (hidden by default)
-    let mana_cost = $('<div class="card-mana-cost">')
+    const mana_cost = $('<div class="card-mana-cost">')
     mana_cost.addClass('d-none')
     mana_cost.append(util.mana_symbols_from_string(data.json.card_faces[0].mana_cost))
     elem.prepend(mana_cost)
+
+    // Power/Toughness (only shown in creatures zone)
+    const power = data.json.card_faces[0].power
+    const toughness = data.json.card_faces[0].toughness
+    if (power !== undefined && power != '') {
+      const pt = $('<div class="card-power-toughness">')
+      pt.addClass('d-none')
+      pt.text(`${power}/${toughness}`)
+      elem.prepend(pt)
+    }
 
     return elem
   }
@@ -116,6 +126,11 @@ module.exports = (function() {
       elem.removeClass('card-autocard')
       cardui.set_name(elem, 'hidden')
     }
+  }
+
+
+  cardui.show_power_toughness = function(elem) {
+    elem.find('.card-power-toughness').removeClass('d-none')
   }
 
 

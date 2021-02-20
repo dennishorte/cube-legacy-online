@@ -52,6 +52,7 @@
   padding: 0;
 }
 
+.card-power-toughness,
 .card-mana-cost {
   float: right;
   font-size: .7rem;
