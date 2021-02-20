@@ -137,6 +137,9 @@ class Levelup(db.Model):
             LevelupClaim.user_id == user_id,
         ).first()
 
+    def reward_paragraphs(self):
+        return [x.strip() for x in self.reward.split('\n') if x.strip()]
+
 
 class LevelupClaim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
