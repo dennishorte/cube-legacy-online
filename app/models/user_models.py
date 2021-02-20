@@ -45,6 +45,8 @@ class User(UserMixin, db.Model):
 
     levelup_claims = db.relationship('LevelupClaim', backref='user')
 
+    game_links = db.relationship('GameUserLink', backref='user')
+
     def __repr__(self):
         return '<User {}>'.format(self.name)
 

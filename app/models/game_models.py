@@ -12,6 +12,8 @@ class Game(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state_json = db.Column(MEDIUMTEXT)
 
+    user_links = db.relationship('GameUserLink', backref='game')
+
     @staticmethod
     def active_games():
         all_games = Game.query.order_by(Game.timestamp.desc()).all()
