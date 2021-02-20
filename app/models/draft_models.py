@@ -35,6 +35,7 @@ class Draft(db.Model):
     match_results = db.relationship('MatchResult', backref='draft')
     deck_links = db.relationship('DeckDraftLink', backref='draft')
     ach_links = db.relationship('AchievementDraftLink', backref='draft')
+    game_links = db.relationship('GameDraftLink', backref='draft')
 
     def __repr__(self):
         return '<Draft {}>'.format(self.name)

@@ -12,6 +12,7 @@ class Game(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state_json = db.Column(MEDIUMTEXT)
 
+    draft_links = db.relationship('GameDraftLink', backref='game')
     user_links = db.relationship('GameUserLink', backref='game')
 
     @staticmethod
@@ -97,4 +98,10 @@ class Game(db.Model):
 class GameUserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
+
+
+class GameDraftLink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))

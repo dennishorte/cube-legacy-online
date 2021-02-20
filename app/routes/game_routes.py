@@ -103,6 +103,10 @@ def game_draft_fight(draft_id, opp_id):
         players = [current_user, opp],
     )
 
+    link = GameDraftLink(draft_id=draft_id, game_id=game.id)
+    db.session.add(link)
+    db.session.commit()
+
     return redirect(url_for('game', game_id=game.id))
 
 
@@ -209,6 +213,10 @@ def game_rematch(game_id):
         name = game.state.name + '+',
         players = [x.user for x in game.user_links],
     )
+
+    link = GameDraftLink.query.filter(GameDraftLink.game_id == game_id).first()
+    if link:
+        new_link = GameDraftLink(game_id=new_game.id, draft_id=link.draft_id)
 
     return redirect(url_for('game', game_id=new_game.id))
 
