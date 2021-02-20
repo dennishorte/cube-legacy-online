@@ -167,7 +167,6 @@ class GameState(object):
             'id': game_id,
             'history': [],
             'cards': {},  # id -> card.data
-            'finished': False,  # deprecated; use self.is_finished()
             'name': name,
             'next_id': 1,
             'players': [],
@@ -175,9 +174,11 @@ class GameState(object):
 
             'turn': 0,  # Whose turn is it? (player_idx)
             'priority': 0,  # Which player has priority? (player_idx)
-            'winner': '',
 
             'latest_version': 1, # Safety check to avoid data overwrites
+
+            'finished': False,  # deprecated; use self.is_finished()
+            'winner': '',  # deprecated; user self.result_for(user)
         }
 
         game = GameState(data)
