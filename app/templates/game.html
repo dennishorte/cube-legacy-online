@@ -131,6 +131,7 @@
       <div id="game-phase" class="col-4 col-lg-1 inner-frames">
         <div id="actions-zone" class="game-frame">
           <p class="border-bottom text-secondary text-xs">Actions</p>
+          <p id="rematch">rematch</p>
           <p id="undo">undo</p>
           <p id="pass-priority">pass priority</p>
         </div>
@@ -326,6 +327,25 @@
     </div>
   </div>
   <!-- END: Container -->
+
+
+  <!-- Rematch Modal -->
+  <div id="rematch-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body">
+          Haven't had enough yet?
+        </div>
+
+        <div class="modal-footer">
+          <a href="{{ url_for('game_rematch', game_id=game_id) }}" class="btn btn-primary">
+            rematch
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Rematch Modal -->
 
 
   <!-- Error Modal -->

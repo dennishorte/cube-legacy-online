@@ -184,6 +184,18 @@ def game_ready(game_id):
     return redirect(url_for('game', game_id=game_id))
 
 
+@app.route("/game/<game_id>/rematch")
+@login_required
+def game_rematch(game_id):
+    game = Game.query.get(game_id)
+    new_game = Game.factory(
+        name = game.state.name + '+',
+        players = [x.user for x in game.user_links],
+    )
+
+    return redirect(url_for('game', game_id=new_game.id))
+
+
 @app.route("/game/save", methods=['POST'])
 @login_required
 def game_save():

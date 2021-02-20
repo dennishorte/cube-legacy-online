@@ -69,6 +69,10 @@ let gameui = (function() {
   }
 
   function _init_actions() {
+    $('#rematch').click(function() {
+      $('#rematch-modal').modal('show')
+    })
+
     $('#undo').click(function() {
       _state.undo()
       _redraw()
