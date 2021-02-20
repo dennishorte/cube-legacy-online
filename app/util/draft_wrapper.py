@@ -76,7 +76,7 @@ class DraftWrapper(object):
 
         return self.seats[next_seat]
 
-    def pick_card(self, card_id, face_up=DraftFaceUp.false):
+    def pick_card(self, card_id):
         pack_card = PackCard.query.filter(PackCard.id==card_id).first()
 
         if not self.pack:
@@ -85,12 +85,8 @@ class DraftWrapper(object):
         if not pack_card.pack_id == self.pack.id:
             raise ValueError(f"{card_id}: {card.cube_card.name()} is not part of pack {self.pack.id}. It's in pack {card.pack_id}.")
 
-        if face_up == DraftFaceUp.optional:
-            raise ValueError("Can't choose optional for draft face up. Please specify t or f")
-
         # If the card was drafted face up.
-        if face_up == DraftFaceUp.true \
-           or pack_card.cube_card.draft_face_up() == DraftFaceUp.true:
+        if pack_card.cube_card.draft_face_up() == DraftFaceUp.true:
             pack_card.faceup = True
             message = Message()
             message.draft_id = self.draft.id
