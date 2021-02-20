@@ -33,6 +33,7 @@ class Draft(db.Model):
     packs = db.relationship('Pack', backref='draft')
     pack_cards = db.relationship('PackCard', backref='draft')
     match_results = db.relationship('MatchResult', backref='draft')
+    messages = db.relationship('Message', backref='draft')
     deck_links = db.relationship('DeckDraftLink', backref='draft')
     ach_links = db.relationship('AchievementDraftLink', backref='draft')
     game_links = db.relationship('GameDraftLink', backref='draft')
@@ -322,6 +323,13 @@ class MatchResult(db.Model):
         result.draws=self.draws
 
         return result
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    text = db.Column(db.Text)
 
 
 class AchievementDraftLink(db.Model):
