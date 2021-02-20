@@ -12,6 +12,10 @@
     {% endif %}
   >
     {% if is_legacy %}
+      <div class="card-mana-cost" style="float: right; font-size: .6rem;">
+        {{ card.card_face(0)['mana_cost'] }}
+      </div>
+
       {# Linked Achievements Icon #}
       {% if card.linked_achievements() %}
         <i class="fab fa-font-awesome-flag"></i>
@@ -255,6 +259,14 @@
    }
 
    document.addEventListener("DOMContentLoaded", function(event) {
+     // Convert the mana costs to fancy mana symbols
+     $('.card-mana-cost').each(function(i, elem) {
+       elem = $(elem)
+       const mana_string = elem.text().trim()
+       const mana_icons = clo.util.mana_symbols_from_string(mana_string)
+       elem.html(mana_icons)
+     })
+
      $('#import-card-submit').click(function() {
        const name = $('#import-card-name').val().trim()
        const id = parseInt($('#import-card-id').val())

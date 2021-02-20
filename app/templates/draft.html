@@ -3,7 +3,6 @@
 {% from 'macros/card_frame.html' import card_frame %}
 {% from "macros/card_list.html" import show_draft_card_list %}
 {% from "macros/deck_builder.html" import deck_builder %}
-{% from "macros/deck_builder_v2.html" import deck_builder_v2 %}
 {% from "macros.html" import show_achievement %}
 {% from "macros.html" import show_picked_card_names %}
 
@@ -267,8 +266,6 @@
 
 
   {{ deck_builder(d.deck_builder) }}
-  <hr>
-  {{ deck_builder_v2(d.deck_builder) }}
 
   <div class="row">
     <div class="col framed">
