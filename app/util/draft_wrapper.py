@@ -132,11 +132,20 @@ class DraftWrapper(object):
             slack.send_your_pick_notification(self.passing_to(), self.draft)
 
     def result_form_for(self, seat):
+        from app.models.game_models import Game, GameUserLink, GameDraftLink
+
         result = MatchResult.query.filter(
             MatchResult.draft_id == self.draft.id,
             MatchResult.user_id == self.user.id,
             MatchResult.opponent_id == seat.user.id,
         ).first()
+
+        links = db.session.query(Game, GameUserLink, GameDraftLink).filter(
+            GameUserLink.user_id == seat.user.id,
+            GameUserLink.game_id == Game.id,
+            GameUserLink.game_id == GameDraftLink.game_id,
+        ).all()
+        linked_games = [x[0] for x in links]
 
         form = ResultForm()
         form.user_id.data = seat.user.id
@@ -145,6 +154,23 @@ class DraftWrapper(object):
             form.wins.data = result.wins
             form.losses.data = result.losses
             form.draws.data = result.draws
+
+        elif linked_games:
+            wins = 0
+            losses = 0
+            draws = 0
+            for game in linked_games:
+                result = game.state.result_for(self.user)
+                if result == 'win':
+                    wins += 1
+                elif result == 'loss':
+                    losses += 1
+                elif result == 'draw':
+                    draws += 1
+
+            form.wins.data = wins
+            form.losses.data = losses
+            form.draws.data = draws
 
         return form
 
