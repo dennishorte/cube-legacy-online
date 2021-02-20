@@ -80,6 +80,7 @@ def game_add_player(game_id):
 @app.route("/game/<game_id>/delete")
 @login_required
 def game_delete(game_id):
+    GameUserLink.query.filter(GameUserLink.game_id == game_id).delete()
     Game.query.filter(Game.id == game_id).delete()
     db.session.commit()
 
