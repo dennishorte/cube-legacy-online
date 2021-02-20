@@ -309,3 +309,13 @@ body {
 .levelup-claimed button {
   color: white;
 }
+
+.deck-builder {
+  margin: .5rem;
+  padding-bottom: .5rem;
+  border-radius: .25rem;
+  border: 1px solid #dee2e6;
+  background-color: #f5f5ff;
+
+  min-width: 1094px;
+}

@@ -67,7 +67,7 @@
 {% endmacro %}
 
 {% macro deck_builder(d) %}
-  <div class="mt-2 pb-2 rounded border" style="background-color: #f5f5ff">
+  <div class="deck-builder">
     <div
       style="display:none"
       data-save-url="{{ url_for('draft_deck_save', draft_id=d.draft.id) }}"
