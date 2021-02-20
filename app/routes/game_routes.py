@@ -12,7 +12,9 @@ from app import app
 from app.forms import *
 from app.models.cube_models import *
 from app.models.deck_models import *
+from app.models.draft_models import *
 from app.models.game_models import *
+from app.util import name_generator
 from app.util import slack
 from app.util.cube_wrapper import CubeWrapper
 from app.util.deck_builder import DeckBuilder
@@ -87,6 +89,21 @@ def game_delete(game_id):
     flash("Game deleted")
 
     return redirect(url_for('admin'))
+
+
+@app.route("/game/draft_fight/<draft_id>/<opp_id>")
+@login_required
+def game_draft_fight(draft_id, opp_id):
+    draft = Draft.query.get(draft_id)
+    opp = User.query.get(opp_id)
+    sassy_phrase = name_generator.generate()
+
+    game = Game.factory(
+        name = f"{current_user.name} vs. {opp.name} - {draft.name} - {sassy_phrase}",
+        players = [current_user, opp],
+    )
+
+    return redirect(url_for('game', game_id=game.id))
 
 
 @app.route("/game/<game_id>/edit_name", methods=["POST"])

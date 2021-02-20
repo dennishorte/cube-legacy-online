@@ -109,7 +109,12 @@
 
       {% for seat1 in d.seats %}
         <tr>
-          <td>{{ seat1.user.name }}</td>
+          <td>
+            {{ seat1.user.name }}
+            {% if seat1.user != current_user %}
+              (<a href="{{ url_for('game_draft_fight', draft_id=d.draft.id, opp_id=seat1.user.id) }}">fight!</a>)
+            {% endif %}
+          </td>
           {% for seat2 in d.seats %}
             <td>
               {% if seat1 == seat2 %}
