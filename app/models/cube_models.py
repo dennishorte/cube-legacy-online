@@ -265,9 +265,10 @@ class CubeCard(db.Model):
 
                 # Replace name in rules text
                 for i in range(len(data['card_faces'])):
-                    if diff['faces'][i]['name']['is_changed']:
-                        new_name = diff['faces'][i]['name']['latest']
-                        old_name = diff['faces'][i]['name']['original']
+                    name_diff = diff['faces'][i]['name']
+                    if name_diff['is_changed'] and name_diff['original']:
+                        new_name = name_diff['latest']
+                        old_name = name_diff['original']
                         card_face = data['card_faces'][i]
                         card_face['scarred_oracle_text'] = card_face['scarred_oracle_text'].replace(old_name, new_name)
 
