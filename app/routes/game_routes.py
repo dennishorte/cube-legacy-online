@@ -118,20 +118,10 @@ def game_next():
 @app.route("/game/new")
 @login_required
 def game_new():
-    game = Game()
-    db.session.add(game)
-    db.session.commit()
-
-    game_state = GameState.factory(
-        game_id=game.id,
-        name=f"{current_user.name}'s game",
+    game = Game.factory(
+        name = f"{current_user.name}'s game",
+        players = [current_user],
     )
-    game.update(game_state)
-    game.add_player(current_user)
-
-    link = GameUserLink(game_id=game.id, user_id=current_user.id)
-    db.session.add(link)
-    db.session.commit()
 
     return redirect(url_for('game', game_id=game.id))
 

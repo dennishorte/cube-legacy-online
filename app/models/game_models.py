@@ -19,9 +19,30 @@ class Game(db.Model):
         all_games = Game.query.order_by(Game.timestamp.desc()).all()
         return [x for x in all_games if not x.state.is_finished()]
 
+    @staticmethod
+    def factory(name, players):
+        game = Game()
+        db.session.add(game)
+        db.session.commit()
+
+        game_state = GameState.factory(
+            game_id=game.id,
+            name=name
+        )
+        game.update(game_state)
+
+        for player in players:
+            game.add_player(player)
+
+        return game
+
     def add_player(self, user):
         state = self.state
         state.add_player(user.id)
+
+        link = GameUserLink(game_id=self.id, user_id=user.id)
+        db.session.add(link)
+
         self.update(state)
 
     def add_player_by_name(self, name):
