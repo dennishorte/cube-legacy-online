@@ -2126,4 +2126,4 @@ def generate():
     adj = random.choice(ADJECTIVES)
     noun = random.choice(NOUNS)
 
-    return adj + '-' + noun
+    return adj + ' ' + noun
