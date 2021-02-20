@@ -300,34 +300,28 @@ class GameState {
     return undefined
   }
 
-    concede(player_idx) {
-    if (!this.state.hasOwnProperty('finished')) {
-      this.state.finished = false
-      this.state.winner = ''
-    }
+  concede(player_idx) {
+    // For older games, ensure the eliminated field exists
+    this.state.players.forEach(player => {
+      if (!player.hasOwnProperty('eliminated')) {
+        player.eliminated = false
+      }
+    })
 
-    let winner_idx = (this.viewer_idx + 1) % 2
-    let winner_name = this.state.players[winner_idx].name
-    let winner_key = `PLAYER_${winner_idx}_NAME`
+    const player_key = `PLAYER_${this.viewer_idx}_NAME`
+    const delta = [
+      {
+        action: 'set_player_value',
+        player_idx: this.viewer_idx,
+        key: 'eliminated',
+        old_value: false,
+        new_value: true,
+      },
+    ]
 
-    let player_key = `PLAYER_${this.viewer_idx}_NAME`
-
-    let diff = {
-      delta: [
-        {
-          action: 'set_game_value',
-          key: 'finished',
-          old_value: false,
-          new_value: true,
-        },
-        {
-          action: 'set_game_value',
-          key: 'winner',
-          old_value: '',
-          new_value: winner_name,
-        }
-      ],
-      message: `${player_key} concedes. ${winner_key} wins!`,
+    const diff = {
+      delta: delta,
+      message: `${player_key} concedes`,
       player: this.viewer_name,
     }
 
@@ -1213,6 +1207,14 @@ class GameState {
         counters[key] = change.new_value
       }
 
+      else if (action == 'set_player_value') {
+        const key = change.key
+        const player = this.state.players[change.player_idx]
+        assert.equal(player[key], change.old_value)
+
+        player[key] = change.new_value
+      }
+
       else if (action == 'set_visibility') {
         let card = this.card(change.card_id)
         assert.ok(util.arraysEqual(card.visibility, change.old), "Original visibility does not match")
@@ -1278,6 +1280,7 @@ class GameState {
           || action == 'set_card_value'
           || action == 'set_cards_in_zone'
           || action == 'set_player_counter'
+          || action == 'set_player_value'
       ) {
         let tmp = change.old_value
         change.old_value = change.new_value

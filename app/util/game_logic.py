@@ -108,6 +108,7 @@ class GamePlayer(object):
         data = {
             'id': player_id,
             'deck_id': None,
+            'eliminated': False,
             'name': user.name,
             'ready_to_start': False,
             'tableau': PlayerTableau.factory(user.name).data,
@@ -123,6 +124,10 @@ class GamePlayer(object):
     @deck_id.setter
     def deck_id(self, deck_id):
         self.data['deck_id'] = deck_id
+
+    @property
+    def eliminated(self):
+        return self.data.get('eliminated', False)
 
     @property
     def id(self):
@@ -162,7 +167,7 @@ class GameState(object):
             'id': game_id,
             'history': [],
             'cards': {},  # id -> card.data
-            'finished': False,
+            'finished': False,  # deprecated; use self.is_finished()
             'name': name,
             'next_id': 1,
             'players': [],
@@ -196,10 +201,11 @@ class GameState(object):
         return GameCard(self.data['cards'][card_id])
 
     def is_finished(self):
-        return self.data.get('finished', False)
+        # This is legacy for games where finished was being set manually.
+        if self.data['finished']:
+            return True
 
-    def is_winner(self, user):
-        return self.winner() == user.name
+        return [x.eliminated for x in self.players].count(False) <= 1
 
     def make_card(self, cube_card_id):
         card = GameCard.factory(self.next_id(), cube_card_id)
@@ -275,6 +281,22 @@ class GameState(object):
     def ready_to_start(self):
         return all([x.ready_to_start for x in self.players])
 
+    def result_for(self, user):
+        """
+        Return either win, loss, draw, or in_progress
+        """
+        elim = { x.id: x.eliminated for x in self.players }
+        num_alive = list(elim.values()).count(False)
+
+        if num_alive == 0:
+            return 'draw'
+        elif num_alive > 1:
+            return 'in_progress'
+        elif elim[user.id] == True:
+            return 'loss'
+        else:
+            return 'win'
+
     def seat_index_by_user_id(self, user_id):
         for i, p in enumerate(self.players):
             if int(p.id) == int(user_id):
@@ -326,5 +348,10 @@ class GameState(object):
         ]
 
 
+    # Deprecated
+    def is_winner(self, user):
+        return self.winner() == user.name
+
+    # Deprecated
     def winner(self):
         return self.data.get('winner', '')
