@@ -293,7 +293,7 @@ class GameState(object):
             return 'draw'
         elif num_alive > 1:
             return 'in_progress'
-        elif elim[user.id] == True:
+        elif elim.get(user.id) == True:
             return 'loss'
         else:
             return 'win'
