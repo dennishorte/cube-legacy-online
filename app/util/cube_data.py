@@ -1,3 +1,4 @@
+from app.models.deck_models import Deck
 from app.util.cube_wrapper import CubeWrapper
 
 
@@ -5,6 +6,7 @@ class CardPickInfo(object):
     def __init__(self, card):
         self.card = card
         self.picks = []
+        self.maindecked = 0
 
     def average_pick(self, normalize=15):
         if not self.picks:
@@ -132,4 +134,16 @@ class CubeData(object):
             info = pick_info.setdefault(pick.cube_card.latest_id, CardPickInfo(pick.cube_card))
             info.picks.append(pick)
 
+        self._maindeck_info(pick_info)
+
         return pick_info
+
+    def _maindeck_info(self, pick_info):
+        for deck in Deck.query.all():
+            for card_id in deck.maindeck_ids.split(','):
+                if not card_id:
+                    continue
+
+                card_id = int(card_id)
+                if card_id in pick_info:
+                    pick_info[card_id].maindecked += 1
