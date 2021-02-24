@@ -83,6 +83,7 @@ def game_add_player(game_id):
 @login_required
 def game_delete(game_id):
     GameUserLink.query.filter(GameUserLink.game_id == game_id).delete()
+    GameDraftLink.query.filter(GameDraftLink.game_id == game_id).delete()
     Game.query.filter(Game.id == game_id).delete()
     db.session.commit()
 
