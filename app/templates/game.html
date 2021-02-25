@@ -101,7 +101,7 @@
           <div class="col">
             <div id="game-name-edit" class="row justify-content-center d-none">
               <div class="col-lg-4">
-                <form action="{{ url_for('game_edit_name', game_id=game_id) }}" method="post" novalidate>
+                <form action="{{ url_for('game_edit_name', game_id=game.id) }}" method="post" novalidate>
                   {{ genform.hidden_tag() }}
                   <div class="form-group">
                     {{ genform.new_game_name.label }}
@@ -118,7 +118,23 @@
           </div>
 
           <div class="col-1">
-            <a id="edit-name-toggle" href="#">edit</a>
+            <ul class="list-unstyled m-0" style="line-height: 1;">
+              <li>
+                <a id="edit-name-toggle" href="#">edit name</a>
+              </li>
+              {% if game.draft_links %}
+                {% set draft = game.draft_links[0].draft %}
+                <li>
+                  <a href="{{ url_for('draft', draft_id=draft.id) }}">draft</a>
+                </li>
+
+                {% if draft.cube_id %}
+                  <li>
+                    <a href="{{ url_for('cube_cards', cube_id=draft.cube_id) }}">cube</a>
+                  </li>
+                {% endif %}
+              {% endif %}
+            </ul>
           </div>
         </div>
       </div>
@@ -338,7 +354,7 @@
         </div>
 
         <div class="modal-footer">
-          <a href="{{ url_for('game_rematch', game_id=game_id) }}" class="btn btn-primary">
+          <a href="{{ url_for('game_rematch', game_id=game.id) }}" class="btn btn-primary">
             rematch
           </a>
         </div>
@@ -363,7 +379,7 @@
         </div>
 
         <div class="modal-footer">
-          <a href="{{ url_for('game', game_id=game_id) }}" class="btn btn-primary">
+          <a href="{{ url_for('game', game_id=game.id) }}" class="btn btn-primary">
             reload
           </a>
         </div>
