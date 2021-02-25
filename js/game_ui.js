@@ -838,10 +838,10 @@ let gameui = (function() {
     assert.equal(typeof player_idx, 'number', `player_idx should be number, got ${player_idx}`)
     assert.equal(typeof zone, 'string', `zone should be string, got ${zone}`)
 
-    let card_list = _state.card_list(player_idx, zone)
-    let zone_prefix = _zone_prefix(player_idx, zone)
-    let cards_elem = $(`${zone_prefix}-cards`)
-    let count_elem = $(`${zone_prefix}-count`)
+    const card_list = _state.card_list(player_idx, zone)
+    const zone_prefix = _zone_prefix(player_idx, zone)
+    const cards_elem = $(`${zone_prefix}-cards`)
+    const count_elem = $(`${zone_prefix}-count`)
 
     assert.equal(cards_elem.length, 1)
     assert.equal(count_elem.length, 1)
@@ -850,13 +850,14 @@ let gameui = (function() {
     cards_elem.empty()
 
     // Load up new card data.
-    for (var i = 0; i < card_list.length; i++) {
-      let card = _state.card(card_list[i])
-      let elem = cardui.factory(card)
+    for (let i = 0; i < card_list.length; i++) {
+      const card = _state.card(card_list[i])
+      const elem = cardui.factory(card)
 
+      const is_visible = _state.card_is_visible(card.id, zone_prefix)
       cardui.set_visibility(
         elem,
-        _state.card_is_visible(card.id, zone_prefix),
+        is_visible,
         card.face_down,
       )
 
@@ -867,7 +868,7 @@ let gameui = (function() {
       if (zone == 'hand' && player_idx == _state.viewer_idx) {
         cardui.show_mana_cost(elem)
       }
-      else if (zone == 'creatures') {
+      else if (zone == 'creatures' && !card.face_down) {
         cardui.show_power_toughness(elem)
       }
 
@@ -877,7 +878,7 @@ let gameui = (function() {
     // Fill in number of cards
     count_elem.text(card_list.length)
 
-    let is_collapsed = _state.is_collapsed(_state.viewer_idx, zone_prefix)
+    const is_collapsed = _state.is_collapsed(_state.viewer_idx, zone_prefix)
     if (is_collapsed) {
       cards_elem.children().hide()
     }
