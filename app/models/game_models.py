@@ -77,7 +77,7 @@ class Game(db.Model):
             return self.state.priority_player().name == user.name
 
         else:
-            return not self.state.player_by_id(user.id).has_deck()
+            return not self.state.player_by_id(user.id).ready_to_start
 
     @property
     def state(self):
