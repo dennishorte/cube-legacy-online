@@ -32,6 +32,7 @@ def game(game_id):
 
         return render_template(
             'game.html',
+            game_id=game_id,  # Used by header.html
             game=game,
             game_state=game.state,
             num_players=len(game.state.players),

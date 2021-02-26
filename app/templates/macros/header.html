@@ -25,7 +25,7 @@
         /
       {% endif %}
 
-      {% if current_user.waiting_games(exclude_id=game.id) %}
+      {% if current_user.waiting_games(exclude_id=game_id) %}
         <a href="{{ url_for('game_next') }}" class="badge badge-warning">next game</a>
       {% else %}
         <a href="{{ url_for('game_next') }}" class="badge badge-secondary">next game?</a>
