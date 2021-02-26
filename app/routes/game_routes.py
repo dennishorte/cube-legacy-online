@@ -210,14 +210,17 @@ def game_ready(game_id):
 @login_required
 def game_rematch(game_id):
     game = Game.query.get(game_id)
+
     new_game = Game.factory(
         name = game.state.name + '+',
         players = [x.user for x in game.user_links],
     )
 
-    link = GameDraftLink.query.filter(GameDraftLink.game_id == game_id).first()
-    if link:
-        new_link = GameDraftLink(game_id=new_game.id, draft_id=link.draft_id)
+    if game.draft_links:
+        old_link = game.draft_links[0]
+        new_link = GameDraftLink(game_id=new_game.id, draft_id=old_link.draft_id)
+        db.session.add(new_link)
+        db.session.commit()
 
     return redirect(url_for('game', game_id=new_game.id))
 
