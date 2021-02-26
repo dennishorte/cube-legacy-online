@@ -552,24 +552,36 @@ class GameState {
     this.draw(player_idx, 7)
   }
 
-  move_top_of_library_to(source_tableau_idx, dest_tableau_idx, dest_zone, count, face_down) {
+  move_top_of_library_to(
+    source_tableau_idx,
+    dest_tableau_idx,
+    dest_zone,
+    count,
+    options,
+  ) {
     if (count <= 0)
       return
 
-    let library = this.card_list(source_tableau_idx, 'library')
+    const library = this.card_list(source_tableau_idx, 'library')
+    let delta = []
 
-    var delta = []
+    // Build up the delta while applying each diff as it is added.
+    // The applied diffs will be undone later, so that it can all be applied as a single
+    // diff at the end. This is required because otherwise the diff building power of other
+    // functions can't be leveraged since the game state won't be correct if the previous
+    // changes haven't been applied.
+    for (let i = 0; i < count; i++) {
+      const card_id = library[0]
 
-    for (var i = 0; i < count; i++) {
-      let card_id = library[0]
-      if (face_down) {
-        let card = this.card(card_id)
+      // Flip the card face down and
+      if (options.face_down) {
+        const card = this.card(card_id)
         if (!card.face_down) {
-          let flip_delta = this.card_flip_down_up(card_id, true)
+          const flip_delta = this.card_flip_down_up(card_id, true)
           delta = delta.concat(flip_delta)
 
           // Apply the flip diffs so that each successive diff is generated correctly.
-          let tmp_diff = {
+          const tmp_diff = {
             delta: flip_delta,
             msg: 'tmp',
             player: 'GM',
@@ -578,21 +590,30 @@ class GameState {
         }
       }
 
-      let orig_loc = {
+      const orig_loc = {
         name: 'library',
         zone_idx: 0,
         player_idx: source_tableau_idx,
       }
-      let dest_loc = {
+      const dest_loc = {
         name: dest_zone,
         zone_idx: 0,
         player_idx: dest_tableau_idx,
       }
-      let move_delta = this.move_card(orig_loc, dest_loc, card_id, true)
+
+      if (dest_zone == 'library' && options.library_bottom) {
+        dest_loc.zone_idx = this.card_list(dest_tableau_idx, dest_zone).length
+        if (source_tableau_idx == dest_tableau_idx) {
+          // Because the card is coming out of the library, the array length won't change
+          dest_loc.zone_idx -= 1
+        }
+      }
+
+      const move_delta = this.move_card(orig_loc, dest_loc, card_id, true)
       delta = delta.concat(move_delta)
 
       // Apply the move diffs so that each successive diff is generated correctly.
-      let tmp_diff = {
+      const tmp_diff = {
         delta: move_delta,
         msg: 'tmp',
         player: 'GM',
@@ -608,7 +629,7 @@ class GameState {
     let player_key = `PLAYER_${this.viewer_idx}_NAME`
     let zone_key = `PLAYER_${dest_tableau_idx}_NAME's ${dest_zone}`
     var message = `${player_key} moves ${count} cards from library to ${zone_key}`
-    if (face_down)
+    if (options.face_down)
       message += ', face down'
 
     let diff = {

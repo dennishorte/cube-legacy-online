@@ -315,34 +315,38 @@ let gameui = (function() {
 
   function _init_library_move_modal() {
     // Populate possible destinations
-    let library_move_dest_select = $('#library-move-dest')
+    const library_move_dest_select = $('#library-move-dest')
     for (var i = 0; i < _state.num_players(); i++) {
-      let player_name = _state.state.players[i].name
+      const player_name = _state.state.players[i].name
+      const zone_meta_info = _state.zone_meta_info()
 
-      let zone_meta_info = _state.zone_meta_info()
       for (let zone in zone_meta_info) {
         if (!zone_meta_info.hasOwnProperty(zone))
           continue
 
-        let zone_id = `player-${i}-${zone}`
-        let zone_name = `${player_name}'s ${zone}`
-        let opt_elem = $(`<option value="${zone_id}">${zone_name}</option>`)
+        const zone_id = `player-${i}-${zone}`
+        const zone_name = `${player_name}'s ${zone}`
+        const opt_elem = $(`<option value="${zone_id}">${zone_name}</option>`)
         library_move_dest_select.append(opt_elem)
       }
     }
 
     $('#library-move-submit').click(function() {
-      let player_idx = parseInt($('#library-move-modal-player-idx').text())
-      let dest_zone_id = $('#library-move-dest').val()
-      let count = parseInt($('#library-move-count').val())
-      let face_down = $('#library-move-face-down').is(':checked')
+      const player_idx = parseInt($('#library-move-modal-player-idx').text())
+      const dest_zone_id = $('#library-move-dest').val()
+      const count = parseInt($('#library-move-count').val())
+
+      const options = {
+        face_down: $('#library-move-face-down').is(':checked'),
+        library_bottom: $('#library-move-bottom-of-library').is(':checked'),
+      }
 
       _state.move_top_of_library_to(
         player_idx,
         util.player_idx_from_elem_id(dest_zone_id),
         _zone_from_id(dest_zone_id),
         count,
-        face_down
+        options,
       )
 
       $('#library-move-modal').modal('hide')
