@@ -796,6 +796,21 @@ class GameState {
     return this._execute(diff)
   }
 
+  reveal_next_in_library(player_idx) {
+    const card_list = this.card_list(player_idx, 'library')
+    const all_player_names = this.state.players.map(player => player.name).sort()
+
+    // Find the first card in the player's library that isn't visible to all players
+    for (let i = 0; i < card_list.length; i++) {
+      const card = this.card(card_list[i])
+      if (card.visibility.length < all_player_names.length) {
+        return this.reveal_top_of_library_to(all_player_names, player_idx, i+1)
+      }
+    }
+
+    throw "Library is fully revealed already"
+  }
+
   reveal_zone(player_idx, zone_name) {
     const card_list = this.card_list(player_idx, zone_name)
     const visibility = this.state.players.map(player => player.name).sort()

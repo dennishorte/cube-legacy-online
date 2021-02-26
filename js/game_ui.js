@@ -722,6 +722,13 @@ let gameui = (function() {
       _redraw()
     }
 
+    else if (menu_item == 'reveal next') {
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
+      _state.reveal_next_in_library(player_idx)
+      _redraw()
+    }
+
     else if (menu_item == 'roll a die') {
       let zone = target.closest('.card-zone')
       let player_idx = util.player_idx_from_elem(zone)
