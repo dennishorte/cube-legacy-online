@@ -34,6 +34,7 @@ from app.util.string import normalize_newlines
 @login_required
 def draft(draft_id):
     dw = DraftWrapper(draft_id, current_user)
+    dw._game_results_linked()
     return render_template('draft.html', d=dw)
 
 

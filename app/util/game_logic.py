@@ -282,7 +282,7 @@ class GameState(object):
     def ready_to_start(self):
         return all([x.ready_to_start for x in self.players])
 
-    def result_for(self, user):
+    def result_for(self, user_id):
         """
         Return either win, loss, draw, or in_progress
         """
@@ -293,7 +293,7 @@ class GameState(object):
             return 'draw'
         elif num_alive > 1:
             return 'in_progress'
-        elif elim.get(user.id) == True:
+        elif elim.get(user_id) == True:
             return 'loss'
         else:
             return 'win'

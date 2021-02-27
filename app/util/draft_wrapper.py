@@ -11,6 +11,36 @@ from app.util.enum import DraftFaceUp
 from app.util.cube_wrapper import CubeWrapper
 
 
+class GameResults(object):
+    def __init__(self):
+        self.wins = 0
+        self.losses = 0
+        self.draws = 0
+        self.in_progress = 0
+
+    def add_result(self, result: str):
+        if result == 'win':
+            self.wins += 1
+        elif result == 'loss':
+            self.losses += 1
+        elif result == 'draw':
+            self.draws += 1
+        elif result == 'in_progress':
+            self.in_progress += 1
+        else:
+            raise ValueError(f"Unknown result: {result}")
+
+    def count(self):
+        return self.wins + self.losses
+
+    def win_loss_str(self):
+        return f"{self.wins}-{self.losses}"
+
+    def __str__(self):
+        return f"{self.wins}-{self.losses}-{self.draws}-{self.in_progress}"
+
+
+
 class DraftWrapper(object):
     def __init__(self, draft_id, user):
         self.draft = Draft.query.get(draft_id)
@@ -25,6 +55,8 @@ class DraftWrapper(object):
         self.pack = self.seat.waiting_pack()
 
         self.deck_builder = DeckBuilder(self.draft.id, self.user.id)
+
+        self.results_dict = self._game_results_linked()
 
     def card_data(self):
         pack_cards = PackCard.query.filter(PackCard.draft_id == self.draft.id).all()
@@ -127,57 +159,56 @@ class DraftWrapper(object):
         if next_seat and next_seat.waiting_pack():
             slack.send_your_pick_notification(self.passing_to(), self.draft)
 
-    def result_form_for(self, seat):
-        from app.models.game_models import Game, GameUserLink, GameDraftLink
-
-        result = MatchResult.query.filter(
-            MatchResult.draft_id == self.draft.id,
-            MatchResult.user_id == self.user.id,
-            MatchResult.opponent_id == seat.user.id,
-        ).first()
-
-        links = db.session.query(Game, GameUserLink, GameDraftLink).filter(
-            GameUserLink.user_id == seat.user.id,
-            GameUserLink.game_id == Game.id,
-            GameUserLink.game_id == GameDraftLink.game_id,
-        ).all()
-        linked_games = [x[0] for x in links]
+    def result_form_for(self, opp_seat):
+        results = self.results(self.user.id, opp_seat.user_id)
 
         form = ResultForm()
-        form.user_id.data = seat.user.id
-
-        if result:
-            form.wins.data = result.wins
-            form.losses.data = result.losses
-            form.draws.data = result.draws
-
-        elif linked_games:
-            wins = 0
-            losses = 0
-            draws = 0
-            for game in linked_games:
-                result = game.state.result_for(self.user)
-                if result == 'win':
-                    wins += 1
-                elif result == 'loss':
-                    losses += 1
-                elif result == 'draw':
-                    draws += 1
-
-            form.wins.data = wins
-            form.losses.data = losses
-            form.draws.data = draws
+        form.user_id.data = opp_seat.user_id
+        form.wins.data = results.wins
+        form.losses.data = results.losses
+        form.draws.data = results.draws
 
         return form
 
-    def results(self, seat1, seat2):
+    def results(self, user_id1, user_id2):
+        # Manually entered match results
         result = MatchResult.query.filter(
             MatchResult.draft_id == self.draft.id,
-            MatchResult.user_id == seat1.user.id,
-            MatchResult.opponent_id == seat2.user.id,
+            MatchResult.user_id == user_id1,
+            MatchResult.opponent_id == user_id2,
         ).first()
 
         if result:
-            return f"{result.wins}-{result.losses}-{result.draws}"
+            r = GameResults()
+            r.wins = result.wins
+            r.losses = result.losses
+            r.draws = result.draws
+            return r
         else:
-            return ""
+            return self.results_dict[user_id1][user_id2]
+
+
+    def _game_results_linked(self):
+        """
+        Auto-generated match results from linked games
+        """
+
+        from app.models.game_models import GameDraftLink
+
+        game_links = GameDraftLink.query.filter(GameDraftLink.draft_id == self.draft.id).all()
+        all_games = [x.game for x in game_links]
+
+        results_map = {}
+
+        for game in all_games:
+            all_users = [x.user_id for x in game.user_links]
+            for user_id in all_users:
+                user_results = results_map.setdefault(user_id, {})
+                for opp_id in all_users:
+                    if user_id == opp_id:
+                        continue
+
+                    match_results = user_results.setdefault(opp_id, GameResults())
+                    match_results.add_result(game.state.result_for(user_id))
+
+        return results_map

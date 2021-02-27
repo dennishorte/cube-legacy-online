@@ -72,6 +72,14 @@ body {
   display: none!important;
 }
 
+.match-complete {
+  color: darkgreen;
+}
+
+.match-in-progress {
+  color: orange;
+}
+
 .framed {
   background-color: var(--light);
   border: 1px solid #dee2e6!important;
