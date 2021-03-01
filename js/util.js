@@ -315,6 +315,9 @@ util.draw_card_face = function(container, face_data) {
   if (face_data.pick_info) {
     pick_info.text(`picks: ${face_data.pick_info.num_picks}, avg: ${face_data.pick_info.average_pick}`)
   }
+  else {
+    pick_info.text('')
+  }
 
   // Container classes
   container.removeClass([
