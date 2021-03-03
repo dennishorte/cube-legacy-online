@@ -110,13 +110,16 @@
   <!-- edit form -->
   <div id="editForm" class="row">
     <div class="col col-md-12">
-      <form action="
-                    {% if mode == 'edit' %}
-                    {{ url_for('card_update', card_id=card.id) }}
-                    {% else %}
-                    {{ url_for('card_create', cube_id=cube.id) }}
-                    {% endif %}
-                    " method="post" novalidate>
+      <form
+        id="edit-card-form"
+        action="
+                {% if mode == 'edit' %}
+                {{ url_for('card_update', card_id=card.id) }}
+                {% else %}
+                {{ url_for('card_create', cube_id=cube.id) }}
+                {% endif %}
+                " method="post" novalidate>
+
         {{ form.hidden_tag() }}
 
         <!-- Big Card Name -->
@@ -300,6 +303,22 @@
     </div>
   {% endif %}
 
+  <!-- Copy to another cube -->
+  {% if card %}
+    <div class="row">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-success"
+          data-toggle="modal"
+          data-target="#copy-card-modal">
+          Copy to Another Cube
+        </button>
+      </div>
+    </div>
+  {% endif %}
+  <!-- END: Copy to another cube -->
+
   <hr>
 
   <div id="linkedAchievements" class="row">
@@ -352,6 +371,37 @@
     <!-- END: Comments from previous versions -->
 
   </div>
+
+  <!-- Copy CardModal -->
+  <div class="modal fade" id="copy-card-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Copy Card</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        <div class="modal-body">
+          {% if card %}
+            <form action="{{ url_for('card_copy', card_id=card.id) }}" method="post" novalidate>
+              {{ copyform.hidden_tag() }}
+
+              <div class="form-group">
+                {{ copyform.cube_id.label() }}
+                {{ copyform.cube_id(class="form-control") }}
+              </div>
+
+              {{ copyform.submit(class="btn btn-primary", id="copy-card-submit") }}
+            </form>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Copy Card Modal -->
 
   <!-- Flatten Scars Modal -->
   <div class="modal fade" id="flatten-scars-modal" tabindex="-1" role="dialog">
@@ -480,7 +530,7 @@
      })
 
      {% if read_only == 'true' %}
-     $('input, textarea').each(function() {
+     $('#edit-card-form input,textarea').each(function() {
        $(this).attr('disabled', 'disabled')
      })
 

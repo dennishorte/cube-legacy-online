@@ -111,6 +111,22 @@ def _make_card_data(card):
     card_data['meta']['card_editor_link'] = url_for('card_editor', card_id=card.id)
     return card_data
 
+
+@app.route("/card/<card_id>/copy", methods=["POST"])
+@login_required
+def card_copy(card_id):
+    form = CopyCardForm.factory()
+
+    if form.validate_on_submit():
+        card = CubeCard.query.get(card_id)
+        new_card = card.copy_to(int(form.cube_id.data))
+
+        return redirect(url_for('card_editor', card_id=new_card.id))
+
+    else:
+        return "Error copying card"
+
+
 @app.route("/cube/<cube_id>/create", methods=["POST"])
 @login_required
 def card_create(cube_id):
@@ -223,12 +239,14 @@ def card_editor(card_id):
         title="Card Editor",
         mode='edit',
         card=card,
-        rcform=RemoveCardForm(),
         scar=scar,
         read_only=read_only,
+        card_data=card_data,
+
         form=form,
         alform=alform,
-        card_data=card_data,
+        rcform=RemoveCardForm(),
+        copyform=CopyCardForm.factory(),
     )
 
 

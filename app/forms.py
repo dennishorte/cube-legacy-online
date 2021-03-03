@@ -45,6 +45,21 @@ class ChangeUserDetailsForm(FlaskForm):
     submit = SubmitField('Save')
 
 
+class CopyCardForm(FlaskForm):
+    cube_id = SelectField('Copy to...')
+    submit = SubmitField('Copy')
+
+    @staticmethod
+    def factory():
+        from app.models.cube_models import Cube
+        cubes = [(x.id, x.name) for x in Cube.query.order_by('name')]
+
+        form = CopyCardForm()
+        form.cube_id.choices = cubes
+
+        return form
+
+
 class GameDeckReadyForm(FlaskForm):
     command_ids = HiddenField('command')
     maindeck_ids = HiddenField('maindeck')

@@ -191,6 +191,50 @@ class CubeCard(db.Model):
             scarred=self.is_scarred(),
         )
 
+    def copy(self):
+        new_card = CubeCard()
+        new_card.id = None
+        new_card.timestamp = self.timestamp
+        new_card.version = self.version
+        new_card.latest = self.latest
+        new_card.json = self.json
+        new_card.comment = self.comment
+        new_card.name_tmp = self.name_tmp
+        new_card.diff = self.diff
+        new_card.is_original = self.is_original
+        new_card.latest_id = self.latest_id
+        new_card.base_id = self.base_id
+        new_card.cube_id = self.cube_id
+        new_card.added_by_id = self.added_by_id
+        new_card.edited_by_id = self.edited_by_id
+        new_card.removed_by_id = self.removed_by_id
+        new_card.removed_by_comment = self.removed_by_comment
+        new_card.removed_by_timestamp = self.removed_by_timestamp
+        new_card.pick_info_count = self.pick_info_count
+        new_card.pick_info_avg = self.pick_info_avg
+        return new_card
+
+    def copy_to(self, cube_id):
+        copy = self.copy()
+        copy.timestamp = datetime.utcnow()
+        copy.version = 0
+        copy.diff = None
+        copy.latest = True
+        copy.cube_id = cube_id
+        copy.removed_by_id = None
+        copy.removed_by_comment = None
+        copy.removed_by_timestamp = None
+        copy.pick_info_count = 0
+        copy.pick_info_avg = 0
+        db.session.add(copy)
+        db.session.commit()
+
+        copy.latest_id = copy.id
+        db.session.add(copy)
+        db.session.commit()
+
+        return copy
+
     def draft_face_up(self):
         rules = self.oracle_text()
         may_pattern = r'[Mm]ay draft.*?face up'
@@ -359,25 +403,9 @@ class CubeCard(db.Model):
 
             if new_version:
                 # Create a copy of this card as a non-latest version.
-                new_card = CubeCard(
-                    timestamp=self.timestamp,
-                    version=self.version,
-                    latest=False,
-                    latest_id=self.id,
-                    json=self.json,
-                    comment=self.comment,
-                    name_tmp=self.name(),
-
-                    cube_id=self.cube_id,
-                    base_id=self.base_id,
-                    added_by_id=self.added_by_id,
-                    edited_by_id=self.edited_by_id,
-
-                    pick_info_count=self.pick_info_count,
-                    pick_info_avg=self.pick_info_avg,
-
-                    diff=None,  # Don't generally need the diff for old versions.
-                )
+                new_card = self.copy()
+                new_card.latest = False
+                new_card.diff = None
                 db.session.add(new_card)
 
                 # Update this card with the new data.
