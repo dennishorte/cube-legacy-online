@@ -183,7 +183,7 @@
                       {{ game.state.name }}
                     </a>
 
-                    {% if game.state.is_winner(user) %}
+                    {% if game.state.result_for(current_user.id) == 'win' or game.state.is_winner(user) %}
                       <span class="badge badge-pill badge-success">
                         <i class="fas fa-check"></i>
                       </span>
