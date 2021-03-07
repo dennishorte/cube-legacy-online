@@ -251,6 +251,23 @@ class CubeCard(db.Model):
     def days_since_last_edit(self):
         return (datetime.utcnow() - self.timestamp).days
 
+    def flatten(self):
+        self.is_original = True
+        self.version = 1
+        self.diff = None
+
+        db.session.add(self)
+
+        all_versions = CubeCard.query.filter(CubeCard.latest_id == self.latest_id).all()
+        for dead in all_versions:
+            if dead.id == self.id:
+                continue
+
+            db.session.delete(dead)
+
+        db.session.commit()
+
+
     @classmethod
     def from_base_card(cls, cube_id, base_card, added_by):
         data = base_card.get_json()

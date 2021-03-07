@@ -254,18 +254,7 @@ def card_editor(card_id):
 @login_required
 def card_flatten(card_id):
     card = CubeCard.query.get(card_id)
-    card.is_original = True
-    card.version = 1
-    db.session.add(card)
-
-    all_versions = CubeCard.query.filter(CubeCard.latest_id == card.latest_id).all()
-    for dead in all_versions:
-        if dead.id == card.id:
-            continue
-
-        db.session.delete(dead)
-
-    db.session.commit()
+    card.flatten()
 
     return redirect(url_for('card_editor', card_id=card_id))
 
