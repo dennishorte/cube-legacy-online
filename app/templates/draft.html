@@ -67,34 +67,40 @@
 {% endmacro %}
 
 {% macro match_results(d) %}
-  <h3>Your Results</h3>
-  <table class="table table-sm">
-    <thead class="thead-light">
-      <th>opponent</th>
-      <th>results</th>
-      <th></th>
-    </thead>
-    <tbody>
-      {% for seat in d.seats %}
-        {% if seat != d.seat %}
-          {% set form = d.result_form_for(seat) %}
-          <form action="{{ url_for('draft_result', draft_id=d.draft.id) }}" method="post" novalidate>
-            {{ form.hidden_tag() }}
-            {{ form.user_id() }}
-            <tr>
-              <td>{{ seat.user.name }}</td>
-              <td>
-                W{{ form.wins(size="3") }}
-                L{{ form.losses(size="3") }}
-                D{{ form.draws(size="3") }}
-              </td>
-              <td>{{ form.submit() }}</td>
-            </tr>
-          </form>
-        {% endif %}
-      {% endfor %}
-    </tbody>
-  </table>
+  <div style="float: right;">
+    <a href="#" onclick="$('#manual-results').removeClass('d-none')" class="text-s">I didn't use the fight button, so I need the manual overrides</a>
+  </div>
+
+  <div id="manual-results" class="d-none">
+    <h3>Your Results</h3>
+    <table class="table table-sm">
+      <thead class="thead-light">
+        <th>opponent</th>
+        <th>results</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for seat in d.seats %}
+          {% if seat != d.seat %}
+            {% set form = d.result_form_for(seat) %}
+            <form action="{{ url_for('draft_result', draft_id=d.draft.id) }}" method="post" novalidate>
+              {{ form.hidden_tag() }}
+              {{ form.user_id() }}
+              <tr>
+                <td>{{ seat.user.name }}</td>
+                <td>
+                  W{{ form.wins(size="3") }}
+                  L{{ form.losses(size="3") }}
+                  D{{ form.draws(size="3") }}
+                </td>
+                <td>{{ form.submit() }}</td>
+              </tr>
+            </form>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <h3>All Results</h3>
   <table class="table table-striped table-sm">
