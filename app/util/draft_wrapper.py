@@ -34,7 +34,10 @@ class GameResults(object):
         return self.wins + self.losses
 
     def win_loss_str(self):
-        return f"{self.wins}-{self.losses}"
+        if self.wins + self.losses + self.draws + self.in_progress == 0:
+            return ''
+        else:
+            return f"{self.wins}-{self.losses}"
 
     def __str__(self):
         return f"{self.wins}-{self.losses}-{self.draws}-{self.in_progress}"
@@ -185,7 +188,7 @@ class DraftWrapper(object):
             r.draws = result.draws
             return r
         else:
-            return self.results_dict[user_id1][user_id2]
+            return self.results_dict.get(user_id1, {}).get(user_id2, GameResults())
 
 
     def _game_results_linked(self):

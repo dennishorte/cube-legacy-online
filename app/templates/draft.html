@@ -126,7 +126,7 @@
                 &times;
               {% else %}
                 {% set results = d.results(seat1.user_id, seat2.user_id) %}
-                <span class="{% if results.count() >= 3 %}
+                <span class="{% if results.wins >= 2 or results.losses >= 2 %}
                              match-complete
                              {% elif results.in_progress > 0 %}
                              match-in-progress
