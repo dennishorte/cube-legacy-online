@@ -1,15 +1,18 @@
 from app.models.cube_models import Cube
 from app.models.cube_models import CubeCard
+from app.models.cube_models import CubeSearch
 
 
 class CubeWrapper(object):
-    def __init__(self, cube):
+    def __init__(self, cube, search_id=None):
         if isinstance(cube, int) or isinstance(cube, str):
             self.cube = Cube.query.get(cube)
         elif isinstance(cube, Cube):
             self.cube = cube
         else:
             raise ValueError(f"Unknown cube type: {cube}")
+
+        self.search = CubeSearch.query.get(search_id) if search_id else None
 
         self._cards = None
         self._cards_include_removed = None
@@ -34,6 +37,10 @@ class CubeWrapper(object):
                     CubeCard.cube_id == self.cube.id,
                     CubeCard.latest == True,
                 ).all()
+
+                if self.search:
+                    self._cards_include_removed = self.search.execute(self._cards_include_removed)
+
                 self._cards_include_removed.sort(key=lambda x: x.name())
             return self._cards_include_removed
         else:
@@ -43,6 +50,10 @@ class CubeWrapper(object):
                     CubeCard.latest == True,
                     CubeCard.removed_by_id == None,
                 ).all()
+
+                if self.search:
+                    self._cards = self.search.execute(self._cards)
+
                 self._cards.sort(key=lambda x: x.name())
             return self._cards
 
@@ -54,3 +65,15 @@ class CubeWrapper(object):
                 self._card_set.add_card(card)
 
         return self._card_set
+
+    def search_apply(self, card_list):
+        if self.search:
+            return self.search.execute(card_list)
+        else:
+            return card_list
+
+    def search_json(self):
+        if self.search:
+            return self.search.json()
+        else:
+            return {}

@@ -51,6 +51,12 @@
         {% endif %}
 
         <li>
+          <a href="{{ url_for('cube_searches', cube_id=cube.id) }}">
+            Searches
+          </a>
+        </li>
+
+        <li>
           <a href="{{ url_for('cube_data', cube_id=cube.id) }}">
             Data
           </a>

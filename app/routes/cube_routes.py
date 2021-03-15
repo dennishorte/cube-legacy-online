@@ -127,12 +127,16 @@ def cube_bump_xp(cube_id):
 @app.route("/cubes/<cube_id>/cards")
 @login_required
 def cube_cards(cube_id):
+    search_id = request.args.get('search_id')
+
     cube = Cube.query.get(cube_id)
+    wrapper = CubeWrapper(cube, search_id)
+
     return render_template(
         'cube_cards.html',
         cube = cube,
-        cw = CubeWrapper(cube),
-        t = CardTable(cube),
+        cw = wrapper,
+        t = CardTable(wrapper),
         add_cards_form = AddCardsForm(),
         rare_form = CardRarityForm(),
     )
@@ -163,6 +167,31 @@ def cube_factions(cube_id):
         cube=cube,
         cw=CubeWrapper(cube),
         form=form,
+    )
+
+
+@app.route("/cube/<cube_id>/search", methods=["POST"])
+@login_required
+def cube_search(cube_id):
+    if request.json:
+        search = CubeSearch()
+        search.cube_id = cube_id
+        search.serialized = json.dumps(request.json)
+        db.session.add(search)
+        db.session.commit()
+        return str(search.id)
+
+    else:
+        raise ValueError("No search received or empty search")
+
+
+@app.route("/cube/<cube_id>/searches")
+@login_required
+def cube_searches(cube_id):
+    cube = Cube.query.get(cube_id)
+    return render_template(
+        'cube_searches.html',
+        cube=cube,
     )
 
 

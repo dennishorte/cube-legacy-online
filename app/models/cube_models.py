@@ -67,6 +67,7 @@ class Cube(db.Model):
     drafts = db.relationship('Draft', backref='cube')
     factions= db.relationship('Faction', backref='cube')
     scars = db.relationship('Scar', backref='cube')
+    searches = db.relationship('CubeSearch', backref='cube')
 
     def __repr__(self):
         return '<Cube {}>'.format(self.name)
@@ -695,3 +696,83 @@ class Faction(db.Model):
             return f"{years} years {days} days"
         else:
             return f"{days} days"
+
+
+class CubeSearch(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
+    serialized = db.Column(db.Text, nullable=False)
+    name = db.Column(db.String(64))
+
+    @staticmethod
+    def cleanup():
+        CubeSearch.query.filter(CubeSearch.name == None).delete()
+        db.session.commit()
+
+    def json(self):
+        return json.loads(self.serialized)
+
+    def execute(self, card_list):
+        return [x for x in card_list if self.match(x)]
+
+    def match(self, card):
+        """
+        name: [{
+          operator: 'and',
+          key: 'wolf'
+        },]
+        power: [{
+          operator: '>',
+          key: 3
+        }]
+        """
+        data = card.get_json()
+
+        for field, filters in self.json().items():
+            value = data.get(field, '')
+
+            if not value:
+                value = data['card_faces'][0].get(field, '')
+
+            if isinstance(value, str):
+                value = value.lower()
+
+            for f in filters:
+                if not self._apply_filter(f, value):
+                    return False
+
+        return True
+
+    def _apply_filter(self, f, value):
+        op = f['operator'].lower()
+        key = f['key']
+
+        if isinstance(key, str):
+            key = key.lower()
+
+        if op == 'and':
+            return key in value
+        elif op == 'not':
+            return key not in value
+
+        # All other relations are numerical
+        else:
+            if value == '':
+                # This card doesn't have a matching value. eg. instants don't have power
+                return False
+            elif value == '*':
+                value = 0
+
+            key = float(key)
+            value = float(value)
+
+            if op == '=':
+                return key == value
+            elif op == '<=':
+                return value <= key
+            elif op == '>=':
+                return value >= key
+            else:
+                raise ValueError(f"Unknown operator: {op}")

@@ -327,3 +327,52 @@ body {
 
   min-width: 1094px;
 }
+
+#search-parameters {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-option {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-field,
+.search-operator,
+.search-input,
+.search-add {
+  padding: .25rem;
+  width: 25%;
+}
+
+.search-input {
+  width: 40%;
+}
+
+.search-add {
+  width: 10%;
+}
+
+.search-params-group {
+  line-height: 1;
+}
+
+.search-params-key {
+  font-weight: bold;
+}
+
+.search-params-option {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-params-operator,
+.search-params-value {
+  margin-left: .5em;
+}
+
+.search-params-operator {
+  font-style: italic;
+  font-weight: lighter;
+}

@@ -20,10 +20,74 @@
     </a>
   </li>
 
+  <li>
+    <a href="#" onclick="toggle_search()">
+      Search
+    </a>
+  </li>
+
 {% endblock more_nav %}
 
 {% block content %}
   {{ super() }}
+
+  <!-- Search Bar -->
+  <div id="search-bar" class="row">
+    <div class="col framed">
+      <div class="search-option"
+           data-field="name"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="oracle_text"
+           data-format="text">
+      </div>
+
+      <!-- <div class="search-option"
+           data-field="colors"
+           data-format="enum"
+           data-options="white,blue,black,red,green,colorless">
+           </div>
+      -->
+      <div class="search-option"
+           data-field="type_line"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="power"
+           data-format="number">
+      </div>
+
+      <div class="search-option"
+           data-field="toughness"
+           data-format="number">
+      </div>
+
+      <div class="search-option"
+           data-field="flavor_text"
+           data-format="text">
+      </div>
+    </div>
+
+    <div id="search-parameters" class="col-6 framed">
+      <div>
+        Search Parameters
+      </div>
+
+      <div id="search-details" style="flex-grow: 2;">
+
+      </div>
+
+      <div style="text-align: right;">
+        <button class="btn btn-warning" type="button" onclick="clear_search()">clear</button>
+        <button class="btn btn-primary" type="button" onclick="do_search()">search</button>
+      </div>
+    </div>
+  </div>
+  <!-- END: Search Bar -->
+
 
   <!-- Formatted Cards Table -->
   <div id="cards" class="row card-table mt-2">
@@ -279,6 +343,173 @@
 {% endblock content %}
 
 {% block scripts %}
+  <script>
+   var search_json = {{ cw.search_json()|tojson }}
+   var search_keys = []
+
+   function do_search() {
+     $.ajax({
+       type: 'POST',
+       url: "{{ url_for('cube_search', cube_id=cube.id) }}",
+       data: JSON.stringify(search_json),
+       contentType: "application/json; charset=utf-8",
+       success: function(search_id) {
+         window.location.href = "{{ url_for('cube_cards', cube_id=cube.id) }}?search_id=" + search_id
+       },
+     })
+   }
+
+   function clear_search() {
+     search_json = {}
+     redraw_search_parameters()
+   }
+
+   function add_search_parameter() {
+     const opt = $(this).parents('.search-option')
+     const field = opt.data('field')
+     const operator = opt.find('.search-operator select').val()
+     let value = opt.find('.search-input input').val().trim()
+
+     if (!value) {
+       return
+     }
+
+     if (operator == '=' || operator == '>=' || operator == '<=') {
+       value = parseInt(value)
+     }
+
+     if (!search_json[field]) {
+       search_json[field] = []
+     }
+
+     search_json[field].push({
+       key: value,
+       operator: operator
+     })
+
+     redraw_search_parameters()
+   }
+
+   function redraw_search_parameters() {
+     const root_elem = $('#search-details').empty()
+
+     search_keys.forEach(key => {
+       const options = search_json[key.field]
+       if (options) {
+         const key_elem = $('<div>')
+           .addClass('search-params-group')
+           .append($('<div>')
+             .addClass('search-params-key')
+             .text(key.field))
+
+         options.forEach(opt => {
+           const opt_elem = $('<div>')
+             .addClass('search-params-option')
+           const operator_elem = $('<div>')
+             .addClass('search-params-operator')
+             .text(opt.operator)
+           const value_elem = $('<div>')
+             .addClass('search-params-value')
+             .text(opt.key)
+           opt_elem
+             .append(operator_elem)
+             .append(value_elem)
+           key_elem
+             .append(opt_elem)
+           root_elem
+             .append(key_elem)
+         })
+       }
+     })
+   }
+
+   function toggle_search() {
+     const elem = $('#search-bar')
+     if (elem.hasClass('d-none')) {
+       elem.removeClass('d-none')
+     }
+     else {
+       elem.addClass('d-none')
+     }
+   }
+
+   function toTitleCase(str) {
+     return str.replace(
+       /\w\S*/g,
+       function(txt) {
+         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+       }
+     );
+   }
+
+   $(document).ready(function() {
+
+     $(".search-option").each(function() {
+       const elem = $(this)
+       const field_name = elem.data('field')
+       const format = elem.data('format')
+
+       // Store the search keys to help with display
+       search_keys.push({
+         field: field_name,
+         format: format
+       })
+
+       // Name
+       const display_name = toTitleCase(field_name.replace('_', ' '))
+       const display_name_elem = $('<div>')
+         .text(display_name)
+         .addClass('search-field')
+       elem.append(display_name_elem)
+
+       // Operators
+       let operators
+       if (format == 'text' || format == 'enum') {
+         operators = ['and', 'not']
+       }
+       else if (format == 'number') {
+         operators = ['=', '<=', '>=']
+       }
+       else {
+         throw `Unknown search-option-format ${format}`
+       }
+
+       const select_elem = $('<select>')
+         .addClass('form-control')
+       operators.forEach(op => {
+         const option = $('<option>').text(op)
+         select_elem.append(option)
+       })
+       const operator_div = $('<div>')
+         .addClass('search-operator')
+         .append(select_elem)
+       elem.append(operator_div)
+
+       // Input
+       const input = $('<input>')
+         .attr('type', 'text')
+         .addClass('form-control')
+       const input_div = $('<div>')
+         .addClass('search-input')
+         .append(input)
+       elem.append(input_div)
+
+       // Add Button
+       const add_button = $('<button>')
+         .addClass('btn btn-secondary')
+         .text('add')
+         .click(add_search_parameter)
+       const button_div = $('<div>')
+         .addClass('search-add')
+         .append(add_button)
+       elem.append(button_div)
+     })
+
+     redraw_search_parameters()
+
+   })
+  </script>
+
   <script>
    $(document).ready(function() {
      {% if cube.style_a == 'legacy' %}

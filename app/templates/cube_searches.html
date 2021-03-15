@@ -1,0 +1,91 @@
+{% extends "cube_base.html" %}
+
+
+{% block cube_section %}
+  Searches
+{% endblock %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col framed">
+
+      <div class="search-option"
+           data-field="name"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="rules-text"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="colors"
+           data-format="enum"
+           data-options="white,blue,black,red,green,colorless">
+      </div>
+
+      <div class="search-option"
+           data-field="super-types"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="sub-types"
+           data-format="text">
+      </div>
+
+      <div class="search-option"
+           data-field="power"
+           data-format="number">
+      </div>
+
+      <div class="search-option"
+           data-field="toughness"
+           data-format="number">
+      </div>
+
+      <div class="search-option"
+           data-field="flavor-text"
+           data-format="text">
+      </div>
+
+    </div>
+
+    <div class="col framed">
+    </div>
+
+  </div>
+{% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   function toTitleCase(str) {
+     return str.replace(
+       /\w\S*/g,
+       function(txt) {
+         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+       }
+     );
+   }
+
+   $(document).ready(function() {
+
+     $(".search-option").each(function() {
+       const elem = $(this)
+       const field_name = elem.data('field')
+       const format = elem.data('format')
+
+       // Name
+       const display_name = toTitleCase(field_name.replace('-', ' '))
+       const display_name_elem = $('<span>').text(display_name)
+       elem.append(display_name_elem)
+
+       // Logical Operators
+
+     })
+   })
+  </script>
+{% endblock scripts %}

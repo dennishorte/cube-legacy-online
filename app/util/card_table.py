@@ -45,8 +45,8 @@ class CardTable(object):
         'Land',
     ]
 
-    def __init__(self, cube):
-        self.cube = cube
+    def __init__(self, cube_wrapper):
+        self.cube_wrapper = cube_wrapper
         self.columns = []
 
         self._init_columns()
@@ -108,7 +108,7 @@ class CardTable(object):
     def _divide_cards_by_column(self):
         columns = {x: [] for x in self.HEADERS}
 
-        cw = CubeWrapper(self.cube)
+        cw = self.cube_wrapper
         for card in cw.cards():
             if card.color_identity() == 'W':
                 columns['White'].append(card)
