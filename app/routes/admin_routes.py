@@ -43,6 +43,7 @@ def admin_add_user():
             user = User()
             user.name = name
             user.set_password(password)
+            user.slack_id = form.slack_id.data.strip()
 
             db.session.add(user)
             db.session.commit()

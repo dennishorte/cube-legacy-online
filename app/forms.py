@@ -26,6 +26,7 @@ class AddCardsForm(FlaskForm):
 class AddUserForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
+    slack = StringField('slack_id')
     submit = SubmitField('Create User')
 
 
