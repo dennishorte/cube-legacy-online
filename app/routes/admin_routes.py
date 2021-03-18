@@ -49,6 +49,12 @@ def admin_add_user():
 
             flash("New user created")
 
+        else:
+            return "empty username or password <= 10 characters"
+
+    else:
+        return "form error"
+
     return redirect(url_for('admin'))
 
 
