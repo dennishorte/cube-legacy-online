@@ -97,7 +97,6 @@ def admin_name_fix():
         return "Not allowed"
 
     for card in CubeCard.query.all():
-        print(card.id)
         card_data = json.loads(card.json)
         if card_data:
             card.name_tmp = card_data.get('name', 'NO_NAME')
