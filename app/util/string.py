@@ -1,2 +1,3 @@
 def normalize_newlines(string):
-    return string.replace('\r\n', '\n').replace('\r', '\n')
+    tmp = string.replace('\r\n', '\n').replace('\r', '\n')
+    return '\n'.join([x.strip() for x in tmp.split('\n')])
