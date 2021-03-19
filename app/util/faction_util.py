@@ -28,6 +28,14 @@ def factions_for_card(card):
         ):
             factions.append("Sai's Robotic Swarm")
 
+        if (
+                'bird' in subtypes
+                or 'badger' in subtypes
+                or 'bear' in subtypes
+                or 'rat' in subtypes
+        ):
+            factions.append("Small Woodland Animals")
+
         if 'human' in subtypes:
             if face.get('flavor_text'):
                 factions.append("Queen Marchesa's Band of Merry Men and Women")
