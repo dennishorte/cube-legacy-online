@@ -36,6 +36,11 @@ class DraftV2(db.Model):
         assert isinstance(info, DraftInfo), "info must be of type DraftInfo"
         self._info_cache = info
 
+    def name_set(self, name):
+        self.name = name
+        self.info().name_set(name)
+        self.info_save()
+
     def user_add(self, user):
         if self.state != DraftStates.SETUP:
             raise RuntimeError(f"Can't add new users when state is {self.state}")

@@ -14,7 +14,17 @@
     <!-- Draft Info -->
     <div class="col col-md-4 framed p-2">
       <ul class="list-unstyled">
-        <li><strong>Draft: </strong>{{ draft.name }}</li>
+        <li>
+          <div style="float: right;">
+            <a href="#edit-draft-name-modal" class="btn btn-link text-s" onclick="show_name_editor()">
+              edit
+            </a>
+          </div>
+          <strong>Draft: </strong><span id="draft-name">{{ draft.name }}</span>
+        </li>
+        <li>
+          <strong>State: </strong> {{ draft.state }}
+        </li>
       </ul>
     </div>
     <!-- END: Draft Info -->
@@ -22,13 +32,62 @@
     <!-- Seating / Results -->
     <div class="col framed ml-2">
       {% if draft.state == 'setup' %}
+        <div style="float: right;">
+          <button type="button" onclick="show_add_users_dialog" class="btn btn-success">
+            add users
+          </button>
+        </div>
+
         <h2>Players</h2>
         {% for user_id in i.user_ids() %}
-          <p>user_id</p>
+          <p>{{ user_id }}</p>
         {% endfor %}
       {% endif %}
     </div>
     <!-- END: Seating / Results -->
 
   </div>
+
+
+  <div class="modal fade" id="edit-draft-name-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Name</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <input type="text" class="form-control" name="draft_name_input" id="draft-name-input">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="submit_draft_name_update()">
+            update
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   function show_name_editor() {
+     const draft_name = $('#draft-name').text()
+     $('#draft-name-input').val(draft_name)
+     $('#edit-draft-name-modal').modal('show')
+   }
+
+   function submit_draft_name_update() {
+     let link = "{{ url_for('draft_v2_name_update', draft_id=draft.id) }}"
+     link += "?name=" + $('#draft-name-input').val()
+     window.location.href = link
+   }
+
+   $(document).ready(function() {
+
+   })
+  </script>
+{% endblock scripts %}

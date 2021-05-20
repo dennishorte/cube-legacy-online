@@ -97,6 +97,19 @@ def draft_v2_new():
     #     return f"Unknown draft type: {draft_style}"
 
 
+@app.route('/draft_v2/<draft_id>/name_update')
+@login_required
+def draft_v2_name_update(draft_id):
+    new_name = request.args.get('name').strip()
+    if not new_name:
+        return "Empty name specified"
+
+    draft = DraftV2.query.get(draft_id)
+    draft.name_set(new_name)
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/start')
 @login_required
 def draft_v2_start(draft_id):
