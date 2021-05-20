@@ -7,21 +7,45 @@ from app import db
 from app.models.cube_models import *
 from app.models.deck_models import *
 from app.models.user_models import *
+from app.util.draft.draft_info import DraftInfo
+
+
+class DraftStates(object):
+    SETUP = 'setup'
+    ACTIVE = 'active'
 
 
 class DraftV2(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    state = db.Column(db.String(32), default=DraftStates.SETUP)
     name = db.Column(db.String(64))
-
-    # 'active', 'complete', 'killed'
-    state = db.Column(db.String(32))
-
     data_json = db.Column(MEDIUMTEXT)
 
-    def wrapper(self):
-        data = json.loads(self.data_json)
-        return DraftInfoBase.from_data(data)
+    def info(self, force_update=False):
+        if not hasattr(self, '_info_cache') or force_update:
+            self._info_cache = DraftInfo(json.loads(self.data_json))
+        return self._info_cache
+
+    def info_save(self):
+        self.data_json = json.dumps(self._info_cache.data)
+        db.session.add(self)
+        db.session.commit()
+
+    def info_set(self, info):
+        assert isinstance(info, DraftInfo), "info must be of type DraftInfo"
+        self._info_cache = info
+
+    def user_add(self, user):
+        if self.state != DraftStates.SETUP:
+            raise RuntimeError(f"Can't add new users when state is {self.state}")
+
+        self.info().user_add(user)
+        link = DraftUserLink(
+            draft_id = self.id,
+            user_id = user.id
+        )
+        db.session.add(link)
 
 
 class DraftAchievementLink(db.Model):

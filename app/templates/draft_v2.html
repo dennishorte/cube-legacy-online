@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title_suffix %}
+  Draft
+{% endblock %}
+
+
+{% block content %}
+  {% set i = draft.info() %}
+
+
+  <div class="row">
+
+    <!-- Draft Info -->
+    <div class="col col-md-4 framed p-2">
+      <ul class="list-unstyled">
+        <li><strong>Draft: </strong>{{ draft.name }}</li>
+      </ul>
+    </div>
+    <!-- END: Draft Info -->
+
+    <!-- Seating / Results -->
+    <div class="col framed ml-2">
+      {% if draft.state == 'setup' %}
+        <h2>Players</h2>
+        {% for user_id in i.user_ids() %}
+          <p>user_id</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <!-- END: Seating / Results -->
+
+  </div>
+{% endblock content %}

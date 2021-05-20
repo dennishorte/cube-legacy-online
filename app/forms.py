@@ -226,22 +226,6 @@ class LinkAchievemetAndCardForm(FlaskForm):
         return form
 
 
-class LoadDraftDeckForm(FlaskForm):
-    draft = SelectField('Draft')
-    submit = SubmitField('Load Cards')
-
-    @staticmethod
-    def factory(user_id):
-        from app.models.user_models import User
-        user = User.query.get(user_id)
-        drafts = [(x.id, x.draft.name) for x in user.draft_seats]
-
-        form = LoadDraftDeckForm()
-        form.draft.choices = drafts
-
-        return form
-
-
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

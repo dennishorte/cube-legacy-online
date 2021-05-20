@@ -175,11 +175,11 @@ def draft_force(draft_id, user_id):
 @app.route('/draft/next')
 @login_required
 def draft_next():
-    next_drafts = current_user.waiting_drafts()
+    next_drafts = current_user.drafts_waiting()
     if not next_drafts:
         return redirect(url_for('index'))
     else:
-        return redirect(url_for('draft', draft_id=next_drafts[0].draft_id))
+        return redirect(url_for('draft', draft_id=next_drafts[0].id))
 
 
 @app.route('/draft/new', methods=['POST'])

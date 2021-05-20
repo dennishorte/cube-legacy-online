@@ -11,7 +11,7 @@
 {% block content %}
   <div class="row mb-3">
     <div class="col">
-      <a href="#newDraftModal" data-toggle="modal">new draft</a>
+      <a href="{{ url_for('draft_v2_new') }}">new draft</a>
       /
       <a href="#newCubeModal" data-toggle="modal">new cube</a>
       /
@@ -320,84 +320,5 @@
     </div>
   </div>
   <!-- END: New Cube Modal -->
-
-  <!-- New Draft Modal -->
-  <div class="modal fade" id="newDraftModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">New Draft</h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-
-        <div class="modal-body">
-
-          <ul class="nav nav-tabs justify-content-around">
-            <li class="active">
-              <a  href="#newCubeDraftTab" data-toggle="tab">Cube</a>
-            </li>
-            <li>
-              <a  href="#newRotisserieDraftTab" data-toggle="tab">Rotisserie</a>
-            </li>
-          </ul>
-
-	  <div class="tab-content clearfix">
-	    <div class="tab-pane active" id="newCubeDraftTab">
-
-              <form action="{{ url_for('draft_v2_new', draft_style='cube') }}" method="post" novalidate>
-                {{ new_cube_draft_form.hidden_tag() }}
-                <div class="form-group">
-                  {{ new_cube_draft_form.name.label }}
-                  {{ new_cube_draft_form.name(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_cube_draft_form.cube.label }}
-                  {{ new_cube_draft_form.cube(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_cube_draft_form.packsize.label }}
-                  {{ new_cube_draft_form.packsize(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_cube_draft_form.numpacks.label }}
-                  {{ new_cube_draft_form.numpacks(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_cube_draft_form.scar_rounds.label }}
-                  {{ new_cube_draft_form.scar_rounds(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_cube_draft_form.submit(class='btn btn-primary') }}
-                </div>
-              </form>
-
-	    </div>
-
-	    <div class="tab-pane" id="newRotisserieDraftTab">
-
-              <form action="{{ url_for('draft_v2_new', draft_style='rotisserie') }}" method="post" novalidate>
-                {{ new_rotisserie_draft_form.hidden_tag() }}
-                <div class="form-group">
-                  {{ new_rotisserie_draft_form.name.label }}
-                  {{ new_rotisserie_draft_form.name(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_rotisserie_draft_form.cube.label }}
-                  {{ new_rotisserie_draft_form.cube(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_rotisserie_draft_form.submit(class='btn btn-primary') }}
-                </div>
-              </form>
-
-	    </div>
-
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- END: New Draft Modal -->
 
 {% endblock %}

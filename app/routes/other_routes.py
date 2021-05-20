@@ -18,7 +18,7 @@ from app.models.user_models import *
 @app.route("/", methods=['GET', 'POST'])
 @login_required
 def index():
-    complete_seats = [x for x in current_user.draft_seats if x.draft.complete]
+    complete_seats = [x for x in current_user.draft_v1_seats() if x.draft.complete]
     complete_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
 
     achievements_unfinished = [x for x in current_user.achievements_unlocked if not x.finalized_timestamp]
@@ -36,7 +36,7 @@ def index():
 
     return render_template(
         'index.html',
-        active = current_user.active_draft_seats(),
+        active = current_user.drafts_incomplete(),
         complete = complete_seats,
         achievements_unfinished = achievements_unfinished,
         achievements_finished = achievements_finished,

@@ -15,14 +15,10 @@
     </div>
 
     <div class="col col-md-2 text-center">
-      {% if current_user.waiting_drafts() %}
+      {% if current_user.drafts_waiting() %}
         <a href="{{ url_for('draft_next') }}" class="badge badge-warning">next draft</a>
       {% else %}
         <a href="{{ url_for('draft_next') }}" class="badge badge-secondary">next draft?</a>
-      {% endif %}
-
-      {% if current_user.waiting_drafts() and current_user.waiting_games(exclude_id=game_id) %}
-        /
       {% endif %}
 
       {% if current_user.waiting_games(exclude_id=game_id) %}

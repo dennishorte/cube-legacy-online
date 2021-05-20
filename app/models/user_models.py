@@ -54,14 +54,6 @@ class User(UserMixin, db.Model):
     def all_names():
         return [x.name for x in User.query.order_by(User.name)]
 
-    def active_draft_seats(self):
-        active_seats = [
-            x for x in self.draft_seats
-            if not x.draft.complete and not x.draft.killed
-        ]
-        active_seats.sort(key=lambda x: x.draft.timestamp, reverse=True)
-        return active_seats
-
     def active_games(self):
         return [x for x in self.all_games() if not x.state.is_finished()]
 
@@ -74,6 +66,28 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def draft_v1_seats(self):
+        return self.draft_seats
+
+    def drafts(self):
+        from app.models.draft_v2_models import DraftStates
+        from app.models.draft_v2_models import DraftV2
+        from app.models.draft_v2_models import DraftUserLink
+
+        links = DraftUserLink.query.filter(DraftUserLink.user_id == self.id).all()
+        draft_ids = [x.draft_id for x in links]
+        return DraftV2.query \
+                      .filter(DraftV2.id.in_(draft_ids)) \
+                      .order_by(DraftV2.timestamp.desc()) \
+                      .all()
+
+    def drafts_incomplete(self):
+        from app.models.draft_v2_models import DraftStates
+        return [x for x in self.drafts() if x.state in (DraftStates.SETUP, DraftStates.ACTIVE)]
+
+    def drafts_waiting(self):
+        return [x for x in self.drafts_incomplete() if x.info().waiting(self)]
 
     @property
     def monikers(self):
@@ -108,10 +122,6 @@ class User(UserMixin, db.Model):
             or not self.last_pick_timestamp
             or self.last_notif_timestamp < self.last_pick_timestamp
         )
-
-    def waiting_drafts(self):
-        active = self.active_draft_seats()
-        return [x for x in active if x.waiting_pack()]
 
     def waiting_games(self, exclude_id=None):
         if isinstance(exclude_id, str):
