@@ -26,6 +26,7 @@ from app.routes import card_routes
 from app.routes import cube_routes
 from app.routes import custom_routes
 from app.routes import draft_routes
+from app.routes import draft_v2_routes
 from app.routes import game_routes
 from app.routes import other_routes
 from app.routes import user_routes

@@ -30,6 +30,56 @@ from app.util.draft_wrapper import DraftWrapper
 from app.util.string import normalize_newlines
 
 
+class NewDraftForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    cube = SelectField('Cube', validators=[DataRequired()])
+    packsize = IntegerField('Pack Size', validators=[DataRequired()])
+    numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
+    scar_rounds = StringField('Scar Rounds (eg. 0,3)')
+    players = SelectMultipleField('Players', validators=[DataRequired()])
+    parent = SelectField('Parent')
+    submit = SubmitField('Create')
+
+    @staticmethod
+    def factory():
+        from app.models.cube_models import Cube
+        from app.models.draft_models import Draft
+        from app.models.user_models import User
+
+        cubes = [x.name for x in Cube.query.order_by('name')]
+        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+        drafts = [(0, '')] + [(x.id, x.name) for x in Draft.query.order_by('name')]
+
+        form = NewDraftForm()
+        form.cube.choices = cubes
+        form.players.choices = users
+        form.parent.choices = drafts
+
+        return form
+
+
+class NewSetDraftForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    cube = SelectField('Cube', validators=[DataRequired()])
+    style = SelectField('Style', validators=[DataRequired()], choices=['standard', 'commander'])
+    players = SelectMultipleField('Players', validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+    @staticmethod
+    def factory():
+        from app.models.cube_models import Cube
+        from app.models.user_models import User
+
+        cubes = [x.name for x in Cube.query.order_by('name') if x.style_a == 'set']
+        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
+
+        form = NewSetDraftForm()
+        form.cube.choices = cubes
+        form.players.choices = users
+
+        return form
+
+
 @app.route("/draft/<draft_id>")
 @login_required
 def draft(draft_id):

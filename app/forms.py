@@ -255,53 +255,34 @@ class NewCubeForm(FlaskForm):
     submit = SubmitField('Create')
 
 
-class NewDraftForm(FlaskForm):
+class NewCubeDraftForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     cube = SelectField('Cube', validators=[DataRequired()])
     packsize = IntegerField('Pack Size', validators=[DataRequired()])
     numpacks = IntegerField('Number of Packs', validators=[DataRequired()])
     scar_rounds = StringField('Scar Rounds (eg. 0,3)')
-    players = SelectMultipleField('Players', validators=[DataRequired()])
-    parent = SelectField('Parent')
     submit = SubmitField('Create')
 
     @staticmethod
     def factory():
         from app.models.cube_models import Cube
-        from app.models.draft_models import Draft
-        from app.models.user_models import User
-
-        cubes = [x.name for x in Cube.query.order_by('name')]
-        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
-        drafts = [(0, '')] + [(x.id, x.name) for x in Draft.query.order_by('name')]
-
-        form = NewDraftForm()
+        cubes = [(x.id, x.name) for x in Cube.query.order_by('name')]
+        form = NewCubeDraftForm()
         form.cube.choices = cubes
-        form.players.choices = users
-        form.parent.choices = drafts
-
         return form
 
 
-class NewSetDraftForm(FlaskForm):
+class NewRotisserieDraftForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     cube = SelectField('Cube', validators=[DataRequired()])
-    style = SelectField('Style', validators=[DataRequired()], choices=['standard', 'commander'])
-    players = SelectMultipleField('Players', validators=[DataRequired()])
     submit = SubmitField('Create')
 
     @staticmethod
     def factory():
         from app.models.cube_models import Cube
-        from app.models.user_models import User
-
-        cubes = [x.name for x in Cube.query.order_by('name') if x.style_a == 'set']
-        users = [(x.name, x.name) for x in User.query.order_by('name') if x.name != 'starter']
-
-        form = NewSetDraftForm()
+        cubes = [(x.id, x.name) for x in Cube.query.order_by('name')]
+        form = NewRotisserieDraftForm()
         form.cube.choices = cubes
-        form.players.choices = users
-
         return form
 
 

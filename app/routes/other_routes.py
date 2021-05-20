@@ -41,8 +41,8 @@ def index():
         achievements_unfinished = achievements_unfinished,
         achievements_finished = achievements_finished,
 
-        new_draft_form = NewDraftForm.factory(),
-        new_set_draft_form = NewSetDraftForm.factory(),
+        new_cube_draft_form = NewCubeDraftForm.factory(),
+        new_rotisserie_draft_form = NewRotisserieDraftForm.factory(),
         new_cube_form = NewCubeForm(),
         new_set_form = NewSetForm(),
         pack_maker_form = PackMakerForm.factory(15),

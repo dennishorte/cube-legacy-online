@@ -334,75 +334,59 @@
 
           <ul class="nav nav-tabs justify-content-around">
             <li class="active">
-              <a  href="#newCubeDraftTab" data-toggle="tab">Cube Draft</a>
+              <a  href="#newCubeDraftTab" data-toggle="tab">Cube</a>
             </li>
             <li>
-              <a  href="#newSetDraftTab" data-toggle="tab">Set Draft</a>
+              <a  href="#newRotisserieDraftTab" data-toggle="tab">Rotisserie</a>
             </li>
           </ul>
 
 	  <div class="tab-content clearfix">
 	    <div class="tab-pane active" id="newCubeDraftTab">
 
-              <form action="{{ url_for('draft_new') }}" method="post" novalidate>
-                {{ new_draft_form.hidden_tag() }}
+              <form action="{{ url_for('draft_v2_new', draft_style='cube') }}" method="post" novalidate>
+                {{ new_cube_draft_form.hidden_tag() }}
                 <div class="form-group">
-                  {{ new_draft_form.name.label }}
-                  {{ new_draft_form.name(class='form-control') }}
+                  {{ new_cube_draft_form.name.label }}
+                  {{ new_cube_draft_form.name(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_draft_form.cube.label }}
-                  {{ new_draft_form.cube(class='form-control') }}
+                  {{ new_cube_draft_form.cube.label }}
+                  {{ new_cube_draft_form.cube(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_draft_form.packsize.label }}
-                  {{ new_draft_form.packsize(class='form-control') }}
+                  {{ new_cube_draft_form.packsize.label }}
+                  {{ new_cube_draft_form.packsize(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_draft_form.numpacks.label }}
-                  {{ new_draft_form.numpacks(class='form-control') }}
+                  {{ new_cube_draft_form.numpacks.label }}
+                  {{ new_cube_draft_form.numpacks(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_draft_form.scar_rounds.label }}
-                  {{ new_draft_form.scar_rounds(class='form-control') }}
+                  {{ new_cube_draft_form.scar_rounds.label }}
+                  {{ new_cube_draft_form.scar_rounds(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_draft_form.players.label }}
-                  {{ new_draft_form.players(class='form-control', size=6) }}
-                </div>
-                <div class="form-group">
-                  {{ new_draft_form.parent.label }}
-                  {{ new_draft_form.parent(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_draft_form.submit() }}
+                  {{ new_cube_draft_form.submit(class='btn btn-primary') }}
                 </div>
               </form>
 
 	    </div>
 
-	    <div class="tab-pane" id="newSetDraftTab">
+	    <div class="tab-pane" id="newRotisserieDraftTab">
 
-              <form action="{{ url_for('draft_new_set') }}" method="post" novalidate>
-                {{ new_set_draft_form.hidden_tag() }}
+              <form action="{{ url_for('draft_v2_new', draft_style='rotisserie') }}" method="post" novalidate>
+                {{ new_rotisserie_draft_form.hidden_tag() }}
                 <div class="form-group">
-                  {{ new_set_draft_form.name.label }}
-                  {{ new_set_draft_form.name(class='form-control') }}
+                  {{ new_rotisserie_draft_form.name.label }}
+                  {{ new_rotisserie_draft_form.name(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_set_draft_form.cube.label }}
-                  {{ new_set_draft_form.cube(class='form-control') }}
+                  {{ new_rotisserie_draft_form.cube.label }}
+                  {{ new_rotisserie_draft_form.cube(class='form-control') }}
                 </div>
                 <div class="form-group">
-                  {{ new_set_draft_form.style.label }}
-                  {{ new_set_draft_form.style(class='form-control') }}
-                </div>
-                <div class="form-group">
-                  {{ new_set_draft_form.players.label }}
-                  {{ new_set_draft_form.players(class='form-control', size=6) }}
-                </div>
-                <div class="form-group">
-                  {{ new_set_draft_form.submit() }}
+                  {{ new_rotisserie_draft_form.submit(class='btn btn-primary') }}
                 </div>
               </form>
 
