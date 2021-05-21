@@ -10,6 +10,9 @@ class DraftInfo(object):
     def name_set(self, name):
         self.data['name'] = name
 
+    def round_add(self, setup: dict):
+        self.data.setdefault('rounds', []).append(setup)
+
     def user_add(self, user):
         self.data.setdefault('user_ids', []).append(user.id)
 
@@ -31,11 +34,14 @@ class DraftInfo(object):
     def pick_undo(self, user):
         pass
 
+    def rounds(self):
+        return self.data.get('rounds', [])
+
     def user_decline(self, user):
         pass
 
     def user_ids(self):
-        return self.data['user_ids']
+        return self.data.get('user_ids', [])
 
     def waiting(self, user):
         return True

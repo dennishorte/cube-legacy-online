@@ -29,10 +29,10 @@
 
           <p class="index-section-header">Active Drafts</p>
           <ul class="list-unstyled ml-4">
-            {% for p in active %}
+            {% for draft in active %}
               <li>
-                <a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a>
-                {% if p.waiting_pack() %}
+                <a href="/draft_v2/{{draft.id}}">{{ draft.name }}</a>
+                {% if draft.info().waiting(current_user) %}
                   <span class="badge badge-pill badge-warning">
                     <i class="fas fa-asterisk"></i>
                   </span>

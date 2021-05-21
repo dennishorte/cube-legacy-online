@@ -25,10 +25,12 @@ from app.util.draft_wrapper import DraftWrapper
 def draft_v2(draft_id):
     draft = DraftV2.query.get(draft_id)
     all_users = User.query.order_by(User.name).all()
+    all_cubes = Cube.query.order_by(Cube.name).all()
 
     return render_template(
         'draft_v2.html',
         draft = draft,
+        all_cubes = all_cubes,
         all_users = all_users,  # Used for adding new users
     )
 
@@ -106,10 +108,50 @@ def draft_v2_name_update(draft_id):
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
+@app.route('/draft_v2/<draft_id>/round_add')
+@login_required
+def draft_v2_round_add(draft_id):
+    draft = DraftV2.query.get(draft_id)
+
+    cube_id = int(request.args.get('cube_id'))
+    style = request.args.get('style')
+
+    if style == 'cube-pack':
+        draft.info().round_add({
+            'style': style,
+            'cube_id': cube_id,
+            'pack_size': int(request.args.get('pack_size')),
+            'num_packs': int(request.args.get('num_packs')),
+            'scar_rounds': [int(x) for x in request.args.get('scar_rounds').split(',') if x.strip()],
+        })
+
+    elif style == 'rotisserie':
+        draft.info().round_add({
+            'style': style,
+            'cube_id': cube_id,
+            'num_cards': int(request.args.get('num_cards')),
+        })
+
+    else:
+        raise ValueError(f"Unknown round style: {style}")
+
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/start')
 @login_required
 def draft_v2_start(draft_id):
-    pass
+    draft = DraftV2.query.get(draft_id)
+    assert draft.state == DraftStates.SETUP, f"Can't start a draft in state {draft.state}"
+
+    # Do all the things to get the rounds ready
+
+    draft.state = DraftStates.ACTIVE
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
 @app.route('/draft_v2/<draft_id>/user_add')

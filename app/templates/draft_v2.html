@@ -26,6 +26,35 @@
           <strong>State: </strong> {{ draft.state }}
         </li>
       </ul>
+
+      <div id="round-info-wrapper">
+        <strong>Rounds:</strong>
+        {% for round in draft.info().rounds() %}
+          <div class="round-info">
+            {{ round['style'] }}
+            <ul>
+              {% for key, value in round.items() %}
+                <li>
+                  {{ key }}: {{ value }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+
+      </div>
+
+      {% if draft.state == 'setup' %}
+        <div id="setup-buttons">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#round-add-modal">
+            add round
+          </button>
+
+          <a href="{{ url_for('draft_v2_start', draft_id=draft.id) }}" class="btn btn-danger">
+            start draft
+          </a>
+        </div>
+      {% endif %}
     </div>
     <!-- END: Draft Info -->
 
@@ -75,7 +104,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Edit Name</h5>
+          <h5 class="modal-title">Add Users</h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
@@ -95,11 +124,89 @@
       </div>
     </div>
   </div>
+
+
+  <div class="modal fade" id="round-add-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Round</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="form-group">
+              <label for="cube">Cube</label>
+              <select id="round-cube-selector" name="cube" class="form-control">
+                {% for cube in all_cubes %}
+                  <option value="{{ cube.id }}">{{ cube.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <select id="round-type-selector" class="form-control" size="2">
+              <option value="cube-pack">Cube Packs</option>
+              <option value="rotisserie">Rotisserie</option>
+            </select>
+          </div>
+
+          <div id="round-type-options">
+            <div id="cube-pack-options" class="round-options d-none">
+              <div class="form-group">
+                <label for="pack_size">Pack Size</label>
+                <input type="text" name="pack_size" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="num_packs">Num Packs</label>
+                <input type="text" name="num_packs" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="scar_rounds">Scar Rounds</label>
+                <input type="text" name="scar_rounds" class="form-control">
+              </div>
+            </div>
+
+            <div id="rotisserie-options" class="round-options d-none">
+              <div class="form-group">
+                <label for="num_cards">Num Cards</label>
+                <input type="text" name="num_cards" class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="round_add()">
+            add round
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
 
 
 {% block scripts %}
   <script>
+   function round_add() {
+     const link = "{{ url_for('draft_v2_round_add', draft_id=draft.id) }}"
+     const cube_id = $('#round-cube-selector').val()
+     const round_type = $('#round-type-selector').val()
+
+     let params = `?style=${round_type}&cube_id=${cube_id}`
+
+     const options_elem = $('#' + round_type + '-options')
+     options_elem.find('input').each(function(idx, elem) {
+       elem = $(elem)
+       params += '&' + elem.attr('name') + '=' + elem.val()
+     })
+
+     window.location.href = link + params
+   }
+
    function show_name_editor() {
      const draft_name = $('#draft-name').text()
      $('#draft-name-input').val(draft_name)
@@ -119,6 +226,12 @@
    }
 
    $(document).ready(function() {
+
+     $('#round-type-selector').change(function() {
+       const round_type = $(this).val()
+       $('.round-options').addClass('d-none')
+       $('#' + round_type + '-options').removeClass('d-none')
+     })
 
    })
   </script>
