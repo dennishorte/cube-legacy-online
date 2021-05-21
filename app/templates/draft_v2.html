@@ -33,7 +33,7 @@
     <div class="col framed ml-2">
       {% if draft.state == 'setup' %}
         <div style="float: right;">
-          <button type="button" onclick="show_add_users_dialog" class="btn btn-success">
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#user-add-modal">
             add users
           </button>
         </div>
@@ -64,7 +64,33 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" onclick="submit_draft_name_update()">
             update
-          </a>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="user-add-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Name</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <select id="user-names-selector" class="form-control" multiple size="{{ all_users|length }}">
+            {% for user in all_users %}
+              <option value="{{ user.id }}">{{ user.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="user_add_submit()">
+            add users
+          </button>
         </div>
       </div>
     </div>
@@ -81,8 +107,14 @@
    }
 
    function submit_draft_name_update() {
-     let link = "{{ url_for('draft_v2_name_update', draft_id=draft.id) }}"
-     link += "?name=" + $('#draft-name-input').val()
+     let link = "{{ url_for('draft_v2_name_update', draft_id=draft.id) }}?name="
+     link += $('#draft-name-input').val()
+     window.location.href = link
+   }
+
+   function user_add_submit() {
+     let link = "{{ url_for('draft_v2_user_add', draft_id=draft.id) }}?ids="
+     link += $('#user-names-selector').val().join(',')
      window.location.href = link
    }
 

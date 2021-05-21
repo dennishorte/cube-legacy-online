@@ -24,17 +24,13 @@ from app.util.draft_wrapper import DraftWrapper
 @login_required
 def draft_v2(draft_id):
     draft = DraftV2.query.get(draft_id)
+    all_users = User.query.order_by(User.name).all()
 
     return render_template(
         'draft_v2.html',
         draft = draft,
+        all_users = all_users,  # Used for adding new users
     )
-
-
-@app.route('/draft_v2/<draft_id>/add_user/<user_id>')
-@login_required
-def draft_v2_add_user(draft_id, user_id):
-    pass
 
 
 @app.route('/draft_v2/new')
@@ -114,3 +110,17 @@ def draft_v2_name_update(draft_id):
 @login_required
 def draft_v2_start(draft_id):
     pass
+
+
+@app.route('/draft_v2/<draft_id>/user_add')
+@login_required
+def draft_v2_user_add(draft_id):
+    draft = DraftV2.query.get(draft_id)
+
+    ids = request.args.get('ids').split(',')
+    for user in User.query.filter(User.id.in_(ids)).all():
+        draft.user_add(user)
+
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))

@@ -45,6 +45,9 @@ class DraftV2(db.Model):
         if self.state != DraftStates.SETUP:
             raise RuntimeError(f"Can't add new users when state is {self.state}")
 
+        if user.id in self.info().user_ids():
+            return f"Duplicate user id: {user.id}"
+
         self.info().user_add(user)
         link = DraftUserLink(
             draft_id = self.id,
