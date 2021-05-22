@@ -17,6 +17,7 @@ from app.models.deck_models import *
 from app.models.draft_v2_models import *
 from app.models.user_models import *
 from app.util.draft.draft_info import DraftInfo
+from app.util.draft.round_builder import RoundBuilder
 from app.util.draft_wrapper import DraftWrapper
 
 
@@ -27,11 +28,16 @@ def draft_v2(draft_id):
     all_users = User.query.order_by(User.name).all()
     all_cubes = Cube.query.order_by(Cube.name).all()
 
+    user_map = {}
+    for user_id in draft.info().user_ids():
+        user_map[user_id] = User.query.get(user_id)
+
     return render_template(
         'draft_v2.html',
         draft = draft,
         all_cubes = all_cubes,
         all_users = all_users,  # Used for adding new users
+        user_map = user_map,  # Used for fetching user data from game data
     )
 
 
@@ -54,45 +60,6 @@ def draft_v2_new():
     draft.info_save()
 
     return redirect(url_for('draft_v2', draft_id=draft.id))
-
-
-
-    # if draft_style == "cube":
-    #     form = NewCubeDraftForm.factory()
-
-    #     if form.validate_on_submit():
-    #         from app.util.draft.draft_creator import create_pack_draft
-    #         draft = create_pack_draft(
-    #             name=form.name.data,
-    #             cube_name=form.cube.data,
-    #             pack_size=form.packsize.data,
-    #             num_packs=form.numpacks.data,
-    #             user_names=form.players.data,
-    #             scar_rounds=form.scar_rounds.data,
-    #             parent_id=form.parent.data,
-    #         )
-    #         return redirect(url_for('draft_v2', draft_id=draft.id))
-
-    #     else:
-    #         return "Unable to create new draft"
-
-    # elif draft_style == "rotisserie":
-    #     form = NewRotisserieDraftFrom.factory()
-
-    #     if form.validate_on_submit():
-    #         from app.util.draft.draft_creator import create_rotisserie_draft
-
-    #         draft = create_rotisserie_draft(
-    #             name = form.name.data.strip(),
-    #             cube = Cube.query.get(form.cube_id).first(),
-    #         )
-    #         return redirect(url_for('draft_v2', draft_id=draft.id))
-
-    #     else:
-    #         return "Unable to create new draft"
-
-    # else:
-    #     return f"Unknown draft type: {draft_style}"
 
 
 @app.route('/draft_v2/<draft_id>/name_update')
@@ -146,7 +113,8 @@ def draft_v2_start(draft_id):
     draft = DraftV2.query.get(draft_id)
     assert draft.state == DraftStates.SETUP, f"Can't start a draft in state {draft.state}"
 
-    # Do all the things to get the rounds ready
+    for round_setup in draft.info().rounds():
+        RoundBuilder.build(round_setup, draft.info().user_data())
 
     draft.state = DraftStates.ACTIVE
     draft.info_save()

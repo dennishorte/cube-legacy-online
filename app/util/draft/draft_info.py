@@ -16,6 +16,15 @@ class DraftInfo(object):
     def user_add(self, user):
         self.data.setdefault('user_ids', []).append(user.id)
 
+        user_data = {
+            'user_id': user.id,
+            'deck': {},
+            'waiting_actions': [],
+            'declined': False,
+        }
+
+        self.data.setdefault('user_data', []).append(user_data)
+
     ############################################################
     # Draft Functions
 
@@ -37,8 +46,21 @@ class DraftInfo(object):
     def rounds(self):
         return self.data.get('rounds', [])
 
-    def user_decline(self, user):
-        pass
+    def user_decline(self, user, value=True):
+        datum = self.user_data(user.id)
+        datum['declined'] = value
+
+    def user_data(self, user_id: int = None):
+        all_data = self.data.get('user_data', [])
+
+        if user_id:
+            for datum in all_data:
+                if datum['user_id'] == user_id:
+                    return datum
+
+            raise ValueError(f"Unknown user with id {user_id}")
+        else:
+            return all_data
 
     def user_ids(self):
         return self.data.get('user_ids', [])
@@ -52,49 +74,3 @@ class DraftInfo(object):
     def dump(self):
         import json
         json.dumps(self.data, indent=2, sort_keys=True)
-
-
-# class PackDraft(DraftInfo):
-#     DRAFT_STYLE = 'pack'
-
-#     @classmethod
-#     def factory(cls, **kwargs):
-#         data = super().factory(**kwargs)
-#         data['cube_id'] = kwargs['cube'].id
-#         data['num_packs'] = kwargs['num_packs']
-#         data['pack_size'] = kwargs['pack_size']
-#         data['picks_per_pack'] = kwargs.get('picks_per_pack', 1)
-#         data['scar_rounds'] = kwargs.get('scar_rounds', '')
-#         data['packs'] = pack_maker(
-#             cube = kwargs['cube'],
-#             num_packs = data['num_packs'],
-#             pack_size = data['pack_size'],
-#         )
-
-#         return PackDraft(data)
-
-#     @property
-#     def num_packs(self):
-#         return self.data['num_packs']
-
-#     @property
-#     def pack_size(self):
-#         return self.data['pack_size']
-
-#     @property
-#     def picks_per_pack(self):
-#         return self.data['picks_per_pack']
-
-#     @property
-#     def scar_rounds(self):
-#         return self.data['scar_rounds']
-
-
-# class RotisserieDraft(DraftInfo):
-#     DRAFT_STYLE = 'rotisserie'
-
-#     @classmethod
-#     def factory(cls, **kwargs):
-#         data = super().factory(**kwargs)
-#         data['cube_id'] = kwargs['cube'].id
-#         data['cards'] = cls._make_card_data(kwargs['cube'])

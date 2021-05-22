@@ -32,11 +32,16 @@
         {% for round in draft.info().rounds() %}
           <div class="round-info">
             {{ round['style'] }}
+
+            {% if round['style'] == 'rotisserie' %}
+              {% set keys = ['num_cards'] %}
+            {% elif round['style'] == 'cube-pack' %}
+              {% set keys = ['num_packs', 'pack_size', 'scar_rounds'] %}
+            {% endif %}
+
             <ul>
-              {% for key, value in round.items() %}
-                <li>
-                  {{ key }}: {{ value }}
-                </li>
+              {% for key in keys %}
+                <li>{{ key }}: {{ round[key] }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -71,6 +76,27 @@
         {% for user_id in i.user_ids() %}
           <p>{{ user_id }}</p>
         {% endfor %}
+
+      {% else %}
+
+        <h2>Seating</h2>
+        <table class="table table-sm">
+          <thead class="thead-light">
+            <tr>
+              <th>name</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for datum in i.user_data() %}
+              <tr>
+                {% set user = user_map[datum['user_id']] %}
+                <td>{{ user.name }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
       {% endif %}
     </div>
     <!-- END: Seating / Results -->
@@ -146,7 +172,7 @@
             </div>
 
             <select id="round-type-selector" class="form-control" size="2">
-              <option value="cube-pack">Cube Packs</option>
+              <option value="cube_pack">Cube Packs</option>
               <option value="rotisserie">Rotisserie</option>
             </select>
           </div>
