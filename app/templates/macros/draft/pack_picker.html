@@ -1,0 +1,48 @@
+{% from 'macros/card_frame.html' import card_frame %}
+
+
+{% macro pack_picker(draft, user_id) %}
+  {% set info = draft.info() %}
+
+  <div class="row">
+    <div class="col">
+      {% set pack = info.next_pack(user_id)  %}
+      {% if pack %}
+
+        {% for card_id in pack['card_ids'] %}
+          {% if info.can_be_seen(card_id, user) %}
+
+            {% set card = info.card(card_id) %}
+            {% set can_be_drafted = info.can_be_drafted(card_id, user) %}
+
+            <div style="margin: 2px;">
+              <a
+                class="plain-link"
+                {% if can_be_drafted %}
+                  {{ url_for('draft_v2_pick', draft_id=draft.id, card_id=card.id) }}
+                {% endif %}
+              >
+                {{ card_frame(220, card.cube_card.id, not can_be_drafted) }}
+              </a>
+
+              <!-- Add Scars Buttons -->
+              {% if info.is_scarring_round(user) %}
+                {% for scar in info.scar_options(user) %}
+                  <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card.cube_card.id, scar_id=scar.id) }}">
+                    Add Scar {{ loop.index }}
+                  </a>
+                {% endfor %}
+              {% endif %}
+              <!-- END: Add Scars Buttons -->
+            </div>
+
+          {% endif %}
+        {% endfor %}
+
+      {% else %}
+        <h1 class="text-warn">Waiting for Pack</h1>
+      {% endif %}
+    </div>
+  </div>
+
+{% endmacro %}

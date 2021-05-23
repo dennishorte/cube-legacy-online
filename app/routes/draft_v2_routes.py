@@ -52,7 +52,7 @@ def draft_v2_new():
     db.session.add(draft)
     db.session.commit()
 
-    draft_info = DraftInfo({})
+    draft_info = DraftInfo.factory()
     draft_info.name_set(draft.name)
     draft.info_set(draft_info)
 
@@ -113,8 +113,11 @@ def draft_v2_start(draft_id):
     draft = DraftV2.query.get(draft_id)
     assert draft.state == DraftStates.SETUP, f"Can't start a draft in state {draft.state}"
 
-    for round_setup in draft.info().rounds():
-        RoundBuilder.build(round_setup, draft.info().user_data())
+    info = draft.info()
+
+    for round_setup in info.rounds():
+        new_card_data = RoundBuilder.build(round_setup, draft.info().user_data())
+        info.card_data().update(new_card_data)
 
     draft.state = DraftStates.ACTIVE
     draft.info_save()

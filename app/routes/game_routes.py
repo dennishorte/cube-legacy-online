@@ -112,6 +112,12 @@ def game_draft_fight(draft_id, opp_id):
     return redirect(url_for('game', game_id=game.id))
 
 
+@app.route("/game/draft_v2_fight/<draft_id>/<opp_id>")
+@login_required
+def game_draft_v2_fight(draft_id, opp_id):
+    return "fight!"
+
+
 @app.route("/game/<game_id>/edit_name", methods=["POST"])
 @login_required
 def game_edit_name(game_id):

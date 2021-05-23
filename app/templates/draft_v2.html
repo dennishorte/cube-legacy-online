@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
+
+{% from "macros/draft/pack_picker.html" import pack_picker %}
+{% from "macros/draft/rotisserie_picker.html" import rotisserie_picker %}
+
+
 {% block title_suffix %}
-  Draft
+  Draft - {{ draft.name }}
 {% endblock %}
 
 
 {% block content %}
-  {% set i = draft.info() %}
+  {% set info = draft.info() %}
 
 
   <div class="row">
@@ -73,7 +78,7 @@
         </div>
 
         <h2>Players</h2>
-        {% for user_id in i.user_ids() %}
+        {% for user_id in info.user_ids() %}
           <p>{{ user_id }}</p>
         {% endfor %}
 
@@ -88,10 +93,15 @@
           </thead>
 
           <tbody>
-            {% for datum in i.user_data() %}
+            {% for user_id in info.user_ids() %}
               <tr>
-                {% set user = user_map[datum['user_id']] %}
-                <td>{{ user.name }}</td>
+                {% set user = info.user_data(user_id) %}
+                <td>
+                  {{ user['name'] }}
+                  {% if user_id != current_user.id %}
+                    (<a href="{{ url_for('game_draft_v2_fight', draft_id=draft.id, opp_id=user.id) }}">fight!</a>)
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -102,6 +112,33 @@
     <!-- END: Seating / Results -->
 
   </div>
+
+
+  <!-- Card Picker -->
+  <div class="row no-gutters mt-2">
+    <div class="col">
+      {% if draft.state == 'active' %}
+        <h2 class="text-primary">Card Picker</h2>
+
+        {% set round_style = draft.info().current_round(user)['style'] %}
+
+        {% if round_style == 'cube-pack' %}
+          {{ pack_picker(draft, current_user.id) }}
+        {% elif round_style == 'rotisserie' %}
+          {{ rotisserie_picker(draft, current_user.id) }}
+        {% else %}
+          <h2 class="text-danger">Unsupported Round Style: {{ round_style }}</h2>
+        {% endif %}
+      {% elif draft.state == 'complete' %}
+        <p>draft is finished</p>
+      {% elif draft.state == 'killed' %}
+        <h1>draft was killed</h1>
+      {% else %}
+        <!-- show nothing for other states -->
+      {% endif %}
+    </div>
+  </div>
+  <!-- END: Card Picker -->
 
 
   <div class="modal fade" id="edit-draft-name-modal" tabindex="-1" role="dialog">
@@ -172,7 +209,7 @@
             </div>
 
             <select id="round-type-selector" class="form-control" size="2">
-              <option value="cube_pack">Cube Packs</option>
+              <option value="cube-pack">Cube Packs</option>
               <option value="rotisserie">Rotisserie</option>
             </select>
           </div>
