@@ -19,16 +19,16 @@
               <a
                 class="plain-link"
                 {% if can_be_drafted %}
-                  {{ url_for('draft_v2_pick', draft_id=draft.id, card_id=card.id) }}
+                  {{ url_for('draft_v2_pack_pick', draft_id=draft.id, card_id=card.id) }}
                 {% endif %}
               >
-                {{ card_frame(220, card.cube_card.id, not can_be_drafted) }}
+                {{ card_frame(220, card_id, not can_be_drafted) }}
               </a>
 
               <!-- Add Scars Buttons -->
-              {% if info.is_scarring_round(user) %}
+              {% if info.is_scar_round(user) %}
                 {% for scar in info.scar_options(user) %}
-                  <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card.cube_card.id, scar_id=scar.id) }}">
+                  <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card_id, scar_id=scar.id) }}">
                     Add Scar {{ loop.index }}
                   </a>
                 {% endfor %}

@@ -26,18 +26,17 @@ class RoundBuilder(object):
             raise ValueError(f"Unknown draft style: {setup['style']}")
 
     @staticmethod
-    def cube_packs(setup: dict, user_data: dict):
+    def cube_packs(setup: dict, user_data: list):
         # Create a separate 'more_setup' dict here and merge it into the setup dict at the end.
         # Creating it here makes it easy to see what keys are added.
         more_setup = {
             'packs': [],  # pack id to pack mapping
+            'picks': [],  # { 'user_id': id, 'pack_id': pack_id, 'card_id': card_id }
         }
 
         cube = Cube.query.get(setup['cube_id'])
         wrapper = CubeWrapper(cube)
         card_data = wrapper.card_data()
-
-        user_data_list = list(user_data.values())
 
         num_packs = setup['num_packs']
         pack_size = setup['pack_size']
@@ -54,16 +53,16 @@ class RoundBuilder(object):
         for i in range(pack_count):
             start = i * pack_size
             end = start + pack_size
-            user_id = user_data_list[i // num_packs]['user_id']
-            assert isinstance(user_id, str), "User ids should be strings"
+            user_id = user_data[i // num_packs]['id']
 
             pack = {
-                'pack_id': str(i),
+                'pack_id': i,
                 'card_ids': card_ids[start:end],
                 'user_id': user_id,  # User who opens pack
-                'round': i % num_packs,  # Order of pack opening
+                'pack_num': i % num_packs,  # Order of pack opening
                 'waiting_id': user_id,  # User who needs to pick from this pack
-                'picked_ids': []
+                'picked_ids': [],
+                'opened': False,
             }
 
             more_setup['packs'].append(pack)
@@ -77,11 +76,13 @@ class RoundBuilder(object):
 
 
     @staticmethod
-    def rotisserie(setup: dict, user_data: dict):
+    def rotisserie(setup: dict, user_data: list):
         cube = Cube.query.get(setup['cube_id'])
         wrapper = CubeWrapper(cube)
         card_data = wrapper.card_data()
         setup['card_ids'] = list(card_data.keys())
-        setup['picked'] = {}
+        setup['picked_ids'] = []
+        setup['first_pick_id'] = random.choice(user_data)['id']
+        setup['direction'] = 'forward'
 
         return card_data

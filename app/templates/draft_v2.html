@@ -120,11 +120,13 @@
       {% if draft.state == 'active' %}
         <h2 class="text-primary">Card Picker</h2>
 
-        {% set round_style = draft.info().current_round(user)['style'] %}
+        {% set round_style = draft.info().current_round(current_user)['style'] %}
 
         {% if round_style == 'cube-pack' %}
+          Pack Picker
           {{ pack_picker(draft, current_user.id) }}
         {% elif round_style == 'rotisserie' %}
+          Rotisserie Picker
           {{ rotisserie_picker(draft, current_user.id) }}
         {% else %}
           <h2 class="text-danger">Unsupported Round Style: {{ round_style }}</h2>

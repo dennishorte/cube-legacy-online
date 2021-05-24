@@ -13,6 +13,8 @@ from app.util.draft.draft_info import DraftInfo
 class DraftStates(object):
     SETUP = 'setup'
     ACTIVE = 'active'
+    COMPLETE = 'complete'
+    KILLED = 'killed'
 
 
 class DraftV2(db.Model):
