@@ -256,6 +256,23 @@
 
 {% block scripts %}
   <script>
+   function fill_card_frames() {
+     $('.closeup-card-wrapper').each(function() {
+       if (!window.card_data)
+         return
+
+       let elem = $(this)
+       let card_id = elem.data('card-id')
+       let data = window.card_data[card_id]
+       if (!data) {
+         console.log(card_id)
+         return
+       }
+
+       clo.util.draw_card_frame(elem, data)
+     })
+   }
+
    function round_add() {
      const link = "{{ url_for('draft_v2_round_add', draft_id=draft.id) }}"
      const cube_id = $('#round-cube-selector').val()
@@ -291,6 +308,9 @@
    }
 
    $(document).ready(function() {
+     autocard_init('card-list-item', true)
+     window.card_data = {{ draft.info().card_data()|tojson }}
+     fill_card_frames()
 
      $('#round-type-selector').change(function() {
        const round_type = $(this).val()
