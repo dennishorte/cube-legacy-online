@@ -36,7 +36,7 @@ class DraftInfo(object):
 
         self.user_data().append({
             'id': user_model.id,
-            'deck': {},
+            'deck': [],
             'declined': False,
             'name': user_model.name,
         })
@@ -44,11 +44,38 @@ class DraftInfo(object):
     ############################################################
     # General Draft Functions
 
-    def can_be_drafted(self, card_id, user):
-        return True
+    def can_be_drafted(self, user_id, card_id):
+        user_id = self._format_user_id(user_id)
+        current_round = self.current_round(user_id)
 
-    def can_be_seen(self, card_id, user):
-        return True
+        if current_round['style'] == 'cube-pack':
+            pack = self.next_pack(user_id)
+            if not pack:
+                return False
+            else:
+                return card_id not in pack['picked_ids']
+
+        else:
+            return True
+
+    def can_be_seen(self, user_id, card_id):
+        user_id = self._format_user_id(user_id)
+        current_round = self.current_round(user_id)
+
+        if current_round['style'] == 'cube-pack':
+            # In a pack draft, the user can see any cards that were in the pack when they
+            # first saw it.
+            pack = self.next_pack(user_id)
+            for event in pack['events']:
+                if event['user_id'] == user_id:
+                    return True
+                elif event['name'] == 'card_picked' and event['card_id'] == card_id:
+                    return False
+
+            return True
+
+        else:
+            return True
 
     def card(self, card_id):
         card_id = str(card_id)
@@ -84,8 +111,7 @@ class DraftInfo(object):
     def round_finalize(self, rnd):
         assert self.round_is_complete(rnd), "Can't finalize an unfinished round."
         rnd['finished'] = True
-        index = self.rounds().indexof(rnd)
-        assert index > -1, "Unable to get proper index for round."
+        index = self.rounds().index(rnd)
 
         if index + 1 < len(self.rounds()):
             self.round_start(self.rounds()[index + 1])
@@ -116,6 +142,14 @@ class DraftInfo(object):
 
     def rounds(self):
         return self.data.get('rounds', [])
+
+    def seat_index(self, user_id):
+        user_id = self._format_user_id(user_id)
+        for i, datum in enumerate(self.user_data()):
+            if datum['id'] == user_id:
+                return i
+
+        raise ValueError(f"Unknown user id {user_id}")
 
     def user_decline(self, user_id, value=True):
         user_id = self._format_user_id(user_id)
@@ -159,6 +193,39 @@ class DraftInfo(object):
     def is_scar_round(self, user_id):
         return False
 
+    def make_pack_pick(self, user_id, card_id):
+        user_id = self._format_user_id(user_id)
+        card_id = int(card_id)
+        pack = self.next_pack(user_id)
+        current_round = self.current_round(user_id)
+
+        # ensure the card is in the pack
+        if card_id not in pack['card_ids']:
+            raise ValueError(f"Card {card_id} is not in pack {pack['pack_id']}")
+
+        # ensure the card has not already been picked
+        if card_id in pack['picked_ids']:
+            raise ValueError(f"Card {card_id} is picked from pack {pack['pack_id']}")
+
+        # ensure this user is allowed to pick this card
+        if not self.can_be_drafted(user_id, card_id):
+            raise ValueError(f"User {user_id} is not allowed to draft card {card_id}")
+
+        # Make the pick
+        pack['picked_ids'].append(card_id)
+        pack['events'].append({
+            'name': 'card_picked',
+            'user_id': user_id,
+            'card_id': card_id,
+        })
+        self.user_data(user_id)['deck'].append(card_id)
+
+        # Pass the pack or open the next pack
+        if len(pack['picked_ids']) == len(pack['card_ids']):
+            self._open_next_pack()
+        else:
+            self._pack_pass(current_round, pack)
+
     def next_pack(self, user_id):
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
@@ -170,7 +237,7 @@ class DraftInfo(object):
             return None
 
         waiting_packs = list(filter(lambda x: x['waiting_id'] == user_id, current_round['packs']))
-        waiting_packs.sort(key=lambda pack: (pack['pack_num'], -len(pack['picked_ids'])))
+        waiting_packs.sort(key=lambda pack: (pack['pack_num'], len(pack['picked_ids'])))
 
         if waiting_packs and waiting_packs[0]['opened']:
             return waiting_packs[0]
@@ -198,6 +265,30 @@ class DraftInfo(object):
         elif isinstance(user_id, dict):
             return self._format_user_id(user_id['id'])
         elif hasattr(user_id, 'id'):
-            return self._format_user_id(user_id = user_id.id)
+            return self._format_user_id(user_id.id)
         else:
             return user_id
+
+    def _pack_open_next(self, current_round, current_pack):
+        next_pack_num = current_pack['pack_num'] + 1
+
+        # No more packs for this user
+        if next_pack_num >= current_round['num_packs']:
+            return
+
+        for p in current_round['packs']:
+            if p['user_id'] == user_id and p['pack_num'] == next_pack_num:
+                p['opened'] = True
+                return
+
+    def _pack_pass(self, rnd, pack):
+        # Decide direction to pass
+        if pack['pack_num'] % 2 == 0:
+            increment = 1
+        else:
+            increment = -1
+
+        seat_index = self.seat_index(pack['waiting_id'])
+        next_index = (seat_index + increment) % len(self.user_data())
+
+        pack['waiting_id'] = self.user_data()[next_index]['id']

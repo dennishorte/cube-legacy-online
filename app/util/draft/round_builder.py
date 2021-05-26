@@ -62,6 +62,7 @@ class RoundBuilder(object):
                 'pack_num': i % num_packs,  # Order of pack opening
                 'waiting_id': user_id,  # User who needs to pick from this pack
                 'picked_ids': [],
+                'events': [],
                 'opened': False,
             }
 

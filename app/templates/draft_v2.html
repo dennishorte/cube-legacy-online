@@ -89,6 +89,7 @@
           <thead class="thead-light">
             <tr>
               <th>name</th>
+              <th></th>
             </tr>
           </thead>
 
@@ -101,6 +102,10 @@
                   {% if user_id != current_user.id %}
                     (<a href="{{ url_for('game_draft_v2_fight', draft_id=draft.id, opp_id=user.id) }}">fight!</a>)
                   {% endif %}
+                </td>
+
+                <td>
+                  <a href="{{ url_for('draft_v2_force', draft_id=draft.id, user_id=user_id) }}">force</a>
                 </td>
               </tr>
             {% endfor %}
@@ -115,15 +120,14 @@
 
 
   <!-- Card Picker -->
-  <div class="row no-gutters mt-2">
-    <div class="col">
+  <div class="row">
+    <div class="col p-0">
       {% if draft.state == 'active' %}
         <h2 class="text-primary">Card Picker</h2>
 
         {% set round_style = draft.info().current_round(current_user)['style'] %}
 
         {% if round_style == 'cube-pack' %}
-          Pack Picker
           {{ pack_picker(draft, current_user.id) }}
         {% elif round_style == 'rotisserie' %}
           Rotisserie Picker

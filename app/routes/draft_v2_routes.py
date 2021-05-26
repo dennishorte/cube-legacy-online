@@ -62,6 +62,12 @@ def draft_v2_new():
     return redirect(url_for('draft_v2', draft_id=draft.id))
 
 
+@app.route('/draft_v2/<draft_id>/force/<user_id>')
+@login_required
+def draft_v2_force(draft_id, user_id):
+    return "force"
+
+
 @app.route('/draft_v2/<draft_id>/name_update')
 @login_required
 def draft_v2_name_update(draft_id):
@@ -78,7 +84,11 @@ def draft_v2_name_update(draft_id):
 @app.route('/draft_v2/<draft_id>/pick/<card_id>')
 @login_required
 def draft_v2_pack_pick(draft_id, card_id):
-    return "pick"
+    draft = DraftV2.query.get(draft_id)
+    draft.info().make_pack_pick(current_user, card_id)
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
 @app.route('/draft_v2/<draft_id>/round_add')
