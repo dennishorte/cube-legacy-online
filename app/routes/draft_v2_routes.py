@@ -32,6 +32,8 @@ def draft_v2(draft_id):
     for user_id in draft.info().user_ids():
         user_map[user_id] = User.query.get(user_id)
 
+    print(draft.info().user_data(current_user))
+
     return render_template(
         'draft_v2.html',
         draft = draft,
@@ -39,6 +41,31 @@ def draft_v2(draft_id):
         all_users = all_users,  # Used for adding new users
         user_map = user_map,  # Used for fetching user data from game data
     )
+
+
+@app.route('/draft_v2/<draft_id>/deck_save', methods=["POST"])
+@login_required
+def draft_v2_deck_save(draft_id):
+    raise NotImplementedError()
+
+
+@app.route('/draft_v2/<draft_id>/force/<user_id>')
+@login_required
+def draft_v2_force(draft_id, user_id):
+    return "force"
+
+
+@app.route('/draft_v2/<draft_id>/name_update')
+@login_required
+def draft_v2_name_update(draft_id):
+    new_name = request.args.get('name').strip()
+    if not new_name:
+        return "Empty name specified"
+
+    draft = DraftV2.query.get(draft_id)
+    draft.name_set(new_name)
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
 @app.route('/draft_v2/new')
@@ -62,26 +89,7 @@ def draft_v2_new():
     return redirect(url_for('draft_v2', draft_id=draft.id))
 
 
-@app.route('/draft_v2/<draft_id>/force/<user_id>')
-@login_required
-def draft_v2_force(draft_id, user_id):
-    return "force"
-
-
-@app.route('/draft_v2/<draft_id>/name_update')
-@login_required
-def draft_v2_name_update(draft_id):
-    new_name = request.args.get('name').strip()
-    if not new_name:
-        return "Empty name specified"
-
-    draft = DraftV2.query.get(draft_id)
-    draft.name_set(new_name)
-
-    return redirect(url_for('draft_v2', draft_id=draft_id))
-
-
-@app.route('/draft_v2/<draft_id>/pick/<card_id>')
+@app.route('/draft_v2/<draft_id>/pack_pick/<card_id>')
 @login_required
 def draft_v2_pack_pick(draft_id, card_id):
     draft = DraftV2.query.get(draft_id)

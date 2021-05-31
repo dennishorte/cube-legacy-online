@@ -1,5 +1,169 @@
+{% macro _deck_builder_row(classes_str, card_id_dict) %}
+  {# id: used to update the card counts by deck_builder.js #}
+
+  <div class="row deckbuilder-row {{ classes_str }}">
+    {% for cmc in range(8) %}
+
+      {# Cards under this header #}
+      {% if cmc == 7 %}
+        {% set cmc_string = '7+' %}
+      {% else %}
+        {% set cmc_string = cmc|string %}
+      {% endif %}
+
+      <div class="col deckbuilder-col">
+        <div class="m-0 border bg-light rounded">
+          <div class="text-center">
+            <p class="deckbuilder-col-header">{{ cmc_string }}</p>
+          </div>
+          <ul class="card-list sortable list-unstyled">
+            {% for card_id in card_id_dict[cmc_string] %}
+              <li class="card-list-item deck-builder-card" data-card-id="{{ card_id }}">
+                {{ card_id }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
 
 {# deck_info is of type app.util.deck_info.DeckInfo #}
-{% macro deck_builder_v2(deck_info) %}
+{% macro deck_builder_v2(draft, deck_info) %}
+  <div class="deck-builder">
+    <div
+      style="display:none"
+      data-save-url="{{ url_for('draft_v2_deck_save', draft_id=draft.id) }}"
+      id="saveMeta">
+    </div>
 
+    <div class="row" id="deckbuilderInfo">
+      <div class="col col-4 framed">
+        <h4>Deck Builder</h4>
+
+        <p><strong>Name: </strong>{{ deck_info.name() }}</p>
+
+
+        <p class="text-secondary ml-2 mb-0 border-bottom">Deck Actions</p>
+        <ul class="list-unstyled">
+          <li>
+            <a href="#" id="saveLink">
+              save
+            </a>
+          </li>
+
+          <li>
+            <a href="#import-card-modal" data-toggle="modal">
+              add cards
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- Card Counts -->
+      <div class="col col-2 framed">
+        <h5>Card Counts</h5>
+        <ul class="list-unstyled">
+          <li>
+            Total:
+            <span id="countMaindeck"></span>
+          </li>
+          <li>
+            Creatures:
+            <span id="countCreatures"</span>
+          </li>
+          <li>
+            Others:
+
+            <span id="countOther"</span>
+          </li>
+          <li>
+            Lands:
+            <span id="countLands"</span>
+          </li>
+        </ul>
+      </div>
+      <!-- END: Card Counts -->
+
+
+      <!-- Basic Lands -->
+      <div class="col col-2 framed">
+        <h5>Basic Lands</h5>
+
+        {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
+          <div class="basic-selector">
+            <i class="far fa-plus-square basic-adjust basic-add"></i>
+            <i class="far fa-minus-square basic-adjust basic-remove"></i>
+            <span class="basic-type">{{ basic }}</span>
+            ...
+            <span class="basic-count">{{ deck_info.basic_counts(basic) }}</span>
+          </div>
+        {% endfor %}
+
+      </div>
+      <!-- END: Basic Lands -->
+
+      <div id="command" class="col col-2 framed">
+        <h5>Command Zone</h5>
+        <ul class="card-list sortable list-unstyled">
+          {% for card_id in deck_info.command_ids() %}
+            {{ card_id }}
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+
+
+    <div id="maindeck">
+      <h5 class="mb-0 mt-2">Main Deck</h5>
+      {{ _deck_builder_row('maindeck creature', deck_info['data']['maindeck']['creature']) }}
+      {{ _deck_builder_row('maindeck other', deck_info['data']['maindeck']['non_creature']) }}
+    </div>
+
+    <div id="sideboard">
+      <h5 class="mb-0 mt-2">Sideboard</h5>
+      {{ _deck_builder_row('sideboard creature', deck_info['data']['sideboard']['creature']) }}
+      {{ _deck_builder_row('sideboard other', deck_info['data']['sideboard']['non_creature']) }}
+    </div>
+
+  </div>
+
+  <script>
+   function init_deck_builder() {
+     $('.deck-builder-card').each(function(index, e) {
+       const elem = $(e)
+       const card_id = elem.data('card-id')
+       const data = window.card_data[card_id]
+       const front = data['card_faces'][0]
+       const back = data['card_faces'][1]
+
+       elem.attr('data-front', front['art_crop_url'])
+       if (back) {
+         elem.attr('data-back', back['art_crop_url'])
+       }
+
+       elem.text(data['name'])
+
+       if (front.achievements) {
+         const ach_elem = $('<i class="fab fa-font-awesome-flag">')
+         elem.prepend(ach_elem)
+       }
+
+       if (front.scarred || (back && back.scarred)) {
+         const scar_elem = $('<i class="fas fa-bolt">')
+         elem.prepend(scar_elem)
+       }
+
+       if (front.mana_cost) {
+         const mana_elem = $('<div class="card-mana-cost" style="float: right; font-size: .6rem;">')
+         mana_elem.append(clo.util.mana_symbols_from_string(front.mana_cost))
+         elem.prepend(mana_elem)
+       }
+     })
+   }
+  </script>
 {% endmacro %}

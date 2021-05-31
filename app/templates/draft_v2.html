@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 
+{% from "macros/deck_builder_v2.html" import deck_builder_v2 %}
 {% from "macros/draft/pack_picker.html" import pack_picker %}
 {% from "macros/draft/rotisserie_picker.html" import rotisserie_picker %}
 
@@ -145,6 +146,10 @@
     </div>
   </div>
   <!-- END: Card Picker -->
+
+  {% if draft.state != 'setup' %}
+    {{ deck_builder_v2(draft, info.deck_info(current_user)) }}
+  {% endif %}
 
 
   <div class="modal fade" id="edit-draft-name-modal" tabindex="-1" role="dialog">
@@ -312,9 +317,10 @@
    }
 
    $(document).ready(function() {
-     autocard_init('card-list-item', true)
      window.card_data = {{ draft.info().card_data()|tojson }}
      fill_card_frames()
+     init_deck_builder()
+     autocard_init('card-list-item', true)
 
      $('#round-type-selector').change(function() {
        const round_type = $(this).val()

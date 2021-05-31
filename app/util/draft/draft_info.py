@@ -1,3 +1,5 @@
+from app.util.deck_info import DeckInfo
+
 
 class DraftInfo(object):
     def __init__(self, data):
@@ -36,10 +38,22 @@ class DraftInfo(object):
 
         self.user_data().append({
             'id': user_model.id,
-            'deck': [],
+            'deck_data': DeckInfo.factory(
+                f"{user_model.name}'s {self.name()} deck",
+                self.card_data()
+            ).data,
             'declined': False,
             'name': user_model.name,
         })
+
+    ############################################################
+    # Deck Functions
+
+    def deck_info(self, user_id):
+        user_data = self.user_data(user_id)
+        print(user_data)
+        return DeckInfo(user_data['deck_data'], self.card_data())
+
 
     ############################################################
     # General Draft Functions
@@ -97,8 +111,8 @@ class DraftInfo(object):
     def json_string(self):
         return json.dumps(self.data)
 
-    def num_picked(self):
-        pass
+    def name(self):
+        return self.data['name']
 
     def pick_do(self, user_id, card_id):
         user_id = self._format_user_id(user_id)
@@ -218,7 +232,7 @@ class DraftInfo(object):
             'user_id': user_id,
             'card_id': card_id,
         })
-        self.user_data(user_id)['deck'].append(card_id)
+        self.deck_info(user_id).add_card(card_id)
 
         # Pass the pack or open the next pack
         if len(pack['picked_ids']) == len(pack['card_ids']):
