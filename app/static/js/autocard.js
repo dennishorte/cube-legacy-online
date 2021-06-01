@@ -88,7 +88,7 @@ function autocard_show_legacy_card(card_id) {
     card_data = autocardDataFetcher(card_id)
   }
   else {
-    card_data = window.card_data[card_id]
+    card_data = window.clo.card_data[card_id]
   }
 
   clo.util.draw_card_frame(

@@ -514,7 +514,7 @@
    $(document).ready(function() {
      {% if cube.style_a == 'legacy' %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ cw.card_data()|tojson }}
+       window.clo.card_data = {{ cw.card_data()|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}

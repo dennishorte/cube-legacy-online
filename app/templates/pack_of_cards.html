@@ -26,7 +26,7 @@
      $('.closeup-card-wrapper').each(function() {
        let elem = $(this)
        let card_id = elem.data('card-id')
-       let data = window.card_data[card_id]
+       let data = window.clo.card_data[card_id]
        if (!data) {
          console.log(card_id)
          return
@@ -39,7 +39,7 @@
    $(document).ready(function() {
      {% if is_legacy %}
        autocard_init('card-list-item', true)
-       window.card_data = {{ card_data|tojson }}
+       window.clo.card_data = {{ card_data|tojson }}
      {% else %}
        autocard_init('card-list-item', false)
      {% endif %}

@@ -137,7 +137,7 @@
      $('.deck-builder-card').each(function(index, e) {
        const elem = $(e)
        const card_id = elem.data('card-id')
-       const data = window.card_data[card_id]
+       const data = window.clo.card_data[card_id]
        const front = data['card_faces'][0]
        const back = data['card_faces'][1]
 
@@ -165,5 +165,64 @@
        }
      })
    }
+
+   function update_counts() {
+     const creatures = $('.maindeck.creature .card-list-item').length
+     const land = $('.maindeck.other .card-list-item.card-type-land').length
+     const other = $('.maindeck.other li').length - land
+
+     let basic_land = 0
+     $('.basic-count').each(function (i, elem) {
+       basic_land += parseInt($(elem).text())
+     })
+
+     const total = creatures + other + land + basic_land
+
+     $('#countMaindeck').text(total)
+     $('#countCreatures').text(creatures)
+     $('#countOther').text(other)
+     $('#countLands').text(land + basic_land)
+   }
+
+   document.addEventListener("DOMContentLoaded", function() {
+     window.clo.deck_info = {{ deck_info.data|tojson }};
+     update_counts()
+
+     $(".sortable").sortable({
+       connectWith: '.card-list',
+       placeholder: 'sortable-highlight',
+       start: function(e, ui){
+         ui.placeholder.height(ui.item.height())
+       },
+       stop: update_counts
+     })
+
+     // Save the deck
+     $("#saveLink").click(function() {
+       $.ajax({
+         type: 'POST',
+         url: $('#saveMeta').data('save-url'),
+         data: JSON.stringify(build_deck_data()),
+         contentType: "application/json; charset=utf-8",
+         success: function() {
+           let msg_template = $('#messageTemplate').clone()
+           msg_template.removeAttr('id')
+           msg_template.removeClass('d-none')
+           msg_template.find('p').text('Deck Saved')
+           $('#flashMessages').append(msg_template)
+         },
+         error: function(error_message) {
+           let msg_template = $('#messageTemplate').clone()
+           msg_template.removeAttr('id')
+           msg_template.removeClass('d-none')
+           msg_template.removeClass('alert-success')
+           msg_template.addClass('alert-danger')
+           msg_template.find('p').text('Error: ' + error_message)
+           console.log(error_message)
+           $('#flashMessages').append(msg_template)
+         }
+       })
+     })
+   })
   </script>
 {% endmacro %}
