@@ -164,6 +164,14 @@
       {{ deck_builder_row('sideboardCreatures', 'creature', d.card_set.sideboard().creatures()) }}
       {{ deck_builder_row('sideboardOther', 'other', d.card_set.sideboard().non_creature()) }}
     </div>
+
+    <div id="card-list" class="row">
+      <div class="col framed">
+        {% for cardname in d.deck_list() %}
+          <p class="m-0">{{ cardname }}</p>
+        {% endfor %}
+      </div>
+    </div>
   </div>
 
 
