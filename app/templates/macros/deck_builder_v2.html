@@ -16,7 +16,9 @@
           <div class="text-center">
             <p class="deckbuilder-col-header">{{ cmc_string }}</p>
           </div>
-          <ul class="card-list sortable list-unstyled">
+          <ul class="card-list sortable list-unstyled"
+              data-section-classes="{{ classes_str }}"
+              data-cmc="{{ cmc_string }}">
             {% for card_id in card_id_dict[cmc_string] %}
               <li class="card-list-item deck-builder-card" data-card-id="{{ card_id }}">
                 {{ card_id }}
@@ -108,7 +110,7 @@
 
       <div id="command" class="col col-2 framed">
         <h5>Command Zone</h5>
-        <ul class="card-list sortable list-unstyled">
+        <ul class="card-list sortable list-unstyled" data-section-classes="command">
           {% for card_id in deck_info.command_ids() %}
             {{ card_id }}
           {% endfor %}
@@ -184,6 +186,36 @@
      $('#countLands').text(land + basic_land)
    }
 
+   function update_deck_info(section_ul_elem) {
+     // Figure out what section this is.
+     const section_classes = section_ul_elem.data('section-classes')
+
+     // Grab the apppriate array from the deck data.
+     let section_array = undefined
+     if (section_classes.includes('command')) {
+       section_array = window.clo.deck_info['command']
+     }
+     else {
+       if (section_classes.includes('maindeck')) {
+         section_array = window.clo.deck_info['maindeck']
+       }
+       else {
+         section_array = window.clo.deck_info['sideboard']
+       }
+
+       const subsection = section_classes.includes('creature') ? 'creature' : 'non_creature'
+       const cmc = section_ul_elem.data('cmc')
+
+       section_array = section_array[subsection][cmc]
+     }
+
+     // Clear the array and refill it, matching the content of the section list.
+     section_array.length = 0
+     section_ul_elem.children().each(function (index, elem) {
+       section_array.push(parseInt($(elem).data('card-id')))
+     })
+   }
+
    document.addEventListener("DOMContentLoaded", function() {
      window.clo.deck_info = {{ deck_info.data|tojson }};
      update_counts()
@@ -191,10 +223,28 @@
      $(".sortable").sortable({
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
-       start: function(e, ui){
+       receive: function(e, ui) {
+         console.log('receive')
+         // This only fires when moving from one list to another.
+         // In this case, the user has changed the section that the card is in.
+         // The `ui.sender` field is where the card came from.
+
+         // Update the deck data for the field where the card came from.
+         update_deck_info(ui.sender)
+       },
+       start: function(e, ui) {
+         console.log('start')
          ui.placeholder.height(ui.item.height())
        },
-       stop: update_counts
+       stop: function(e, ui) {
+         console.log('stop')
+         // This fires when the user drops the item they were sorting, even if the final
+         // position has not changed. The `ui.sender` field is always null for this event.
+         update_counts()
+
+         // Update the deck data for the field where the item ended up.
+         update_deck_info(ui.item.parent())
+       },
      })
 
      // Save the deck
@@ -202,7 +252,7 @@
        $.ajax({
          type: 'POST',
          url: $('#saveMeta').data('save-url'),
-         data: JSON.stringify(build_deck_data()),
+         data: JSON.stringify(window.clo.deck_info),
          contentType: "application/json; charset=utf-8",
          success: function() {
            let msg_template = $('#messageTemplate').clone()
