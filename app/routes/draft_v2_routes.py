@@ -46,7 +46,10 @@ def draft_v2(draft_id):
 @app.route('/draft_v2/<draft_id>/deck_save', methods=["POST"])
 @login_required
 def draft_v2_deck_save(draft_id):
-    raise NotImplementedError()
+    draft = DraftV2.query.get(draft_id)
+    draft.info().deck_update(current_user, request.json)
+    draft.info_save()
+    return 'success'
 
 
 @app.route('/draft_v2/<draft_id>/force/<user_id>')

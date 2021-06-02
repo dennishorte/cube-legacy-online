@@ -46,13 +46,17 @@ class DraftInfo(object):
             'name': user_model.name,
         })
 
+
     ############################################################
     # Deck Functions
 
     def deck_info(self, user_id):
         user_data = self.user_data(user_id)
-        print(user_data)
         return DeckInfo(user_data['deck_data'], self.card_data())
+
+    def deck_update(self, user_id, deck_json):
+        user_data = self.user_data(user_id)
+        user_data['deck_data'] = deck_json
 
 
     ############################################################

@@ -30,7 +30,7 @@ class DraftV2(db.Model):
         return self._info_cache
 
     def info_save(self):
-        self.data_json = json.dumps(self._info_cache.data)
+        self.data_json = json.dumps(self.info().data)
         db.session.add(self)
         db.session.commit()
 

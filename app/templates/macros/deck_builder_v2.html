@@ -38,7 +38,7 @@
     <div
       style="display:none"
       data-save-url="{{ url_for('draft_v2_deck_save', draft_id=draft.id) }}"
-      id="saveMeta">
+      id="save-meta">
     </div>
 
     <div class="row" id="deckbuilderInfo">
@@ -51,7 +51,7 @@
         <p class="text-secondary ml-2 mb-0 border-bottom">Deck Actions</p>
         <ul class="list-unstyled">
           <li>
-            <a href="#" id="saveLink">
+            <a href="#" id="save-link">
               save
             </a>
           </li>
@@ -112,7 +112,9 @@
         <h5>Command Zone</h5>
         <ul class="card-list sortable list-unstyled" data-section-classes="command">
           {% for card_id in deck_info.command_ids() %}
-            {{ card_id }}
+            <li class="card-list-item deck-builder-card" data-card-id="{{ card_id }}">
+              {{ card_id }}
+            </li>
           {% endfor %}
         </ul>
       </div>
@@ -224,7 +226,6 @@
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
        receive: function(e, ui) {
-         console.log('receive')
          // This only fires when moving from one list to another.
          // In this case, the user has changed the section that the card is in.
          // The `ui.sender` field is where the card came from.
@@ -233,11 +234,9 @@
          update_deck_info(ui.sender)
        },
        start: function(e, ui) {
-         console.log('start')
          ui.placeholder.height(ui.item.height())
        },
        stop: function(e, ui) {
-         console.log('stop')
          // This fires when the user drops the item they were sorting, even if the final
          // position has not changed. The `ui.sender` field is always null for this event.
          update_counts()
@@ -248,10 +247,10 @@
      })
 
      // Save the deck
-     $("#saveLink").click(function() {
+     $("#save-link").click(function() {
        $.ajax({
          type: 'POST',
-         url: $('#saveMeta').data('save-url'),
+         url: $('#save-meta').data('save-url'),
          data: JSON.stringify(window.clo.deck_info),
          contentType: "application/json; charset=utf-8",
          success: function() {
