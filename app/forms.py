@@ -385,15 +385,6 @@ class NewAchievementForm(FlaskForm):
         return flat
 
 
-class NewFactionForm(FlaskForm):
-    id = HiddenField('Faction ID')
-    name = StringField('Faction Name')
-    desc = TextAreaField('Description')
-    memb = TextAreaField('Membership Criteria')
-    note = TextAreaField('Notes')
-    submit = SubmitField('Create/Update')
-
-
 class NewScarForm(FlaskForm):
     text = TextAreaField('Scar Text', validators=[DataRequired()])
     restrictions = StringField('Restrictions')

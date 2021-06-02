@@ -156,20 +156,6 @@ def cube_data(cube_id):
     )
 
 
-@app.route("/cube/<cube_id>/factions")
-@login_required
-def cube_factions(cube_id):
-    cube = Cube.query.get(cube_id)
-    form = NewFactionForm()
-
-    return render_template(
-        'cube_factions.html',
-        cube=cube,
-        cw=CubeWrapper(cube),
-        form=form,
-    )
-
-
 @app.route("/cube/<cube_id>/search", methods=["POST"])
 @login_required
 def cube_search(cube_id):
@@ -219,36 +205,6 @@ def cube_interns(cube_id):
         live_interns=live_interns,
         dead_interns=dead_interns,
     )
-
-
-@app.route("/cube/<cube_id>/factions/edit", methods=["POST"])
-@login_required
-def cube_edit_faction(cube_id):
-    cube = Cube.query.get(cube_id)
-    form = NewFactionForm()
-
-    if form.validate_on_submit():
-        if form.id.data:
-            faction = Faction.query.get(form.id.data)
-            flash('Faction updated')
-        else:
-            faction = Faction()
-            faction.cube_id = cube_id
-            flash('New faction created!')
-
-        faction.name = form.name.data.strip()
-        faction.desc = form.desc.data.strip()
-        faction.memb = form.memb.data.strip()
-        faction.note = form.note.data.strip()
-
-        db.session.add(faction)
-        db.session.commit()
-
-
-    else:
-        flash('Error creating new faction')
-
-    return redirect(url_for('cube_factions', cube_id=cube_id))
 
 
 @app.route("/cube/<cube_id>/link_achievement", methods=["POST"])

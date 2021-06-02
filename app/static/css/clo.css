@@ -270,37 +270,6 @@ body {
   flex-shrink: 0;
 }
 
-.faction p {
-  margin: 0;
-  padding: 0;
-}
-
-.faction-header {
-  margin-top: .5rem!important;
-  border-bottom: 1px solid var(--gray);
-  color: var(--gray);
-}
-
-.faction-name {
-  font-weight: bold;
-}
-
-.faction-desc {
-  font-size: .8rem;
-  font-style: italic;
-  color: var(--cyan);
-}
-
-.faction-age {
-  font-size: .8rem;
-  color: var(--gray);
-  margin-left: 4px!important;
-}
-
-.faction-edit-button {
-  float: right;
-}
-
 #edit-monikers {
   float: right;
   margin: .5rem;

@@ -50,9 +50,6 @@ class AchievementsWrapper(object):
             sort_key = SortKey(lambda x: (-x.xp, x.name)),
         )
 
-    def faction(self):
-        return self._with_filter(lambda x: x.available() and 'faction' in x.conditions.lower())
-
     def linked(self):
         return self._with_filter(lambda x: bool(x.linked_cards))
 

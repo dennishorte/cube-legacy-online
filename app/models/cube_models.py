@@ -7,7 +7,6 @@ from datetime import datetime
 from app import db
 from app.models.user_models import *
 from app.util import card_util
-from app.util import faction_util
 from app.util import cockatrice
 from app.util.card_diff import CardDiffer
 from app.util.card_util import color_sort_key
@@ -65,7 +64,6 @@ class Cube(db.Model):
     _cards = db.relationship('CubeCard', backref='cube')
     achievements = db.relationship('Achievement', backref='cube')
     drafts = db.relationship('Draft', backref='cube')
-    factions= db.relationship('Faction', backref='cube')
     scars = db.relationship('Scar', backref='cube')
     searches = db.relationship('CubeSearch', backref='cube')
 
@@ -290,9 +288,6 @@ class CubeCard(db.Model):
 
         return json.loads(self.diff)
 
-    def get_factions(self):
-        return faction_util.factions_for_card(self)
-
     def get_json(self):
         if not self._json_cached:
             data = json.loads(self.json)
@@ -333,10 +328,6 @@ class CubeCard(db.Model):
                         old_name = name_diff['original']
                         card_face = data['card_faces'][i]
                         card_face['scarred_oracle_text'] = card_face['scarred_oracle_text'].replace(old_name, new_name)
-
-            factions = self.get_factions()
-            for i in range(len(factions)):
-                data['card_faces'][i]['factions'] = factions[i]
 
         return self._json_cached
 
@@ -675,27 +666,6 @@ class AchievementStar(db.Model):
 
     def __repr__(self):
         return f"AchievementStar({self.ach_id},{self.user_id})"
-
-
-class Faction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    cube_id = db.Column(db.Integer, db.ForeignKey('cube.id'))
-    name = db.Column(db.String(128))
-    desc = db.Column(db.Text)  # Description
-    memb = db.Column(db.Text)  # Membership criteria
-    note = db.Column(db.Text)  # Notes
-
-    def age(self):
-        age = datetime.utcnow() - self.created_at
-        years = age.days // 365
-        days = age.days % 365
-
-        if years > 0:
-            return f"{years} years {days} days"
-        else:
-            return f"{days} days"
 
 
 class CubeSearch(db.Model):
