@@ -92,7 +92,7 @@
 
 
       <!-- Basic Lands -->
-      <div class="col col-2 framed">
+      <div id="deck-builder-basic-land" class="col col-2 framed">
         <h5>Basic Lands</h5>
 
         {% for basic in ['Forest', 'Island', 'Mountain', 'Plains', 'Swamp', 'Wastes'] %}
@@ -137,6 +137,20 @@
   </div>
 
   <script>
+   function basic_land_adjust() {
+     const button = $(this)
+     const parent = button.parent('.basic-selector')
+
+     const diff = button.hasClass('basic-add') ? 1 : -1
+     const count_span = parent.find('.basic-count')
+     const count = Math.max(0, parseInt(count_span.text()) + diff)
+
+     count_span.text(count)
+
+     update_counts()
+     update_deck_info_basic_lands()
+   }
+
    function init_deck_builder() {
      $('.deck-builder-card').each(function(index, e) {
        const elem = $(e)
@@ -218,10 +232,26 @@
      })
    }
 
+   function update_deck_info_basic_lands() {
+     const basic_lands_elem = $('#deck-builder-basic-land')
+     basic_lands_elem.find('.basic-selector').each(function(index, elem) {
+       elem = $(elem)
+       const basic_type = elem.find('.basic-type').text().toLowerCase()
+       const basic_count = parseInt(elem.find('.basic-count').text())
+
+       window.clo.deck_info.basic_land[basic_type] = basic_count
+     })
+   }
+
    document.addEventListener("DOMContentLoaded", function() {
      window.clo.deck_info = {{ deck_info.data|tojson }};
      update_counts()
 
+     // Basic Land Selectors
+     $('.basic-adjust').click(basic_land_adjust)
+     $('.basic-selector').disableSelection()
+
+     // Drag and drop deck management
      $(".sortable").sortable({
        connectWith: '.card-list',
        placeholder: 'sortable-highlight',
