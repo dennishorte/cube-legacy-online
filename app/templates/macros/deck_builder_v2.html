@@ -51,7 +51,7 @@
         <p class="text-secondary ml-2 mb-0 border-bottom">Deck Actions</p>
         <ul class="list-unstyled">
           <li>
-            <a href="#" id="save-link">
+            <a href="#" onclick="save_deck()">
               save
             </a>
           </li>
@@ -60,8 +60,15 @@
             <a href="#import-card-modal" data-toggle="modal">
               add cards
             </a>
+            <span class="text-xs font-italic">automatically saves deck</span>
           </li>
 
+          <li>
+            <a href="#remove-card-modal" data-toggle="modal">
+              remove cards
+            </a>
+            <span class="text-xs font-italic">automatically saves deck</span>
+          </li>
         </ul>
       </div>
 
@@ -136,7 +143,105 @@
 
   </div>
 
+
+<!-- Import Card Modal -->
+  <div class="modal fade" id="import-card-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Import Card</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <form>
+          <div class="modal-body">
+
+            <div class="row no-gutters">
+              <div class="col form-group">
+                <label for="import-card-name">Name</label>
+                <input id="import-card-name" type="text" class="form-control">
+              </div>
+
+              <div class="col form-group pl-1">
+                <label for="import-card-id">ID</label>
+                <input id="import-card-id" type="text" class="form-control">
+              </div>
+            </div>
+
+          </div> <!-- modal-body -->
+
+          <div class="modal-footer">
+            <button id="import-card-submit" type="button" class="btn btn-primary">import</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Import Card Modal -->
+
+
+  <!-- Import Select Modal -->
+  <div class="modal fade" id="import-select-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Select Card Version</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <form>
+
+            <div class="col form-group pl-1">
+              <p id="import-select-name"></p>
+            </div>
+
+            <div>
+              <ul class="list-unstyled" id="import-select-version">
+              </ul>
+            </div>
+
+          </form>
+        </div> <!-- modal-body -->
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Import Select Modal -->
+
+
+  <!-- Card Added Modal -->
+  <div class="modal fade" id="card-added-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Card Added</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+        </div> <!-- modal-body -->
+
+        <div class="modal-footer">
+          <a href="{{ url_for('draft_v2', draft_id=draft.id) }}" class="btn btn-primary">Reload</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- END: Import Select Modal -->
+
+
   <script>
+   function add_card_to_deck(card_data) {
+     console.log('add_card_to_deck')
+     console.log(card_data)
+   }
+
    function basic_land_adjust() {
      const button = $(this)
      const parent = button.parent('.basic-selector')
@@ -180,6 +285,145 @@
          const mana_elem = $('<div class="card-mana-cost" style="float: right; font-size: .6rem;">')
          mana_elem.append(clo.util.mana_symbols_from_string(front.mana_cost))
          elem.prepend(mana_elem)
+       }
+     })
+   }
+
+   function import_card_action() {
+     const name = $('#import-card-name').val().trim()
+     const id = parseInt($('#import-card-id').val())
+
+     const import_card_data = {}
+     let request_url = undefined
+     let key = undefined
+
+     if (id) {
+       import_card_data.id = id
+       request_url = "/cards_by_id"
+       key = id
+     }
+     else if (name) {
+       import_card_data.name = name
+       request_url = "/cards_by_name"
+       key = name
+     }
+     else {
+       return
+     }
+
+     $.ajax({
+       type: 'POST',
+       url: request_url,
+       data: JSON.stringify(import_card_data),
+       contentType: "application/json; charset=utf-8",
+       success: function(response) {
+         $('#import-card-modal').modal('hide')
+
+         // Copy the received data into 'window.clo.card_data'
+         Object.values(response.cards).forEach(import_card_add_to_card_data)
+         response.multiples.forEach(function(multiple) {
+           console.log(multiple)
+           multiple.forEach(import_card_add_to_card_data)
+         })
+
+         // Import the data into the deck.
+         if (Object.keys(response.cards).length == 1) {
+           const card_data = Object.values(response.cards)[0]
+           import_card_add_to_deck(card_data.meta.cube_card_id)
+         }
+         else if (response.missing.length == 1) {
+           alert('Unable to find card')
+         }
+         else if (response.multiples.length == 1) {
+           import_select_modal_open(response.multiples[0])
+         }
+         else {
+           console.log(response)
+           alert('Unexpected response when importing card')
+         }
+       },
+       error: function(error_message) {
+         alert('Error importing card')
+       }
+     })
+   }
+
+   function import_card_add_option_to_deck(card_id) {
+     $('#import-select-modal').modal('hide')
+     import_card_add_to_deck(card_id)
+   }
+
+   function import_card_add_to_card_data(card_json) {
+     const card_id = card_json.meta.cube_card_id
+     if (!window.clo.card_data.hasOwnProperty(card_id)) {
+       window.clo.card_data[card_id] = card_json
+     }
+   }
+
+   function import_card_add_to_deck(card_id) {
+     const card_json = window.clo.card_data[card_id]
+     console.log(`Adding ${card_json['name']} to deck`)
+
+     // Update the deck data
+     let section
+     if (card_json.card_faces[0].type_line.toLowerCase().includes('creature')) {
+       section = window.clo.deck_info.maindeck.creature
+     }
+     else {
+       section = window.clo.deck_info.maindeck.non_creature
+     }
+
+     const cmc = card_json.cmc >= 7 ? '7+' : card_json.cmc
+     section[cmc].push(card_id)
+
+     // Save deck and reload page to have it display
+     save_deck()
+     $('#card-added-modal').modal('show')
+   }
+
+   function import_select_modal_open(import_options) {
+     const name_field = $('#import-select-name')
+     name_field.val(import_options[0].name)
+
+     const select_field = $('#import-select-version')
+     select_field.empty()
+
+     import_options.forEach(function(opt) {
+       const link = $('<button type="button" class="btn btn-link">')
+       link.attr('onclick', `import_card_add_option_to_deck(${opt.meta.cube_card_id})`)
+       link.text(opt.meta.cube_name)
+
+       const li = $('<li>')
+       li.append(link)
+
+       select_field.append(li)
+     })
+
+     $('#import-select-modal').modal('show')
+   }
+
+   function save_deck() {
+     $.ajax({
+       type: 'POST',
+       url: $('#save-meta').data('save-url'),
+       data: JSON.stringify(window.clo.deck_info),
+       contentType: "application/json; charset=utf-8",
+       success: function() {
+         let msg_template = $('#messageTemplate').clone()
+         msg_template.removeAttr('id')
+         msg_template.removeClass('d-none')
+         msg_template.find('p').text('Deck Saved')
+         $('#flashMessages').append(msg_template)
+       },
+       error: function(error_message) {
+         let msg_template = $('#messageTemplate').clone()
+         msg_template.removeAttr('id')
+         msg_template.removeClass('d-none')
+         msg_template.removeClass('alert-success')
+         msg_template.addClass('alert-danger')
+         msg_template.find('p').text('Error: ' + error_message)
+         console.log(error_message)
+         $('#flashMessages').append(msg_template)
        }
      })
    }
@@ -243,6 +487,7 @@
      })
    }
 
+   document.addEventListener("DOMContentLoaded", import_card_action)
    document.addEventListener("DOMContentLoaded", function() {
      window.clo.deck_info = {{ deck_info.data|tojson }};
      update_counts()
@@ -250,6 +495,9 @@
      // Basic Land Selectors
      $('.basic-adjust').click(basic_land_adjust)
      $('.basic-selector').disableSelection()
+
+     // Card imports
+     $('#import-card-submit').click(import_card_action)
 
      // Drag and drop deck management
      $(".sortable").sortable({
@@ -274,33 +522,6 @@
          // Update the deck data for the field where the item ended up.
          update_deck_info(ui.item.parent())
        },
-     })
-
-     // Save the deck
-     $("#save-link").click(function() {
-       $.ajax({
-         type: 'POST',
-         url: $('#save-meta').data('save-url'),
-         data: JSON.stringify(window.clo.deck_info),
-         contentType: "application/json; charset=utf-8",
-         success: function() {
-           let msg_template = $('#messageTemplate').clone()
-           msg_template.removeAttr('id')
-           msg_template.removeClass('d-none')
-           msg_template.find('p').text('Deck Saved')
-           $('#flashMessages').append(msg_template)
-         },
-         error: function(error_message) {
-           let msg_template = $('#messageTemplate').clone()
-           msg_template.removeAttr('id')
-           msg_template.removeClass('d-none')
-           msg_template.removeClass('alert-success')
-           msg_template.addClass('alert-danger')
-           msg_template.find('p').text('Error: ' + error_message)
-           console.log(error_message)
-           $('#flashMessages').append(msg_template)
-         }
-       })
      })
    })
   </script>

@@ -32,8 +32,6 @@ def draft_v2(draft_id):
     for user_id in draft.info().user_ids():
         user_map[user_id] = User.query.get(user_id)
 
-    print(draft.info().user_data(current_user))
-
     return render_template(
         'draft_v2.html',
         draft = draft,

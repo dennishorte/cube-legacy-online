@@ -6,6 +6,15 @@ class DeckInfo(object):
         self.data = data
         self.card_data = card_data  # Formatted as {card_id: CubeCard.get_json()}
 
+        # Ensure all of the info for card ids in this deck are loaded
+        missing = [x for x in self.card_ids() if x not in self.card_data]
+        if missing:
+            from app.models.cube_models import CubeCard
+            cube_cards = CubeCard.query.filter(CubeCard.id.in_(missing)).all()
+
+            for card in cube_cards:
+                self.card_data[str(card.id)] = card.get_json()
+
     @staticmethod
     def factory(name: str, card_data: dict):
         data = {
@@ -64,8 +73,9 @@ class DeckInfo(object):
     def card_ids(self):
         id_list = []
         for x in ('creature', 'non_creature'):
-            for _, card_list in self.data[x].items():
-                id_list += card_list
+            for y in ('maindeck', 'sideboard'):
+                for _, card_list in self.data[y][x].items():
+                    id_list += card_list
 
         id_list += self.data['command']
 

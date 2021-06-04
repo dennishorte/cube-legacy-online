@@ -21,7 +21,7 @@ class DraftInfo(object):
     # Setup Functions
 
     def card_data_add(self, data: dict):
-        self.card_data().extend(data)
+        self.card_data().update(data)
 
     def name_set(self, name):
         self.data['name'] = name
@@ -57,6 +57,17 @@ class DraftInfo(object):
     def deck_update(self, user_id, deck_json):
         user_data = self.user_data(user_id)
         user_data['deck_data'] = deck_json
+
+        # If there are any cards in the user's deck that aren't in the draft cards,
+        # add them into the draft cards.
+        deck_info = self.deck_info(user_id)
+        for card_id in deck_info.card_ids():
+            if card_id not in self.card_data():
+                from app.models.cube_models import CubeCard
+                card = CubeCard.query.get(card_id)
+                self.card_data_add({
+                    str(card_id): card.get_json(),
+                })
 
 
     ############################################################
