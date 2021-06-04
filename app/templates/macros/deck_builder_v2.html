@@ -62,13 +62,14 @@
             </a>
             <span class="text-xs font-italic">automatically saves deck</span>
           </li>
+        </ul>
 
-          <li>
-            <a href="#remove-card-modal" data-toggle="modal">
-              remove cards
-            </a>
-            <span class="text-xs font-italic">automatically saves deck</span>
-          </li>
+        <p>
+          <span class="text-secondary ml-2 mb-0 border-bottom">Remove Card Dropper</span>
+          <span class="text-xs font-italic">automatically saves deck</span>
+        </p>
+        <ul class="list-unstyled sortable card-list" data-section-classes="card-remove">
+
         </ul>
       </div>
 
@@ -219,7 +220,15 @@
       <div class="modal-content">
 
         <div class="modal-header">
-          <h5 class="modal-title">Card Added</h5>
+          <h5 class="modal-title">
+            <span id="card-added-modal-added" class="d-none">
+              Card Added
+            </span>
+
+            <span id="card-added-modal-removed" class="d-none">
+              Card Removed
+            </span>
+          </h5>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
@@ -378,6 +387,7 @@
 
      // Save deck and reload page to have it display
      save_deck()
+     $('#card-added-modal-added').removeClass('d-none')
      $('#card-added-modal').modal('show')
    }
 
@@ -452,7 +462,13 @@
 
      // Grab the apppriate array from the deck data.
      let section_array = undefined
-     if (section_classes.includes('command')) {
+     if (section_classes.includes('card-remove')) {
+       save_deck()
+       $('#card-added-modal-removed').removeClass('d-none')
+       $('#card-added-modal').modal('show')
+       return
+     }
+     else if (section_classes.includes('command')) {
        section_array = window.clo.deck_info['command']
      }
      else {
