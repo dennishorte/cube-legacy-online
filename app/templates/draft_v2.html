@@ -13,6 +13,7 @@
 
 {% block content %}
   {% set info = draft.info() %}
+  {% set current_round = info.current_round(current_user) %}
 
 
   <div class="row">
@@ -90,7 +91,15 @@
           <thead class="thead-light">
             <tr>
               <th>name</th>
-              <th></th>
+
+              {% if current_round['style'] == 'cube-pack' %}
+                <th>waiting?</th>
+                {% for round_num in range(current_round['num_packs']) %}
+                  <th>{{ loop.index }}</th>
+                {% endfor %}
+              {% endif %}
+
+              <th>force</th>
             </tr>
           </thead>
 
@@ -104,6 +113,30 @@
                     (<a href="{{ url_for('game_draft_v2_fight', draft_id=draft.id, opp_id=user.id) }}">fight!</a>)
                   {% endif %}
                 </td>
+
+                {% if current_round['style'] == 'cube-pack' %}
+                  <td>
+                    {% if info.next_pack(user_id) %}
+                      <i class="fas fa-check"></i>
+                    {% endif %}
+                  </td>
+
+                  {% for round_num in range(current_round['num_packs']) %}
+                    {% set picks_made_this_round = info.num_picks_for_pack_num(user_id, round_num) %}
+                    <td>
+                      {{ picks_made_this_round }}
+                      /
+                      {% if picks_made_this_round == current_round['pack_size'] %}
+                        <span>
+                      {% else %}
+                        <span class="text-warning">
+                      {% endif %}
+                      {{ info.num_packs_waiting_for_pack_num(user_id, round_num) }}
+                        </span>
+                    </td>
+                  {% endfor %}
+                {% endif %}
+
 
                 <td>
                   <a href="{{ url_for('draft_v2_force', draft_id=draft.id, user_id=user_id) }}">force</a>
@@ -318,9 +351,13 @@
 
    $(document).ready(function() {
      window.clo.card_data = {{ draft.info().card_data()|tojson }};
+     window.clo.draft_data = {{ draft.info().data|tojson }};
      fill_card_frames()
-     init_deck_builder()
      autocard_init('card-list-item', true)
+
+     if (typeof init_deck_builder === 'function') {
+       init_deck_builder()
+     }
 
      $('#round-type-selector').change(function() {
        const round_type = $(this).val()

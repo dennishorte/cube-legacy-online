@@ -7,13 +7,6 @@ from app.util.cube_wrapper import CubeWrapper
 class RoundBuilder(object):
     @staticmethod
     def build(setup: dict, user_data: list):
-        # The set of all actions taken during this draft. Required fields are:
-        # {
-        #   'action': 'action_name',
-        #   'user': user_id,
-        #   'timestamp': timestamp,
-        # }
-        # Any number of other fields may be included for the specific draft.
         setup['built'] = True
 
         if setup['style'] == 'cube-pack':

@@ -251,7 +251,7 @@ class DraftInfo(object):
 
         # Pass the pack or open the next pack
         if len(pack['picked_ids']) == len(pack['card_ids']):
-            self._open_next_pack()
+            self._pack_open_next(user_id, current_round, pack)
         else:
             self._pack_pass(current_round, pack)
 
@@ -272,6 +272,30 @@ class DraftInfo(object):
             return waiting_packs[0]
         else:
             return None
+
+    def num_packs_waiting_for_pack_num(self, user_id, pack_num):
+        round_info = self.current_round(user_id)
+        assert round_info['style'] == 'cube-pack', f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
+
+        waiting_count = 0
+        for pack in round_info['packs']:
+            if pack['pack_num'] == pack_num and pack['waiting_id'] == user_id:
+                waiting_count += 1
+
+        return waiting_count
+
+    def num_picks_for_pack_num(self, user_id, pack_num):
+        round_info = self.current_round(user_id)
+        assert round_info['style'] == 'cube-pack', f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
+
+        pick_count = 0
+        for pack in round_info['packs']:
+            if pack['pack_num'] == pack_num:
+                for event in pack['events']:
+                    if event['user_id'] == user_id and event['name'] == 'card_picked':
+                        pick_count += 1
+
+        return pick_count
 
     def scar_options(self, user_id):
         return []
@@ -298,7 +322,8 @@ class DraftInfo(object):
         else:
             return user_id
 
-    def _pack_open_next(self, current_round, current_pack):
+    def _pack_open_next(self, user_id, current_round, current_pack):
+        current_pack['waiting_id'] = 'pack_complete'
         next_pack_num = current_pack['pack_num'] + 1
 
         # No more packs for this user

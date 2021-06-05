@@ -54,17 +54,16 @@ class DeckInfo(object):
 
     def add_card(self, card_id):
         card = self.card_wrapper(card_id)
+        cmc = str(card.cmc()) if card.cmc() < 7 else '7+'
 
         if card.has_type('conspiracy'):
             self.command.append(card_id)
 
         elif card.is_creature():
-            print('added to creatures')
-            self.data['maindeck']['creature'][str(card.cmc())].append(card_id)
+            self.data['maindeck']['creature'][cmc].append(card_id)
 
         else:
-            print('added to non creatures')
-            self.data['maindeck']['non_creature'][str(card.cmc())].append(card_id)
+            self.data['maindeck']['non_creature'][cmc].append(card_id)
 
     def basic_counts(self, name: str):
         name = name.lower()
