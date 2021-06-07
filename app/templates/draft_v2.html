@@ -170,9 +170,9 @@
           <h2 class="text-danger">Unsupported Round Style: {{ round_style }}</h2>
         {% endif %}
       {% elif draft.state == 'complete' %}
-        <p>draft is finished</p>
+        <h2 class="text-primary">Draft Complete</h2>
       {% elif draft.state == 'killed' %}
-        <h1>draft was killed</h1>
+        <h2 class="text-danger">Draft Killed</h2>
       {% else %}
         <!-- show nothing for other states -->
       {% endif %}

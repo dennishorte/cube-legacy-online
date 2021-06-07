@@ -24,6 +24,15 @@ class DraftV2(db.Model):
     name = db.Column(db.String(64))
     data_json = db.Column(MEDIUMTEXT)
 
+    def check_if_complete(self):
+        if self.state != DraftStates.ACTIVE:
+            return self.state
+
+        elif self.info().is_complete():
+            self.state = DraftStates.COMPLETE
+
+        return self.state
+
     def info(self, force_update=False):
         if not hasattr(self, '_info_cache') or force_update:
             self._info_cache = DraftInfo(json.loads(self.data_json))

@@ -95,6 +95,7 @@ def draft_v2_new():
 def draft_v2_pack_pick(draft_id, card_id):
     draft = DraftV2.query.get(draft_id)
     draft.info().make_pack_pick(current_user, card_id)
+    draft.check_if_complete()
     draft.info_save()
 
     return redirect(url_for('draft_v2', draft_id=draft_id))

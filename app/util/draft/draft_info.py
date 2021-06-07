@@ -115,10 +115,11 @@ class DraftInfo(object):
 
     def current_round(self, user_id):
         user_id = self._format_user_id(user_id)
-        if self.rounds():
-            return self.rounds()[0]
-        else:
-            return None
+        for rnd in self.rounds():
+            if not rnd['finished']:
+                return rnd
+
+        return None
 
     def is_complete(self):
         return all([x['finished'] for x in self.rounds()])
@@ -136,24 +137,6 @@ class DraftInfo(object):
     def pick_undo(self, user_id):
         user_id = self._format_user_id(user_id)
         pass
-
-    def round_finalize(self, rnd):
-        assert self.round_is_complete(rnd), "Can't finalize an unfinished round."
-        rnd['finished'] = True
-        index = self.rounds().index(rnd)
-
-        if index + 1 < len(self.rounds()):
-            self.round_start(self.rounds()[index + 1])
-
-    def round_is_complete(self, rnd):
-        if rnd['style'] == 'cube-pack':
-            return len(rnd['picked_ids']) == setup['num_packs'] * setup['pack_size'] * len(self.user_data())
-
-        elif rnd['style'] == 'rotisserie':
-            return len(rnd['picked_ids']) == setup['num_cards'] * len(self.user_data())
-
-        else:
-            raise ValueError(f"Unknown round style: {rnd['style']}")
 
     def round_start(self, rnd):
         rnd['started'] = True
@@ -255,6 +238,8 @@ class DraftInfo(object):
         else:
             self._pack_pass(current_round, pack)
 
+        self._check_for_pack_round_complete(current_round)
+
     def next_pack(self, user_id):
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
@@ -322,6 +307,13 @@ class DraftInfo(object):
         else:
             return user_id
 
+    def _check_for_pack_round_complete(self, rnd):
+        for pack in rnd['packs']:
+            if pack['waiting_id'] != 'pack_complete':
+                return
+
+        self._round_advance(rnd)
+
     def _pack_open_next(self, user_id, current_round, current_pack):
         current_pack['waiting_id'] = 'pack_complete'
         next_pack_num = current_pack['pack_num'] + 1
@@ -346,3 +338,6 @@ class DraftInfo(object):
         next_index = (seat_index + increment) % len(self.user_data())
 
         pack['waiting_id'] = self.user_data()[next_index]['id']
+
+    def _round_advance(self, current_round):
+        current_round['finished'] = True
