@@ -159,6 +159,7 @@
       {% if draft.state == 'active' %}
         <h2 class="text-primary">Card Picker</h2>
 
+
         {% set round_style = draft.info().current_round(current_user)['style'] %}
 
         {% if round_style == 'cube-pack' %}

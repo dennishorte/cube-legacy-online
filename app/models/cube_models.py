@@ -288,8 +288,8 @@ class CubeCard(db.Model):
 
         return json.loads(self.diff)
 
-    def get_json(self):
-        if not self._json_cached:
+    def get_json(self, force_update=False):
+        if not self._json_cached or force_update:
             data = json.loads(self.json)
             self._json_cached = data
 
@@ -513,34 +513,42 @@ class Scar(db.Model):
 
     # Lock info
     locked_by_id = db.Column(db.Integer)
-    locked_pack_id = db.Column(db.Integer)
-
-    @staticmethod
-    def get_for_pack(pack_id, user_id):
-        return Scar.query.filter(
-            Scar.locked_by_id == user_id,
-            Scar.locked_pack_id == pack_id,
-        ).all()
+    locked_draft_id = db.Column(db.Integer)
 
     def is_locked(self):
         return self.locked_by_id is not None
 
-    def lock(self, pack_id, user_id):
-        self.locked_by_id = user_id
-        self.locked_pack_id = pack_id
-        db.session.add(self)
-        db.session.commit()
+    @staticmethod
+    def draft_v2_get(draft_id, user_id):
+        return Scar.query.filter(
+            Scar.locked_by_id == user_id,
+            Scar.locked_draft_id == draft_id,
+        ).all()
 
     @staticmethod
-    def lock_random_scars(pack_id, user_id, count):
-        from app.models.draft_models import Pack
-        pack = Pack.query.get(pack_id)
-
-        scars = Scar.random_scars(pack.draft.cube_id, count)
+    def draft_v2_lock(draft_id, cube_id, user_id, count):
+        scars = Scar.random_scars(cube_id, count)
         for scar in scars:
-            scar.lock(pack_id, user_id)
+            scar.locked_by_id = user_id
+            scar.locked_draft_id = draft_id
+            db.session.add(scar)
 
+        db.session.commit()
         return scars
+
+    @staticmethod
+    def draft_v2_unlock(draft_id, user_id):
+        locked = Scar.query.filter(
+            Scar.locked_draft_id == draft_id,
+            Scar.locked_by_id == user_id
+        ).all()
+
+        for scar in locked:
+            scar.locked_by_id = None
+            scar.locked_draft_id = None
+            db.session.add(scar)
+
+        db.session.commit()
 
     @staticmethod
     def random_scars(cube_id, count):
@@ -551,14 +559,6 @@ class Scar(db.Model):
         ).all()
         random.shuffle(scars)
         return scars[:count]
-
-    def unlock(self, commit=True):
-        self.locked_by_id = None
-        self.locked_pack_id = None
-
-        if commit:
-            db.session.add(self)
-            db.session.commit()
 
 
 class Achievement(db.Model):

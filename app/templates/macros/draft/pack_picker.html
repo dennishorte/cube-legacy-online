@@ -3,6 +3,40 @@
 
 {% macro pack_picker(draft, user_id) %}
   {% set info = draft.info() %}
+  {% set scars = info.scars(user_id) %}
+
+  {% if scars %}
+    <div class="framed mb-2">
+      <div class="alert alert-success">
+        <h3>Scarring Round</h3>
+      </div>
+      <p class="text-s">
+        You will apply one of these scars to a card in the pack. After applying the scar, you will be able to pick a card from the pack. However, you cannot select the card you added the scar to.
+      </p>
+      {% for scar in scars %}
+        <div class="mb-1" style="display: flex; flex-direction: row;">
+          <div>
+            <div class="badge badge-success">
+              Scar {{ loop.index }}
+            </div>
+          </div>
+
+          <div class="ml-2" style="display: flex; flex-direction: column;">
+            <div>
+              <span class="font-weight-bold">Text:</span>
+              {{ scar.text }}
+            </div>
+            <div>
+              <span class="font-weight-bold">Restrictions:</span>
+              {{ scar.restrictions }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+
 
   <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
     {% set pack = info.next_pack(user_id)  %}
@@ -25,12 +59,14 @@
             </a>
 
             <!-- Add Scars Buttons -->
-            {% if info.is_scar_round(user_id) %}
-              {% for scar in info.scar_options(user_id) %}
+            {% if scars %}
+              <div class="mt-1">
+              {% for scar in scars %}
                 <a class="btn btn-secondary add-scar-btn" href="{{ url_for('card_editor', card_id=card_id, scar_id=scar.id) }}">
                   Add Scar {{ loop.index }}
                 </a>
               {% endfor %}
+              </div>
             {% endif %}
             <!-- END: Add Scars Buttons -->
           </div>

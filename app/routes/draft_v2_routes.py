@@ -80,7 +80,7 @@ def draft_v2_new():
     db.session.add(draft)
     db.session.commit()
 
-    draft_info = DraftInfo.factory()
+    draft_info = DraftInfo.factory(draft.id)
     draft_info.name_set(draft.name)
     draft.info_set(draft_info)
 

@@ -306,42 +306,42 @@ def card_update(card_id):
 
     # Give the user some feedback on what happened.
     if new_version_created:
-        return_to_draft_id = _apply_scar_from_editor(card, form.scar_id.data)
-        db.session.commit()
-
-        if return_to_draft_id:
-            return redirect(url_for('draft', draft_id=return_to_draft_id))
-
         flash('Card Updated')
+
+        # If this was changed due to scarring in a draft, update the draft.
+        if form.scar_id.data:
+            scar = Scar.query.get(form.scar_id.data)
+            draft_id = scar.locked_draft_id
+            return _apply_scar_for_draft(draft_id, card, scar)
+
     else:
         flash('No changes detected')
 
     return redirect(url_for('card_editor', card_id=card_id))
 
 
-def _apply_scar_from_editor(card, scar_id):
-    if not scar_id:
-        return None
+def _apply_scar_for_draft(draft_id, card, scar):
+    from app.models.draft_v2_models import DraftV2
 
-    scar = Scar.query.get(scar_id)
     scar.applied_timestamp = datetime.utcnow()
     scar.applied_by_id = current_user.id
     scar.applied_to_id = card.id
     db.session.add(scar)
+    # db.session.commit()  # Will be commited by unlock call.
 
     # Unlock the scars if they're from a draft.
     # The most common case is that the scar was applied from a draft.
-    pack = Pack.query.get(scar.locked_pack_id)
-    if pack and scar.locked_by_id == current_user.id:
-        pack.scarred_this_round_id = card.id
-        db.session.add(pack)
-        for pack_scar in Scar.get_for_pack(pack.id, current_user.id):
-            pack_scar.unlock(commit=False)
-            db.session.add(pack_scar)
-        return pack.draft_id
+    Scar.draft_v2_unlock(scar.locked_draft_id, current_user.id)
 
-    else:
-        return None
+    # Update the draft data with the latest data about the scarred card.
+    draft = DraftV2.query.get(draft_id)
+    draft.info().card_data_add({
+        str(card.id): card.get_json(force_update=True),
+    })
+    draft.info().user_did_scar(current_user.id, card.id)
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
 def _card_update_copy_form_data_into_card_json(card_json, form):

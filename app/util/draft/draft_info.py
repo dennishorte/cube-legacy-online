@@ -7,9 +7,10 @@ class DraftInfo(object):
         self.data = data
 
     @staticmethod
-    def factory():
+    def factory(draft_id: int):
         data = {
             'card_data': {},  # cube_card.id: card_json
+            'draft_id': draft_id,
             'name': '',
             'rounds': [],  # dicts of round setup info
             'user_data': [],  # [dict] (see user_add func for dict definition)
@@ -121,8 +122,25 @@ class DraftInfo(object):
 
         return None
 
+    def draft_id(self):
+        return self.data['draft_id']
+
     def is_complete(self):
         return all([x['finished'] for x in self.rounds()])
+
+    def is_scar_round(self, user_id):
+        current_round = self.current_round(user_id)
+
+        if current_round['style'] == 'cube-pack':
+            pack = self.next_pack(user_id)
+            return (
+                pack
+                and len(pack['picked_ids']) == 0
+                and pack['pack_num'] in current_round['scar_rounds']
+            )
+
+        else:
+            return False
 
     def json_string(self):
         return json.dumps(self.data)
@@ -154,6 +172,31 @@ class DraftInfo(object):
 
     def rounds(self):
         return self.data.get('rounds', [])
+
+    def scars(self, user_id):
+        from app.models.cube_models import Scar
+
+        user_id = self._format_user_id(user_id)
+
+        if not self.is_scar_round(user_id):
+            return None
+
+        if self.user_scarring_complete(user_id):
+            return None
+
+        scars = Scar.draft_v2_get(self.draft_id(), user_id)
+
+        if not scars:
+            scars = Scar.draft_v2_lock(
+                draft_id = self.draft_id(),
+                cube_id = self.current_round(user_id)['cube_id'],
+                user_id = user_id,
+                count = 2,
+            )
+
+        assert len(scars) == 2, "Incorrect number of locked scars. Something is wrong."
+
+        return scars
 
     def seat_index(self, user_id):
         user_id = self._format_user_id(user_id)
@@ -201,9 +244,6 @@ class DraftInfo(object):
 
     ############################################################
     # Pack Draft Functions
-
-    def is_scar_round(self, user_id):
-        return False
 
     def make_pack_pick(self, user_id, card_id):
         user_id = self._format_user_id(user_id)
@@ -282,8 +322,25 @@ class DraftInfo(object):
 
         return pick_count
 
-    def scar_options(self, user_id):
-        return []
+    def user_did_scar(self, user_id, card_id):
+        user_id = self._format_user_id(user_id)
+        pack = self.next_pack(user_id)
+        pack['events'].append({
+            'name': 'scar_applied',
+            'pack_num': self.next_pack(user_id)['pack_num'],
+            'user_id': user_id,
+            'card_id': card_id,
+        })
+
+    def user_scarring_complete(self, user_id):
+        user_id = self._format_user_id(user_id)
+        pack = self.next_pack(user_id)
+
+        for event in pack['events']:
+            if event['name'] == 'scar_applied' and event['user_id'] == user_id and event['pack_num'] == pack['pack_num']:
+                return True
+
+        return False
 
 
     ############################################################
