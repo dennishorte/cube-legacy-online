@@ -82,6 +82,10 @@ class DraftInfo(object):
             pack = self.next_pack(user_id)
             if not pack:
                 return False
+            elif self._user_just_scarred_card(user_id, card_id):
+                return False
+            elif self.is_scar_round(user_id) and not self.user_scarring_complete(user_id):
+                return False
             else:
                 return card_id not in pack['picked_ids']
 
@@ -398,3 +402,20 @@ class DraftInfo(object):
 
     def _round_advance(self, current_round):
         current_round['finished'] = True
+
+    def _user_just_scarred_card(self, user_id, card_id):
+        user_id = self._format_user_id(user_id)
+        pack = self.next_pack(user_id)
+
+        if len(pack['picked_ids']) > 0:
+            return False
+
+        for event in pack['events']:
+            if (
+                    event['name'] == 'scar_applied'
+                    and event['user_id'] == user_id
+                    and event['card_id'] == card_id
+            ):
+                return True
+
+        return False
