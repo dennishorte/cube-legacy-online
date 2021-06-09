@@ -202,6 +202,11 @@ class DraftInfo(object):
 
         return scars
 
+    def scars_change(self, user_id):
+        from app.models.cube_models import Scar
+        user_id = self._format_user_id(user_id)
+        Scar.draft_v2_unlock(self.draft_id(), user_id)
+
     def seat_index(self, user_id):
         user_id = self._format_user_id(user_id)
         for i, datum in enumerate(self.user_data()):

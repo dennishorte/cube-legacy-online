@@ -33,6 +33,9 @@
           </div>
         </div>
       {% endfor %}
+      <a class="text-s" href="{{ url_for('draft_v2_change_scars', draft_id=draft.id) }}">
+        these scars don't work
+      </a>
     </div>
 
   {% endif %}

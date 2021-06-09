@@ -41,6 +41,14 @@ def draft_v2(draft_id):
     )
 
 
+@app.route('/draft_v2/<draft_id>/change_scars')
+@login_required
+def draft_v2_change_scars(draft_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.info().scars_change(current_user)
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/deck_save', methods=["POST"])
 @login_required
 def draft_v2_deck_save(draft_id):
