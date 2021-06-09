@@ -107,12 +107,14 @@ def draft_v2_round_add(draft_id):
     draft = DraftV2.query.get(draft_id)
 
     cube_id = int(request.args.get('cube_id'))
+    cube = Cube.query.get(cube_id)
     style = request.args.get('style')
 
     if style == 'cube-pack':
         draft.info().round_add({
             'style': style,
             'cube_id': cube_id,
+            'cube_name': cube.name,
             'pack_size': int(request.args.get('pack_size')),
             'num_packs': int(request.args.get('num_packs')),
             'scar_rounds': [int(x) for x in request.args.get('scar_rounds').split(',') if x.strip()],

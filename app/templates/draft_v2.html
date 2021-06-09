@@ -41,9 +41,9 @@
             {{ round['style'] }}
 
             {% if round['style'] == 'rotisserie' %}
-              {% set keys = ['num_cards'] %}
+              {% set keys = ['cube_name', 'num_cards'] %}
             {% elif round['style'] == 'cube-pack' %}
-              {% set keys = ['num_packs', 'pack_size', 'scar_rounds'] %}
+              {% set keys = ['cube_name', 'num_packs', 'pack_size', 'scar_rounds'] %}
             {% endif %}
 
             <ul>
