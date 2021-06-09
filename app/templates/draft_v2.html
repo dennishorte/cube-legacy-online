@@ -101,7 +101,6 @@
                 {% endfor %}
               {% endif %}
 
-              <th>force</th>
             </tr>
           </thead>
 
@@ -140,9 +139,6 @@
                 {% endif %}
 
 
-                <td>
-                  <a href="{{ url_for('draft_v2_force', draft_id=draft.id, user_id=user_id) }}">force</a>
-                </td>
               </tr>
             {% endfor %}
           </tbody>
