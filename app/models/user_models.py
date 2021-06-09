@@ -82,6 +82,10 @@ class User(UserMixin, db.Model):
                       .order_by(DraftV2.timestamp.desc()) \
                       .all()
 
+    def drafts_complete(self):
+        from app.models.draft_v2_models import DraftStates
+        return [x for x in self.drafts() if x.state == DraftStates.COMPLETE]
+
     def drafts_incomplete(self):
         from app.models.draft_v2_models import DraftStates
         return [x for x in self.drafts() if x.state in (DraftStates.SETUP, DraftStates.ACTIVE)]

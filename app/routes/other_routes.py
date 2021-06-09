@@ -36,7 +36,8 @@ def index():
 
     return render_template(
         'index.html',
-        active = current_user.drafts_incomplete(),
+        v2_active = current_user.drafts_incomplete(),
+        v2_complete = current_user.drafts_complete(),
         complete = complete_seats,
         achievements_unfinished = achievements_unfinished,
         achievements_finished = achievements_finished,

@@ -16,7 +16,7 @@
 
     <div class="col col-md-2 text-center">
       {% if current_user.drafts_waiting() %}
-        <a href="{{ url_for('draft_next') }}" class="badge badge-warning">next draft</a>
+        <a href="{{ url_for('draft_v2_next') }}" class="badge badge-warning">next draft</a>
       {% else %}
         <a href="{{ url_for('draft_next') }}" class="badge badge-secondary">next draft?</a>
       {% endif %}

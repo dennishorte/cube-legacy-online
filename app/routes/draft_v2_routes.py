@@ -99,6 +99,16 @@ def draft_v2_new():
     return redirect(url_for('draft_v2', draft_id=draft.id))
 
 
+@app.route('/draft_v2/next')
+@login_required
+def draft_v2_next():
+    next_drafts = current_user.drafts_waiting()
+    if not next_drafts:
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('draft_v2', draft_id=next_drafts[0].id))
+
+
 @app.route('/draft_v2/<draft_id>/pack_pick/<card_id>')
 @login_required
 def draft_v2_pack_pick(draft_id, card_id):

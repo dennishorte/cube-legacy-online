@@ -29,7 +29,7 @@
 
           <p class="index-section-header">Active Drafts</p>
           <ul class="list-unstyled ml-4">
-            {% for draft in active %}
+            {% for draft in v2_active %}
               <li>
                 <a href="/draft_v2/{{draft.id}}">{{ draft.name }}</a>
                 {% if draft.info().waiting(current_user) %}
@@ -68,13 +68,36 @@
       <div class="mt-2">
         <h3>Completed</h3>
 
-        <div id="complete" class="framed">
-          <p class="index-section-header">Completed Drafts</p>
-          <ul class="list-unstyled ml-4">
-            {% for p in complete %}
-              <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
-            {% endfor %}
-          </ul>
+        <div class="framed">
+          <div>
+            <a data-toggle="collapse" href="#draft-v2-completed">
+              Completed V2 Drafts
+            </a>
+            <div id="draft-v2-completed" class="collapse">
+              <div>
+                <ul class="list-unstyled ml-4">
+                  {% for draft in v2_complete %}
+                    <li><a href="/draft_v2/{{draft.id}}">{{ draft.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <a data-toggle="collapse" href="#draft-v1-completed">
+              Completed V1 Drafts
+            </a>
+            <div id="draft-v1-completed" class="collapse">
+              <div>
+                <ul class="list-unstyled ml-4">
+                  {% for p in complete %}
+                    <li><a href="/draft/{{p.draft.id}}">{{ p.draft.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="framed">
