@@ -18,12 +18,12 @@ class CubeWrapper(object):
         self._cards_include_removed = None
         self._card_set = None
 
-    def card_data(self):
+    def card_data(self, include_removed=True):
         """
         Card json data for use in javascript (eg. legacy autocard popups)
         """
         cards = {}
-        for card in self.cards(include_removed=True):
+        for card in self.cards(include_removed=include_removed):
             cards[card.id] = card.get_json()
         return cards
 

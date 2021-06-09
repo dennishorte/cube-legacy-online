@@ -29,7 +29,7 @@ class RoundBuilder(object):
 
         cube = Cube.query.get(setup['cube_id'])
         wrapper = CubeWrapper(cube)
-        card_data = wrapper.card_data()
+        card_data = wrapper.card_data(include_removed=False)
 
         num_packs = setup['num_packs']
         pack_size = setup['pack_size']
