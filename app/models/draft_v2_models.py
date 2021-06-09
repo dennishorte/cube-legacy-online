@@ -47,6 +47,11 @@ class DraftV2(db.Model):
         assert isinstance(info, DraftInfo), "info must be of type DraftInfo"
         self._info_cache = info
 
+    def kill(self):
+        self.state = DraftStates.KILLED
+        db.session.add(self)
+        db.session.commit()
+
     def name_set(self, name):
         self.name = name
         self.info().name_set(name)

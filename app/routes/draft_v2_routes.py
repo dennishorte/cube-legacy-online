@@ -56,6 +56,15 @@ def draft_v2_force(draft_id, user_id):
     return "force"
 
 
+@app.route('/draft_v2/<draft_id>/kill')
+@login_required
+def draft_v2_kill(draft_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.kill()
+
+    return redirect(url_for('index'))
+
+
 @app.route('/draft_v2/<draft_id>/name_update')
 @login_required
 def draft_v2_name_update(draft_id):
