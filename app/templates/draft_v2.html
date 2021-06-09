@@ -80,10 +80,12 @@
         </div>
 
         <h2>Players</h2>
-        {% for user_id in info.user_ids() %}
-          <p>{{ user_id }}</p>
-        {% endfor %}
-
+        <ul class="list-unstyled">
+          {% for user_id in info.user_ids() %}
+            {% set user = info.user_data(user_id) %}
+            <li>{{ user.name }}</li>
+          {% endfor %}
+        </ul>
       {% else %}
 
         <h2>Seating</h2>
@@ -255,7 +257,7 @@
 
             <select id="round-type-selector" class="form-control" size="2">
               <option value="cube-pack">Cube Packs</option>
-              <option value="rotisserie">Rotisserie</option>
+              <!-- <option value="rotisserie">Rotisserie</option> -->
             </select>
           </div>
 
