@@ -279,6 +279,8 @@ def card_remove(card_id):
 @app.route("/card/<card_id>/update", methods=["POST"])
 @login_required
 def card_update(card_id):
+    print('+++++ card_update')
+
     form = EditMultiFaceCardForm()
     form.update_as.choices = User.all_names()
     form.group_fields()
@@ -313,6 +315,9 @@ def card_update(card_id):
             scar = Scar.query.get(form.scar_id.data)
             draft_id = scar.locked_draft_id
             return _apply_scar_for_draft(draft_id, card, scar)
+
+        else:
+            db.session.commit()
 
     else:
         flash('No changes detected')
