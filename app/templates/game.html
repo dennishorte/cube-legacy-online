@@ -122,10 +122,11 @@
               <li>
                 <a id="edit-name-toggle" href="#">edit name</a>
               </li>
+
               {% if game.draft_links %}
                 {% set draft = game.draft_links[0].draft %}
                 <li>
-                  <a href="{{ url_for('draft', draft_id=draft.id) }}">draft</a>
+                  <a href="{{ url_for('draft_v2', draft_id=draft.id) }}">draft</a>
                 </li>
 
                 {% if draft.cube_id %}
@@ -133,6 +134,13 @@
                     <a href="{{ url_for('cube_cards', cube_id=draft.cube_id) }}">cube</a>
                   </li>
                 {% endif %}
+              {% endif %}
+
+              {% if game.draft_v2_links %}
+                {% set draft = game.draft_v2_links[0].draft %}
+                <li>
+                  <a href="{{ url_for('draft_v2', draft_id=draft.id) }}">draft</a>
+                </li>
               {% endif %}
             </ul>
           </div>

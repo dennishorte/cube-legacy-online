@@ -115,7 +115,22 @@ def game_draft_fight(draft_id, opp_id):
 @app.route("/game/draft_v2_fight/<draft_id>/<opp_id>")
 @login_required
 def game_draft_v2_fight(draft_id, opp_id):
-    return "fight!"
+    from app.models.draft_v2_models import DraftV2
+
+    draft = DraftV2.query.get(draft_id)
+    opp = User.query.get(opp_id)
+    sassy_phrase = name_generator.generate()
+
+    game = Game.factory(
+        name = f"{draft.name} - {sassy_phrase}",
+        players = [current_user, opp],
+    )
+
+    link = GameDraftV2Link(draft_id=draft_id, game_id=game.id)
+    db.session.add(link)
+    db.session.commit()
+
+    return redirect(url_for('game', game_id=game.id))
 
 
 @app.route("/game/<game_id>/edit_name", methods=["POST"])

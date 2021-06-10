@@ -58,6 +58,14 @@
                     </span>
                   {% endif %}
 
+                  {% for user in game.state.players %}
+                    {% if user.name != current_user.name %}
+                      <p class="text-s text-secondary mt-0 mb-0 ml-2">
+                        vs. {{ user.name }}
+                      </p>
+                    {% endif %}
+                  {% endfor %}
+
                 </li>
               {% endif %}
             {% endfor %}

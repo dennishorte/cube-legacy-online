@@ -13,6 +13,7 @@ class Game(db.Model):
     state_json = db.Column(MEDIUMTEXT)
 
     draft_links = db.relationship('GameDraftLink', backref='game')
+    draft_v2_links = db.relationship('GameDraftV2Link', backref='game')
     user_links = db.relationship('GameUserLink', backref='game')
 
     @staticmethod
@@ -104,4 +105,10 @@ class GameUserLink(db.Model):
 class GameDraftLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     draft_id = db.Column(db.Integer, db.ForeignKey('draft.id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
+
+
+class GameDraftV2Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    draft_id = db.Column(db.Integer, db.ForeignKey('draft_v2.id'))
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
