@@ -18,6 +18,7 @@ from app.util import name_generator
 from app.util import slack
 from app.util.cube_wrapper import CubeWrapper
 from app.util.deck_builder import DeckBuilder
+from app.util.deck_info import DeckInfo
 from app.util.game_logic import GameCard
 from app.util.game_logic import GamePhase
 from app.util.game_logic import GameState
@@ -42,15 +43,8 @@ def game(game_id):
 
     else:
         # Deck Builder
-        player = game.state.player_by_id(current_user.id)
-        if player.has_deck():
-            deck = Deck.query.get(player.deck_id)
-            deck_builder = DeckBuilder(
-                draft_id=deck.draft_link.draft_id,
-                user_id=current_user.id
-            )
-        else:
-            deck_builder = None
+        draft = game.linked_draft()
+        deck_info = draft.info().deck_info(current_user)
 
         # Output
         return render_template(
@@ -59,11 +53,11 @@ def game(game_id):
             game_state=game.state,
 
             apform=SelectPlayerForm.factory(),
-            dsform=DeckSelectorForm.factory(current_user.id),
             genform=GameEditNameForm(),
             rform=GameDeckReadyForm(),
 
-            db=deck_builder,
+            draft=draft,
+            deck_info=deck_info,
         )
 
 
@@ -178,50 +172,26 @@ def game_ready(game_id):
     if not form.validate_on_submit():
         raise RuntimeError("Error validating GameDeckReadyForm")
 
+    deck_info = DeckInfo(json.loads(form.deck_json.data), {})
     game = Game.query.get(game_id)
     state = game.state
     player = state.player_by_id(current_user.id)
     player.ready_to_start = True
 
-    maindeck_ids = form.maindeck_ids.data.split(',')
-    sideboard_ids = form.sideboard_ids.data.split(',')
-    command_ids = form.command_ids.data.split(',')
-    basic_lands = form.basics_list.data.split(',')
+    maindeck = [state.make_card(x) for x in deck_info.maindeck_ids()]
+    sideboard = [state.make_card(x) for x in deck_info.sideboard_ids()]
+    command = [state.make_card(x) for x in deck_info.command_ids()]
 
-    sideboard_cards = []
-    for id in sideboard_ids:
-        if not id:
-            continue
-        sideboard_cards.append(state.make_card(id))
-
-    maindeck_cards = []
-    for id in maindeck_ids:
-        if not id:
-            continue
-        maindeck_cards.append(state.make_card(id))
-
-    command_cards = []
-    for id in command_ids:
-        if not id:
-            continue
-        command_cards.append(state.make_card(id))
-
-    basics_cube = Cube.query.filter(Cube.name == 'basic lands').first()
-    basics_cube_wrapper = CubeWrapper(basics_cube)
-    basic_cards = {x.name(): x for x in basics_cube_wrapper.cards()}
-    for basic in basic_lands:
-        if not basic:
-            continue
-        count, name = basic.split()
-        for i in range(int(count)):
-            maindeck_cards.append(state.make_card(basic_cards[name].id))
-
-
-    state.load_deck(player.id, maindeck_cards, sideboard_cards, command_cards)
+    state.load_deck(
+        player_id = player.id,
+        maindeck = maindeck,
+        sideboard = sideboard,
+        command = command,
+    )
 
     if state.ready_to_start():
         state.start_game()
-        state.set_phase = GamePhase.untap
+        state.set_phase(GamePhase.untap)
 
     game.update(state)
 
@@ -268,24 +238,6 @@ def game_save():
         game.update(data)
         slack.send_your_turn_in_game_notification(game)
         return "saved"
-
-
-@app.route("/game/<game_id>/select_deck", methods=["POST"])
-@login_required
-def game_select_deck(game_id):
-    form = DeckSelectorForm.factory(current_user.id)
-
-    if form.validate_on_submit():
-        game = Game.query.get(game_id)
-        state = game.state
-        player = state.player_by_id(current_user.id)
-        player.deck_id = int(form.deck.data)
-        game.update(state)
-
-    else:
-        flash('Error on form submission')
-
-    return redirect(url_for('game', game_id=game_id))
 
 
 @app.route("/game_test")

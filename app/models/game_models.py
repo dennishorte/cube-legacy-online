@@ -13,8 +13,10 @@ class Game(db.Model):
     state_json = db.Column(MEDIUMTEXT)
 
     draft_links = db.relationship('GameDraftLink', backref='game')
-    draft_v2_links = db.relationship('GameDraftV2Link', backref='game')
     user_links = db.relationship('GameUserLink', backref='game')
+
+    # For reasons unclear to me, this doesn't work. Use Game.linked_draft()
+    # draft_v2_links = db.relationship('GameDraftV2Link', backref='game')
 
     @staticmethod
     def active_games():
@@ -79,6 +81,9 @@ class Game(db.Model):
 
         else:
             return not self.state.player_by_id(user.id).ready_to_start
+
+    def linked_draft(self):
+        return GameDraftV2Link.query.filter(GameDraftV2Link.game_id == self.id).first().draft
 
     @property
     def state(self):

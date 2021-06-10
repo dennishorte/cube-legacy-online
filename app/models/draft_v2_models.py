@@ -24,6 +24,8 @@ class DraftV2(db.Model):
     name = db.Column(db.String(64))
     data_json = db.Column(MEDIUMTEXT)
 
+    game_links = db.relationship('GameDraftV2Link', backref='draft')
+
     def check_if_complete(self):
         if self.state != DraftStates.ACTIVE:
             return self.state

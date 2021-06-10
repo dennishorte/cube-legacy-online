@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% from 'macros/deck_builder.html' import deck_builder %}
+{% from 'macros/deck_builder_v2.html' import deck_builder_v2 %}
 
 
 {% block title_suffix %}
@@ -67,40 +67,23 @@
 
     <!-- Deck Selector -->
     <div class="col framed">
-      <form action="{{ url_for('game_select_deck', game_id=game_id) }}" method="post" novalidate>
-        {{ dsform.hidden_tag() }}
-        <div class="form-group">
-          {{ dsform.deck.label }}
-          {{ dsform.deck(class='form-control') }}
-        </div>
-        <div class="text-right">
-          {{ dsform.submit(class="btn btn-info") }}
-        </div>
-      </form>
+      <div class="text-right mt-2">
+        <form
+          id="ready-form"
+          action="{{ url_for('game_ready', game_id=game_id) }}"
+          method="post"
+          novalidate>
 
-      {% if db %}
-        <div class="text-right mt-2">
-          <form
-            id="readyForm"
-            action="{{ url_for('game_ready', game_id=game_id) }}"
-            method="post"
-            novalidate>
-
-            {{ rform.hidden_tag() }}
-            {{ rform.submit(class="btn btn-success") }}
-          </form>
-        </div>
-      {% endif %}
+          {{ rform.hidden_tag() }}
+          {{ rform.submit(class="btn btn-success") }}
+        </form>
+      </div>
     </div>
     <!-- END: Deck Selector -->
 
   </div>
 
-  {################}
-  {# Deck Builder #}
-  {% if db %}
-    {{ deck_builder(db) }}
-  {% endif %}
+  {{ deck_builder_v2(draft, deck_info) }}
 
 {% endblock content %}
 
@@ -108,26 +91,19 @@
 {% block scripts %}
 
   <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
-  <script src="/static/js/deck_builder.js?version={{ version }}"></script>
   <script>
    $(document).ready(function() {
 
-     {% if db %}
-       {% if db.cube.style_a == 'legacy' %}
-         autocard_init('card-list-item', true)
-         window.clo.card_data = {{ db.cube_wrapper.card_data()|tojson }}
-       {% else %}
-         autocard_init('card-list-item', false)
-       {% endif %}
-     {% endif %}
+     window.clo.card_data = {{ draft.info().card_data()|tojson }};
+     autocard_init('card-list-item', true)
+
+     if (typeof init_deck_builder === 'function') {
+       init_deck_builder()
+     }
 
      // When hitting ready, fill the hidden fields with the deck data before submitting.
-     $('#readyForm').submit(function(event) {
-       let data = build_deck_data()
-       $('#maindeck_ids').val(data.maindeck.join(','))
-       $('#sideboard_ids').val(data.sideboard.join(','))
-       $('#command_ids').val(data.command.join(','))
-       $('#basics_list').val(data.basics.join(','))
+     $('#ready-form').submit(function(event) {
+       $('#deck_json').val(JSON.stringify(window.clo.deck_info))
      })
 
      // Automatically add selected players.
