@@ -364,6 +364,36 @@ class GameState {
     return this._execute(diff)
   }
 
+  hide_zone(player_idx, zone_name) {
+    const card_list = this.card_list(player_idx, zone_name)
+    const zone_vis = card_zones[zone_name].visibility
+    let visibility
+    if (zone_vis == 'all') {
+      visibility = this.state.players.map(player => player.name).sort()
+    }
+    else if (zone_vis == 'owner') {
+      visibility = [this.state.players[player_idx].name]
+    }
+    else {
+      visiblity = []
+    }
+
+    const delta = []
+    card_list.forEach(card_id => {
+      const card = this.card(card_id)
+      const diff = this._visibility_diff(card, visibility)
+      delta.push(diff)
+    })
+
+    const diff = {
+      delta: delta,
+      message: `PLAYER_${this.viewer_idx}_NAME hides PLAYER_${player_idx}_NAME's ${zone_name}`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   is_auto_draw(player_idx) {
     const view_options = this.view_options(player_idx)
 
