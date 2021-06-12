@@ -1200,8 +1200,8 @@ class GameState {
         // Add the card to the new zone.
         let dest_zone = this._card_list_from_loc(change.dest_loc)
         var dest_idx = change.dest_loc.zone_idx
-        if (dest_idx == -1) {
-          dest_idx = dest_zone.length
+        if (dest_idx < 0) {
+          dest_idx = dest_zone.length + 1 + dest_idx
         }
         dest_zone.splice(dest_idx, 0, card_id)
       }

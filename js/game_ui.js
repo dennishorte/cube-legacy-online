@@ -33,6 +33,12 @@ const gameui = (function() {
     card: undefined,
   }
 
+  const _cached_card_move_data = {
+    orig_loc: undefined,
+    dest_loc: undefined,
+    card_id: undefined,
+  }
+
   const _token_maker_state = {
     active: true,
     player_idx: undefined,
@@ -361,6 +367,29 @@ const gameui = (function() {
     })
   }
 
+  function _init_library_depth_select_modal() {
+    $('#depth-select-submit').click(function() {
+      const from_top = $('#depth-from-top').val().trim()
+      const from_bot = $('#depth-from-bottom').val().trim()
+
+      if (from_top.length > 0) {
+        _cached_card_move_data.dest_loc.zone_idx = parseInt(from_top) - 1
+      }
+      else {
+        _cached_card_move_data.dest_loc.zone_idx = -parseInt(from_bot)
+      }
+
+      _state.move_card(
+        _cached_card_move_data.orig_loc,
+        _cached_card_move_data.dest_loc,
+        _cached_card_move_data.card_id,
+      )
+
+      $('#library-depth-select-modal').modal('hide')
+      _redraw()
+    })
+  }
+
   function _init_counters_area() {
     // Attach handlers to the counters area rather than specific counters because new
     // counters can be added and this ensures events will catch new as well as existing ones.
@@ -536,6 +565,14 @@ const gameui = (function() {
     const dest_loc = _move_card_location_maker(dest, didx)
     const card_id = cardui.id(card)
 
+    if (dest_loc.zone_idx == 'ask') {
+      _cached_card_move_data.orig_loc = orig_loc
+      _cached_card_move_data.dest_loc = dest_loc
+      _cached_card_move_data.card_id = card_id
+      $("#library-depth-select-modal").modal('show')
+      return
+    }
+
     _state.move_card(orig_loc, dest_loc, card_id)
     _redraw()
   }
@@ -552,16 +589,21 @@ const gameui = (function() {
     }
 
     if (elem_id.endsWith('-cards-bottom')) {
-      elem_id = elem_id.substr(0, elem_id.length - '-bottom'.length)
       index = '-1'
     }
 
     const tokens = elem_id.split('-')
-    return {
+    const loc = {
       player_idx: parseInt(tokens[1]),
       zone_idx: parseInt(index),
       name: tokens[2],
     }
+
+    if (elem_id.endsWith('-cards-middle')) {
+      loc.zone_idx = 'ask'
+    }
+
+    return loc
   }
 
   function _open_import_select_modal() {
@@ -748,7 +790,6 @@ const gameui = (function() {
     }
 
     else if (menu_item == 'view all') {
-      console.log('view all')
       const zone = target.closest('.card-zone')
       const player_idx = util.player_idx_from_elem(zone)
       $('#scry-modal-player-idx').text(player_idx)
@@ -924,7 +965,8 @@ const gameui = (function() {
       }
     }
 
-    // Clear any cards that were dragged into the bottom of library
+    // Clear any cards that were dragged into the middle or bottom of library
+    $(`${zone_prefix}-cards-middle`).empty()
     $(`${zone_prefix}-cards-bottom`).empty()
   }
 
@@ -1073,6 +1115,7 @@ const gameui = (function() {
         _init_counters_area()
         _init_die_modal()
         _init_import_card_modal()
+        _init_library_depth_select_modal()
         _init_library_move_modal()
         _init_player_counter_modal()
         _init_popup_menus()

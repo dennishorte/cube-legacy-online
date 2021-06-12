@@ -62,6 +62,10 @@
     </ul>
 
     <p class="library-divider border-top">top</p>
+
+    <ul id="{{ id_prefix }}-cards-middle" class="card-list sortable">
+    </ul>
+
     <p class="library-divider border-bottom">bottom</p>
 
     <ul id="{{ id_prefix }}-cards-bottom" class="card-list sortable">
@@ -507,6 +511,36 @@
     </div>
   </div>
   <!-- END: Roll a Die Modal -->
+
+
+  <!-- Library Depth Select Modal -->
+  <div id="library-depth-select-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Make your choice!</h2>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="depth-from-top">How many from top (1 = top)</label>
+            <input id="depth-from-top" type="text" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="depth-from-bottom">How many from bottom (1 = bottom)</label>
+            <input id="depth-from-bottom" type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="depth-select-submit" type="button" class="btn btn-primary">Yes!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Library Depth Select Modal -->
 
 
   <!-- View Top N of Library Modal -->
