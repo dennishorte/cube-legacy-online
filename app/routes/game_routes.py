@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import current_app
 from flask import flash
 from flask import redirect
@@ -236,6 +238,12 @@ def game_save():
     else:
         data['latest_version'] += 1
         game.update(data)
+
+        if game.state.is_finished() and not game.completed_timestamp:
+            game.completed_timestamp = datetime.utcnow()
+            db.session.add(game)
+            db.session.commit()
+
         slack.send_your_turn_in_game_notification(game)
         return "saved"
 

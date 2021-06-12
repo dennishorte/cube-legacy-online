@@ -11,6 +11,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state_json = db.Column(MEDIUMTEXT)
+    completed_timestamp = db.Column(db.DateTime)
 
     draft_links = db.relationship('GameDraftLink', backref='game')
     user_links = db.relationship('GameUserLink', backref='game')
@@ -90,7 +91,14 @@ class Game(db.Model):
         return self.state_no_cache()
 
     def state_no_cache(self):
-        return GameState(json.loads(self.state_json))
+        state = GameState(json.loads(self.state_json))
+
+        if not self.completed_timestamp and state.is_finished():
+            self.completed_timestamp = self.timestamp
+            db.session.add(self)
+            db.session.commit()
+
+        return state
 
     def update(self, game_state):
         if hasattr(game_state, 'data'):
