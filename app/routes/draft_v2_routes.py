@@ -18,7 +18,6 @@ from app.models.draft_v2_models import *
 from app.models.user_models import *
 from app.util.draft.draft_info import DraftInfo
 from app.util.draft.round_builder import RoundBuilder
-from app.util.draft_wrapper import DraftWrapper
 
 
 @app.route("/draft_v2/<draft_id>")
