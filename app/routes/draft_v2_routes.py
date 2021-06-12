@@ -141,6 +141,13 @@ def draft_v2_round_add(draft_id):
             'scar_rounds': [int(x) for x in request.args.get('scar_rounds').split(',') if x.strip()],
         })
 
+    elif style == 'set-pack':
+        draft.info().round_add({
+            'style': style,
+            'cube_id': cube_id,
+            'cube_name': cube.name,
+        })
+
     elif style == 'rotisserie':
         draft.info().round_add({
             'style': style,

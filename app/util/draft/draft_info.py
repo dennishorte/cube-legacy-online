@@ -78,7 +78,7 @@ class DraftInfo(object):
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
 
-        if current_round['style'] == 'cube-pack':
+        if current_round['style'] in ('cube-pack', 'set-pack'):
             pack = self.next_pack(user_id)
             if not pack:
                 return False
@@ -96,7 +96,7 @@ class DraftInfo(object):
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
 
-        if current_round['style'] == 'cube-pack':
+        if current_round['style'] in ('cube-pack', 'set-pack'):
             # In a pack draft, the user can see any cards that were in the pack when they
             # first saw it.
             pack = self.next_pack(user_id)
@@ -163,7 +163,7 @@ class DraftInfo(object):
     def round_start(self, rnd):
         rnd['started'] = True
 
-        if rnd['style'] == 'cube-pack':
+        if rnd['style'] in ('cube-pack', 'set-pack'):
             for pack in rnd['packs']:
                 if pack['pack_num'] == 0:
                     pack['opened'] = True
@@ -243,7 +243,7 @@ class DraftInfo(object):
 
         round_style = current_round['style']
 
-        if round_style == 'cube-pack':
+        if round_style in ('cube-pack', 'set-pack'):
             return self.next_pack(user_id) is not None
         elif round_style == 'rotisserie':
             return True
@@ -309,7 +309,7 @@ class DraftInfo(object):
 
     def num_packs_waiting_for_pack_num(self, user_id, pack_num):
         round_info = self.current_round(user_id)
-        assert round_info['style'] == 'cube-pack', f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
+        assert round_info['style'] in ('cube-pack', 'set-pack'), f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
 
         waiting_count = 0
         for pack in round_info['packs']:
@@ -320,7 +320,7 @@ class DraftInfo(object):
 
     def num_picks_for_pack_num(self, user_id, pack_num):
         round_info = self.current_round(user_id)
-        assert round_info['style'] == 'cube-pack', f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
+        assert round_info['style'] in ('cube-pack', 'set-pack'), f"Incorrect round type for num_picks_for_pack: {round_info['style']}"
 
         pick_count = 0
         for pack in round_info['packs']:
