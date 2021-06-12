@@ -99,9 +99,9 @@ class User(UserMixin, db.Model):
     def drafts(self):
         from app.models.draft_v2_models import DraftStates
         from app.models.draft_v2_models import DraftV2
-        from app.models.draft_v2_models import DraftUserLink
+        from app.models.draft_v2_models import DraftV2UserLink
 
-        links = DraftUserLink.query.filter(DraftUserLink.user_id == self.id).all()
+        links = DraftV2UserLink.query.filter(DraftV2UserLink.user_id == self.id).all()
         draft_ids = [x.draft_id for x in links]
         return DraftV2.query \
                       .filter(DraftV2.id.in_(draft_ids)) \
