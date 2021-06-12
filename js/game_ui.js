@@ -1,31 +1,31 @@
 'use strict'
 
-let assert = require('assert')
+const assert = require('assert')
 
-let GameState = require('./game_state.js')
-let cardui = require('./card_ui.js')
-let dialogs = require('./dialogs.js')
-let util = require('./util.js')
+const GameState = require('./game_state.js')
+const cardui = require('./card_ui.js')
+const dialogs = require('./dialogs.js')
+const util = require('./util.js')
 
 
-let gameui = (function() {
-  var _state
-  var _import_options
-  var _import_zone
-  var _import_count
-  var _import_token
+const gameui = (function() {
+  let _state
+  let _import_options
+  let _import_zone
+  let _import_count
+  let _import_token
 
 
   ////////////////////////////////////////////////////////////////////////////////
   // State
 
-  let _click_state = {
+  const _click_state = {
     delay: 300,
     clicks: 0,
     timer: undefined,
   }
 
-  let _card_drag_state = {
+  const _card_drag_state = {
     orig: undefined,
     oidx: undefined,
     dest: undefined,
@@ -33,7 +33,7 @@ let gameui = (function() {
     card: undefined,
   }
 
-  let _token_maker_state = {
+  const _token_maker_state = {
     active: true,
     player_idx: undefined,
   }
@@ -60,8 +60,8 @@ let gameui = (function() {
     assert.notEqual(root.length, 0, "root can't be empty")
     assert.equal(root.length, 1, "root should be a single element")
 
-    var elem = root
-    for (var i = 1; i < path.length; i++) {
+    let elem = root
+    for (let i = 1; i < path.length; i++) {
       elem = elem.find(`.section-${path[i]}`)
       assert.equal(elem.length, 1, `found too many elements on path: ${path}, ${elem.length}`)
     }
@@ -104,7 +104,7 @@ let gameui = (function() {
     $('.card-list').click(function(event) {
       event.preventDefault()
 
-      let card = $(event.target).closest('.card-list-item')
+      const card = $(event.target).closest('.card-list-item')
       _click_state.clicks += 1
 
       if (_click_state.clicks == 1) {
@@ -136,7 +136,7 @@ let gameui = (function() {
   }
 
   function _init_card_closeup_interations() {
-    let closeup = $('#card-closeup')
+    const closeup = $('#card-closeup')
 
     closeup.on('clo.dialogs.closing', function() {
       _state.card_annotation(
@@ -164,7 +164,7 @@ let gameui = (function() {
         _card_drag_state.didx = ui.item.index()
       },
       stop: function(e, ui) {
-        var redraw = false;
+        let redraw = false;
 
         if (_card_drag_state.dest.hasClass('closeup-dropper')) {
           dialogs.show('card-closeup', {
@@ -204,11 +204,11 @@ let gameui = (function() {
 
   function _init_die_modal() {
     $('#die-roll').click(function() {
-      let player_idx = parseInt($('#die-roller-player-idx').text())
-      let player = _state.player(player_idx)
+      const player_idx = parseInt($('#die-roller-player-idx').text())
+      const player = _state.player(player_idx)
 
-      let faces = parseInt($('#die-faces').val())
-      let roll = Math.floor(Math.random() * faces) + 1
+      const faces = parseInt($('#die-faces').val())
+      const roll = Math.floor(Math.random() * faces) + 1
       _state.message(`Rolled ${roll} on a d${faces} for ${player.name}`)
 
       $('#die-roller').modal('hide')
@@ -226,7 +226,7 @@ let gameui = (function() {
 
   function _init_history_navigation() {
     $('#messages').click(function(e) {
-      var target_msg = $(e.target)
+      let target_msg = $(e.target)
 
       if (target_msg.tagName != 'li') {
         target_msg = target_msg.closest('li')
@@ -237,7 +237,7 @@ let gameui = (function() {
     })
 
     window.addEventListener('keyup', function(event) {
-      let focus = $(document.activeElement).prop('tagName').toLowerCase()
+      const focus = $(document.activeElement).prop('tagName').toLowerCase()
       if (focus == 'input' || focus == 'textarea')
         return
 
@@ -261,8 +261,8 @@ let gameui = (function() {
       const token = $('#import-card-token').is(':checked')
 
       const import_card_data = {}
-      let request_url = undefined
-      let key = undefined
+      const request_url = undefined
+      const key = undefined
 
       if (id) {
         import_card_data.id = id
@@ -316,7 +316,7 @@ let gameui = (function() {
   function _init_library_move_modal() {
     // Populate possible destinations
     const library_move_dest_select = $('#library-move-dest')
-    for (var i = 0; i < _state.num_players(); i++) {
+    for (let i = 0; i < _state.num_players(); i++) {
       const player_name = _state.state.players[i].name
       const zone_meta_info = _state.zone_meta_info()
 
@@ -365,15 +365,15 @@ let gameui = (function() {
     // Attach handlers to the counters area rather than specific counters because new
     // counters can be added and this ensures events will catch new as well as existing ones.
     $('.player-counters-area').click(function(event) {
-      let button = $(event.target)
+      const button = $(event.target)
       if (!button.hasClass('counter-button'))
         return
 
-      let counter_elem = button.parents('.player-counter')
-      let counter_name = counter_elem.data('counter-name')
+      const counter_elem = button.parents('.player-counter')
+      const counter_name = counter_elem.data('counter-name')
 
-      let amount = parseInt(button.attr('amount'))
-      let player_idx = util.player_idx_from_elem(counter_elem)
+      const amount = parseInt(button.attr('amount'))
+      const player_idx = util.player_idx_from_elem(counter_elem)
       _state.player_counter_increment(player_idx, counter_name, amount)
       _update_player_info(player_idx)
       _update_history()
@@ -383,7 +383,7 @@ let gameui = (function() {
   function _init_message_box() {
     $("#message-input").keyup(function(event) {
       if (event.keyCode === 13) {
-        let input = $(this)
+        const input = $(this)
         _state.message(input.val())
         input.val('')
         _redraw()
@@ -393,7 +393,7 @@ let gameui = (function() {
 
   function _init_phase_changes() {
     $('.phase').click(function(e) {
-      let phase = $(e.target).attr('id')
+      const phase = $(e.target).attr('id')
       assert.ok(phase.startsWith('phase-'))
 
       _state.set_phase(phase.substring(6))
@@ -403,8 +403,8 @@ let gameui = (function() {
 
   function _init_player_counter_modal() {
     $('#player-counter-submit').click(function() {
-      let player_idx = parseInt($('#player-counter-modal-player-idx').text())
-      let counter_name = $('#player-counter-name').val().trim()
+      const player_idx = parseInt($('#player-counter-modal-player-idx').text())
+      const counter_name = $('#player-counter-name').val().trim()
 
       if (counter_name.length == 0)
         return
@@ -426,15 +426,15 @@ let gameui = (function() {
   function _init_popup_menus() {
     // Populate all of the zone popup menus from the templates.
     $('.popup-menu-template').each(function() {
-      let menu = $(this)
-      let zone = menu.data('zone')
+      const menu = $(this)
+      const zone = menu.data('zone')
 
-      for (var i = 0; i < _state.num_players(); i++) {
-        let parent_id = `#player-${i}-${zone}`
-        let parent = $(parent_id).find('.zone-menu-inner')
+      for (let i = 0; i < _state.num_players(); i++) {
+        const parent_id = `#player-${i}-${zone}`
+        const parent = $(parent_id).find('.zone-menu-inner')
         assert.equal(parent.length, 1, `No zone menu found for id ${parent_id}`)
 
-        let new_menu = menu.clone()
+        const new_menu = menu.clone()
         new_menu.removeClass('popup-menu-template')
         new_menu.addClass(`popup-menu-${zone}`)
 
@@ -444,7 +444,7 @@ let gameui = (function() {
 
     // Hide menu icons with no child elements
     $('.zone-menu-inner').each(function(i, elem) {
-      let jelem = $(elem)
+      const jelem = $(elem)
       if (jelem.find('ul').length == 0) {
         jelem.find('.zone-menu-icon').hide()
       }
@@ -452,11 +452,11 @@ let gameui = (function() {
 
     // Open all popup menus on click
     $('.zone-menu-icon').click(function () {
-      let popup = $(this).siblings('.popup-menu').show()
+      const popup = $(this).siblings('.popup-menu').show()
 
       // Adjust position if off the edge of the screen.
-      let popup_right = popup.offset().left + popup.outerWidth()
-      let viewportRight = $(window).width() + $(window).scrollLeft() // Scroll left considers horizontal scrollbar
+      const popup_right = popup.offset().left + popup.outerWidth()
+      const viewportRight = $(window).width() + $(window).scrollLeft() // Scroll left considers horizontal scrollbar
 
       if (popup_right < viewportRight) {
         popup.css('left', 0)
@@ -479,8 +479,8 @@ let gameui = (function() {
 
   function _init_randomize_bottom_modal() {
     $('#randomize-bottom-submit').click(function() {
-      let player_idx = parseInt($('#randomize-bottom-modal-player-idx').text())
-      let count = parseInt($('#randomize-bottom-count').val())
+      const player_idx = parseInt($('#randomize-bottom-modal-player-idx').text())
+      const count = parseInt($('#randomize-bottom-count').val())
 
       _state.randomize_bottom_of_library(player_idx, count)
 
@@ -529,12 +529,12 @@ let gameui = (function() {
   }
 
   function _move_card(orig, oidx, dest, didx, card) {
-    let source_index = card.data('source-index')
+    const source_index = card.data('source-index')
 
     // Update the game state to reflect the change.
-    let orig_loc = _move_card_location_maker(orig, oidx, source_index)
-    let dest_loc = _move_card_location_maker(dest, didx)
-    let card_id = cardui.id(card)
+    const orig_loc = _move_card_location_maker(orig, oidx, source_index)
+    const dest_loc = _move_card_location_maker(dest, didx)
+    const card_id = cardui.id(card)
 
     _state.move_card(orig_loc, dest_loc, card_id)
     _redraw()
@@ -542,7 +542,7 @@ let gameui = (function() {
 
   // Source index is used when the card is moved by the viewer, rather than from a regular zone.
   function _move_card_location_maker(elem, index, source_index) {
-    var elem_id = elem.attr('id')
+    const elem_id = elem.attr('id')
     if (elem_id == 'popup-viewer-cards') {
       elem_id = dialogs.data('popup-viewer-zone').source_id
 
@@ -551,12 +551,12 @@ let gameui = (function() {
       }
     }
 
-    if (elem_id.endsWith('-bottom')) {
+    if (elem_id.endsWith('-cards-bottom')) {
       elem_id = elem_id.substr(0, elem_id.length - '-bottom'.length)
       index = '-1'
     }
 
-    let tokens = elem_id.split('-')
+    const tokens = elem_id.split('-')
     return {
       player_idx: parseInt(tokens[1]),
       zone_idx: parseInt(index),
@@ -588,7 +588,7 @@ let gameui = (function() {
       const opt = $(event.target)
       const id = opt.data('card-id')
 
-      let data = undefined
+      const data = undefined
       _import_options.forEach(function(card_data) {
         if (card_data.meta.cube_card_id == id) {
           data = card_data
@@ -607,7 +607,7 @@ let gameui = (function() {
   function _perform_message_styling(message) {
     const card_name_span = '<span class="message-card-name">CARD_NAME</span>'
 
-    var msg = message
+    let msg = message
     if (msg.match(/^PLAYER_[0-9]_NAME: /)) {
       msg = `<span class="message-player-typed">${msg}</span>`
     }
@@ -620,23 +620,23 @@ let gameui = (function() {
   }
 
   function _perform_message_substitutions(hist, message) {
-    var msg = message
+    let msg = message
     msg = msg.replace(/PLAYER_[0-9]_NAME/g, (match) => {
-      let player_idx = parseInt(match.charAt(7))
+      const player_idx = parseInt(match.charAt(7))
       return _state.player(player_idx).name
     })
 
     if (msg.indexOf('CARD_NAME') >= 0) {
-      let card = _state.card(hist.delta[0].card_id)
-      let visibility = hist.delta[0].card_vis || 'UNKNOWN'
+      const card = _state.card(hist.delta[0].card_id)
+      const visibility = hist.delta[0].card_vis || 'UNKNOWN'
 
-      var card_name = 'a card'
-      let spectator_can_see = (
+      let card_name = 'a card'
+      const spectator_can_see = (
         visibility != 'UNKNOWN'
         && _state.spectator
         && visibility.length >= _state.num_players()
       )
-      let player_can_see = (
+      const player_can_see = (
         visibility != 'UNKNOWN'
         && visibility.indexOf(_state.viewer_name) >= 0
       )
@@ -652,12 +652,12 @@ let gameui = (function() {
   }
 
   function _popup_menu_click_handler(event) {
-    let target = $(event.target)
-    let menu_item = target.text()
+    const target = $(event.target)
+    const menu_item = target.text()
 
     if (menu_item == 'collapse/expand') {
-      let zone = target.closest('.card-zone')
-      let player_idx = _state.viewer_idx
+      const zone = target.closest('.card-zone')
+      const player_idx = _state.viewer_idx
       _state.toggle_zone_collapse(player_idx, zone.attr('id'))
       _redraw()
     }
@@ -668,17 +668,17 @@ let gameui = (function() {
     }
 
     else if (menu_item == 'create counter') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
 
       $('#player-counter-modal-player-idx').text(player_idx)
       $('#player-counter-modal').modal('show')
     }
 
     else if (menu_item == 'create token') {
-      let zone = target.closest('.card-zone')
-      let zone_name = _zone_from_id(zone.attr('id'))
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const zone_name = _zone_from_id(zone.attr('id'))
+      const player_idx = util.player_idx_from_elem(zone)
 
       $('#token-zone').val(zone_name)
       dialogs.show('token-maker', {
@@ -688,21 +688,21 @@ let gameui = (function() {
     }
 
     else if (menu_item == 'draw') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       _state.draw(player_idx, 1)
       _redraw()
     }
 
     else if (menu_item == 'draw 7') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       _state.draw(player_idx, 7)
       _redraw()
     }
 
     else if (menu_item == 'face-down/face-up') {
-      let card_id = dialogs.data('card-closeup').card_id
+      const card_id = dialogs.data('card-closeup').card_id
       _state.card_flip_down_up(card_id)
       _redraw()
     }
@@ -712,16 +712,16 @@ let gameui = (function() {
     }
 
     else if (menu_item == 'mulligan') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       _state.mulligan(player_idx)
       _redraw()
     }
 
     else if (menu_item == 'reveal') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
-      let zone_name = _zone_from_id(zone.attr('id'))
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
+      const zone_name = _zone_from_id(zone.attr('id'))
       _state.reveal_zone(player_idx, zone_name)
       _redraw()
     }
@@ -734,45 +734,45 @@ let gameui = (function() {
     }
 
     else if (menu_item == 'roll a die') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       $('#die-roller-player-idx').text(player_idx)
       $('#die-roller').modal('show')
     }
 
     else if (menu_item == 'shuffle') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       _state.shuffle(player_idx)
       _redraw()
     }
 
     else if (menu_item == 'view all') {
       console.log('view all')
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       $('#scry-modal-player-idx').text(player_idx)
       $('#scry-count').val('9999')
       $('#scry-submit').click()
     }
 
     else if (menu_item == 'view top n') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       $('#scry-modal-player-idx').text(player_idx)
       $('#scry-modal').modal('show')
     }
 
     else if (menu_item == 'move top n') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       $('#library-move-modal-player-idx').text(player_idx)
       $('#library-move-modal').modal('show')
     }
 
     else if (menu_item == 'shuffle bottom n') {
-      let zone = target.closest('.card-zone')
-      let player_idx = util.player_idx_from_elem(zone)
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
       $('#randomize-bottom-modal-player-idx').text(player_idx)
       $('#randomize-bottom-modal').modal('show')
     }
@@ -783,14 +783,14 @@ let gameui = (function() {
   }
 
   function _redraw() {
-    let root = $('.game-root')
+    const root = $('.game-root')
 
     _update_card_droppers()
     _update_phase()
     _update_turn_and_priority()
     _update_history()
 
-    for (var i = 0; i < _state.num_players(); i++) {
+    for (let i = 0; i < _state.num_players(); i++) {
       _update_card_zone(i, 'battlefield')
       _update_card_zone(i, 'creatures')
       _update_card_zone(i, 'land')
@@ -899,17 +899,17 @@ let gameui = (function() {
   }
 
   function _update_library(player_idx) {
-    let card_list = _state.card_list(player_idx, 'library')
-    let zone_prefix = _zone_prefix(player_idx, 'library')
+    const card_list = _state.card_list(player_idx, 'library')
+    const zone_prefix = _zone_prefix(player_idx, 'library')
 
-    let count_elem = $(`${zone_prefix}-count`)
+    const count_elem = $(`${zone_prefix}-count`)
     count_elem.text(card_list.length)
 
-    let top_elem = $(`${zone_prefix}-cards`).empty()
-    for (var i = 0; i < card_list.length; i++) {
-      let card = _state.card(card_list[i])
+    const top_elem = $(`${zone_prefix}-cards`).empty()
+    for (let i = 0; i < card_list.length; i++) {
+      const card = _state.card(card_list[i])
       if (i == 0 || _state.card_is_visible(card.id, zone_prefix)) {
-        let elem = cardui.factory(card)
+        const elem = cardui.factory(card)
         cardui.set_visibility(elem, _state.card_is_visible(card.id, zone_prefix))
 
         if (_state.card_is_revealed(card.id, zone_prefix)) {
@@ -929,9 +929,9 @@ let gameui = (function() {
   }
 
   function _update_history() {
-    let elem = $('#messages')
-    let messages = elem.children()
-    let prev_message_count = elem.children().length
+    const elem = $('#messages')
+    const messages = elem.children()
+    const prev_message_count = elem.children().length
 
     if (!_state.history[0].id) {
       // No history ids means need to redraw the whole history.
@@ -939,24 +939,24 @@ let gameui = (function() {
       elem.empty()
     }
 
-    for (var i = 0; i < _state.history.length; i++) {
-      let hist = _state.history[i]
+    for (let i = 0; i < _state.history.length; i++) {
+      const hist = _state.history[i]
 
       if (i < messages.length) {
-        let msg = $(messages[i])
-        let msg_id = msg.data('msg-id')
+        const msg = $(messages[i])
+        const msg_id = msg.data('msg-id')
         if (msg.data('msg-id') == hist.id) {
           continue
         }
       }
 
-      let message = _perform_message_substitutions(
+      const message = _perform_message_substitutions(
         hist,
         _perform_message_styling(hist.message)
       )
-      let message_html = $(`<span>${message}</span>`)
+      const message_html = $(`<span>${message}</span>`)
 
-      let msg = $('<li></li>')
+      const msg = $('<li></li>')
         .append(message_html)
         .addClass('message')
         .attr('data-msg-id', hist.id)
@@ -983,7 +983,7 @@ let gameui = (function() {
 
     // Trim off excess messages (typically due to undo action)
     if (_state.history.length < messages.length) {
-      let num_to_cut = messages.length - _state.history.length
+      const num_to_cut = messages.length - _state.history.length
       messages.slice(-num_to_cut).remove()
     }
 
@@ -993,18 +993,18 @@ let gameui = (function() {
   }
 
   function _update_phase() {
-    let phase = _state.phase()
+    const phase = _state.phase()
 
     // UI
-    let phases = $('.phase')
-    let current = $(`#phase-${phase}`)
+    const phases = $('.phase')
+    const current = $(`#phase-${phase}`)
 
     phases.removeClass('current-phase')
     current.addClass('current-phase')
   }
 
   function _update_player_info(player_idx) {
-    let player = _state.player(player_idx)
+    const player = _state.player(player_idx)
 
     // Name
     $(`#player-${player_idx}-name`).text(player.name)
@@ -1014,16 +1014,16 @@ let gameui = (function() {
       if (!player.tableau.counters.hasOwnProperty(key))
         continue
 
-      let counter_id = `#player-${player_idx}-counter-${key}`
-      var elem = $(counter_id)
+      const counter_id = `#player-${player_idx}-counter-${key}`
+      let elem = $(counter_id)
 
       // Create the counter elem, if needed
       if (elem.length == 0) {
         // Grab a copy of the the life counter.
-        let clone = $(`#player-${player_idx}-counter-life`).clone()
+        const clone = $(`#player-${player_idx}-counter-life`).clone()
 
         // Replace 'life' with the new counter name.
-        let updated = clone[0].outerHTML.replace(/life/g, key)
+        const updated = clone[0].outerHTML.replace(/life/g, key)
         elem = $(updated)
 
         $(`#player-${player_idx}-counters`).append(elem)
@@ -1038,8 +1038,8 @@ let gameui = (function() {
     $('.tableau').removeClass('player-turn')
     $('.player-info').removeClass('player-priority')
 
-    let turn_player_idx = _state.turn_player_idx()
-    let priority_player_idx = _state.priority_player_idx()
+    const turn_player_idx = _state.turn_player_idx()
+    const priority_player_idx = _state.priority_player_idx()
     $(`#player-${turn_player_idx}-tableau`).addClass('player-turn')
     $(_zone_prefix(priority_player_idx, 'info')).addClass('player-priority')
   }
@@ -1055,7 +1055,7 @@ let gameui = (function() {
   ////////////////////////////////////////////////////////////////////////////////
   // Public Interface
 
-  let gameui = {
+  const gameui = {
     init(game_state, viewing_player) {
       _state = new GameState(game_state, viewing_player)
 
