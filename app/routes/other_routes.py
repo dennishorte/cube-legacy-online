@@ -49,7 +49,7 @@ def index():
         pack_maker_form = PackMakerForm.factory(15),
 
         cubes = cubes,
-        games = current_user.all_games(),
+        active_games = current_user.active_games(),
         users = users,
     )
 

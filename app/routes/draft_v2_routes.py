@@ -58,12 +58,6 @@ def draft_v2_deck_save(draft_id):
     return 'success'
 
 
-@app.route('/draft_v2/<draft_id>/force/<user_id>')
-@login_required
-def draft_v2_force(draft_id, user_id):
-    return "force"
-
-
 @app.route('/draft_v2/<draft_id>/kill')
 @login_required
 def draft_v2_kill(draft_id):

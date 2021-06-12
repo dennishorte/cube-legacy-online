@@ -70,15 +70,7 @@ class DeckInfo(object):
         return self.data['basic_land'][name]
 
     def card_ids(self):
-        id_list = []
-        for x in ('creature', 'non_creature'):
-            for y in ('maindeck', 'sideboard'):
-                for _, card_list in self.data[y][x].items():
-                    id_list += card_list
-
-        id_list += self.data['command']
-
-        return id_list
+        return self.maindeck_ids() + self.sideboard_ids() + self.command_ids()
 
     def card_wrapper(self, card_id):
         return CardJsonWrapper(self.card_data[str(card_id)])
@@ -86,5 +78,19 @@ class DeckInfo(object):
     def command_ids(self):
         return self.data['command']
 
+    def maindeck_ids(self):
+        id_list = []
+        for x in ('creature', 'non_creature'):
+            for _, card_list in self.data['maindeck'][x].items():
+                id_list += card_list
+        return id_list
+
     def name(self):
         return self.data['name']
+
+    def sideboard_ids(self):
+        id_list = []
+        for x in ('creature', 'non_creature'):
+            for _, card_list in self.data['sideboard'][x].items():
+                id_list += card_list
+        return id_list

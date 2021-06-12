@@ -62,6 +62,10 @@
     </ul>
 
     <p class="library-divider border-top">top</p>
+
+    <ul id="{{ id_prefix }}-cards-middle" class="card-list sortable">
+    </ul>
+
     <p class="library-divider border-bottom">bottom</p>
 
     <ul id="{{ id_prefix }}-cards-bottom" class="card-list sortable">
@@ -122,10 +126,11 @@
               <li>
                 <a id="edit-name-toggle" href="#">edit name</a>
               </li>
+
               {% if game.draft_links %}
                 {% set draft = game.draft_links[0].draft %}
                 <li>
-                  <a href="{{ url_for('draft', draft_id=draft.id) }}">draft</a>
+                  <a href="{{ url_for('draft_v2', draft_id=draft.id) }}">draft</a>
                 </li>
 
                 {% if draft.cube_id %}
@@ -133,6 +138,13 @@
                     <a href="{{ url_for('cube_cards', cube_id=draft.cube_id) }}">cube</a>
                   </li>
                 {% endif %}
+              {% endif %}
+
+              {% if game.draft_v2_links %}
+                {% set draft = game.draft_v2_links[0].draft %}
+                <li>
+                  <a href="{{ url_for('draft_v2', draft_id=draft.id) }}">draft</a>
+                </li>
               {% endif %}
             </ul>
           </div>
@@ -500,6 +512,36 @@
     </div>
   </div>
   <!-- END: Roll a Die Modal -->
+
+
+  <!-- Library Depth Select Modal -->
+  <div id="library-depth-select-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Make your choice!</h2>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="depth-from-top">How many from top (1 = top)</label>
+            <input id="depth-from-top" type="text" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="depth-from-bottom">How many from bottom (1 = bottom)</label>
+            <input id="depth-from-bottom" type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="depth-select-submit" type="button" class="btn btn-primary">Yes!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Library Depth Select Modal -->
 
 
   <!-- View Top N of Library Modal -->

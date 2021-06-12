@@ -62,28 +62,8 @@ class CopyCardForm(FlaskForm):
 
 
 class GameDeckReadyForm(FlaskForm):
-    command_ids = HiddenField('command')
-    maindeck_ids = HiddenField('maindeck')
-    sideboard_ids = HiddenField('sideboard')
-    basics_list = HiddenField('basics')
+    deck_json = HiddenField('deck_json')
     submit = SubmitField('Ready!')
-
-
-class DeckSelectorForm(FlaskForm):
-    deck = SelectField('Deck')
-    submit = SubmitField('Load Deck')
-
-    @staticmethod
-    def factory(user_id):
-        from app.models.deck_models import Deck
-        decks = Deck.query.filter(Deck.user_id == user_id).order_by(Deck.name).all()
-        decks.sort(key=lambda x: x.timestamp, reverse=True)
-        decks = [('none', '')] + [(str(x.id), x.name) for x in decks]
-
-        form = DeckSelectorForm()
-        form.deck.choices = decks
-
-        return form
 
 
 class EditLevelupStoryForm(FlaskForm):
