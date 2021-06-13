@@ -19,7 +19,7 @@ class Layout(enum.Enum):
     adventure = 8  # Cards with an Adventure spell part
     # planar = 9  # Plane and Phenomenon-type cards
     # scheme = 10  # Scheme-type cards
-    # vanguard = 11  # Vanguard-type cards
+    vanguard = 11  # Vanguard-type cards
     token = 12  # Token cards
     # double_faced_token = 13  # Tokens with another token printed on the back
     # emblem = 14  # Emblem cards
@@ -45,6 +45,7 @@ class Layout(enum.Enum):
             Layout.token.name,
             Layout.host.name,
             Layout.augment.name,
+            Layout.vanguard.name,
         )
 
     @staticmethod
