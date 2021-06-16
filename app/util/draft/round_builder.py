@@ -108,12 +108,16 @@ class RoundBuilder(object):
     def rotisserie(setup: dict, user_data: list):
         cube = Cube.query.get(setup['cube_id'])
         wrapper = CubeWrapper(cube)
-        card_data = wrapper.card_data()
-        setup['card_ids'] = list(card_data.keys())
-        setup['picked_ids'] = []
-        setup['first_pick_id'] = random.choice(user_data)['id']
-        setup['direction'] = 'forward'
+        card_data = wrapper.card_data(include_removed=False)
 
+        first_pick_id = random.choice(user_data)['id']
+
+        setup.update({
+            'card_ids': [str(x) for x in card_data.keys()],
+            'waiting_id': first_pick_id,
+            'picked_ids': [],
+            'events': [],
+        })
         return card_data
 
     @staticmethod

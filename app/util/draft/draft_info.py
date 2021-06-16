@@ -63,6 +63,7 @@ class DraftInfo(object):
         # add them into the draft cards.
         deck_info = self.deck_info(user_id)
         for card_id in deck_info.card_ids():
+            card_id = self._format_card_id(card_id)
             if card_id not in self.card_data():
                 from app.models.cube_models import CubeCard
                 card = CubeCard.query.get(card_id)
@@ -75,6 +76,7 @@ class DraftInfo(object):
     # General Draft Functions
 
     def can_be_drafted(self, user_id, card_id):
+        card_id = self._format_card_id(card_id)
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
 
@@ -89,10 +91,14 @@ class DraftInfo(object):
             else:
                 return card_id not in pack['picked_ids']
 
+        elif current_round['style'] == 'rotisserie':
+            return card_id not in current_round['picked_ids']
+
         else:
             return True
 
     def can_be_seen(self, user_id, card_id):
+        card_id = self._format_card_id(card_id)
         user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
 
@@ -108,11 +114,14 @@ class DraftInfo(object):
 
             return True
 
+        elif current_round['style'] == 'rotisserie':
+            return True
+
         else:
             return True
 
     def card(self, card_id):
-        card_id = str(card_id)
+        card_id = self._format_card_id(card_id)
         return self.data['card_data'][card_id]
 
     def card_data(self):
@@ -151,14 +160,6 @@ class DraftInfo(object):
 
     def name(self):
         return self.data['name']
-
-    def pick_do(self, user_id, card_id):
-        user_id = self._format_user_id(user_id)
-        pass
-
-    def pick_undo(self, user_id):
-        user_id = self._format_user_id(user_id)
-        pass
 
     def round_start(self, rnd):
         rnd['started'] = True
@@ -237,6 +238,7 @@ class DraftInfo(object):
         return [x['id'] for x in self.user_data()]
 
     def waiting(self, user_id):
+        user_id = self._format_user_id(user_id)
         current_round = self.current_round(user_id)
         if not current_round or 'built' not in current_round:
             return False
@@ -246,7 +248,7 @@ class DraftInfo(object):
         if round_style in ('cube-pack', 'set-pack'):
             return self.next_pack(user_id) is not None
         elif round_style == 'rotisserie':
-            return True
+            return current_round.get('waiting_id') == user_id
         else:
             raise ValueError(f"Unknown round type: {round_style}")
 
@@ -255,8 +257,8 @@ class DraftInfo(object):
     # Pack Draft Functions
 
     def make_pack_pick(self, user_id, card_id):
+        card_id = self._format_card_id(card_id)
         user_id = self._format_user_id(user_id)
-        card_id = int(card_id)
         pack = self.next_pack(user_id)
         current_round = self.current_round(user_id)
 
@@ -332,6 +334,7 @@ class DraftInfo(object):
         return pick_count
 
     def user_did_scar(self, user_id, card_id):
+        card_id = self._format_card_id(card_id)
         user_id = self._format_user_id(user_id)
         pack = self.next_pack(user_id)
         pack['events'].append({
@@ -351,6 +354,69 @@ class DraftInfo(object):
 
         return False
 
+    ############################################################
+    # Rotisserie Functions
+
+    def card_table(self, user_id):
+        user_id = self._format_user_id(user_id)
+        current_round = self.current_round(user_id)
+        card_ids = set(current_round['card_ids'])
+
+        card_data = {
+            cid: cjson
+            for cid, cjson in self.card_data().items()
+            if cid in card_ids
+        }
+
+        from app.util.card_table_json import CardTableJson
+        return CardTableJson(card_data)
+
+    def make_rotisserie_pick(self, user_id, card_id):
+        card_id = self._format_card_id(card_id)
+        user_id = self._format_user_id(user_id)
+        current_round = self.current_round(user_id)
+
+        # ensure it is the current user's turn to pick
+        if not current_round['waiting_id'] != user_id:
+            raise ValueError(f"It is not {user_id}'s turn to pick")
+
+        # ensure the card is in the current_round
+        if card_id not in current_round['card_ids']:
+            raise ValueError(f"Card {card_id} is not in rotisserie")
+
+        # ensure the card has not already been picked
+        if card_id in current_round['picked_ids']:
+            raise ValueError(f"Card {card_id} is picked from rotisserie")
+
+        # ensure this user is allowed to pick this card
+        if not self.can_be_drafted(user_id, card_id):
+            raise ValueError(f"User {user_id} is not allowed to draft card {card_id}")
+
+        # Make the pick
+        current_round['picked_ids'].append(card_id)
+        current_round['events'].append({
+            'name': 'card_picked',
+            'user_id': user_id,
+            'card_id': card_id,
+        })
+        self.deck_info(user_id).add_card(card_id)
+
+        # Get the direction for the next player
+        user_ids = self.user_ids()
+        picks_per_player = len(current_round['picked_ids']) // len(user_ids)
+        if picks_per_player // 2 == 0:
+            direction = 1
+        else:
+            direction = -1
+
+        user_index = user_ids.index(user_id)
+        next_index = user_index + direction
+        current_round['waiting_id'] = user_ids[next_index]
+
+        # Check if the round is finished
+        if len(current_round['picked_ids']) == len(self.user_ids()) * current_round['num_cards']:
+            self._round_advance()
+
 
     ############################################################
     # Debug Functions
@@ -362,6 +428,16 @@ class DraftInfo(object):
 
     ############################################################
     # Internal Functions
+
+    def _format_card_id(self, card_id):
+        if isinstance(card_id, int):
+            return str(card_id)
+        elif isinstance(card_id, dict):
+            return self._format_card_id(card_id['cube_card_id'])
+        elif hasattr(card_id, 'id'):
+            return self._format_card_id(card_id.id())
+        else:
+            return card_id
 
     def _format_user_id(self, user_id):
         if isinstance(user_id, str):

@@ -121,6 +121,17 @@ def draft_v2_pack_pick(draft_id, card_id):
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
+@app.route('/draft_v2/<draft_id>/rotisseriepick/<card_id>')
+@login_required
+def draft_v2_rotisserie_pick(draft_id, card_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.info().make_rotisserie_pick(current_user, card_id)
+    draft.check_if_complete()
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/round_add')
 @login_required
 def draft_v2_round_add(draft_id):
