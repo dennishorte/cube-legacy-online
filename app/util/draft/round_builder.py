@@ -45,7 +45,7 @@ class RoundBuilder(object):
 
         included_card_data = {}
 
-        card_ids = list(card_data.keys())
+        card_ids = [str(x) for x in card_data.keys()]
         random.shuffle(card_ids)
         for i in range(pack_count):
             start = i * pack_size
@@ -152,7 +152,7 @@ class RoundBuilder(object):
             for card in cards:
                 card_data[card.id] = card.get_json()
 
-        card_ids = [x.id for x in cards]
+        card_ids = [str(x.id) for x in cards]
 
         return card_ids, card_data
 
