@@ -14,6 +14,7 @@
 {% block content %}
   {% set info = draft.info() %}
   {% set current_round = info.current_round(current_user) %}
+  {% set round_style = current_round['style'] %}
 
 
   <div class="row">
@@ -44,6 +45,8 @@
               {% set keys = ['cube_name', 'num_cards'] %}
             {% elif round['style'] == 'cube-pack' %}
               {% set keys = ['cube_name', 'num_packs', 'pack_size', 'scar_rounds'] %}
+            {% elif round['style'] == 'set-pack' %}
+              {% set keys = ['cube_name'] %}
             {% endif %}
 
             <ul>
@@ -94,14 +97,13 @@
             <tr>
               <th>name</th>
 
-              {% if current_round['style'] == 'cube-pack' %}
+              {% if round_style == 'cube-pack' or round_style == 'set-pack' %}
                 <th>waiting?</th>
                 {% for round_num in range(current_round['num_packs']) %}
                   <th>{{ loop.index }}</th>
                 {% endfor %}
               {% endif %}
 
-              <th>force</th>
             </tr>
           </thead>
 
@@ -116,7 +118,7 @@
                   {% endif %}
                 </td>
 
-                {% if current_round['style'] == 'cube-pack' %}
+                {% if round_style == 'cube-pack' or round_style == 'set-pack' %}
                   <td>
                     {% if info.next_pack(user_id) %}
                       <i class="fas fa-check"></i>
@@ -140,9 +142,6 @@
                 {% endif %}
 
 
-                <td>
-                  <a href="{{ url_for('draft_v2_force', draft_id=draft.id, user_id=user_id) }}">force</a>
-                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -164,10 +163,9 @@
 
         {% set round_style = draft.info().current_round(current_user)['style'] %}
 
-        {% if round_style == 'cube-pack' %}
+        {% if round_style in ('cube-pack', 'set-pack') %}
           {{ pack_picker(draft, current_user.id) }}
         {% elif round_style == 'rotisserie' %}
-          Rotisserie Picker
           {{ rotisserie_picker(draft, current_user.id) }}
         {% else %}
           <h2 class="text-danger">Unsupported Round Style: {{ round_style }}</h2>
@@ -255,9 +253,10 @@
               </select>
             </div>
 
-            <select id="round-type-selector" class="form-control" size="2">
+            <select id="round-type-selector" class="form-control" size="3">
               <option value="cube-pack">Cube Packs</option>
-              <!-- <option value="rotisserie">Rotisserie</option> -->
+              <option value="set-pack">Set Packs</option>
+              <option value="rotisserie">Rotisserie</option>
             </select>
           </div>
 
@@ -277,6 +276,9 @@
                 <label for="scar_rounds">Scar Rounds</label>
                 <input type="text" name="scar_rounds" class="form-control">
               </div>
+            </div>
+
+            <div id="set-pack-options" class="round-options d-none">
             </div>
 
             <div id="rotisserie-options" class="round-options d-none">

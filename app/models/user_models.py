@@ -55,7 +55,18 @@ class User(UserMixin, db.Model):
         return [x.name for x in User.query.order_by(User.name)]
 
     def active_games(self):
-        return [x for x in self.all_games() if not x.state.is_finished()]
+        from app.models.game_models import Game
+        from app.models.game_models import GameUserLink
+
+        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
+
+        return Game.query \
+                   .filter(
+                       Game.id.in_(game_ids),
+                       Game.completed_timestamp == None,
+                   ) \
+                   .order_by(Game.timestamp.desc()) \
+                   .all()
 
     def all_games(self):
         from app.models.game_models import Game
@@ -63,6 +74,21 @@ class User(UserMixin, db.Model):
 
         game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
         return Game.query.filter(Game.id.in_(game_ids)).order_by(Game.timestamp.desc()).all()
+
+    def games_recently_completed(self):
+        from app.models.game_models import Game
+        from app.models.game_models import GameUserLink
+
+        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
+
+        return Game.query \
+                   .filter(
+                       Game.id.in_(game_ids),
+                       Game.completed_timestamp != None,
+                   ) \
+                   .order_by(Game.timestamp.desc()) \
+                   .limit(5) \
+                   .all()
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -73,9 +99,9 @@ class User(UserMixin, db.Model):
     def drafts(self):
         from app.models.draft_v2_models import DraftStates
         from app.models.draft_v2_models import DraftV2
-        from app.models.draft_v2_models import DraftUserLink
+        from app.models.draft_v2_models import DraftV2UserLink
 
-        links = DraftUserLink.query.filter(DraftUserLink.user_id == self.id).all()
+        links = DraftV2UserLink.query.filter(DraftV2UserLink.user_id == self.id).all()
         draft_ids = [x.draft_id for x in links]
         return DraftV2.query \
                       .filter(DraftV2.id.in_(draft_ids)) \

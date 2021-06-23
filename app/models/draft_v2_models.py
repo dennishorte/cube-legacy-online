@@ -24,6 +24,8 @@ class DraftV2(db.Model):
     name = db.Column(db.String(64))
     data_json = db.Column(MEDIUMTEXT)
 
+    game_links = db.relationship('GameDraftV2Link', backref='draft')
+
     def check_if_complete(self):
         if self.state != DraftStates.ACTIVE:
             return self.state
@@ -65,20 +67,20 @@ class DraftV2(db.Model):
             return f"Duplicate user id: {user.id}"
 
         self.info().user_add(user)
-        link = DraftUserLink(
+        link = DraftV2UserLink(
             draft_id = self.id,
             user_id = user.id
         )
         db.session.add(link)
 
 
-class DraftAchievementLink(db.Model):
+class DraftV2AchievementLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     draft_id = db.Column(db.Integer, db.ForeignKey("draft_v2.id"), nullable=False)
     ach_id = db.Column(db.Integer, db.ForeignKey('achievement.id'), nullable=False)
 
 
-class DraftUserLink(db.Model):
+class DraftV2UserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     draft_id = db.Column(db.Integer, db.ForeignKey("draft_v2.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

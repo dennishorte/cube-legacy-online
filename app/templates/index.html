@@ -15,8 +15,6 @@
       /
       <a href="#newCubeModal" data-toggle="modal">new cube</a>
       /
-      <a href="{{ url_for('game_new') }}">new game</a>
-      /
       <a href="#pack-maker-modal" data-toggle="modal">make pack</a>
     </div>
   </div>
@@ -45,7 +43,7 @@
         <div class="framed">
           <p class="index-section-header">Active Games</p>
           <ul class="list-unstyled ml-4">
-            {% for game in games %}
+            {% for game in active_games %}
               {% if not game.state.is_finished() %}
                 <li>
                   <a href="{{ url_for('game', game_id=game.id) }}">
@@ -57,6 +55,14 @@
                       <i class="fas fa-asterisk"></i>
                     </span>
                   {% endif %}
+
+                  {% for user in game.state.players %}
+                    {% if user.name != current_user.name %}
+                      <p class="text-s text-secondary mt-0 mb-0 ml-2">
+                        vs. {{ user.name }}
+                      </p>
+                    {% endif %}
+                  {% endfor %}
 
                 </li>
               {% endif %}
@@ -103,7 +109,7 @@
         <div class="framed">
           <p class="index-section-header">Finished Games</p>
           <ul class="list-unstyled ml-4 mt-3">
-            {% for game in games %}
+            {% for game in current_user.games_recently_completed() %}
               {% if game.state.is_finished() %}
                 <li>
                   <a href="{{ url_for('game', game_id=game.id) }}">

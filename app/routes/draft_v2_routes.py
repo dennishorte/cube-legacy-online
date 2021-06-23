@@ -18,7 +18,6 @@ from app.models.draft_v2_models import *
 from app.models.user_models import *
 from app.util.draft.draft_info import DraftInfo
 from app.util.draft.round_builder import RoundBuilder
-from app.util.draft_wrapper import DraftWrapper
 
 
 @app.route("/draft_v2/<draft_id>")
@@ -56,12 +55,6 @@ def draft_v2_deck_save(draft_id):
     draft.info().deck_update(current_user, request.json)
     draft.info_save()
     return 'success'
-
-
-@app.route('/draft_v2/<draft_id>/force/<user_id>')
-@login_required
-def draft_v2_force(draft_id, user_id):
-    return "force"
 
 
 @app.route('/draft_v2/<draft_id>/kill')
@@ -128,6 +121,17 @@ def draft_v2_pack_pick(draft_id, card_id):
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
+@app.route('/draft_v2/<draft_id>/rotisseriepick/<card_id>')
+@login_required
+def draft_v2_rotisserie_pick(draft_id, card_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.info().make_rotisserie_pick(current_user, card_id)
+    draft.check_if_complete()
+    draft.info_save()
+
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/round_add')
 @login_required
 def draft_v2_round_add(draft_id):
@@ -145,6 +149,13 @@ def draft_v2_round_add(draft_id):
             'pack_size': int(request.args.get('pack_size')),
             'num_packs': int(request.args.get('num_packs')),
             'scar_rounds': [int(x) for x in request.args.get('scar_rounds').split(',') if x.strip()],
+        })
+
+    elif style == 'set-pack':
+        draft.info().round_add({
+            'style': style,
+            'cube_id': cube_id,
+            'cube_name': cube.name,
         })
 
     elif style == 'rotisserie':
