@@ -262,9 +262,6 @@ class DraftInfo(object):
         pack = self.next_pack(user_id)
         current_round = self.current_round(user_id)
 
-        print(repr(card_id))
-        print(repr(pack['card_ids'][0]))
-
         # ensure the card is in the pack
         if card_id not in pack['card_ids']:
             raise ValueError(f"Card {card_id} is not in pack {pack['pack_id']}")

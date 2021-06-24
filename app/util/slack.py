@@ -48,7 +48,11 @@ def send_your_turn_in_game_notification(game):
 
 
 def send_new_draft_notifications(draft):
-    for user in [x.user for x in draft.seats]:
+    from app.models.draft_v2_models import DraftV2UserLink
+    draft_user_links = DraftV2UserLink.query.filter(DraftV2UserLink.draft_id == draft.id).all()
+    draft_users = [x.user for x in draft_user_links]
+
+    for user in draft_users:
         domain_host = urlparse(request.base_url).hostname
         draft_url = f"http://{domain_host}/draft/{draft.id}"
         message = f"A new draft, {draft.name}, has started. <{draft_url}|Come check it out>."
@@ -71,8 +75,8 @@ def send_your_pick_notification(user, draft):
 
 
 def _send_slack_message(user, message):
-    if Config.FLASK_ENV != 'production':
-        return
+    # if Config.FLASK_ENV != 'production':
+    #     return
 
     if not user.slack_id:
         return

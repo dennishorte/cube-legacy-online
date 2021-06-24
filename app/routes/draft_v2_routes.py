@@ -1,3 +1,5 @@
+import datetime
+
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -18,6 +20,7 @@ from app.models.draft_v2_models import *
 from app.models.user_models import *
 from app.util.draft.draft_info import DraftInfo
 from app.util.draft.round_builder import RoundBuilder
+from app.util import slack
 
 
 @app.route("/draft_v2/<draft_id>")
@@ -113,21 +116,41 @@ def draft_v2_next():
 @app.route('/draft_v2/<draft_id>/pack_pick/<card_id>')
 @login_required
 def draft_v2_pack_pick(draft_id, card_id):
-    draft = DraftV2.query.get(draft_id)
-    draft.info().make_pack_pick(current_user, card_id)
-    draft.check_if_complete()
-    draft.info_save()
-
-    return redirect(url_for('draft_v2', draft_id=draft_id))
+    return _do_pick(
+        draft_id,
+        card_id,
+        'make_pack_pick',
+    )
 
 
 @app.route('/draft_v2/<draft_id>/rotisseriepick/<card_id>')
 @login_required
 def draft_v2_rotisserie_pick(draft_id, card_id):
+    return _do_pick(
+        draft_id,
+        card_id,
+        'make_rotisserie_pick',
+    )
+
+
+def _do_pick(draft_id, card_id, picker_function):
     draft = DraftV2.query.get(draft_id)
-    draft.info().make_rotisserie_pick(current_user, card_id)
+
+    before = {
+        user_id: draft.info().waiting(user_id)
+        for user_id in draft.info().user_ids()
+    }
+
+    getattr(draft.info(), picker_function)(current_user, card_id)
+    current_user.last_pick_timestamp = datetime.utcnow()
+    db.session.add(current_user)  # commited by draft.info_save()
     draft.check_if_complete()
     draft.info_save()
+
+    for user_id in draft.info().user_ids():
+        if before[user_id] is False and draft.info().waiting(user_id) is True:
+            user = User.query.get(user_id)
+            slack.send_your_pick_notification(user, draft)
 
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
@@ -189,6 +212,8 @@ def draft_v2_start(draft_id):
 
     draft.state = DraftStates.ACTIVE
     draft.info_save()
+
+    slack.send_new_draft_notifications(draft)
 
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
