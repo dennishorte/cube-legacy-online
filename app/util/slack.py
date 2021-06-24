@@ -75,8 +75,8 @@ def send_your_pick_notification(user, draft):
 
 
 def _send_slack_message(user, message):
-    # if Config.FLASK_ENV != 'production':
-    #     return
+    if Config.FLASK_ENV != 'production':
+        return
 
     if not user.slack_id:
         return
