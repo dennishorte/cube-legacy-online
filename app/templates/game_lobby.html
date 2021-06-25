@@ -97,10 +97,6 @@
      window.clo.card_data = {{ draft.info().card_data()|tojson }};
      autocard_init('card-list-item', true)
 
-     if (typeof init_deck_builder === 'function') {
-       init_deck_builder()
-     }
-
      // When hitting ready, fill the hidden fields with the deck data before submitting.
      $('#ready-form').submit(function(event) {
        $('#deck_json').val(JSON.stringify(window.clo.deck_info))

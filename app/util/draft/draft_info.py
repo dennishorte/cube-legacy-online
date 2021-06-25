@@ -1,3 +1,4 @@
+from app.util.card_json_wrapper import CardJsonWrapper
 from app.util.deck_info import DeckInfo
 
 
@@ -126,6 +127,22 @@ class DraftInfo(object):
 
     def card_data(self):
         return self.data['card_data']
+
+    def card_wrapped(self, card_id):
+        return CardJsonWrapper(self.card(card_id))
+
+    def cards_picked(self, user_id):
+        user_id = self._format_user_id(user_id)
+
+        card_ids = []
+
+        for rnd in self.rounds():
+            if rnd['style'] == 'rotisserie':
+                for event in rnd['events']:
+                    if event['user_id'] == user_id and event['name'] == 'card_picked':
+                        card_ids.append(event['card_id'])
+
+        return card_ids
 
     def current_round(self, user_id):
         user_id = self._format_user_id(user_id)
@@ -377,7 +394,7 @@ class DraftInfo(object):
         current_round = self.current_round(user_id)
 
         # ensure it is the current user's turn to pick
-        if not current_round['waiting_id'] != user_id:
+        if current_round['waiting_id'] != user_id:
             raise ValueError(f"It is not {user_id}'s turn to pick")
 
         # ensure the card is in the current_round

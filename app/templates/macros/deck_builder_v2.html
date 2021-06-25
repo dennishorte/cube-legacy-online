@@ -20,7 +20,7 @@
               data-section-classes="{{ classes_str }}"
               data-cmc="{{ cmc_string }}">
             {% for card_id in card_id_dict[cmc_string] %}
-              <li class="card-list-item deck-builder-card" data-card-id="{{ card_id }}">
+              <li class="card-list-item clo-card" data-card-id="{{ card_id }}">
                 {{ card_id }}
               </li>
             {% endfor %}
@@ -120,7 +120,7 @@
         <h5>Command Zone</h5>
         <ul class="card-list sortable list-unstyled" data-section-classes="command">
           {% for card_id in deck_info.command_ids() %}
-            <li class="card-list-item deck-builder-card" data-card-id="{{ card_id }}">
+            <li class="card-list-item clo-card" data-card-id="{{ card_id }}">
               {{ card_id }}
             </li>
           {% endfor %}
@@ -263,39 +263,6 @@
 
      update_counts()
      update_deck_info_basic_lands()
-   }
-
-   function init_deck_builder() {
-     $('.deck-builder-card').each(function(index, e) {
-       const elem = $(e)
-       const card_id = elem.data('card-id')
-       const data = window.clo.card_data[card_id]
-       const front = data['card_faces'][0]
-       const back = data['card_faces'][1]
-
-       elem.attr('data-front', front['art_crop_url'])
-       if (back) {
-         elem.attr('data-back', back['art_crop_url'])
-       }
-
-       elem.text(data['name'])
-
-       if (front.achievements) {
-         const ach_elem = $('<i class="fab fa-font-awesome-flag">')
-         elem.prepend(ach_elem)
-       }
-
-       if (front.scarred || (back && back.scarred)) {
-         const scar_elem = $('<i class="fas fa-bolt">')
-         elem.prepend(scar_elem)
-       }
-
-       if (front.mana_cost) {
-         const mana_elem = $('<div class="card-mana-cost" style="float: right; font-size: .6rem;">')
-         mana_elem.append(clo.util.mana_symbols_from_string(front.mana_cost))
-         elem.prepend(mana_elem)
-       }
-     })
    }
 
    function import_card_action() {
