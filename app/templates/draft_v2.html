@@ -387,9 +387,10 @@
      window.location.href = link
    }
 
-   $(document).ready(function() {
-     window.clo.card_data = {{ draft.info().card_data()|tojson }};
-     window.clo.draft_data = {{ draft.info().data|tojson }};
+   window.clo.card_data = {{ draft.info().card_data()|tojson }};
+   window.clo.draft_data = {{ draft.info().data|tojson }};
+
+   document.addEventListener("DOMContentLoaded", function() {
      fill_card_frames()
      autocard_init('card-list-item', true)
 
