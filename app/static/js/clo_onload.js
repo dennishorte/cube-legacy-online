@@ -1,5 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
-  function init_cards() {
+  function init_card_frames() {
+     $('.closeup-card-wrapper').each(function() {
+       const elem = $(this)
+       const card_id = elem.data('card-id')
+       const data = window.clo.card_data[card_id]
+       if (!data) {
+         console.log(card_id)
+         return
+       }
+
+       clo.util.draw_card_frame(elem, data)
+     })
+  }
+
+  function init_card_line_items() {
     $('.clo-card').each(function(index, e) {
       const elem = $(e)
       const card_id = elem.data('card-id')
@@ -32,5 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
     })
   }
 
-  init_cards()
+  init_card_frames()
+  init_card_line_items()
 })

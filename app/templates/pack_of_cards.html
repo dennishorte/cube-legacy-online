@@ -2,8 +2,6 @@
 
 {% extends "base.html" %}
 
-{% set is_legacy = card_data|length > 0 %}
-
 
 {% block title_suffix %}
   Pack of Cards
@@ -16,35 +14,12 @@
 
 
 {% block content %}
-  {{ show_card_list(cards, is_legacy) }}
+  {{ show_card_list(cards, True) }}
 {% endblock content %}
 
 
 {% block scripts %}
   <script>
-   function fill_card_frames() {
-     $('.closeup-card-wrapper').each(function() {
-       let elem = $(this)
-       let card_id = elem.data('card-id')
-       let data = window.clo.card_data[card_id]
-       if (!data) {
-         console.log(card_id)
-         return
-       }
-
-       clo.util.draw_card_frame(elem, data)
-     })
-   }
-
-   $(document).ready(function() {
-     {% if is_legacy %}
-       autocard_init('card-list-item', true)
-       window.clo.card_data = {{ card_data|tojson }}
-     {% else %}
-       autocard_init('card-list-item', false)
-     {% endif %}
-
-     fill_card_frames()
-   })
+   window.clo.card_data = {{ card_data|tojson }};
   </script>
 {% endblock scripts %}

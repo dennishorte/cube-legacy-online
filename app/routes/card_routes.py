@@ -56,9 +56,8 @@ def pack_of_cards(cube_id, num_cards, random_seed):
     cards = cards[:num_cards]
 
     card_data = {}
-    if cube.style_a == 'legacy':
-        for card in cards:
-            card_data[card.id] = card.get_json()
+    for card in cards:
+        card_data[card.id] = card.get_json()
 
     return render_template(
         'pack_of_cards.html',
