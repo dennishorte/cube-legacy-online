@@ -58,7 +58,7 @@
 
                   {% for user in game.state.players %}
                     {% if user.name != current_user.name %}
-                      <p class="text-s text-secondary mt-0 mb-0 ml-2">
+                      <p class="text-s text-secondary mb-0 ml-2" style="margin-top:-.7em;">
                         vs. {{ user.name }}
                       </p>
                     {% endif %}
