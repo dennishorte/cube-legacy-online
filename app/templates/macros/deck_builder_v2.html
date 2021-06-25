@@ -265,6 +265,22 @@
      update_deck_info_basic_lands()
    }
 
+   function card_swap_maindeck_sideboard() {
+     const elem = this
+     const parent = elem.parentElement
+
+     const cmc = parent.getAttribute('data-cmc')
+     const section_classes = parent.getAttribute('data-section-classes').split(' ')
+     section_classes[0] = section_classes[0] == 'maindeck' ? 'sideboard' : 'maindeck'
+     const new_section_classes = section_classes.join(' ')
+     const new_section = document.querySelector(`[data-section-classes="${new_section_classes}"][data-cmc="${cmc}"]`)
+
+     new_section.append(elem)
+
+     update_deck_info(parent)
+     update_deck_info(new_section)
+   }
+
    function import_card_action() {
      const name = $('#import-card-name').val().trim()
      const id = parseInt($('#import-card-id').val())
@@ -424,6 +440,8 @@
    }
 
    function update_deck_info(section_ul_elem) {
+     section_ul_elem = $(section_ul_elem)
+
      // Figure out what section this is.
      const section_classes = section_ul_elem.data('section-classes')
 
@@ -506,6 +524,9 @@
          update_deck_info(ui.item.parent())
        },
      })
+
+     // Double click card swap
+     $('.clo-card').dblclick(card_swap_maindeck_sideboard)
    })
   </script>
 {% endmacro %}
