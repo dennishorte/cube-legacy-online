@@ -102,6 +102,11 @@
                 {% for round_num in range(current_round['num_packs']) %}
                   <th>{{ loop.index }}</th>
                 {% endfor %}
+
+              {% elif round_style == 'rotisserie' %}
+                <th colspan="2">
+                  draft order
+                </th>
               {% endif %}
 
             </tr>
@@ -139,8 +144,30 @@
                         </span>
                     </td>
                   {% endfor %}
-                {% endif %}
 
+                {% elif round_style == 'rotisserie' %}
+                  {% set waiting_pos = info.rotisserie_waiting_position() %}
+
+                  <td>
+                    {% if waiting_pos[0] == loop.index - 1 and waiting_pos[1] == 0 %}
+                      <i class="fas fa-check"></i>
+                    {% elif loop.index == info.user_ids()|length %}
+                      <i class="fas fa-arrow-right text-secondary"></i>
+                    {% else %}
+                      <i class="fas fa-arrow-down text-secondary"></i>
+                    {% endif %}
+                  </td>
+
+                  <td>
+                    {% if waiting_pos[0] == loop.index - 1 and waiting_pos[1] == 1 %}
+                      <i class="fas fa-check"></i>
+                    {% elif loop.index == 1 %}
+                      <i class="fas fa-arrow-left text-secondary"></i>
+                    {% else %}
+                      <i class="fas fa-arrow-up text-secondary"></i>
+                    {% endif %}
+                  </td>
+                {% endif %}
 
               </tr>
             {% endfor %}

@@ -1,3 +1,5 @@
+import random
+
 from app.util.card_json_wrapper import CardJsonWrapper
 from app.util.deck_info import DeckInfo
 
@@ -137,6 +139,9 @@ class DraftInfo(object):
         card_ids = []
 
         for rnd in self.rounds():
+            if not rnd['built']:
+                continue
+
             if rnd['style'] == 'rotisserie':
                 for event in rnd['events']:
                     if event['user_id'] == user_id and event['name'] == 'card_picked':
@@ -144,8 +149,7 @@ class DraftInfo(object):
 
         return card_ids
 
-    def current_round(self, user_id):
-        user_id = self._format_user_id(user_id)
+    def current_round(self, user_id=None):
         for rnd in self.rounds():
             if not rnd['finished']:
                 return rnd
@@ -187,7 +191,13 @@ class DraftInfo(object):
                     pack['opened'] = True
 
         elif rnd['style'] == 'rotisserie':
-            pass
+            # Adjust the player order to match the rotisserie first player.
+            first_id = rnd['waiting_id']
+            user_data = self.user_data()
+            assert any([x['id'] == first_id for x in user_data]), "Invalid user id as first player id"
+
+            while user_data[0]['id'] != first_id:
+                user_data.append(user_data.pop(0))
 
         else:
             raise ValueError(f"Unknown round style: {rnd['style']}")
@@ -232,6 +242,10 @@ class DraftInfo(object):
                 return i
 
         raise ValueError(f"Unknown user id {user_id}")
+
+    def start(self):
+        # Randomize seating
+        random.shuffle(self.user_data())
 
     def user_decline(self, user_id, value=True):
         user_id = self._format_user_id(user_id)
@@ -409,6 +423,9 @@ class DraftInfo(object):
         if not self.can_be_drafted(user_id, card_id):
             raise ValueError(f"User {user_id} is not allowed to draft card {card_id}")
 
+        # Calculate direction for next step before making pick
+        direction = self.rotisserie_next_direction()
+
         # Make the pick
         current_round['picked_ids'].append(card_id)
         current_round['events'].append({
@@ -420,12 +437,6 @@ class DraftInfo(object):
 
         # Get the direction for the next player
         user_ids = self.user_ids()
-        picks_per_player = len(current_round['picked_ids']) // len(user_ids)
-        if picks_per_player // 2 == 0:
-            direction = 1
-        else:
-            direction = -1
-
         user_index = user_ids.index(user_id)
         next_index = user_index + direction
         current_round['waiting_id'] = user_ids[next_index]
@@ -433,6 +444,41 @@ class DraftInfo(object):
         # Check if the round is finished
         if len(current_round['picked_ids']) == len(self.user_ids()) * current_round['num_cards']:
             self._round_advance()
+
+    def rotisserie_next_direction(self):
+        row, col = self.rotisserie_waiting_position()
+
+        if col == 0:
+            if row + 1 == len(self.user_ids()):
+                return 0
+            else:
+                return 1
+
+        else:
+            if row == 0:
+                return 0
+            else:
+                return -1
+
+    def rotisserie_waiting_position(self):
+        current_round = self.current_round()
+
+        if current_round['style'] != 'rotisserie':
+            raise RuntimeError("It is not currently a rotisserie round")
+
+        num_users = len(self.user_ids())
+        num_picked = len(current_round['picked_ids'])
+        round_length = num_users * 2
+        round_position = num_picked % round_length
+
+        if round_position < num_users:
+            row = round_position
+        else:
+            row = round_length - round_position - 1
+
+        col = round_position // num_users
+
+        return row, col
 
 
     ############################################################

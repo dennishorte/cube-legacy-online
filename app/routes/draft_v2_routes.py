@@ -185,6 +185,7 @@ def draft_v2_round_add(draft_id):
         draft.info().round_add({
             'style': style,
             'cube_id': cube_id,
+            'cube_name': cube.name,
             'num_cards': int(request.args.get('num_cards')),
         })
 
@@ -208,6 +209,7 @@ def draft_v2_start(draft_id):
         new_card_data = RoundBuilder.build(round_setup, draft.info().user_data())
         info.card_data().update(new_card_data)
 
+    info.start()
     info.round_start(info.rounds()[0])
 
     draft.state = DraftStates.ACTIVE
