@@ -54,7 +54,7 @@ def send_new_draft_notifications(draft):
 
     for user in draft_users:
         domain_host = urlparse(request.base_url).hostname
-        draft_url = f"http://{domain_host}/draft/{draft.id}"
+        draft_url = f"http://{domain_host}/draft_v2/{draft.id}"
         message = f"A new draft, {draft.name}, has started. <{draft_url}|Come check it out>."
 
         _send_slack_message(user, message)
@@ -65,7 +65,7 @@ def send_your_pick_notification(user, draft):
         return
 
     domain_host = urlparse(request.base_url).hostname
-    draft_url = f"http://{domain_host}/draft/{draft.id}"
+    draft_url = f"http://{domain_host}/draft_v2/{draft.id}"
     message = f"Someone has passed you a pack in {draft.name}. Time to <{draft_url}|make a pick>."
 
     if _send_slack_message(user, message):
