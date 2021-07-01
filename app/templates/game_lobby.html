@@ -92,9 +92,9 @@
 
   <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
   <script>
-   $(document).ready(function() {
+   window.clo.card_data = {{ draft.info().card_data()|tojson }};
 
-     window.clo.card_data = {{ draft.info().card_data()|tojson }};
+   $(document).ready(function() {
      autocard_init('card-list-item', true)
 
      // When hitting ready, fill the hidden fields with the deck data before submitting.
