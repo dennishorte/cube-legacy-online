@@ -1,4 +1,4 @@
-{% macro _deck_builder_row(classes_str, card_id_dict) %}
+{% macro _deck_builder_row(classes_str, deck_info, card_id_dict) %}
   {# id: used to update the card counts by deck_builder.js #}
 
   <div class="row deckbuilder-row {{ classes_str }}">
@@ -20,7 +20,9 @@
               data-section-classes="{{ classes_str }}"
               data-cmc="{{ cmc_string }}">
             {% for card_id in card_id_dict[cmc_string] %}
-              <li class="card-list-item clo-card" data-card-id="{{ card_id }}">
+              {% set card = deck_info.card_wrapper(card_id) %}
+              {% set land_class = 'card-type-land' if card.is_land() else '' %}
+              <li class="card-list-item clo-card {{ land_class }}" data-card-id="{{ card_id }}">
                 {{ card_id }}
               </li>
             {% endfor %}
@@ -132,14 +134,14 @@
 
     <div id="maindeck">
       <h5 class="mb-0 mt-2">Main Deck</h5>
-      {{ _deck_builder_row('maindeck creature', deck_info['data']['maindeck']['creature']) }}
-      {{ _deck_builder_row('maindeck other', deck_info['data']['maindeck']['non_creature']) }}
+      {{ _deck_builder_row('maindeck creature', deck_info, deck_info['data']['maindeck']['creature']) }}
+      {{ _deck_builder_row('maindeck other', deck_info, deck_info['data']['maindeck']['non_creature']) }}
     </div>
 
     <div id="sideboard">
       <h5 class="mb-0 mt-2">Sideboard</h5>
-      {{ _deck_builder_row('sideboard creature', deck_info['data']['sideboard']['creature']) }}
-      {{ _deck_builder_row('sideboard other', deck_info['data']['sideboard']['non_creature']) }}
+      {{ _deck_builder_row('sideboard creature', deck_info, deck_info['data']['sideboard']['creature']) }}
+      {{ _deck_builder_row('sideboard other', deck_info, deck_info['data']['sideboard']['non_creature']) }}
     </div>
 
   </div>
