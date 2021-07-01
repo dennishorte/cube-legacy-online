@@ -177,6 +177,7 @@ class GameState(object):
 
             'latest_version': 1, # Safety check to avoid data overwrites
 
+            'started': False,
             'finished': False,  # deprecated; use self.is_finished()
             'winner': '',  # deprecated; user self.result_for(user)
         }
@@ -205,6 +206,9 @@ class GameState(object):
         # This is legacy for games where finished was being set manually.
         if self.data['finished']:
             return True
+
+        if 'started' in self.data and not self.data['started']:
+            return False
 
         return [x.eliminated for x in self.players].count(False) <= 1
 
@@ -306,6 +310,7 @@ class GameState(object):
         return -1
 
     def start_game(self):
+        self.data['started'] = True
         self.data['turn'] = random.randrange(len(self.players))
         self.data['priority'] = self.data['turn']
         first_player_name = self.players[self.data['turn']].data['name']

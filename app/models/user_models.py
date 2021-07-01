@@ -60,7 +60,6 @@ class User(UserMixin, db.Model):
         from app.models.game_models import GameUserLink
 
         game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
-
         return Game.query \
                    .filter(
                        Game.id.in_(game_ids),

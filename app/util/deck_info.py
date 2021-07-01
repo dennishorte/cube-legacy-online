@@ -6,6 +6,9 @@ class DeckInfo(object):
         self.data = data
         self.card_data = card_data  # Formatted as {card_id: CubeCard.get_json()}
 
+        for card_id, datum in self.card_data.items():
+            datum['cube_card_id'] = card_id
+
         # Ensure all of the info for card ids in this deck are loaded
         missing = [x for x in self.card_ids() if x not in self.card_data]
         if missing:

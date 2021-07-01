@@ -443,7 +443,7 @@ class DraftInfo(object):
 
         # Check if the round is finished
         if len(current_round['picked_ids']) == len(self.user_ids()) * current_round['num_cards']:
-            self._round_advance()
+            self._round_advance(current_round)
 
     def rotisserie_next_direction(self):
         row, col = self.rotisserie_waiting_position()

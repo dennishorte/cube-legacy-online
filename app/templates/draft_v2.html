@@ -227,10 +227,9 @@
           </div>
 
           {% for card_id in info.cards_picked(user_id) %}
-            {% set card = info.card_wrapped(card_id) %}
             <p
               class="card-list-item clo-card"
-              data-card-id="{{ card.id() }}"
+              data-card-id="{{ card_id }}"
             >
             </p>
           {% endfor %}

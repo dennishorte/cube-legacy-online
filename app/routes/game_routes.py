@@ -81,6 +81,7 @@ def game_add_player(game_id):
 def game_delete(game_id):
     GameUserLink.query.filter(GameUserLink.game_id == game_id).delete()
     GameDraftLink.query.filter(GameDraftLink.game_id == game_id).delete()
+    GameDraftV2Link.query.filter(GameDraftV2Link.game_id == game_id).delete()
     Game.query.filter(Game.id == game_id).delete()
     db.session.commit()
 
@@ -121,6 +122,7 @@ def game_draft_v2_fight(draft_id, opp_id):
         name = f"{draft.name} - {sassy_phrase}",
         players = [current_user, opp],
     )
+    db.session.add(game)
 
     link = GameDraftV2Link(draft_id=draft_id, game_id=game.id)
     db.session.add(link)
