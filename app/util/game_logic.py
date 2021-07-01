@@ -207,7 +207,7 @@ class GameState(object):
         if self.data['finished']:
             return True
 
-        if 'started' in self.data and not self.data['started']:
+        if not self.data.get('started', True):
             return False
 
         return [x.eliminated for x in self.players].count(False) <= 1
