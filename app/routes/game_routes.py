@@ -182,13 +182,14 @@ def game_ready(game_id):
     player = state.player_by_id(current_user.id)
     player.ready_to_start = True
 
+    basics = [state.make_card(x) for x in deck_info.basic_ids()]
     maindeck = [state.make_card(x) for x in deck_info.maindeck_ids()]
     sideboard = [state.make_card(x) for x in deck_info.sideboard_ids()]
     command = [state.make_card(x) for x in deck_info.command_ids()]
 
     state.load_deck(
         player_id = player.id,
-        maindeck = maindeck,
+        maindeck = maindeck + basics,
         sideboard = sideboard,
         command = command,
     )

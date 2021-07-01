@@ -72,6 +72,20 @@ class DeckInfo(object):
         name = name.lower()
         return self.data['basic_land'][name]
 
+    def basic_ids(self):
+        from app.models.cube_models import Cube, CubeCard
+        cube_id = Cube.query.filter(Cube.name == 'basic lands').first().id
+        basics = CubeCard.query.filter(CubeCard.cube_id == cube_id).all()
+        name_model_map = {card.name_tmp.lower(): card for card in basics}
+
+        ids = []
+
+        for name, model in name_model_map.items():
+            count = self.basic_counts(name)
+            ids += [model.id] * count
+
+        return ids
+
     def card_ids(self):
         return self.maindeck_ids() + self.sideboard_ids() + self.command_ids()
 
