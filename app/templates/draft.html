@@ -286,6 +286,14 @@
         {% endif %}
       {% endfor %}
     </div>
+
+    <div class="col framed">
+      <ul class="list-unstyled">
+        {% for card_name in d.deck_builder.deck_list() %}
+          <li>{{ card_name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 {% endblock content %}
 
