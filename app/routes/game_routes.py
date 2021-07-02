@@ -217,7 +217,8 @@ def game_rematch(game_id):
     if linked_draft:
         new_link = GameDraftV2Link(game_id=new_game.id, draft_id=linked_draft.id)
         db.session.add(new_link)
-        db.session.commit()
+
+    db.session.commit()
 
     return redirect(url_for('game', game_id=new_game.id))
 
