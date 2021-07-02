@@ -361,6 +361,7 @@
 
 
 {% block scripts %}
+  <script src="/static/js/jquery.ui.touch-punch.min.js"></script>
   <script>
    function round_add() {
      const link = "{{ url_for('draft_v2_round_add', draft_id=draft.id) }}"
