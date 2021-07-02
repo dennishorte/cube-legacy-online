@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function() {
      $('.closeup-card-wrapper').each(function() {
        const elem = $(this)
        const card_id = elem.data('card-id')
+       if (!card_id) {
+         return
+       }
+
        const data = window.clo.card_data[card_id]
        if (!data) {
          console.log(card_id)
@@ -17,6 +21,10 @@ document.addEventListener("DOMContentLoaded", function() {
     $('.clo-card').each(function(index, e) {
       const elem = $(e)
       const card_id = elem.data('card-id')
+      if (!card_id) {
+        return
+      }
+
       const data = window.clo.card_data[card_id]
       const front = data['card_faces'][0]
       const back = data['card_faces'][1]
