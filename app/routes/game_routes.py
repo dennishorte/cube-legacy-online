@@ -213,9 +213,9 @@ def game_rematch(game_id):
         players = [x.user for x in game.user_links],
     )
 
-    if game.draft_links:
-        old_link = game.draft_links[0]
-        new_link = GameDraftLink(game_id=new_game.id, draft_id=old_link.draft_id)
+    linked_draft = game.linked_draft()
+    if linked_draft:
+        new_link = GameDraftV2Link(game_id=new_game.id, draft_id=linked_draft.id)
         db.session.add(new_link)
         db.session.commit()
 
