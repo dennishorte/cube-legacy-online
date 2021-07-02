@@ -267,8 +267,8 @@ const gameui = (function() {
       const token = $('#import-card-token').is(':checked')
 
       const import_card_data = {}
-      const request_url = undefined
-      const key = undefined
+      let request_url = undefined
+      let key = undefined
 
       if (id) {
         import_card_data.id = id
