@@ -630,7 +630,7 @@ const gameui = (function() {
       const opt = $(event.target)
       const id = opt.data('card-id')
 
-      const data = undefined
+      let data = undefined
       _import_options.forEach(function(card_data) {
         if (card_data.meta.cube_card_id == id) {
           data = card_data
