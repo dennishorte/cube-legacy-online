@@ -42,11 +42,10 @@
                 </div>
               {% endif %}
               <p
-                class="card-list-item
-                       {% if not can_be_drafted %}
-                       text-secondary
-                       {% endif %}
-                       "
+                class="card-list-item"
+                {% if not can_be_drafted %}
+                  style="color: #ccc;"
+                {% endif %}
                 data-card-id="{{ card.id() }}"
                 data-front="{{ card.image_front() }}"
                 {% if card.image_back() %}
