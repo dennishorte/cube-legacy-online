@@ -2,12 +2,15 @@ import random
 
 from app.util.card_json_wrapper import CardJsonWrapper
 from app.util.deck_info import DeckInfo
+from app.util.game_results import GameResults
 
 
 class DraftInfo(object):
     def __init__(self, data):
         assert isinstance(data, dict), "Data must be of type dict"
         self.data = data
+
+        self._results = {}
 
     @staticmethod
     def factory(draft_id: int):
@@ -181,6 +184,12 @@ class DraftInfo(object):
 
     def name(self):
         return self.data['name']
+
+    def results(self, user1, user2):
+        if not self._results:
+            self._results = self._all_match_results()
+
+        return self._results[user1][user2]
 
     def round_start(self, rnd):
         rnd['started'] = True
@@ -511,6 +520,30 @@ class DraftInfo(object):
             return self._format_user_id(user_id.id)
         else:
             return user_id
+
+    def _all_match_results(self):
+        from app.models.game_models import Game
+        from app.models.game_models import GameDraftV2Link
+
+        game_links = GameDraftV2Link.query.filter(GameDraftV2Link.draft_id == self.draft_id()).all()
+        all_game_ids = [x.game_id for x in game_links]
+        all_games = Game.query.filter(Game.id.in_(all_game_ids)).all()
+
+        results_map = {}
+
+        for game in all_games:
+            all_users = [x.user_id for x in game.user_links]
+            for user_id in all_users:
+                user_results = results_map.setdefault(user_id, {})
+                for opp_id in all_users:
+                    if user_id == opp_id:
+                        continue
+
+                    match_results = user_results.setdefault(opp_id, GameResults())
+                    match_results.add_result(game.state.result_for(user_id))
+
+        return results_map
+
 
     def _check_for_pack_round_complete(self, rnd):
         for pack in rnd['packs']:
