@@ -189,7 +189,7 @@ class DraftInfo(object):
         if not self._results:
             self._results = self._all_match_results()
 
-        return self._results[user1][user2]
+        return self._results.get(user1, {}).get(user2, GameResults())
 
     def round_start(self, rnd):
         rnd['started'] = True
