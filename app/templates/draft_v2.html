@@ -109,7 +109,7 @@
                 <td>
                   {{ user.name }}
                   {% if user != current_user %}
-                    (<a href="{{ url_for('game_draft_fight', draft_id=draft.id, opp_id=user.id) }}">fight!</a>)
+                    (<a href="{{ url_for('game_draft_v2_fight', draft_id=draft.id, opp_id=user.id) }}">fight!</a>)
                   {% endif %}
                 </td>
                 {% for user_id2 in info.user_ids() %}
