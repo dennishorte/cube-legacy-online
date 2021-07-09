@@ -10,7 +10,7 @@ from app.forms import FinalizeAchievementForm
 from app.forms import NewAchievementForm
 from app.forms import SelectDraftForm
 from app.models.cube_models import *
-from app.models.draft_models import *
+from app.models.draft_v2_models import *
 from app.models.user_models import *
 
 
@@ -94,12 +94,12 @@ def achievement_link_to_draft(achievement_id):
     if form.validate_on_submit():
         if int(form.draft.data) != 0:
 
-            link = AchievementDraftLink.query.filter(
-                AchievementDraftLink.ach_id == achievement_id,
+            link = DraftV2AchievementLink.query.filter(
+                DraftV2AchievementLink.ach_id == achievement_id,
             ).first()
 
             if not link:
-                link = AchievementDraftLink()
+                link = DraftV2AchievementLink()
 
             link.draft_id = form.draft.data
             link.ach_id = achievement_id
@@ -110,9 +110,6 @@ def achievement_link_to_draft(achievement_id):
         flash("Form validation failure")
 
     return redirect(url_for('achievement_view', achievement_id=achievement_id))
-
-
-
 
 
 @app.route("/achievement/<ach_id>/star")
@@ -147,8 +144,8 @@ def achievement_view(achievement_id):
     achievement = Achievement.query.get(achievement_id)
     draft_form = SelectDraftForm.factory()
     form = FinalizeAchievementForm()
-    link = AchievementDraftLink.query.filter(
-        AchievementDraftLink.ach_id == achievement_id,
+    link = DraftV2AchievementLink.query.filter(
+        DraftV2AchievementLink.ach_id == achievement_id,
     ).first()
 
     return render_template(

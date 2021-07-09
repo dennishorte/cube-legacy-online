@@ -382,8 +382,8 @@ class SelectDraftForm(FlaskForm):
 
     @staticmethod
     def factory():
-        from app.models.draft_models import Draft
-        drafts = Draft.query.order_by(Draft.timestamp.desc()).all()
+        from app.models.draft_v2_models import DraftV2
+        drafts = DraftV2.query.order_by(DraftV2.timestamp.desc()).all()
         form = SelectDraftForm()
         form.draft.choices = [(0, '')] + [(x.id, x.name) for x in drafts]
         return form

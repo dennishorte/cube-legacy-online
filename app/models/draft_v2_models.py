@@ -24,6 +24,7 @@ class DraftV2(db.Model):
     name = db.Column(db.String(64))
     data_json = db.Column(MEDIUMTEXT)
 
+    ach_links = db.relationship('DraftV2AchievementLink', backref='draft')
     game_links = db.relationship('GameDraftV2Link', backref='draft')
 
     def check_if_complete(self):
