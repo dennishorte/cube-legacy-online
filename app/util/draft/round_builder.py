@@ -66,7 +66,7 @@ class RoundBuilder(object):
             more_setup['packs'].append(pack)
 
             for card_id in pack['card_ids']:
-                included_card_data[card_id] = card_data[card_id]
+                included_card_data[card_id] = card_data[int(card_id)]
 
         setup.update(more_setup)
 
