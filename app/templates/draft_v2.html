@@ -228,33 +228,35 @@
 
 
   <!-- Picked Cards Table -->
-  <div class="row">
-    <div class="col p-0">
-      <a href="#picked-cards" data-toggle="collapse">
-        <h2>Picked Cards</h2>
-      </a>
-    </div>
-  </div>
-
-  <div id="picked-cards" class="row card-table collapse show">
-    {% for user_id in info.user_ids() %}
-      <div class="col table-column">
-        <div class="table-section">
-          <div class="table-section-header">
-            {{ info.user_data(user_id)['name'] }}
-          </div>
-
-          {% for card_id in info.cards_picked(user_id) %}
-            <p
-              class="card-list-item clo-card"
-              data-card-id="{{ card_id }}"
-            >
-            </p>
-          {% endfor %}
-        </div>
+  {% if round_style == 'rotisserie' %}
+    <div class="row">
+      <div class="col p-0">
+        <a href="#picked-cards" data-toggle="collapse">
+          <h2>Picked Cards</h2>
+        </a>
       </div>
-    {% endfor %}
-  </div>
+    </div>
+
+    <div id="picked-cards" class="row card-table collapse show">
+      {% for user_id in info.user_ids() %}
+        <div class="col table-column">
+          <div class="table-section">
+            <div class="table-section-header">
+              {{ info.user_data(user_id)['name'] }}
+            </div>
+
+            {% for card_id in info.cards_picked(user_id) %}
+              <p
+                class="card-list-item clo-card"
+                data-card-id="{{ card_id }}"
+              >
+              </p>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
   <!-- END: Picked Cards Table -->
 
 
