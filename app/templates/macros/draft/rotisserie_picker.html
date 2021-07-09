@@ -1,4 +1,5 @@
 {% from 'macros/card_frame.html' import card_frame %}
+{% from 'macros/card_frame.html' import empty_card_frame %}
 
 
 {% macro rotisserie_picker(draft, user_id) %}
@@ -59,15 +60,7 @@
                   <i class="fas fa-bolt"></i>
                 {% endif %}
 
-                {% if can_be_drafted and info.waiting(user_id) %}
-                  <a href="{{ url_for('draft_v2_rotisserie_pick', draft_id=draft.id, card_id=card.id()) }}">
-                {% endif %}
-
                 {{ card.name() }}
-
-                {% if can_be_drafted %}
-                  </a>
-                {% endif %}
               </p>
             {% endfor %}
 
@@ -80,10 +73,49 @@
   </div>
   <!-- END: Formatted Cards Table -->
 
+  <!-- Confirmation Modal -->
+  <div class="modal fade" id="rotisserie-confirmation-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Pick this card?</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div id="rotisserie-confirmation-card-frame" class="modal-body">
+          {{ empty_card_frame(220) }}
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">nope</button>
+          <a id="rotisserie-confirmation-link" href="" class="btn btn-primary">gimme</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Confirmation Modal -->
+
+
   <script>
+
    document.addEventListener("DOMContentLoaded", function() {
+     window.clo.card_data = {{ draft.info().card_data()|tojson }};
      autocard_init('card-list-item', true)
-     window.clo.card_data = {{ draft.info().card_data()|tojson }}
+
+     $('.card-list-item').click(function() {
+       const card_id = $(this).data('card-id')
+       const card_data = window.clo.card_data[card_id]
+
+       clo.util.draw_card_frame(
+         $('#rotisserie-confirmation-card-frame').find('.closeup-card-wrapper'),
+         card_data,
+       )
+
+       const link = "{{ url_for('draft_v2_rotisserie_pick', draft_id=draft.id, card_id="") }}" + card_id
+       $('#rotisserie-confirmation-link').attr('href', link)
+
+       $('#rotisserie-confirmation-modal').modal('show')
+     })
    })
   </script>
 {% endmacro %}
