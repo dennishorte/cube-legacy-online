@@ -27,6 +27,9 @@ class DraftV2(db.Model):
     ach_links = db.relationship('DraftV2AchievementLink', backref='draft')
     game_links = db.relationship('GameDraftV2Link', backref='draft')
 
+    def achs(self, user_id):
+        return [x for x in self.ach_links if x.ach.unlocked_by_id == user_id]
+
     def check_if_complete(self):
         if self.state != DraftStates.ACTIVE:
             return self.state
@@ -85,3 +88,9 @@ class DraftV2UserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     draft_id = db.Column(db.Integer, db.ForeignKey("draft_v2.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def draft(self):
+        return DraftV2.query.get(self.draft_id)
+
+    def user(self):
+        return User.query.get(self.user_ids)

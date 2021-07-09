@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     cubes = db.relationship('Cube', backref='created_by')
     draft_seats = db.relationship('Seat', backref='user')
     match_results = db.relationship('MatchResult', backref='user')
-    drafts_v2 = db.relationship('DraftV2UserLink', backref='user')
+    draft_v2_links = db.relationship('DraftV2UserLink', backref='user')
 
     cards_added = db.relationship('CubeCard', backref='added_by', foreign_keys='CubeCard.added_by_id')
     cards_edited = db.relationship('CubeCard', backref='edited_by', foreign_keys='CubeCard.edited_by_id')

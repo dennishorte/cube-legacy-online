@@ -82,10 +82,10 @@
           {% for draft in drafts %}
             <div class="framed">
               <h6>~{{ draft.name }}~</h6>
-              <p>Results: {{ draft.match_record(user.id) }}</p>
-              {% if draft.achs(user.id) %}
+              {% set links = draft.achs(user.id) %}
+              {% if links %}
                 <p class="text-secondary border-bottom mb-0">Achievements</p>
-                {% for link in draft.achs(user.id) %}
+                {% for link in links %}
                   {{ show_achievement(link.ach, None) }}
                 {% endfor %}
               {% endif %}

@@ -9,7 +9,7 @@ from flask_login import login_required
 from app import app
 from app.forms import *
 from app.models.cube_models import *
-from app.models.draft_models import *
+from app.models.draft_v2_models import *
 from app.models.game_models import *
 from app.models.user_models import *
 
@@ -18,11 +18,8 @@ from app.models.user_models import *
 @login_required
 def user_profile(user_id):
     user = User.query.get(user_id)
-    seats = Seat.query.filter(
-        Seat.user_id == user_id,
-    )
-    drafts = [x.draft for x in seats if not x.draft.killed]
-    drafts.sort(key=lambda x: x.timestamp, reverse=True)
+
+    drafts = [x.draft() for x in user.draft_v2_links]
 
     return render_template(
         'user.html',

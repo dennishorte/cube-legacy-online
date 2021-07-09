@@ -589,6 +589,7 @@ class Achievement(db.Model):
     # Relationships
     linked_cards = db.relationship('AchievementLink', backref='achievement')
     linked_drafts = db.relationship('AchievementDraftLink', backref='ach')
+    linked_drafts_v2 = db.relationship('DraftV2AchievementLink', backref='ach')
     starred = db.relationship('AchievementStar', backref='achievement')
 
     def unlock_date(self):
