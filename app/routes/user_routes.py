@@ -30,12 +30,11 @@ def user_profile(user_id):
         drafts=drafts,
         games=user.all_games(),
 
-        moniker_form=EditMonikersForm.factory(user),
-        persona_form=EditPersonasForm.factory(user),
-        portrait_form=EditPortraitForm(prefix='portrait'),
-        story_form=EditLevelupStoryForm(prefix='story'),
+        pwform=ChangePasswordForm(),
+        udform=ChangeUserDetailsForm(),
 
-        levelups=Levelup.query.order_by(Levelup.xp).all(),
+        moniker_form=EditMonikersForm.factory(user),
+        portrait_form=EditPortraitForm(prefix='portrait'),
     )
 
 

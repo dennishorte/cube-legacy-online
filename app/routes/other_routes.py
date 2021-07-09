@@ -57,12 +57,7 @@ def index():
 @app.route("/my_account")
 @login_required
 def my_account():
-    return render_template(
-        'my_account.html',
-        user=current_user,
-        pwform=ChangePasswordForm(),
-        udform=ChangeUserDetailsForm(),
-    )
+    return redirect(url_for('user_profile', user_id=current_user.id))
 
 
 @app.route("/my_account/change_details", methods=["POST"])
