@@ -1007,6 +1007,38 @@ class GameState {
     this._execute(diff)
   }
 
+  tie_game(player_idx) {
+    // For older games, ensure the eliminated field exists
+    this.state.players.forEach(player => {
+      if (!player.hasOwnProperty('eliminated')) {
+        player.eliminated = false
+      }
+    })
+
+    const delta = []
+
+    this.state.players.forEach((player, idx) => {
+      if (!player.eliminated) {
+        delta.push({
+          action: 'set_player_value',
+          player_idx: idx,
+          key: 'eliminated',
+          old_value: false,
+          new_value: true,
+        })
+      }
+    })
+
+    const player_key = `PLAYER_${this.viewer_idx}_NAME`
+    const diff = {
+      delta: delta,
+      message: `${player_key} declares the game a tie`,
+      player: this.viewer_name,
+    }
+
+    return this._execute(diff)
+  }
+
   toggle_zone_collapse(player_idx, zone_id) {
     zone_id = this._clean_id(zone_id)
 
@@ -1117,8 +1149,8 @@ class GameState {
     assert.ok(index >= 0, "negative history index")
     assert.ok(index < this.history.length, "too large history index")
 
-    let forward = index > this.history_index
-    let increment = forward ? 1 : -1
+    const forward = index > this.history_index
+    const increment = forward ? 1 : -1
 
     while (index != this.history_index) {
       if (forward) {
@@ -1179,16 +1211,16 @@ class GameState {
 
   _apply(diff) {
     for (var i = 0; i < diff.delta.length; i++) {
-      let change = diff.delta[i]
-      let action = change.action
+      const change = diff.delta[i]
+      const action = change.action
 
       if (action == 'annihilate_card') {
-        let zone = this._card_list_from_loc(change.loc)
+        const zone = this._card_list_from_loc(change.loc)
         zone.splice(change.loc.zone_idx, 1)
       }
 
       else if (action == 'create_card') {
-        let data = change.card_data
+        const data = change.card_data
 
         // Don't assert this anymore, since we don't delete cards when going back through
         // time anymore.
@@ -1197,7 +1229,7 @@ class GameState {
 
         this.state.cards[data.id] = data
 
-        let card_list = this._card_list_from_loc({
+        const card_list = this._card_list_from_loc({
           name: change.zone,
           player_idx: this.player_idx_by_name(data.owner),
         })
@@ -1210,11 +1242,11 @@ class GameState {
       }
 
       else if (action == 'move_card') {
-        let card_id = change.card_id
+        const card_id = change.card_id
 
         // Ensure the card exists where it is supposed to be.
-        let orig_zone = this._card_list_from_loc(change.orig_loc)
-        var orig_idx = change.orig_loc.zone_idx
+        const orig_zone = this._card_list_from_loc(change.orig_loc)
+        let orig_idx = change.orig_loc.zone_idx
         if (orig_idx == -1) {
           orig_idx = orig_zone.length - 1
         }
@@ -1228,8 +1260,8 @@ class GameState {
         orig_zone.splice(orig_idx, 1)
 
         // Add the card to the new zone.
-        let dest_zone = this._card_list_from_loc(change.dest_loc)
-        var dest_idx = change.dest_loc.zone_idx
+        const dest_zone = this._card_list_from_loc(change.dest_loc)
+        let dest_idx = change.dest_loc.zone_idx
         if (dest_idx < 0) {
           dest_idx = dest_zone.length + 1 + dest_idx
         }
@@ -1237,7 +1269,7 @@ class GameState {
       }
 
       else if (action == 'set_game_value') {
-        let key = change.key
+        const key = change.key
         assert.equal(
           this.state[key], change.old_value,
           `Change old value (${change.old_value}) doesn't match current value (${this.state[key]})`
@@ -1246,8 +1278,8 @@ class GameState {
       }
 
       else if (action == 'set_card_value') {
-        let card = this.card(change.card_id)
-        let key = change.key
+        const card = this.card(change.card_id)
+        const key = change.key
         assert.equal(
           card[key], change.old_value,
           "Change old value doesn't match current card value" +
@@ -1259,15 +1291,15 @@ class GameState {
       }
 
       else if (action == 'set_cards_in_zone') {
-        let tableau = this.state.players[change.player_idx].tableau
+        const tableau = this.state.players[change.player_idx].tableau
         assert.ok(util.arraysEqual(tableau[change.zone], change.old_value))
 
         tableau[change.zone] = [...change.new_value]
       }
 
       else if (action == 'set_player_counter') {
-        let counters = this.state.players[change.player_idx].tableau.counters
-        let key = change.key
+        const counters = this.state.players[change.player_idx].tableau.counters
+        const key = change.key
         assert.equal(counters[key], change.old_value)
 
         counters[key] = change.new_value
@@ -1282,27 +1314,27 @@ class GameState {
       }
 
       else if (action == 'set_visibility') {
-        let card = this.card(change.card_id)
+        const card = this.card(change.card_id)
         assert.ok(util.arraysEqual(card.visibility, change.old), "Original visibility does not match")
 
         card.visibility = [...change.vis]
       }
 
       else if (action == 'unannihilate_card') {
-        let zone = this._card_list_from_loc(change.loc)
+        const zone = this._card_list_from_loc(change.loc)
         zone.splice(change.loc.zone_idx, 0, change.card_id)
       }
 
       else if (action == 'uncreate_card') {
-        let data = change.card_data
-        let id = data.id
+        const data = change.card_data
+        const id = data.id
 
-        let card_list = this._card_list_from_loc({
+        const card_list = this._card_list_from_loc({
           name: change.zone,
           player_idx: this.player_idx_by_name(data.owner),
         })
 
-        let index = card_list.indexOf(id)
+        const index = card_list.indexOf(id)
         assert.ok(index != -1, 'Could not find card to uncreate')
 
         card_list.splice(index, 1)
@@ -1321,7 +1353,7 @@ class GameState {
     // Update the diff with visibility information of the cards (after the diff was applied).
     // This ensures that when cards become visible, the message includes the card name.
     for (var i = 0; i < diff.delta.length; i++) {
-      let change = diff.delta[i]
+      const change = diff.delta[i]
       if (change.hasOwnProperty('card_id')) {
         change.card_vis = [...this.card(change.card_id).visibility]
       }
@@ -1331,7 +1363,7 @@ class GameState {
 
   _unapply(diff) {
     // Make a copy so that we don't alter the original diff.
-    let inverse = JSON.parse(JSON.stringify(diff))
+    const inverse = JSON.parse(JSON.stringify(diff))
 
     // Reverse the order of the delta so they will be unapplied in reverse order of application.
     let delta = inverse.delta || []
@@ -1339,8 +1371,8 @@ class GameState {
 
     // Invert each change in the delta
     for (var i = 0; i < delta.length; i++) {
-      let change = delta[i]
-      let action = change.action
+      const change = delta[i]
+      const action = change.action
 
       if (action == 'set_game_value'
           || action == 'set_card_value'
@@ -1348,7 +1380,7 @@ class GameState {
           || action == 'set_player_counter'
           || action == 'set_player_value'
       ) {
-        let tmp = change.old_value
+        const tmp = change.old_value
         change.old_value = change.new_value
         change.new_value = tmp
       }
@@ -1362,13 +1394,13 @@ class GameState {
       }
 
       else if (action == 'move_card') {
-        let tmp = change.orig_loc
+        const tmp = change.orig_loc
         change.orig_loc = change.dest_loc
         change.dest_loc = tmp
       }
 
       else if (action == 'set_visibility') {
-        let tmp = change.vis
+        const tmp = change.vis
         change.vis = change.old
         change.old = tmp
       }

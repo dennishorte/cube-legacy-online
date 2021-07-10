@@ -797,6 +797,11 @@ const gameui = (function() {
       _redraw()
     }
 
+    else if (menu_item == 'tie game') {
+      _state.tie_game(_state.viewer_idx)
+      _redraw()
+    }
+
     else if (menu_item == 'view all') {
       const zone = target.closest('.card-zone')
       const player_idx = util.player_idx_from_elem(zone)
