@@ -132,14 +132,21 @@
                       {{ game.state.name }}
                     </a>
 
-                    {% if game.state.result_for(current_user.id) == 'win' or game.state.is_winner(user) %}
+                    {% set result = game.state.result_for(current_user.id) %}
+                    {% if result == 'win' %}
                       <span class="badge badge-pill badge-success">
                         <i class="fas fa-check"></i>
                       </span>
-                    {% else %}
+                    {% elif result == 'loss' %}
                       <span class="badge badge-pill badge-danger">
                         <i class="fas fa-times"></i>
                       </span>
+                    {% elif result == 'draw' %}
+                      <span class="badge badge-pill badge-warning">
+                        &#x2014; <!-- em dash -->
+                      </span>
+                    {% else %}
+                      ???
                     {% endif %}
 
                   </li>
