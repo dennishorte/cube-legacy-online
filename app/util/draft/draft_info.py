@@ -17,6 +17,7 @@ class DraftInfo(object):
         data = {
             'card_data': {},  # cube_card.id: card_json
             'draft_id': draft_id,
+            'messages': [],
             'name': '',
             'rounds': [],  # dicts of round setup info
             'user_data': [],  # [dict] (see user_add func for dict definition)
@@ -51,6 +52,9 @@ class DraftInfo(object):
             ).data,
             'declined': False,
             'name': user_model.name,
+
+            # draft matters info
+            'cogwork_librarian_ids': [],
         })
 
 
@@ -76,6 +80,50 @@ class DraftInfo(object):
                 self.card_data_add({
                     str(card_id): card.get_json(),
                 })
+
+
+    ############################################################
+    # Draft Matters Functions
+
+    def has_cogwork_librarian(self, user_id):
+        user_id = self._format_user_id(user_id)
+        user_data = self.user_data(user_id)
+
+        # Support for older drafts in progress
+        if 'cogwork_librarian_ids' not in user_data:
+            user_data['cogwork_librarian_ids'] = []
+
+            deck = deck_info(user_id)
+            for card_id in deck.card_ids():
+                card = deck.card_wrapper(card_id)
+                if 'cogwork librarian' in card.name().lower():
+                    user_data['cogwork_librarian_ids'].append(card_id)
+
+        return len(user_data['cogwork_librarian_ids']) > 0
+
+    def maybe_add_cogwork_librarian(self, user_id, card_id):
+        print('maybe_add_cogwork_librarian')
+
+        user_id = self._format_user_id(user_id)
+        user_data = self.user_data(user_id)
+
+        card_id = self._format_card_id(card_id)
+        card = self.card_wrapper(card_id)
+
+        if 'cogwork_librarian_ids' not in user_data:
+            user_data['cogwork_librarian_ids'] = []
+
+        if 'cogwork librarian' in card.name().lower():
+            print('...exists')
+            user_data['cogwork_librarian_ids'].append(card_id)
+
+            from app.models.user_models import User
+            user = User.query.get(user_id)
+
+            if not self.data['messages']:
+                self.data['messages'] = []
+
+            self.data['messages'].append(f"{user.name} drafted {card.name()}")
 
 
     ############################################################
@@ -133,7 +181,7 @@ class DraftInfo(object):
     def card_data(self):
         return self.data['card_data']
 
-    def card_wrapped(self, card_id):
+    def card_wrapper(self, card_id):
         return CardJsonWrapper(self.card(card_id))
 
     def cards_picked(self, user_id):
@@ -181,6 +229,9 @@ class DraftInfo(object):
 
     def json_string(self):
         return json.dumps(self.data)
+
+    def messages(self):
+        return self.data.get('messages', [])
 
     def name(self):
         return self.data['name']
@@ -323,6 +374,9 @@ class DraftInfo(object):
         })
         self.deck_info(user_id).add_card(card_id)
 
+        # Draft matters checks
+        self.maybe_add_cogwork_librarian(user_id, card_id)
+
         # Pass the pack or open the next pack
         if len(pack['picked_ids']) == len(pack['card_ids']):
             self._pack_open_next(user_id, current_round, pack)
@@ -443,6 +497,9 @@ class DraftInfo(object):
             'card_id': card_id,
         })
         self.deck_info(user_id).add_card(card_id)
+
+        # Draft matters checks
+        self.maybe_add_cogwork_librarian(user_id, card_id)
 
         # Get the direction for the next player
         user_ids = self.user_ids()

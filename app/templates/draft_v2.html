@@ -227,6 +227,22 @@
   </div>
 
 
+  <!-- Draft Messages -->
+  {% set messages = info.messages() %}
+  {% if messages %}
+    <div class="row">
+      <div class="col framed">
+        <ul class="list-unstyled">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+  <!-- END: Draft Messages -->
+
+
   <!-- Picked Cards Table -->
   {% if round_style == 'rotisserie' %}
     <div class="row">
