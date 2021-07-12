@@ -93,7 +93,7 @@ class DraftInfo(object):
         if 'cogwork_librarian_ids' not in user_data:
             user_data['cogwork_librarian_ids'] = []
 
-            deck = deck_info(user_id)
+            deck = self.deck_info(user_id)
             for card_id in deck.card_ids():
                 card = deck.card_wrapper(card_id)
                 if 'cogwork librarian' in card.name().lower():
