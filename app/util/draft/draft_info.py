@@ -122,8 +122,10 @@ class DraftInfo(object):
 
         # Mark that this user gets an additional pick from this pack
         pack = self.next_pack(user_id)
-
         pack['waiting_picks'] += 1
+
+        # Put cogwork librarian into the pack
+        pack['card_ids'].append(card_id)
 
 
     ############################################################

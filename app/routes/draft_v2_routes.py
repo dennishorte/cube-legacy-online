@@ -51,6 +51,26 @@ def draft_v2_change_scars(draft_id):
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
+@app.route('/draft_v2/<draft_id>/debug')
+@login_required
+def draft_v2_debug(draft_id):
+    draft = DraftV2.query.get(draft_id)
+    return render_template(
+        'draft_v2_debug.html',
+        draft = draft,
+    )
+
+
+@app.route('/draft_v2/<draft_id>/debug/update_info', methods=["POST"])
+@login_required
+def draft_v2_debug_update_info(draft_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.info_set(DraftInfo(request.json))
+    draft.info_save()
+
+    return redirect(url_for('draft_v2_debug', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/deck_save', methods=["POST"])
 @login_required
 def draft_v2_deck_save(draft_id):

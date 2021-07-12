@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+{% from "macros/deck_builder_v2.html" import deck_builder_v2 %}
+{% from "macros/draft/pack_picker.html" import pack_picker %}
+{% from "macros/draft/rotisserie_picker.html" import rotisserie_picker %}
+
+
+{% block title_suffix %}
+  Draft - {{ draft.name }}
+{% endblock %}
+
+
+{% block content %}
+  {% set info = draft.info() %}
+  {% set current_round = info.current_round(current_user) %}
+  {% set round_style = current_round['style'] %}
+
+  <div class="row">
+    <div class="col framed">
+      <h1>Draft Debugger</h1>
+    </div>
+  </div>
+
+  {% for round in info.rounds() %}
+    <div class="row">
+      <div id="round{{ loop.index - 1 }}" class="col framed">
+      </div>
+    </div>
+  {% endfor %}
+
+{% endblock content %}
+
+
+{% block scripts %}
+  <script>
+   window.clo.draft_info = {{ draft.info().data|tojson }};
+
+   function redraw() {
+     window.clo.draft_info.rounds.forEach(function(round, index) {
+       const elem = document.getElementById('round' + index)
+       elem.innerHTML = ""
+
+       const title_elem = document.createElement('h5')
+       const title_text_elem = document.createTextNode('Round ' + index)
+       title_elem.appendChild(title_text_elem)
+       elem.appendChild(title_elem)
+
+       const pre_elem = document.createElement('pre')
+       const code_elem = document.createElement('code')
+       const code_text_elem = document.createTextNode(JSON.stringify(round, null, 2))
+       code_elem.appendChild(code_text_elem)
+       pre_elem.appendChild(code_elem)
+       elem.appendChild(pre_elem)
+     })
+   }
+
+   function update_info() {
+     $.ajax({
+       type: 'POST',
+       url: "{{ url_for('draft_v2_debug_update_info', draft_id=draft.id) }}",
+       data: JSON.stringify(window.clo.draft_info),
+       contentType: "application/json; charset=utf-8",
+       success: function(response) {
+         console.log('success')
+       },
+       error: function(response) {
+         console.log('error')
+         console.log(response)
+       },
+     })
+   }
+
+   document.addEventListener('DOMContentLoaded', function() {
+     redraw()
+   })
+  </script>
+{% endblock scripts %}
