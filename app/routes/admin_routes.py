@@ -9,7 +9,7 @@ from flask_login import login_required
 from app import app
 from app.forms import *
 from app.models.cube_models import *
-from app.models.draft_models import *
+from app.models.draft_v2_models import *
 from app.models.game_models import *
 from app.models.user_models import *
 
@@ -70,6 +70,40 @@ def admin_clear_diffs():
         db.session.add(card)
 
     db.session.commit()
+
+    return redirect(url_for('admin'))
+
+
+@app.route("/admin/cogwork_librarian_update")
+@login_required
+def admin_cogwork_librarian_update():
+    if not current_user.is_admin:
+        return "Not allowed"
+
+    for draft in DraftV2.query.all():
+        info = draft.info()
+
+        if 'messages' not in info.data:
+            info.data['messages'] = []
+
+        for rnd in info.rounds():
+            if 'packs' in rnd:
+                for pack in rnd['packs']:
+                    pack['waiting_picks'] = 1
+
+        for user_id in info.user_ids():
+            user_data = info.user_data(user_id)
+
+            if 'cogwork_librarian_ids' not in user_data:
+                user_data['cogwork_librarian_ids'] = []
+
+                deck = info.deck_info(user_id)
+                for card_id in deck.card_ids():
+                    card = deck.card_wrapper(card_id)
+                    if 'cogwork librarian' in card.name().lower():
+                        user_data['cogwork_librarian_ids'].append(card_id)
+
+        draft.info_save()
 
     return redirect(url_for('admin'))
 

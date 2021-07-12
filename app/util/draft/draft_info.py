@@ -88,17 +88,6 @@ class DraftInfo(object):
     def cogwork_librarian_has(self, user_id):
         user_id = self._format_user_id(user_id)
         user_data = self.user_data(user_id)
-
-        # For backwards compatibility
-        if 'cogwork_librarian_ids' not in user_data:
-            user_data['cogwork_librarian_ids'] = []
-
-            deck = self.deck_info(user_id)
-            for card_id in deck.card_ids():
-                card = deck.card_wrapper(card_id)
-                if 'cogwork librarian' in card.name().lower():
-                    user_data['cogwork_librarian_ids'].append(card_id)
-
         return len(user_data['cogwork_librarian_ids']) > 0
 
     def cogwork_librarian_maybe_add(self, user_id, card_id):
@@ -108,19 +97,11 @@ class DraftInfo(object):
         card_id = self._format_card_id(card_id)
         card = self.card_wrapper(card_id)
 
-        # For backwards compatibility
-        if 'cogwork_librarian_ids' not in user_data:
-            user_data['cogwork_librarian_ids'] = []
-
         if 'cogwork librarian' in card.name().lower():
             user_data['cogwork_librarian_ids'].append(card_id)
 
             from app.models.user_models import User
             user = User.query.get(user_id)
-
-            # For backwards compatibility
-            if not self.data['messages']:
-                self.data['messages'] = []
 
             self.data['messages'].append(f"{user.name} drafted {card.name()}")
 
@@ -135,20 +116,12 @@ class DraftInfo(object):
         card_id = user_data['cogwork_librarian_ids'].pop()
         self.deck_info(user_id).card_remove_by_id(card_id)
 
-        # For backwards compatibility
-        if not self.data['messages']:
-            self.data['messages'] = []
-
         # Public notification of using a face up card
         card = self.card_wrapper(card_id)
         self.data['messages'].append(f"{user_data['name']} put {card.name()} back in a pack")
 
         # Mark that this user gets an additional pick from this pack
         pack = self.next_pack(user_id)
-
-        # For backwards compatibility
-        if 'waiting_picks' not in pack:
-            pack['waiting_picks'] = 1
 
         pack['waiting_picks'] += 1
 
