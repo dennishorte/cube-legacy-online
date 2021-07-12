@@ -409,7 +409,7 @@ class DraftInfo(object):
             self._pack_open_next(user_id, current_round, pack)
 
         # Maybe this player needs to take another card?
-        elif pack['waiting_picks'] > 1:
+        elif 'waiting_picks' in pack and pack['waiting_picks'] > 1:
             pack['waiting_picks'] -= 1
 
         # Otherwise, pass the pack to the next player
