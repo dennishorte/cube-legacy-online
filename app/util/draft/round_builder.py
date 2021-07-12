@@ -58,6 +58,7 @@ class RoundBuilder(object):
                 'user_id': user_id,  # User who opens pack
                 'pack_num': i % num_packs,  # Order of pack opening
                 'waiting_id': user_id,  # User who needs to pick from this pack
+                'waiting_picks': 1,
                 'picked_ids': [],
                 'events': [],
                 'opened': False,
@@ -95,6 +96,7 @@ class RoundBuilder(object):
                     'card_ids': pack_card_ids[pack_index],
                     'user_id': user_data[user_num]['id'],  # User who opens pack
                     'waiting_id': user_data[user_num]['id'],  # User who needs to pick from pack
+                    'waiting_picks': 1,
                     'pack_num': pack_num,  # Order of pack opening
                     'picked_ids': [],
                     'events': [],

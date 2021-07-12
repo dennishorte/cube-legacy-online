@@ -220,6 +220,15 @@ def draft_v2_start(draft_id):
     return redirect(url_for('draft_v2', draft_id=draft_id))
 
 
+@app.route('/draft_v2/<draft_id>/use_cogwork_librarian')
+@login_required
+def draft_v2_use_cogwork_librarian(draft_id):
+    draft = DraftV2.query.get(draft_id)
+    draft.info().cogwork_librarian_use(current_user)
+    draft.info_save()
+    return redirect(url_for('draft_v2', draft_id=draft_id))
+
+
 @app.route('/draft_v2/<draft_id>/user_add')
 @login_required
 def draft_v2_user_add(draft_id):

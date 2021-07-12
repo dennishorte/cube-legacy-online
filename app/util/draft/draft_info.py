@@ -85,11 +85,11 @@ class DraftInfo(object):
     ############################################################
     # Draft Matters Functions
 
-    def has_cogwork_librarian(self, user_id):
+    def cogwork_librarian_has(self, user_id):
         user_id = self._format_user_id(user_id)
         user_data = self.user_data(user_id)
 
-        # Support for older drafts in progress
+        # For backwards compatibility
         if 'cogwork_librarian_ids' not in user_data:
             user_data['cogwork_librarian_ids'] = []
 
@@ -101,29 +101,56 @@ class DraftInfo(object):
 
         return len(user_data['cogwork_librarian_ids']) > 0
 
-    def maybe_add_cogwork_librarian(self, user_id, card_id):
-        print('maybe_add_cogwork_librarian')
-
+    def cogwork_librarian_maybe_add(self, user_id, card_id):
         user_id = self._format_user_id(user_id)
         user_data = self.user_data(user_id)
 
         card_id = self._format_card_id(card_id)
         card = self.card_wrapper(card_id)
 
+        # For backwards compatibility
         if 'cogwork_librarian_ids' not in user_data:
             user_data['cogwork_librarian_ids'] = []
 
         if 'cogwork librarian' in card.name().lower():
-            print('...exists')
             user_data['cogwork_librarian_ids'].append(card_id)
 
             from app.models.user_models import User
             user = User.query.get(user_id)
 
+            # For backwards compatibility
             if not self.data['messages']:
                 self.data['messages'] = []
 
             self.data['messages'].append(f"{user.name} drafted {card.name()}")
+
+    def cogwork_librarian_use(self, user_id):
+        user_id = self._format_user_id(user_id)
+
+        if self.current_round(user_id)['style'] not in ('cube-pack', 'set-pack'):
+            raise RuntimeError(f"Can't use cogwork librarian in this round type")
+
+        # Remove from user's card pool
+        user_data = self.user_data(user_id)
+        card_id = user_data['cogwork_librarian_ids'].pop()
+        self.deck_info(user_id).card_remove_by_id(card_id)
+
+        # For backwards compatibility
+        if not self.data['messages']:
+            self.data['messages'] = []
+
+        # Public notification of using a face up card
+        card = self.card_wrapper(card_id)
+        self.data['messages'].append(f"{user_data['name']} put {card.name()} back in a pack")
+
+        # Mark that this user gets an additional pick from this pack
+        pack = self.next_pack(user_id)
+
+        # For backwards compatibility
+        if 'waiting_picks' not in pack:
+            pack['waiting_picks'] = 1
+
+        pack['waiting_picks'] += 1
 
 
     ############################################################
@@ -375,11 +402,17 @@ class DraftInfo(object):
         self.deck_info(user_id).add_card(card_id)
 
         # Draft matters checks
-        self.maybe_add_cogwork_librarian(user_id, card_id)
+        self.cogwork_librarian_maybe_add(user_id, card_id)
 
-        # Pass the pack or open the next pack
+        # Open the next pack
         if len(pack['picked_ids']) == len(pack['card_ids']):
             self._pack_open_next(user_id, current_round, pack)
+
+        # Maybe this player needs to take another card?
+        elif pack['waiting_picks'] > 1:
+            pack['waiting_picks'] -= 1
+
+        # Otherwise, pass the pack to the next player
         else:
             self._pack_pass(current_round, pack)
 
@@ -499,7 +532,7 @@ class DraftInfo(object):
         self.deck_info(user_id).add_card(card_id)
 
         # Draft matters checks
-        self.maybe_add_cogwork_librarian(user_id, card_id)
+        self.cogwork_librarian_maybe_add(user_id, card_id)
 
         # Get the direction for the next player
         user_ids = self.user_ids()

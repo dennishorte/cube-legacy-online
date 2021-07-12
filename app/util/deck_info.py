@@ -68,6 +68,21 @@ class DeckInfo(object):
         else:
             self.data['maindeck']['non_creature'][cmc].append(card_id)
 
+    def card_remove_by_id(self, card_id):
+        command_ids = self.command_ids()
+        if card_id in command_ids:
+            command_ids.remove(card_id)
+            return
+
+        for section in ('maindeck', 'sideboard'):
+            for card_type in ('creature', 'non_creature'):
+                for cmc_list in self.data[section][card_type].values():
+                    if card_id in cmc_list:
+                        cmc_list.remove(card_id)
+                        return
+
+        raise ValueError(f"Card {card_id} not found in deck")
+
     def basic_counts(self, name: str):
         name = name.lower()
         return self.data['basic_land'][name]

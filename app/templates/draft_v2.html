@@ -243,6 +243,20 @@
   <!-- END: Draft Messages -->
 
 
+  <!-- Special Actions -->
+  {% if info.cogwork_librarian_has(current_user) %}
+    <div class="row">
+      <div class="col framed">
+        <h3>Special Actions</h3>
+        <a href="{{ url_for('draft_v2_use_cogwork_librarian', draft_id=draft.id) }}" class="btn btn-success">
+          use cogwork librarian
+        </a>
+      </div>
+    </div>
+  {% endif %}
+  <!-- END: Special Actions -->
+
+
   <!-- Picked Cards Table -->
   {% if round_style == 'rotisserie' %}
     <div class="row">
