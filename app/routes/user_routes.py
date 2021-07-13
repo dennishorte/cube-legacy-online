@@ -34,6 +34,19 @@ def user_profile(user_id):
     )
 
 
+@app.route("/user/<user_id>/all_games", methods=['POST'])
+@login_required
+def user_all_games(user_id):
+    user = User.query.get(user_id)
+    games_json = [{
+        'name': game.state.name,
+        'link': url_for('game', game_id=game.id),
+        'result': game.state.result_for(user_id),
+    } for game in user.games_complete()]
+
+    return { 'games': games_json }
+
+
 @app.route("/user/<user_id>/set_monikers", methods=['POST'])
 @login_required
 def user_set_monikers(user_id):

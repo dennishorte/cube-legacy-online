@@ -121,8 +121,11 @@
           </div>
 
           <div>
+            <div style="float: right;">
+              <a id="show-all-games-button" href="#" class="text-s">show all</a>
+            </div>
             <p>Finished Games</p>
-            <ul class="list-unstyled ml-4 mt-3">
+            <ul id="finished-games-list" class="list-unstyled ml-4 mt-3">
               {% for game in user.games_recent() %}
                 <li>
                   <a href="{{ url_for('game', game_id=game.id) }}">
@@ -257,7 +260,66 @@
        .text(data)
    }
 
+   function show_all_games() {
+     $.ajax({
+       type: 'POST',
+       url: "{{ url_for('user_all_games', user_id=user.id) }}",
+       data: JSON.stringify({}),
+       contentType: "application/json; charset=utf-8",
+       success: function(response) {
+         console.log(response)
+         const list_elem = document.getElementById('finished-games-list')
+         list_elem.innerHTML = ""
+
+         response.games.forEach(function(game_data) {
+           const a_elem = document.createElement('a')
+           const name_elem = document.createTextNode(game_data.name)
+           a_elem.appendChild(name_elem)
+           a_elem.setAttribute('href', game_data.link)
+
+           const badge_elem = document.createElement('span')
+           badge_elem.classList.add('badge', 'badge-pill')
+           if (game_data.result == 'win') {
+             badge_elem.classList.add('badge-success')
+
+             const icon_elem = document.createElement('i')
+             icon_elem.classList.addClass('fas', 'fa-check')
+             badge_elem.appendChild(icon_elem)
+           }
+           else if (game_data.result == 'loss') {
+             badge_elem.classList.add('badge-danger')
+
+             const icon_elem = document.createElement('i')
+             icon_elem.classList.addClass('fas', 'fa-times')
+             badge_elem.appendChild(icon_elem)
+           }
+           else if (game_data.result == 'draw') {
+             badge_elem.classList.add('badge-warning')
+             badge_elem.innerHTML = "&#x2014;"
+           }
+           else {
+             badge_elem.classList.add('badge-info')
+             badge_elem.innerHTML = "???"
+           }
+
+           const li_elem = document.createElement('li')
+           li_elem.appendChild(a_elem)
+           li_elem.appendChild(badge_elem)
+
+           list_elem.appendChild(li_elem)
+         })
+       },
+       error: function(response) {
+         alert('Error loading all games')
+       },
+     })
+   }
+
    $(document).ready(function() {
+     document
+       .getElementById('show-all-games-button')
+       .addEventListener('click', show_all_games)
+
      $('.stat-value').click(function(event) {
        let stat = $(this)
        let stat_name = stat.data('stat').trim()
@@ -281,8 +343,8 @@
          url: "{{ url_for('user_update_stat', user_id=user.id) }}",
          data: JSON.stringify(data),
          contentType: "application/json; charset=utf-8",
-         success: function (response) {
-           if (response == 'success') {
+             success: function (response) {
+               if (response == 'success') {
              location.reload()
            }
            else {

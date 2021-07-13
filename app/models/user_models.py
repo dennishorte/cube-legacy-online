@@ -75,6 +75,18 @@ class User(UserMixin, db.Model):
                    .order_by(Game.timestamp.desc()) \
                    .all()
 
+    def games_complete(self):
+        from app.models.game_models import Game
+        from app.models.game_models import GameUserLink
+
+        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
+        return Game.query \
+                   .filter(
+                       Game.id.in_(game_ids),
+                       Game.completed_timestamp != None,
+                   ) \
+                   .order_by(Game.timestamp.desc()) \
+                   .all()
 
     def games_recent(self, count=7):
         from app.models.game_models import Game
