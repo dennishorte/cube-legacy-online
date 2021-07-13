@@ -25,7 +25,6 @@ def user_profile(user_id):
         'user.html',
         user=user,
         drafts=drafts,
-        games=user.all_games(),
 
         pwform=ChangePasswordForm(),
         udform=ChangeUserDetailsForm(),

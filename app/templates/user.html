@@ -37,7 +37,7 @@
           <img src="{{ user.portrait_link }}" alt="user portrait" style="width: 100%;">
         {% endif %}
 
-        <div style="float: right;">
+        <div class="text-right">
           <a href="#edit-portrait-modal" data-toggle="modal">portrait</a>
         </div>
 
@@ -103,21 +103,19 @@
           <div>
             <p>Active Games</p>
             <ul class="list-unstyled ml-4 mt-3">
-              {% for game in games %}
-                {% if not game.state.is_finished() %}
-                  <li>
-                    <a href="{{ url_for('game', game_id=game.id) }}">
-                      {{ game.state.name }}
-                    </a>
+              {% for game in user.games_active() %}
+                <li>
+                  <a href="{{ url_for('game', game_id=game.id) }}">
+                    {{ game.state.name }}
+                  </a>
 
-                    {% if game.is_my_turn(user) %}
-                      <span class="badge badge-pill badge-warning">
-                        <i class="fas fa-asterisk"></i>
-                      </span>
-                    {% endif %}
+                  {% if game.is_my_turn(user) %}
+                    <span class="badge badge-pill badge-warning">
+                      <i class="fas fa-asterisk"></i>
+                    </span>
+                  {% endif %}
 
-                  </li>
-                {% endif %}
+                </li>
               {% endfor %}
             </ul>
           </div>
@@ -125,32 +123,30 @@
           <div>
             <p>Finished Games</p>
             <ul class="list-unstyled ml-4 mt-3">
-              {% for game in games %}
-                {% if game.state.is_finished() %}
-                  <li>
-                    <a href="{{ url_for('game', game_id=game.id) }}">
-                      {{ game.state.name }}
-                    </a>
+              {% for game in user.games_recent() %}
+                <li>
+                  <a href="{{ url_for('game', game_id=game.id) }}">
+                    {{ game.state.name }}
+                  </a>
 
-                    {% set result = game.state.result_for(current_user.id) %}
-                    {% if result == 'win' %}
-                      <span class="badge badge-pill badge-success">
-                        <i class="fas fa-check"></i>
-                      </span>
-                    {% elif result == 'loss' %}
-                      <span class="badge badge-pill badge-danger">
-                        <i class="fas fa-times"></i>
-                      </span>
-                    {% elif result == 'draw' %}
-                      <span class="badge badge-pill badge-warning">
-                        &#x2014; <!-- em dash -->
-                      </span>
-                    {% else %}
-                      ???
-                    {% endif %}
+                  {% set result = game.state.result_for(current_user.id) %}
+                  {% if result == 'win' %}
+                    <span class="badge badge-pill badge-success">
+                      <i class="fas fa-check"></i>
+                    </span>
+                  {% elif result == 'loss' %}
+                    <span class="badge badge-pill badge-danger">
+                      <i class="fas fa-times"></i>
+                    </span>
+                  {% elif result == 'draw' %}
+                    <span class="badge badge-pill badge-warning">
+                      &#x2014; <!-- em dash -->
+                    </span>
+                  {% else %}
+                    ???
+                  {% endif %}
 
-                  </li>
-                {% endif %}
+                </li>
               {% endfor %}
             </ul>
           </div>

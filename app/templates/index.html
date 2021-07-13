@@ -109,7 +109,7 @@
         <div class="framed">
           <p class="index-section-header">Finished Games</p>
           <ul class="list-unstyled ml-4 mt-3">
-            {% for game in current_user.games_recently_completed() %}
+            {% for game in current_user.games_recent() %}
               {% if game.state.is_finished() %}
                 <li>
                   <a href="{{ url_for('game', game_id=game.id) }}">

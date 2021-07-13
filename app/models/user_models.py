@@ -55,7 +55,14 @@ class User(UserMixin, db.Model):
     def all_names():
         return [x.name for x in User.query.order_by(User.name)]
 
-    def active_games(self):
+    def games(self):
+        from app.models.game_models import Game
+        from app.models.game_models import GameUserLink
+
+        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
+        return Game.query.filter(Game.id.in_(game_ids)).order_by(Game.timestamp.desc()).all()
+
+    def games_active(self):
         from app.models.game_models import Game
         from app.models.game_models import GameUserLink
 
@@ -68,14 +75,8 @@ class User(UserMixin, db.Model):
                    .order_by(Game.timestamp.desc()) \
                    .all()
 
-    def all_games(self):
-        from app.models.game_models import Game
-        from app.models.game_models import GameUserLink
 
-        game_ids = [x.game_id for x in GameUserLink.query.filter(GameUserLink.user_id == self.id).all()]
-        return Game.query.filter(Game.id.in_(game_ids)).order_by(Game.timestamp.desc()).all()
-
-    def games_recently_completed(self):
+    def games_recent(self, count=7):
         from app.models.game_models import Game
         from app.models.game_models import GameUserLink
 
@@ -87,7 +88,7 @@ class User(UserMixin, db.Model):
                        Game.completed_timestamp != None,
                    ) \
                    .order_by(Game.timestamp.desc()) \
-                   .limit(5) \
+                   .limit(count) \
                    .all()
 
     def check_password(self, password):
@@ -158,7 +159,7 @@ class User(UserMixin, db.Model):
             exclude_id = int(exclude_id)
 
         return [
-            x for x in self.active_games()
+            x for x in self.games_active()
             if x.is_my_turn(self)
             and x.id != exclude_id
         ]
