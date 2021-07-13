@@ -108,6 +108,26 @@ def admin_cogwork_librarian_update():
     return redirect(url_for('admin'))
 
 
+@app.route("/admin/deck_fix")
+@login_required
+def admin_deck_fix():
+    for draft in DraftV2.query.all():
+        info = draft.info()
+        for user_id in info.user_ids():
+            deck = info.deck_info(user_id)
+
+            deck.data['command'] = [str(x) for x in deck.data['command']]
+
+            for section in ('maindeck', 'sideboard'):
+                for card_type in ('creature', 'non_creature'):
+                    for key, card_list in deck.data[section][card_type].items():
+                        deck.data[section][card_type][key] = [str(x) for x in card_list]
+
+        draft.info_save()
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/admin/game_user_link")
 @login_required
 def admin_game_user_link():

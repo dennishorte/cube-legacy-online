@@ -56,6 +56,7 @@ class DeckInfo(object):
         return DeckInfo(data, card_data)
 
     def add_card(self, card_id):
+        card_id = str(card_id)
         card = self.card_wrapper(card_id)
         cmc = str(card.cmc()) if card.cmc() < 7 else '7+'
 
@@ -69,6 +70,7 @@ class DeckInfo(object):
             self.data['maindeck']['non_creature'][cmc].append(card_id)
 
     def card_remove_by_id(self, card_id):
+        card_id = str(card_id)
         command_ids = self.command_ids()
         if card_id in command_ids:
             command_ids.remove(card_id)
