@@ -41,7 +41,7 @@ def user_all_games(user_id):
     games_json = [{
         'name': game.state.name,
         'link': url_for('game', game_id=game.id),
-        'result': game.state.result_for(user_id),
+        'result': game.state.result_for(int(user_id)),
     } for game in user.games_complete()]
 
     return { 'games': games_json }
