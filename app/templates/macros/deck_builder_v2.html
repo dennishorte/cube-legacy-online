@@ -248,11 +248,6 @@
 
 
   <script>
-   function add_card_to_deck(card_data) {
-     console.log('add_card_to_deck')
-     console.log(card_data)
-   }
-
    function basic_land_adjust() {
      const button = $(this)
      const parent = button.parent('.basic-selector')
@@ -263,8 +258,8 @@
 
      count_span.text(count)
 
-     update_counts()
      update_deck_info_basic_lands()
+     update_counts()
    }
 
    function card_swap_maindeck_sideboard() {
@@ -281,6 +276,7 @@
 
      update_deck_info(parent)
      update_deck_info(new_section)
+     update_counts()
    }
 
    function import_card_action() {
@@ -369,6 +365,7 @@
 
      const cmc = card_json.cmc >= 7 ? '7+' : card_json.cmc
      section[cmc].push(card_id)
+     update_counts()
 
      // Save deck and reload page to have it display
      save_deck()
@@ -488,6 +485,7 @@
 
        window.clo.deck_info.basic_land[basic_type] = basic_count
      })
+     update_counts()
    }
 
    document.addEventListener("DOMContentLoaded", import_card_action)
