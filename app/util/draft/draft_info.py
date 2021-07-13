@@ -72,6 +72,7 @@ class DraftInfo(object):
         # If there are any cards in the user's deck that aren't in the draft cards,
         # add them into the draft cards.
         deck_info = self.deck_info(user_id)
+        deck_info.clean_ids()
         for card_id in deck_info.card_ids():
             card_id = self._format_card_id(card_id)
             if card_id not in self.card_data():

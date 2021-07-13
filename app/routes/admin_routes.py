@@ -108,6 +108,20 @@ def admin_cogwork_librarian_update():
     return redirect(url_for('admin'))
 
 
+@app.route("/admin/deck_fix")
+@login_required
+def admin_deck_fix():
+    for draft in DraftV2.query.all():
+        info = draft.info()
+        for user_id in info.user_ids():
+            deck = info.deck_info(user_id)
+            deck.clean_ids()
+
+        draft.info_save()
+
+    return redirect(url_for('admin'))
+
+
 @app.route("/admin/game_user_link")
 @login_required
 def admin_game_user_link():
