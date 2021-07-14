@@ -22,6 +22,17 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col framed">
+      <ul class="list-unstyled">
+        {% for user_id in info.user_ids() %}
+          {% set user = info.user_data(user_id) %}
+          <li>{{ user_id }}: {{ user['name'] }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
   {% for round in info.rounds() %}
     <div class="row">
       <div id="round{{ loop.index - 1 }}" class="col framed">
@@ -35,27 +46,9 @@
 {% block scripts %}
   <script>
    window.clo.draft_info = {{ draft.info().data|tojson }};
+   window.clo.card_data = {{ draft.info().card_data()|tojson }};
 
-   function redraw() {
-     window.clo.draft_info.rounds.forEach(function(round, index) {
-       const elem = document.getElementById('round' + index)
-       elem.innerHTML = ""
-
-       const title_elem = document.createElement('h5')
-       const title_text_elem = document.createTextNode('Round ' + index)
-       title_elem.appendChild(title_text_elem)
-       elem.appendChild(title_elem)
-
-       const pre_elem = document.createElement('pre')
-       const code_elem = document.createElement('code')
-       const code_text_elem = document.createTextNode(JSON.stringify(round, null, 2))
-       code_elem.appendChild(code_text_elem)
-       pre_elem.appendChild(code_elem)
-       elem.appendChild(pre_elem)
-     })
-   }
-
-   function update_info() {
+   function clo_debug_update_info() {
      $.ajax({
        type: 'POST',
        url: "{{ url_for('draft_v2_debug_update_info', draft_id=draft.id) }}",
@@ -72,6 +65,72 @@
    }
 
    document.addEventListener('DOMContentLoaded', function() {
+     function make_card_list_item(card_id) {
+       const link_elem = document.createElement('p')
+       link_elem.classList.add('p-0', 'm-0', 'text-s', 'card-list-item', 'clo-card')
+       link_elem.setAttribute('data-card-id', card_id)
+       link_elem.setAttribute('style', 'display: inline-block;')
+       link_elem.innerHTML = " " + card_id
+       return link_elem
+     }
+
+     function insert_card_items() {
+       for (const elem of document.getElementsByClassName('round-info')) {
+         for (const p of elem.getElementsByTagName('div')) {
+           const json_line_text = p.firstChild.innerHTML
+
+           for (const card_id of Object.keys(window.clo.card_data)) {
+             const test_string = `"${card_id}"`
+             if (json_line_text.includes(test_string)) {
+
+               p.appendChild(make_card_list_item(card_id))
+
+               break
+             }
+           }
+         }
+       }
+     }
+
+     function redraw_rounds() {
+       window.clo.draft_info.rounds.forEach(function(round, index) {
+         // Round Title
+         const title_elem = document.createElement('h5')
+         const title_text_elem = document.createTextNode('Round ' + index)
+         title_elem.appendChild(title_text_elem)
+
+         // Round Json, formatted
+         const info_elem = document.createElement('div')
+         JSON.stringify(round, null, 4).split('\n').forEach(function(line) {
+           const pre_elem = document.createElement('pre')
+           pre_elem.classList.add('p-0', 'm-0')
+           pre_elem.setAttribute('style', 'display: inline-block;')
+           pre_elem.innerHTML = line
+
+           const line_elem = document.createElement('div')
+           line_elem.classList.add('p-0', 'm-0')
+           line_elem.appendChild(pre_elem)
+
+           info_elem.appendChild(line_elem)
+         })
+
+         // Round top-level element
+         const elem = document.getElementById('round' + index)
+         elem.classList.add('round-info')
+         elem.innerHTML = ""
+         elem.appendChild(title_elem)
+         elem.appendChild(info_elem)
+       })
+     }
+
+     function redraw() {
+       redraw_rounds()
+       insert_card_items()
+       clo_init_card_frames()
+       clo_init_card_line_items()
+       autocard_init('card-list-item', true)
+     }
+
      redraw()
    })
   </script>

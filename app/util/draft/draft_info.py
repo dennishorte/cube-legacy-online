@@ -124,6 +124,11 @@ class DraftInfo(object):
         # Mark that this user gets an additional pick from this pack
         pack = self.next_pack(user_id)
         pack['waiting_picks'] += 1
+        pack['events'].append({
+            'name': 'cogwork_librarian_used',
+            'card_id': card_id,
+            'user_id': user_id,
+        })
 
         # Put cogwork librarian into the pack
         pack['card_ids'].append(card_id)
@@ -431,8 +436,11 @@ class DraftInfo(object):
         for pack in round_info['packs']:
             if pack['pack_num'] == pack_num:
                 for event in pack['events']:
-                    if event['user_id'] == user_id and event['name'] == 'card_picked':
-                        pick_count += 1
+                    if event['user_id'] == user_id:
+                        if event['name'] == 'card_picked':
+                            pick_count += 1
+                        elif event['name'] == 'cogwork_librarian_used':
+                            pick_count -= 1
 
         return pick_count
 
