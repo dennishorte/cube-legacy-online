@@ -410,7 +410,12 @@ class DraftInfo(object):
             return None
 
         waiting_packs = list(filter(lambda x: x['waiting_id'] == user_id, current_round['packs']))
-        waiting_packs.sort(key=lambda pack: (pack['pack_num'], len(pack['picked_ids'])))
+
+        def pack_sort_key(pack):
+            pick_ordering = len(pack['picked_ids']) - len(pack['card_ids'])
+            return (pack['pack_num'], pick_ordering)
+
+        waiting_packs.sort(key=pack_sort_key)
 
         if waiting_packs and waiting_packs[0]['opened']:
             return waiting_packs[0]
