@@ -677,6 +677,11 @@ class GameState {
     return id
   }
 
+  not_owners_zone(card, player_idx) {
+    const player_name = this.player(player_idx).name
+    return player_name != card.owner
+  }
+
   num_players() {
     return this.state.players.length
   }

@@ -70,6 +70,7 @@
   padding-top: .1em;
 }
 
+.ownership-symbol,
 .token-symbol,
 .scar-symbol {
   float: left;

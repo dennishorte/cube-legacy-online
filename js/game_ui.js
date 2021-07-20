@@ -926,6 +926,10 @@ const gameui = (function() {
         card.face_down,
       )
 
+      if (_state.not_owners_zone(card, player_idx)) {
+        cardui.show_ownership(elem)
+      }
+
       if (_state.card_is_revealed(card.id, zone_prefix)) {
         cardui.set_revealed(elem)
       }

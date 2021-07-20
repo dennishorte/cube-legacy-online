@@ -129,6 +129,11 @@ module.exports = (function() {
   }
 
 
+  cardui.show_ownership = function(elem) {
+    elem.prepend($('<i class="ownership-symbol fas fa-arrows-alt-h">'))
+  }
+
+
   cardui.show_power_toughness = function(elem) {
     elem.find('.card-power-toughness').removeClass('d-none')
   }
