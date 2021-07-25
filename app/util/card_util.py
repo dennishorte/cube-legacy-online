@@ -50,6 +50,7 @@ class CardConsts(object):
         'artifact',
         'enchantment',
         'land',
+        'dungeon',
         'other',
     )
 
