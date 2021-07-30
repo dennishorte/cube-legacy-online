@@ -153,7 +153,8 @@ module.exports = (function() {
     closeup.find('.card-closeup-annotation-input').val(card.annotation)
 
     // Set external link to card editor
-    const link = `https://cubelegacyonline.com/card/${d.card_id}`
+    const cube_card_id = _state.card(d.card_id).cube_card_id
+    const link = `https://cubelegacyonline.com/card/${cube_card_id}`
     $('#closeup-card-link').attr('href', link)
   }
 

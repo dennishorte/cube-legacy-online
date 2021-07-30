@@ -1115,8 +1115,11 @@ const gameui = (function() {
   // Public Interface
 
   const gameui = {
+    state: null,
+
     init(game_state, viewing_player) {
       _state = new GameState(game_state, viewing_player)
+      gameui.state = _state
 
       cardui.init(_state)
       dialogs.init(_state)
