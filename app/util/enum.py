@@ -27,6 +27,7 @@ class Layout(enum.Enum):
     host = 16  # Host-type cards
     # art_series = 17  # Art Series collectable double-faced cards
     # double_sided = 18  # A Magic card with two sides that are unrelated
+    clazz = 19
 
     @classmethod
     def choices(cls):
@@ -46,6 +47,7 @@ class Layout(enum.Enum):
             Layout.host.name,
             Layout.augment.name,
             Layout.vanguard.name,
+            "class",
         )
 
     @staticmethod
