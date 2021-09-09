@@ -26,11 +26,6 @@ module.exports = (function() {
       elem.prepend($('<i class="token-symbol fas fa-ghost">'))
     }
 
-    if (data.scarred) {
-      elem.prepend($('<i class="scar-symbol fas fa-bolt">'))
-      elem.addClass('scarred')
-    }
-
     if (data.tapped) {
       elem.addClass('tapped')
     }
@@ -44,6 +39,11 @@ module.exports = (function() {
       elem.removeClass('card-autocard')
       const icon = $('<i class="not-visible-icon fas fa-caret-square-down">')
       elem.find('.card-name').prepend(icon)
+    }
+
+    else if (data.scarred) {
+      elem.prepend($('<i class="scar-symbol fas fa-bolt">'))
+      elem.addClass('scarred')
     }
 
     // Mana cost (hidden by default)
