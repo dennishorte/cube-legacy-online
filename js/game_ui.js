@@ -810,6 +810,13 @@ const gameui = (function() {
       $('#scry-submit').click()
     }
 
+    else if (menu_item == 'view next') {
+      const zone = target.closest('.card-zone')
+      const player_idx = util.player_idx_from_elem(zone)
+      _state.reveal_next_in_library_to([_state.viewer_name], player_idx)
+      _redraw()
+    }
+
     else if (menu_item == 'view top n') {
       const zone = target.closest('.card-zone')
       const player_idx = util.player_idx_from_elem(zone)
