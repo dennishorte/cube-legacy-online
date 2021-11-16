@@ -6,6 +6,7 @@
 function autocard_init(classname, legacy, dataFetcher=undefined) {
   legacyAutocard = legacy
   autocardDataFetcher = dataFetcher
+  autocardClassName = classname
 
   const elements = document.getElementsByClassName(classname)
   for (let i = 0; i < elements.length; i++) {
@@ -25,8 +26,20 @@ function autocard_init(classname, legacy, dataFetcher=undefined) {
       )
     }
   }
+
+  document.addEventListener('mousemove', _autocard_update_position)
+  document.addEventListener('click', _autocard_update_position)
+  document.addEventListener('click', _autocard_click)
 }
 
+function _autocard_click(event) {
+  if (event.target.classList.contains(autocardClassName)) {
+    _autocard_enter_listener(event)
+  }
+  else {
+    _autocard_leave_card()
+  }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +47,7 @@ function autocard_init(classname, legacy, dataFetcher=undefined) {
 
 var stopAutocard = false
 var legacyAutocard = false
+var autocardClassName
 var autocardDataFetcher
 
 // These maps prevent duplicate listeners from being added.
@@ -41,42 +55,6 @@ const autocardEnterListeners = new Map()
 const autocardLeaveListeners = new Map()
 
 const autocardLoadListeners = {}
-
-
-// Each time the mouse is moved, calculate the position where the popup should be displayed.
-document.addEventListener('mousemove', function (e) {
-  const leftPixelSpace = e.clientX
-  const rightPixelSpace = window.innerWidth - leftPixelSpace
-  const topPixelSpace = e.clientY
-  const bottomPixelSpace = window.innerHeight - topPixelSpace
-
-  const x_offset = e.clientX + self.pageXOffset
-  const y_offset = e.clientY + self.pageYOffset
-
-  let autocardPopup = _autocard_popup_element()
-
-  if (rightPixelSpace > leftPixelSpace) {
-    // display on right
-    autocardPopup.style.left = Math.max(self.pageXOffset, 5 + x_offset) + 'px'
-    autocardPopup.style.right = null
-  }
-  else {
-    // display on left
-    autocardPopup.style.right = Math.max(window.innerWidth + 5 - x_offset, 0) + 'px'
-    autocardPopup.style.left = null
-  }
-
-  if (bottomPixelSpace > topPixelSpace) {
-    // display on bottom
-    autocardPopup.style.top = 5 + y_offset + 'px'
-    autocardPopup.style.bottom = null
-  }
-  else {
-    // display on top
-    autocardPopup.style.bottom = window.innerHeight + 5 - y_offset + 'px'
-    autocardPopup.style.top = null
-  }
-})
 
 function autocard_show_legacy_card(card_id) {
   let popup_element = $(_autocard_popup_element())
@@ -151,4 +129,43 @@ function _autocard_popup_element() {
   else {
     return document.getElementById('autocardPopup')
   }
+}
+
+function _autocard_update_position(e) {
+  const leftPixelSpace = e.clientX
+  const rightPixelSpace = window.innerWidth - leftPixelSpace
+  const topPixelSpace = e.clientY
+  const bottomPixelSpace = window.innerHeight - topPixelSpace
+
+  const x_offset = e.clientX + self.pageXOffset
+  const y_offset = e.clientY + self.pageYOffset
+
+  const seemsLikeMobile = _autocard_check_for_mobile_coordinates()
+  const autocardPopup = _autocard_popup_element()
+
+  if (rightPixelSpace > leftPixelSpace) {
+    // display on right
+    autocardPopup.style.left = Math.max(self.pageXOffset, 5 + x_offset) + 'px'
+    autocardPopup.style.right = null
+  }
+  else {
+    // display on left
+    autocardPopup.style.right = Math.max(window.innerWidth + 5 - x_offset, 0) + 'px'
+    autocardPopup.style.left = null
+  }
+
+  if (seemsLikeMobile || bottomPixelSpace > topPixelSpace) {
+    // display on bottom
+    autocardPopup.style.top = 5 + y_offset + 'px'
+    autocardPopup.style.bottom = null
+  }
+  else {
+    // display on top
+    autocardPopup.style.bottom = window.innerHeight + 5 - y_offset + 'px'
+    autocardPopup.style.top = null
+  }
+}
+
+function _autocard_check_for_mobile_coordinates() {
+  return visualViewport.pageTop === visualViewport.offsetTop
 }
