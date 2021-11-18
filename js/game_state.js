@@ -719,8 +719,11 @@ class GameState {
   }
 
   player_counter_create(player_idx, counter) {
-    let player = this.state.players[player_idx]
-    let counters = player.tableau.counters
+    if (!input_string.match(/^[0-9a-z]+$/)) {
+      throw new Error(`Counter names can have only numbers and letters`)
+    }
+    const player = this.state.players[player_idx]
+    const counters = player.tableau.counters
     assert.ok(!(counter in counters), `Can't create counter ${counter}`)
     counters[counter] = 0
   }
