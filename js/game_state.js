@@ -719,7 +719,7 @@ class GameState {
   }
 
   player_counter_create(player_idx, counter) {
-    if (!input_string.match(/^[0-9a-z]+$/)) {
+    if (!counter.match(/^[0-9a-z]+$/)) {
       throw new Error(`Counter names can have only numbers and letters`)
     }
     const player = this.state.players[player_idx]
