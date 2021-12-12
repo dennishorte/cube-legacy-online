@@ -206,11 +206,12 @@ util.player_idx_from_elem_id = function(elem_id) {
 ////////////////////////////////////////////////////////////////////////////////
 // Card drawing functions
 
-util.draw_card_face = function(container, face_data) {
+util.draw_card_face = function(container, face_data, rarity) {
   // Elements to be updated
   const name_elem = container.find('.frame-card-name')
   const mana_elem = container.find('.frame-mana-cost')
   const type_elem = container.find('.frame-card-type')
+  const icon_elem = container.find('.frame-card-icon')
   const rules_elem = container.find('.frame-description-wrapper')
   const flavor_elem = container.find('.frame-flavor-wrapper')
   const image_elem = container.find('.frame-art')
@@ -305,6 +306,11 @@ util.draw_card_face = function(container, face_data) {
     pick_info.text('')
   }
 
+  // Icon (Rarity)
+  if (rarity) {
+    icon_elem.addClass(rarity)
+  }
+
   // Container classes
   container.removeClass([
     'land-card',
@@ -352,7 +358,7 @@ util.draw_card_frame = function(container, card_json) {
   let back = container.find('.closeup-back')
 
   // Draw front
-  util.draw_card_face(front, card_json.card_faces[0])
+  util.draw_card_face(front, card_json.card_faces[0], card_json.rarity)
 
   // Draw back
   if (card_json.card_faces.length > 1) {
