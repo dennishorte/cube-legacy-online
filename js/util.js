@@ -310,6 +310,9 @@ util.draw_card_face = function(container, face_data, rarity) {
   if (rarity) {
     icon_elem.addClass(rarity)
   }
+  else {
+    icon_elem.addClass('d-none')
+  }
 
   // Container classes
   container.removeClass([

@@ -34,6 +34,14 @@ def draft_v2(draft_id):
     for user_id in draft.info().user_ids():
         user_map[user_id] = User.query.get(user_id)
 
+    info = draft.info()
+    for i in range(len(info.data['rounds']) - 1):
+        rnd_a = info.data['rounds'][i]
+        rnd_b = info.data['rounds'][i + 1]
+        if rnd_a['finished'] and not rnd_b['started']:
+            info.round_start(rnd_b)
+            draft.info_save()
+
     return render_template(
         'draft_v2.html',
         draft = draft,
