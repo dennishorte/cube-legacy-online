@@ -455,11 +455,15 @@ class CubeCard(db.Model):
         pattern = r"{(.*?)}"
         identity = set()
         for face in self.card_faces():
-            texts = [face['mana_cost']] + re.findall(pattern, face['oracle_text'])
-            for text in texts:
-                for ch in face['mana_cost'].upper():
-                    if ch in 'WUBRG':
-                        identity.add(ch)
+            if face.get('color_override'):
+                identity.add(face.get('color_override'))
+
+            else:
+                texts = [face['mana_cost']] + re.findall(pattern, face['oracle_text'])
+                for text in texts:
+                    for ch in face['mana_cost'].upper():
+                        if ch in 'WUBRG':
+                            identity.add(ch)
 
         identity = sorted(identity, key=color_sort_key)
         identity = ''.join(identity)

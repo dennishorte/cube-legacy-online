@@ -50,8 +50,12 @@ util.string_reverse = function(str) {
 //
 
 
-util.mana_cost_colors = function(mana_cost) {
-  mana_cost = mana_cost.toUpperCase()
+util.card_face_color = function(face_data) {
+  if (face_data.color_override) {
+    return face_data.color_override.toUpperCase()
+  }
+
+  const mana_cost = face_data.mana_cost.toUpperCase()
   let colors = []
   for (let i in mana_cost) {
     let ch = mana_cost.charAt(i)
@@ -330,7 +334,7 @@ util.draw_card_face = function(container, face_data, rarity) {
     container.addClass('land-card')
   }
   else {
-    const colors = util.mana_cost_colors(face_data.mana_cost)
+    const colors = util.card_face_color(face_data)
 
     if (colors == 'W')
       container.addClass('white-card')

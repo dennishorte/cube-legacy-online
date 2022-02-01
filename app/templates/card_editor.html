@@ -6,7 +6,7 @@
 
 {% macro render_field_diff(diff, field_name) %}
   {% set field_diff = diff[field_name] %}
-  {% if diff and field_diff['is_changed'] %}
+  {% if diff and field_diff and field_diff['is_changed'] %}
 
     <ul class="field-diff list-unstyled">
       {% if field_name == 'oracle_text' %}
@@ -68,7 +68,16 @@
     <div class="framed-inner">
       <h4 class="mt-2">{{ face_name }}</h4>
       {{ render_form_group(fields, diff, 'name') }}
-      {{ render_form_group(fields, diff, 'mana_cost') }}
+
+      <div class="row">
+        <div class="col">
+          {{ render_form_group(fields, diff, 'mana_cost') }}
+        </div>
+        <div class="col">
+          {{ render_form_group(fields, diff, 'color_override') }}
+        </div>
+      </div>
+
       {{ render_form_group(fields, diff, 'image_url') }}
       {{ render_form_group(fields, diff, 'art_crop_url') }}
       {{ render_form_group(fields, diff, 'type_line') }}
@@ -495,8 +504,28 @@
 
      for (var i = 0; i < fields.length; i++) {
        let field = fields[i]
-       front[field] = $(`#face_0_${field}`).val()
-       back[field]  = $(`#face_1_${field}`).val()
+
+       if (field === 'mana_cost') {
+         const color_override_0 = $(`#face_0_color_override`).val()
+         if (color_override_0) {
+           front[field] = color_override_0
+         }
+         else {
+           front[field] = $(`#face_0_${field}`).val()
+         }
+
+         const color_override_1 = $(`#face_1_color_override`).val()
+         if (color_override_1) {
+           back[field] = color_override_1
+         }
+         else {
+           back[field]  = $(`#face_1_${field}`).val()
+         }
+       }
+       else {
+         front[field] = $(`#face_0_${field}`).val()
+         back[field]  = $(`#face_1_${field}`).val()
+       }
      }
 
      let data = {
