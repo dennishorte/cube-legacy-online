@@ -19,6 +19,7 @@ from app.util.card_table import CardTable
 from app.util.cube_data import CubeData
 from app.util.cube_util import add_cards_to_cube
 from app.util.cube_util import create_set_cube
+from app.util.cube_util import remove_cards_from_cube
 from app.util.cube_wrapper import CubeWrapper
 
 
@@ -77,13 +78,30 @@ def cube_achievements(cube_id):
     )
 
 
+def separate_cards(card_names):
+    add = []
+    rem = []
+
+    for name in card_names:
+        name = name.strip()
+        if name.startswith('-'):
+            rem.append(name[1:].strip())
+        elif name.startswith('+'):
+            add.append(name[1:].strip())
+        elif name:
+            add.append(name)
+
+    return add, rem
+
+
 @app.route("/cubes/<cube_id>/add", methods=["POST"])
 @login_required
 def cube_add_cards(cube_id):
     form = AddCardsForm()
 
     if form.validate_on_submit():
-        card_names = [x.strip() for x in form.cardnames.data.split('\n') if x.strip()]
+        card_names = form.cardnames.data.split('\n')
+        add_cards, remove_cards = separate_cards(card_names)
 
         if form.add_as_starter.data == True:
             added_by = admin_util.starter_user()
@@ -92,12 +110,19 @@ def cube_add_cards(cube_id):
 
         add_cards_to_cube(
             cube_id,
-            card_names,
+            add_cards,
             added_by,
             form.comment.data,
         )
 
-        flash('cards added')
+        remove_cards_from_cube(
+            cube_id,
+            remove_cards,
+            added_by,
+            form.comment.data,
+        )
+
+        flash('cards added/removed')
         return 'success'
 
     else:

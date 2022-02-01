@@ -101,6 +101,25 @@ def add_cards_to_cube(cube_id, card_names, added_by, comment):
     db.session.commit()
 
 
+def remove_cards_from_cube(cube_id, card_names, removed_by, comment):
+    if not card_names:
+        return
+
+    card_names = [x.lower() for x in card_names]
+    comment = comment.strip()
+    _ensure_cube(cube_id)
+    all_cards = CubeCard.query.filter(CubeCard.cube_id == cube_id).all()
+    cards = [x for x in all_cards if x.name_tmp.lower() in card_names]
+
+    for card in cards:
+        card.removed_by_id = removed_by.id
+        card.removed_by_comment = comment
+        card.removed_by_timestamp = datetime.utcnow()
+        db.session.add(card)
+
+    db.session.commit()
+
+
 def _ensure_cube(cube_id):
     cube = Cube.query.get(cube_id)
     if not cube:
