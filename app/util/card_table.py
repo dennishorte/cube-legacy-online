@@ -72,6 +72,7 @@ class CardTable(object):
 
         for card in cards:
             identity = card.color_identity().upper()
+            identity = list(set(identity))
             identity = ''.join(sorted(identity))
             guilds[identity].append(card)
 
