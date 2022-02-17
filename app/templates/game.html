@@ -480,18 +480,20 @@
         </div>
 
         <div class="modal-body">
-          <form>
-
-            <div class="col form-group pl-1">
-              <p id="import-select-name"></p>
+          <div id="import-version-list-template" class="row d-none">
+            <div class="col-8 import-name">
             </div>
-
-            <div>
-              <ul class="list-unstyled" id="import-select-version">
-              </ul>
+            <div class="col import-buttons">
+              <button class="btn btn-link view-import-button">view</button>
             </div>
+          </div>
 
-          </form>
+          <div id="import-version-list">
+          </div>
+
+          <div id="import-card-frame" class="d-none">
+            {{ empty_card_frame(220) }}
+          </div>
         </div> <!-- modal-body -->
 
       </div>

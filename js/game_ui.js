@@ -607,21 +607,26 @@ const gameui = (function() {
   }
 
   function _open_import_select_modal() {
-    const name_field = $('#import-select-name')
-    name_field.val(_import_options[0].name)
+    $('#import-card-frame').addClass('d-none')
 
-    const select_field = $('#import-select-version')
+    const select_field = $('#import-version-list')
     select_field.empty()
+
+    _import_options.sort((l, r) => l.meta.cube_name.localeCompare(r.meta.cube_name))
     _import_options.forEach(function(opt) {
       const button = $('<button type="button"></button>')
       button.addClass('btn btn-link import-select-opt')
       button.attr('data-card-id', opt.meta.cube_card_id)
       button.text(opt.meta.cube_name)
 
-      const li = $('<li></li>')
-      li.append(button)
+      const list_item = $('#import-version-list-template').clone()
+      list_item.removeAttr('id')
+      list_item.removeClass('d-none')
+      list_item.find('.import-name').append(button)
 
-      select_field.append(li)
+      list_item.find('.view-import-button').attr('data-json', JSON.stringify(opt))
+
+      select_field.append(list_item)
     })
 
     $('#import-select-modal').modal('show')
@@ -638,11 +643,18 @@ const gameui = (function() {
       })
 
       if (!data) {
-        throw "Selected card not found"
+        throw new Error("Selected card not found")
       }
 
       _create_imported_card(data, _import_zone, _import_count, _import_token)
       $('#import-select-modal').modal('hide')
+    })
+
+    $('.view-import-button').click(event => {
+      const card_frame = $('#import-card-frame')
+      const card_data = $(event.target).data('json')
+      util.draw_card_frame(card_frame, card_data)
+      card_frame.removeClass('d-none')
     })
   }
 

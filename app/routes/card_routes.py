@@ -278,8 +278,6 @@ def card_remove(card_id):
 @app.route("/card/<card_id>/update", methods=["POST"])
 @login_required
 def card_update(card_id):
-    print('+++++ card_update')
-
     form = EditMultiFaceCardForm()
     form.update_as.choices = User.all_names()
     form.group_fields()
