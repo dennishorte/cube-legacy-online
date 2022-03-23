@@ -87,7 +87,7 @@ def game_delete(game_id):
 
     flash("Game deleted")
 
-    return redirect(url_for('admin'))
+    return redirect(url_for('index'))
 
 
 @app.route("/game/draft_fight/<draft_id>/<opp_id>")
