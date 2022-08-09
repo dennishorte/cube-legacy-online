@@ -19,49 +19,6 @@
           </li>
         {% endfor %}
       </ul>
-
-
-      <h5>All Active Games</h5>
-      <div id="active-games-accordian">
-        {% for game in games %}
-          <div class="card">
-            <div class="card-header" id="game-{{ loop.index }}" style="padding: 0;">
-              <a
-                class="btn"
-                href="#game-details-{{ loop.index }}"
-                data-toggle="collapse">
-
-                {{ game.state.name }}
-              </a>
-            </div>
-
-            <div
-              class="collapse"
-              id="game-details-{{ loop.index }}"
-              data-parent="#game-{{ loop.index }}">
-
-              <div class="card-body">
-                <ul class="list-unstyled">
-                  <li>{{ ', '.join(game.state.player_names()) }}</li>
-                  <li>{{ game.age() }}</li>
-                  <li>history: {{ game.state.data['history']|length }}</li>
-                  <li>---</li>
-                  <li>
-                    <a href="{{ url_for('game', game_id=game.id) }}">
-                      view
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{{ url_for('game_delete', game_id=game.id) }}">
-                      delete
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
     </div>
 
     <div class="col framed">
