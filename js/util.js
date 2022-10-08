@@ -68,76 +68,84 @@ util.card_face_color = function(face_data) {
 
 
 util.format_rules_text = function(text) {
-  /* let text = elem.text() */
-  var new_html = '<span>'
+  try {
 
-  if (text.startsWith('+ ')) {
-    new_html = '<span class="rule-scar">'
-    text = text.slice(2)
-  }
+    /* let text = elem.text() */
+    var new_html = '<span>'
 
-  var last_commit = -1;
-  var open_curly = -1;
-  var open_paren = -1;
-
-  var i;
-  for (i = 0; i < text.length; i++) {
-    let ch = text.charAt(i)
-
-    if (ch == '{') {
-      assert.equal(open_curly, -1, "Format rules text: A")
-      open_curly = i
-
-      if (last_commit < i) {
-        new_html += text.substr(last_commit + 1, i - last_commit - 1)
-        last_commit = i - 1
-      }
+    if (text.startsWith('+ ')) {
+      new_html = '<span class="rule-scar">'
+      text = text.slice(2)
     }
 
-    else if (ch == '}') {
-      assert.ok(open_curly >= 0, "Format rules text: B")
-      let icon_string = util.icon_from_text(text.substr(open_curly, i - open_curly + 1))
-      new_html += icon_string
-      last_commit = i
-      open_curly = -1
-    }
+    var last_commit = -1;
+    var open_curly = -1;
+    var open_paren = -1;
 
-    else if (ch == '(') {
-      assert.equal(open_curly, -1, "Format rules text: C")
-      assert.equal(open_paren, -1, "Format rules text: D")
+    var i;
+    for (i = 0; i < text.length; i++) {
+      let ch = text.charAt(i)
 
-      if (last_commit < i) {
-        new_html += text.substr(last_commit + 1, i - last_commit - 1)
-        last_commit = i - 1
+      if (ch == '{') {
+        assert.equal(open_curly, -1, "Format rules text: A")
+        open_curly = i
+
+        if (last_commit < i) {
+          new_html += text.substr(last_commit + 1, i - last_commit - 1)
+          last_commit = i - 1
+        }
       }
 
-      new_html += '<em class="frame-reminder-text">'
-      open_paren = i
+      else if (ch == '}') {
+        assert.ok(open_curly >= 0, "Format rules text: B")
+        let icon_string = util.icon_from_text(text.substr(open_curly, i - open_curly + 1))
+        new_html += icon_string
+        last_commit = i
+        open_curly = -1
+      }
+
+      else if (ch == '(') {
+        assert.equal(open_curly, -1, "Format rules text: C")
+        assert.equal(open_paren, -1, "Format rules text: D")
+
+        if (last_commit < i) {
+          new_html += text.substr(last_commit + 1, i - last_commit - 1)
+          last_commit = i - 1
+        }
+
+        new_html += '<em class="frame-reminder-text">'
+        open_paren = i
+      }
+
+      else if (ch == ')') {
+        assert.equal(open_curly, -1, "Format rules text: E")
+        assert.ok(open_paren > -1, "Format rules text: F")
+
+        new_html += text.substr(last_commit + 1, i - last_commit)
+        new_html += '</em>'
+
+        last_commit = i
+        open_paren = -1
+      }
+
     }
 
-    else if (ch == ')') {
-      assert.equal(open_curly, -1, "Format rules text: E")
-      assert.ok(open_paren > -1, "Format rules text: F")
+    assert.equal(open_curly, -1, "Format rules text: Y")
+    assert.equal(open_paren, -1, "Format rules text: Z")
 
-      new_html += text.substr(last_commit + 1, i - last_commit)
-      new_html += '</em>'
-
-      last_commit = i
-      open_paren = -1
+    if (last_commit != i) {
+      new_html += text.substr(last_commit + 1)
     }
 
+    new_html += "</span>"
+
+    return new_html
   }
 
-  assert.equal(open_curly, -1, "Format rules text: Y")
-  assert.equal(open_paren, -1, "Format rules text: Z")
-
-  if (last_commit != i) {
-    new_html += text.substr(last_commit + 1)
+  catch (e) {
+    console.log(e)
+    return '<pre>' + text + '</pre>'
   }
-
-  new_html += "</span>"
-
-  return new_html
 }
 
 
