@@ -33,6 +33,7 @@ class CardConsts(object):
         'image_url',
         'art_crop_url',
         'loyalty',
+        'defense',
         'mana_cost',
         'name',
         'object',

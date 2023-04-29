@@ -95,6 +95,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_0_power = StringField('Power')
     face_0_toughness = StringField('Toughness')
     face_0_loyalty = StringField('Loyalty')
+    face_0_defense = StringField('Defense')
 
     face_1_name = StringField('Name')
     face_1_mana_cost = StringField('Mana Cost')
@@ -107,6 +108,7 @@ class EditMultiFaceCardForm(FlaskForm):
     face_1_power = StringField('Power')
     face_1_toughness = StringField('Toughness')
     face_1_loyalty = StringField('Loyalty')
+    face_1_defense = StringField('Defense')
 
     comment = TextAreaField('Comment')
 
@@ -132,6 +134,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'power': self.face_0_power,
                 'toughness': self.face_0_toughness,
                 'loyalty': self.face_0_loyalty,
+                'defense': self.face_0_defense,
             },
             {
                 'name': self.face_1_name,
@@ -145,6 +148,7 @@ class EditMultiFaceCardForm(FlaskForm):
                 'power': self.face_1_power,
                 'toughness': self.face_1_toughness,
                 'loyalty': self.face_1_loyalty,
+                'defense': self.face_1_defense,
             },
         ]
 

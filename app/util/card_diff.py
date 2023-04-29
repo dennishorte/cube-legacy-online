@@ -67,7 +67,8 @@ class FaceDiffer(BaseDiffer):
            or self.is_changed('mana_cost') \
            or self.is_changed('power') \
            or self.is_changed('toughness') \
-           or self.is_changed('loyalty'):
+           or self.is_changed('loyalty') \
+           or self.is_changed('defense'):
 
             return True
 
@@ -106,6 +107,7 @@ class FaceDiffer(BaseDiffer):
         summary += field_plus('flavor_text')
         summary += self['oracle_text']
         summary += field_plus('loyalty')
+        summary += field_plus('defense')
         summary += pt()
 
         return summary

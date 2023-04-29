@@ -306,6 +306,10 @@ util.draw_card_face = function(container, face_data, rarity) {
     ptl_elem.text(face_data.loyalty)
     ptl_elem.show()
   }
+  else if (face_data.defense && face_data.type_line.includes('Siege')) {
+    ptl_elem.text(face_data.defense)
+    ptl_elem.show()
+  }
   else {
     ptl_elem.hide()
   }
